@@ -28,7 +28,8 @@ export default class ShoppingListController {
          id: req.listid,
          title: `New List (${new Date().toUTCString()})`,
          items: [],
-         recentlyUsed: []
+         recentlyUsed: [],
+         categories: [],
        })
        this.db.set({
          ...this.db.get(),

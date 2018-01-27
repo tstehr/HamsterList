@@ -14,6 +14,7 @@ import ItemController from './ItemController'
 import SocketController from './SocketController'
 import SyncController from './SyncController'
 import CompletionsController from './CompletionsController'
+import CategoriesController from './CategoriesController'
 
 const app = express()
 expressWs(app)
@@ -28,6 +29,7 @@ db.load()
     const shoppingListController = new ShoppingListController(db, socketController.notifiyChanged)
     const itemController = new ItemController(db, socketController.notifiyChanged)
     const syncController = new SyncController(db, socketController.notifiyChanged)
+    const categoriesController = new CategoriesController(db)
     const completionsController = new CompletionsController()
 
     router.param('listid', shoppingListController.handleParamListid)
@@ -43,6 +45,9 @@ db.load()
     router.delete('/:listid/items/:itemid', itemController.handleDelete)
 
     router.get('/:listid/completions', completionsController.handleGet)
+
+    router.get('/:listid/categories', categoriesController.handleGet)
+    router.put('/:listid/categories', categoriesController.handlePut)
 
     router.get('/:listid/sync', syncController.handleGet)
     router.post('/:listid/sync', syncController.handlePost)
