@@ -1,5 +1,4 @@
-// @flows
-
+// @flow
 import deepFreeze from 'deep-freeze'
 import onecolor from 'onecolor'
 import { type UUID, createUUID } from '../util/uuid'
@@ -35,6 +34,7 @@ export function createCategoryDefinition(categoryDefinitionSpec: any): CategoryD
   categoryDefinition.name = categoryDefinitionSpec.name.trim()
   categoryDefinition.shortName = categoryDefinitionSpec.shortName.trim()
   categoryDefinition.color = createColor(categoryDefinitionSpec.color)
+  categoryDefinition.lightText = !!categoryDefinitionSpec.lightText
 
   return deepFreeze(categoryDefinition)
 }

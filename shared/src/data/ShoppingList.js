@@ -1,5 +1,6 @@
 // @flow
 import _ from 'lodash'
+import { type Iteratee } from 'lodash'
 import deepFreeze from 'deep-freeze'
 import { type Item, createItem, mergeItems } from './Item'
 import { type UUID } from '../util/uuid'
@@ -25,7 +26,7 @@ export function createShoppingList(shoppingListSpec: any): ShoppingList {
   checkAttributeType(shoppingListSpec, 'items', 'array')
 
   const items = shoppingListSpec.items.map(createItem)
-  const sortedItems = _.sortBy(items, ['name', 'id'])
+  const sortedItems = _.sortBy(items, (['name', 'id'] : Array<Iteratee<Item>>))
   //console.log("items", items)
   //console.log("sorted", sortedItems)
 

@@ -38,6 +38,7 @@ export default class SocketController {
     this.registeredWebSockets[req.listid].push(ws)
 
     ws.isAlive = true
+    // $FlowFixMe
     ws.debugIdentifier = `${req.listid} ${req.connection.remoteAddress} ${req.get('User-Agent').split(' ').pop()}`
 
     console.log(`Connected: ${ws.debugIdentifier}`)
