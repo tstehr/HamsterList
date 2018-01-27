@@ -3,7 +3,7 @@ import _ from 'lodash'
 import express from 'express'
 import {
   type Item, type LocalItem, type CompletionItem, type UUID,
-  createItem, createLocalItem, createLocalItemFromString, createUUID, createRandomUUID
+  createItem, createLocalItem, createLocalItemFromString, createCompletionItem, createUUID, createRandomUUID
 } from 'shoppinglist-shared'
 import { type DB, updateInArray } from './DB'
 import { type ServerShoppingList, type RecentlyUsedArray } from './ServerShoppingList'
@@ -53,7 +53,9 @@ export default class ItemController {
       res.status(400).json({error: e.message})
       return
     }
+
     const item: Item = {...localItem, id: createRandomUUID()}
+
 
     const changedList: ServerShoppingList = {
       ...req.list,
@@ -146,17 +148,9 @@ export default class ItemController {
 }
 
 export function updateRecentlyUsed(recentlyUsed: RecentlyUsedArray, item: Item): RecentlyUsedArray {
-  const completionItem = {}
-  completionItem.name = item.name
-  if (item.category != null) {
-    completionItem.category = createUUID(item.category)
-  }
+  const completionItem = createCompletionItem(_.pick(item, 'name', 'category'))
 
-  const entryIdx = _.findIndex(recentlyUsed, entry => {
-    const eq = _.isEqual(entry.item, completionItem)
-    console.log(entry.item, completionItem, eq)
-    return eq
-  })
+  const entryIdx = _.findIndex(recentlyUsed, entry => _.isEqual(entry.item, completionItem))
 
   if (entryIdx === -1) {
     return [...recentlyUsed, {

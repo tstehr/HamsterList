@@ -104,6 +104,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     this.state = this.db.get('lists').getById(this.props.listid).value() || initialState
     this.supressSave = false
 
+    // TODO cleanup
     setInterval(() => {
       //console.log(`Socket state: ${this.socket && this.socket.readyState}`)
     }, 1000)
