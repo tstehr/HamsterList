@@ -24,6 +24,15 @@ export function checkAttributeType(object: Object, key: string, type: AttributeT
   }
 }
 
+export function nullSafe<T, R>(func: (T) => R): (?T) => ?R {
+  return function(p : ?T) {
+    if (p == null) {
+      return null
+    }
+    return func(p)
+  }
+}
+
 function getAttributeType(attribute: any): string {
   if (Array.isArray(attribute)) {
     return 'array'

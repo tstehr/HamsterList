@@ -2,14 +2,14 @@
 import _ from 'lodash'
 import mathjs from 'mathjs'
 import deepFreeze from 'deep-freeze'
-import { checkKeys, checkAttributeType } from '../util/validation'
+import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
 
 export opaque type Unit : string = string
 export opaque type AmountValue : number = number
 
 export type Amount = {
   +value: AmountValue,
-  +unit?: Unit,
+  +unit: ?Unit,
   // See https://github.com/facebook/flow/issues/4946#issuecomment-331451281 and https://github.com/facebook/flow/issues/2405
   [any]: empty
 }
@@ -35,9 +35,7 @@ export function createAmount(amountSpec: any): Amount {
 
   const amount = {}
   amount.value = createAmountValue(amountSpec.value)
-  if (amountSpec.unit != null) {
-    amount.unit = createUnit(amountSpec.unit)
-  }
+  amount.unit = nullSafe(createUnit)(amountSpec.unit)
 
   return deepFreeze(amount)
 }

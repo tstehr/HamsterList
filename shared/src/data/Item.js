@@ -4,32 +4,32 @@ import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
 import mathjs from 'mathjs'
 import { type UUID, createUUID } from '../util/uuid'
-import { checkKeys, checkAttributeType } from '../util/validation'
+import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
 import { type Amount, createAmount, createAmountFromString, mergeAmounts } from './Amount'
 
 export type CompletionItem = {
   +name: string,
-  +category?: UUID
+  +category: ?UUID
 }
 
 export type BaseItem = {
   +name: string,
-  +amount?: Amount,
-  +category?: UUID
+  +amount: ?Amount,
+  +category: ?UUID
 }
 
 export type LocalItem = {
   +name: string,
-  +amount?: Amount,
-  +category?: UUID,
+  +amount: ?Amount,
+  +category: ?UUID,
   [any]: empty
 }
 
 export type Item = {
   +id: UUID,
   +name: string,
-  +amount?: Amount,
-  +category?: UUID,
+  +amount: ?Amount,
+  +category: ?UUID,
   [any]: empty
 }
 
@@ -40,9 +40,7 @@ export function createCompletionItem(completionItemSpec: any): CompletionItem {
 
   const item = {}
   item.name = completionItemSpec.name.trim()
-  if (completionItemSpec.category != null) {
-    item.category = createUUID(completionItemSpec.category)
-  }
+  item.category = nullSafe(createUUID)(completionItemSpec.category)
 
   return deepFreeze(item)
 }
@@ -53,9 +51,7 @@ export function createLocalItem(localItemSpec: any): LocalItem {
 
   const item = {}
   Object.assign(item, localItem)
-  if (localItemSpec.amount != null) {
-    item.amount = createAmount(localItemSpec.amount)
-  }
+  item.amount = nullSafe(createAmount)(localItemSpec.amount)
 
   return deepFreeze(item)
 }
