@@ -1,0 +1,50 @@
+.TopBarComponent {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  border-bottom: 2px solid #4CAF50;
+  background: white;
+  width: 100%;
+}
+.TopBarComponent__content {
+  max-width: 30rem;
+  height: 3rem;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@media (min-width: 40rem) {
+  .TopBarComponent__content {
+    max-width: 60rem;
+    padding: 0 1rem;
+  }
+}
+@media (min-width: 50rem) {
+  .TopBarComponent__content {
+    padding: 0 2rem;
+  }
+}
+.TopBarComponent__content > span {
+  width: 3rem;
+  flex-shrink: 0;
+}
+.TopBarComponent__content > button {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+}
+.TopBarComponent__content > h1 {
+  font-weight: bold;
+  font-size: 2rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 .5rem;
+}
+
+.TopBarComponent--dirty > h1 {
+  font-style: italic;
+}

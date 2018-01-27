@@ -1,0 +1,42 @@
+.CreateItemButtonComponent {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 3rem;
+  padding: .5rem;
+  border: solid #4CAF50;
+  border-width: 1px 0;
+  display: block;
+  border-radius: 0;
+  font-size: 1rem;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: padding-left 150ms;
+}
+.CreateItemButtonComponent:focus, .CreateItemButtonComponent.focused {
+  padding-left: 2rem;
+  z-index: 1;
+}
+.CreateItemButtonComponent::before {
+  content: '➔ ';
+  font-size: 1.3rem;
+  position: absolute;
+  height: 3rem;
+  line-height: 3rem;
+  left: .5rem;
+  top: 0;
+  opacity: 0;
+}
+.CreateItemButtonComponent:focus::before, .CreateItemButtonComponent.focused::before {
+  opacity: 1;
+  transition: opacity 100ms 50ms;
+}
+@media (min-width: 30rem) {
+  .CreateItemButtonComponent {
+    border: 0;
+    background-color: #4CAF50;
+    color: #fff;
+    margin-bottom: .5rem;
+  }
+}

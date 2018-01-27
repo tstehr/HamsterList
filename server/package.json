@@ -1,0 +1,40 @@
+{
+  "name": "shoppinglist-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "production": "NODE_ENV=production node build/index.js",
+    "start": "nodemon --watch src --watch data/options.json5 --exec babel-node src/index.js",
+    "build": "npm run build:clean && npm run build:babel",
+    "build:clean": "rm -rf ./build",
+    "build:babel": "npx babel src --out-dir build --source-maps",
+    "test": "npx jest",
+    "flow": "npx flow"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "deep-freeze": "0.0.1",
+    "express": "^4.16.2",
+    "express-rest": "^1.0.4",
+    "express-ws": "^3.0.0",
+    "fs-extra": "^4.0.2",
+    "json-stable-stringify": "^1.0.1",
+    "json5": "^0.5.1",
+    "lodash": "^4.17.4",
+    "shoppinglist-shared": "file:../shared",
+    "ws": "^3.3.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-node-modules": "^0.0.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-flow": "^6.23.0",
+    "chalk": "^2.3.0",
+    "flow-bin": "^0.59.0",
+    "jest": "^21.2.1"
+  }
+}

@@ -1,0 +1,29 @@
+.CreateItemComponent {
+  border: solid #4CAF50;
+  border-width: 1px 0;
+}
+.CreateItemComponent__form {
+  display: flex;
+  height: 3rem;
+  border: solid #4CAF50;
+  border-width: 1px 0;
+}
+.CreateItemComponent__form > input {
+  flex: 1;
+  border: 0;
+  padding: .5rem;
+  font-size: 1rem;
+  font-family: inherit;
+}
+.CreateItemComponent__form > button {
+  width: 3rem;
+}
+@media (min-width: 30rem) {
+  .CreateItemComponent {
+    border: 0;
+  }
+  .CreateItemComponent__form {
+    border-width: 2px;
+    margin-bottom: .5rem;
+  }
+}

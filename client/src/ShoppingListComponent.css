@@ -1,0 +1,41 @@
+.ShoppingListComponent__body {
+  margin-top: 3rem;
+}
+.ShoppingListComponent__section {
+  max-width: 30rem;
+  margin: 0 auto 2rem;
+}
+@media (min-width: 30rem) {
+  .ShoppingListComponent__body {
+    margin-top: 4rem;
+  }
+}
+@media (min-width: 40rem) {
+  .ShoppingListComponent__body {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .ShoppingListComponent__section {
+    flex: 1;
+  }
+  .ShoppingListComponent__section {
+    margin: 0;
+    padding-right: 1rem;
+  }
+  .ShoppingListComponent__section:first-child {
+    padding-left: 1rem;
+  }
+}
+
+@media (min-width: 50rem) {
+  .ShoppingListComponent__body {
+    margin-top: 5rem;
+  }
+  .ShoppingListComponent__section {
+    padding-right: 2rem;
+  }
+  .ShoppingListComponent__section:first-child {
+    padding-left: 2rem;
+  }
+}

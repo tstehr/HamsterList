@@ -1,0 +1,14 @@
+.CategoryComponent {
+  width: 3rem;
+  height: 3rem;
+}
+.CategoryComponent__circle {
+  width: 80%;
+  height: 80%;
+  margin: 10%;
+  background-color: #999;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,0 +1,46 @@
+.EditItemComponent {
+  display: flex;
+  justify-content: space-between;
+  height: 3rem;
+  align-items: stretch;
+  border-bottom: 1px solid #eee;
+}
+.EditItemComponent__category {
+  width: 3rem;
+}
+
+.EditItemComponent__name {
+  flex: 1;
+}
+
+.EditItemComponent__name > div,
+.EditItemComponent__name form,
+.EditItemComponent__name input {
+  height: 100%;
+  width: 100%;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 0;
+}
+
+.EditItemComponent__name > div,
+.EditItemComponent__name input {
+  padding-left: .5rem
+}
+
+.EditItemComponent__name > div {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 30rem) {
+  .EditItemComponent {
+    border: 0;
+    background-color: #f7f7f7;
+    margin-bottom: .5rem;
+  }
+}
+
+.EditItemComponent button {
+  width: 3rem;
+}
