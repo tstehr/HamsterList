@@ -6,16 +6,16 @@ import { type BaseShoppingList, type SyncedShoppingList, type CategoryDefinition
 
 const secret = "123" // TODO import from config!
 
-export function setToken(list: BaseShoppingList, categories: $ReadOnlyArray<CategoryDefinition>): SyncedShoppingList {
-  return createSyncedShoppingList({...list, token: createToken(list, categories)}, categories)
+export function setToken(list: BaseShoppingList): SyncedShoppingList {
+  return createSyncedShoppingList({...list, token: createToken(list)}, null)
 }
 
-export function createToken(list: BaseShoppingList, categories: $ReadOnlyArray<CategoryDefinition>): string {
-  const secretList = createSyncedShoppingList({...list, token: secret}, categories)
+export function createToken(list: BaseShoppingList): string {
+  const secretList = createSyncedShoppingList({...list, token: secret}, null)
   const secretListJSON = stringify(secretList)
   return crypto.createHash('sha256').update(secretListJSON).digest('hex')
 }
 
-export function validateToken(list: SyncedShoppingList, categories: $ReadOnlyArray<CategoryDefinition>): boolean {
-  return list.token === setToken(list, categories).token
+export function validateToken(list: SyncedShoppingList): boolean {
+  return list.token === setToken(list).token
 }

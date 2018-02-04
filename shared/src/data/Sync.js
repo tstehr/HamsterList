@@ -32,14 +32,14 @@ export function createSyncedShoppingList(syncedShoppingListSpec: any, categories
   return deepFreeze(syncedShoppingList)
 }
 
-export function createSyncRequest(syncRequestSpec: any, categories: $ReadOnlyArray<CategoryDefinition>): SyncRequest {
+export function createSyncRequest(syncRequestSpec: any): SyncRequest {
   checkKeys(syncRequestSpec, ['previousSync', 'currentState'])
   checkAttributeType(syncRequestSpec, 'previousSync', 'object')
   checkAttributeType(syncRequestSpec, 'currentState', 'object')
 
   const syncRequest = {}
-  syncRequest.previousSync = createSyncedShoppingList(syncRequestSpec.previousSync, categories)
-  syncRequest.currentState = createShoppingList(syncRequestSpec.currentState, categories)
+  syncRequest.previousSync = createSyncedShoppingList(syncRequestSpec.previousSync, null)
+  syncRequest.currentState = createShoppingList(syncRequestSpec.currentState, null)
 
   return deepFreeze(syncRequest)
 }

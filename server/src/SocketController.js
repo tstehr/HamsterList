@@ -61,7 +61,7 @@ export default class SocketController {
   notifiyChanged: ShoppingListChangeCallback = (list: ServerShoppingList) => {
     if (this.registeredWebSockets[list.id] != null) {
       for (const ws of this.registeredWebSockets[list.id]) {
-        ws.send(createToken(getBaseShoppingList(list), list.categories))
+        ws.send(createToken(getBaseShoppingList(list)))
       }
     }
   }
