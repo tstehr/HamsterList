@@ -45,7 +45,7 @@ export default class ItemController {
     let localItem: LocalItem
     try {
       if (req.query.parse != null) {
-        localItem = createLocalItemFromString(req.body)
+        localItem = createLocalItemFromString(req.body, req.list.categories)
       } else {
         localItem = createLocalItem(req.body)
       }
@@ -79,7 +79,7 @@ export default class ItemController {
     let item: Item
     try {
       if (req.query.parse != null) {
-        let localItem = createLocalItemFromString(req.body)
+        let localItem = createLocalItemFromString(req.body, req.list.categories)
         item = {...localItem, id: req.itemid}
       } else {
         item = createItem(req.body)

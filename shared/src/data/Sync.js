@@ -3,6 +3,7 @@ import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import { type Item } from './Item'
 import { type ShoppingList, createShoppingList } from './ShoppingList'
+import { type CategoryDefinition } from './CategoryDefinition'
 import { checkKeys, checkAttributeType } from '../util/validation'
 
 
@@ -20,8 +21,8 @@ export type SyncRequest = {
   [any]: empty
 }
 
-export function createSyncedShoppingList(syncedShoppingListSpec: any): SyncedShoppingList {
-  const shoppingList = createShoppingList(_.omit(syncedShoppingListSpec, ['token']))
+export function createSyncedShoppingList(syncedShoppingListSpec: any, categories: ?$ReadOnlyArray<CategoryDefinition>): SyncedShoppingList {
+  const shoppingList = createShoppingList(_.omit(syncedShoppingListSpec, ['token']), categories)
   checkAttributeType(syncedShoppingListSpec, 'token', 'string')
 
   const syncedShoppingList = {}
@@ -31,14 +32,14 @@ export function createSyncedShoppingList(syncedShoppingListSpec: any): SyncedSho
   return deepFreeze(syncedShoppingList)
 }
 
-export function createSyncRequest(syncRequestSpec: any): SyncRequest {
+export function createSyncRequest(syncRequestSpec: any, categories: $ReadOnlyArray<CategoryDefinition>): SyncRequest {
   checkKeys(syncRequestSpec, ['previousSync', 'currentState'])
   checkAttributeType(syncRequestSpec, 'previousSync', 'object')
   checkAttributeType(syncRequestSpec, 'currentState', 'object')
 
   const syncRequest = {}
-  syncRequest.previousSync = createSyncedShoppingList(syncRequestSpec.previousSync)
-  syncRequest.currentState = createShoppingList(syncRequestSpec.currentState)
+  syncRequest.previousSync = createSyncedShoppingList(syncRequestSpec.previousSync, categories)
+  syncRequest.currentState = createShoppingList(syncRequestSpec.currentState, categories)
 
   return deepFreeze(syncRequest)
 }

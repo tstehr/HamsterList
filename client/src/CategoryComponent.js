@@ -1,18 +1,40 @@
 // @flow
 import React from 'react'
-import toMaterialStyle from 'material-color-hash'
+import _ from 'lodash'
+import { type CategoryDefinition, type UUID, createCategoryDefinition } from 'shoppinglist-shared'
 import './CategoryComponent.css'
 
 type Props = {
-  categoryName: ?string
+  category?: CategoryDefinition,
+  categories?: $ReadOnlyArray<CategoryDefinition>,
+  categoryId?: ?UUID
 }
+
 
 export default function CategoryComponent(props: Props) {
-  const initials = props.categoryName != null ? createInitials(props.categoryName) : '?'
+  let category : ?CategoryDefinition
+  if (props.category != null) {
+    category = props.category
+  } else if (props.categories != null && props.categoryId != null){
+    category = _.find(props.categories, (category) => category.id === props.categoryId)
+  }
+  if (category == null) {
+    category = createCategoryDefinition({
+      "id": "00000000-0000-4000-b000-000000000000",
+      "name": "Unknown Category",
+      "shortName": "?",
+      "color": "#ccc",
+      "lightText": false
+    })
+  }
 
-  return <div class="CategoryComponent"><div class="CategoryComponent__circle"><span>{initials}</span></div></div>
-}
+  const initials = category.shortName
+  const style = {
+    backgroundColor: category.color,
+    color:category.lightText ? '#fff' : '#000'
+  }
 
-function createInitials(categoryName: string) {
-  return String.fromCodePoint(categoryName.codePointAt(0)).toUpperCase()
+  return <div className="CategoryComponent" title={category.name}>
+    <div className="CategoryComponent__circle" style={style}><span>{initials}</span></div>
+  </div>
 }

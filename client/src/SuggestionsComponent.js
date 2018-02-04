@@ -1,22 +1,22 @@
 // @flow
 import React from 'react'
-import { type LocalItem, type CompletionItem, createLocalItemFromString } from 'shoppinglist-shared'
+import { type LocalItem, type CompletionItem, type CategoryDefinition, itemToString } from 'shoppinglist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 
 type Props = {
   completions: $ReadOnlyArray<CompletionItem>,
-  recentlyDeleted: $ReadOnlyArray<string>,
+  categories: $ReadOnlyArray<CategoryDefinition>,
+  recentlyDeleted: $ReadOnlyArray<LocalItem>,
   createItem: (item: LocalItem) => void,
 }
 
 export default function SuggestionsComponent(props: Props) {
   return (
     <ul>
-      {[...props.recentlyDeleted].reverse().map((itemStr) => {
-        const item = createLocalItemFromString(itemStr)
+      {[...props.recentlyDeleted].reverse().map((item) => {
         return (
-          <li key={itemStr} style={{display:"block"}}>
-            <CreateItemButtonComponent item={item} createItem={props.createItem}/>
+          <li key={itemToString(item)+'_'+item.category} style={{display:"block"}}>
+            <CreateItemButtonComponent item={item} createItem={props.createItem} categories={props.categories}/>
           </li>
         )
       })}

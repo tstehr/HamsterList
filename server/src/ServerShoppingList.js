@@ -14,10 +14,10 @@ export type ServerShoppingList = {
 }
 
 export function createServerShoppingList(serverShoppingListSpec: any): ServerShoppingList {
-  const shoppingList = createShoppingList(_.omit(serverShoppingListSpec, ['recentlyUsed', 'categories']))
   checkAttributeType(serverShoppingListSpec, 'recentlyUsed', 'array')
   checkAttributeType(serverShoppingListSpec, 'categories', 'array')
 
+  const categories = serverShoppingListSpec.categories.map(createCategoryDefinition)
   const recentlyUsed = serverShoppingListSpec.recentlyUsed.map(used => {
     checkKeys(used, ['lastUsedTimestamp', 'uses', 'item'])
     checkAttributeType(used, 'lastUsedTimestamp', 'number')
@@ -27,7 +27,7 @@ export function createServerShoppingList(serverShoppingListSpec: any): ServerSho
     return {...used, item: createCompletionItem(used.item)}
   })
 
-  const categories = serverShoppingListSpec.categories.map(createCategoryDefinition)
+  const shoppingList = createShoppingList(_.omit(serverShoppingListSpec, ['recentlyUsed', 'categories']), categories)
 
   const serverShoppingList = {}
   Object.assign(serverShoppingList, shoppingList)
@@ -40,5 +40,5 @@ export function createServerShoppingList(serverShoppingListSpec: any): ServerSho
 }
 
 export function getBaseShoppingList(serverShoppingList: ServerShoppingList): ShoppingList {
-  return createShoppingList(_.pick(serverShoppingList, ['id', 'title', 'items']))
+  return createShoppingList(_.pick(serverShoppingList, ['id', 'title', 'items']), serverShoppingList.categories)
 }

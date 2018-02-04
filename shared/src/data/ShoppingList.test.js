@@ -11,7 +11,7 @@ it('Creates a simple object', () => {
     id: 'mylist',
     title: "Aquarium",
     items: []
-  })
+  }, [])
 })
 
 
@@ -27,7 +27,7 @@ describe('mergeShoppingLists', () => {
     }
     const client = {...base, title: 'Clienttitle'}
     const server = base
-    const result = mergeShoppingLists(base, client, server)
+    const result = mergeShoppingLists(base, client, server, [])
     expect(result).toEqual(client)
   })
 
@@ -39,7 +39,7 @@ describe('mergeShoppingLists', () => {
     }
     const client = base
     const server = {...base, title: 'Servertitle'}
-    const result = mergeShoppingLists(base, client, server)
+    const result = mergeShoppingLists(base, client, server, [])
     expect(result).toEqual(server)
   })
 
@@ -51,7 +51,7 @@ describe('mergeShoppingLists', () => {
     }
     const client = {...base, title: 'Clientitle'}
     const server = {...base, title: 'Servertitle'}
-    const result = mergeShoppingLists(base, client, server)
+    const result = mergeShoppingLists(base, client, server, [])
     expect(result).toEqual(client)
   })
 
@@ -59,23 +59,23 @@ describe('mergeShoppingLists', () => {
     const base = {
       id: 'mylist',
       title: "Basetitle",
-      items: [{...createLocalItemFromString("1 Ei"), id: id}]
+      items: [{...createLocalItemFromString('1 Ei', []), id: id}]
     }
-    const client = {...base, items: [{...createLocalItemFromString("6 Eier"), id: id}]}
-    const server = {...base, items: [{...createLocalItemFromString("2 Eier (Bio)"), id: id}]}
-    const result = mergeShoppingLists(base, client, server)
-    expect(result).toEqual({...base, items: [{...createLocalItemFromString("6 Eier (Bio)"), id: id}]})
+    const client = {...base, items: [{...createLocalItemFromString('6 Eier', []), id: id}]}
+    const server = {...base, items: [{...createLocalItemFromString('2 Eier (Bio)', []), id: id}]}
+    const result = mergeShoppingLists(base, client, server, [])
+    expect(result).toEqual({...base, items: [{...createLocalItemFromString('6 Eier (Bio)', []), id: id}]})
   })
 
   it('Handles delete on both', () => {
     const base = {
       id: 'mylist',
       title: "Basetitle",
-      items: [{...createLocalItemFromString("1 Ei"), id: id}]
+      items: [{...createLocalItemFromString('1 Ei', []), id: id}]
     }
     const client = {...base, items: []}
     const server = {...base, items: []}
-    const result = mergeShoppingLists(base, client, server)
+    const result = mergeShoppingLists(base, client, server, [])
     expect(result).toEqual(server)
   })
 
@@ -83,11 +83,11 @@ describe('mergeShoppingLists', () => {
     const base = {
       id: 'mylist',
       title: "Basetitle",
-      items: [{...createLocalItemFromString("1 Ei"), id: id}]
+      items: [{...createLocalItemFromString('1 Ei', []), id: id}]
     }
     const client = base
     const server = {...base, items: []}
-    const result = mergeShoppingLists(base, client, server)
+    const result = mergeShoppingLists(base, client, server, [])
     expect(result).toEqual(server)
   })
 
@@ -95,11 +95,11 @@ describe('mergeShoppingLists', () => {
     const base = {
       id: 'mylist',
       title: "Basetitle",
-      items: [{...createLocalItemFromString("1 Ei"), id: id}]
+      items: [{...createLocalItemFromString('1 Ei', []), id: id}]
     }
     const client = {...base, items: []}
-    const server = {...base, items: [{...createLocalItemFromString("6 Eier"), id: id}]}
-    const result = mergeShoppingLists(base, client, server)
+    const server = {...base, items: [{...createLocalItemFromString('6 Eier', []), id: id}]}
+    const result = mergeShoppingLists(base, client, server, [])
     expect(result).toEqual(server)
   })
 
@@ -121,7 +121,7 @@ describe('mergeShoppingLists', () => {
   //     title: "Title",
   //     items: []
   //   }
-  //   const result = mergeShoppingLists(base, client, server)
+  //   const result = mergeShoppingLists(base, client, server, [])
   //   expect(result).toEqual({
   //     id: 'mylist',
   //     title: "Title",

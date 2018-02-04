@@ -29,7 +29,7 @@ db.load()
     const shoppingListController = new ShoppingListController(db, socketController.notifiyChanged)
     const itemController = new ItemController(db, socketController.notifiyChanged)
     const syncController = new SyncController(db, socketController.notifiyChanged)
-    const categoriesController = new CategoriesController(db)
+    const categoriesController = new CategoriesController(db, socketController.notifiyChanged)
     const completionsController = new CompletionsController()
 
     router.param('listid', shoppingListController.handleParamListid)

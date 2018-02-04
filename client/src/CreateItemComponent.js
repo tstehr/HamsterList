@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react'
-import { type LocalItem, type CompletionItem, createLocalItemFromString } from 'shoppinglist-shared'
+import _ from 'lodash'
+import { type LocalItem, type CompletionItem, type CategoryDefinition, type UUID, createLocalItemFromString } from 'shoppinglist-shared'
 import type { CreateItem } from './ShoppingListContainerComponent'
 import CompletionsComponent from './CompletionsComponent'
 import SuggestionsComponent from './SuggestionsComponent'
@@ -9,8 +10,9 @@ import './CreateItemComponent.css'
 
 
 type Props = {
-  recentlyDeleted: $ReadOnlyArray<string>,
+  recentlyDeleted: $ReadOnlyArray<LocalItem>,
   completions: $ReadOnlyArray<CompletionItem>,
+  categories: $ReadOnlyArray<CategoryDefinition>,
   createItem: CreateItem,
 }
 
@@ -31,6 +33,30 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
   }
 
+  getItemInCreation(): LocalItem {
+    const itemFromString = createLocalItemFromString(this.state.inputValue, this.props.categories);
+
+    const exactMatchingCompletion = this.props.completions
+      .find((completionItem) =>
+        completionItem.name == itemFromString.name
+          && (itemFromString.category == null || itemFromString.category == completionItem.category)
+      )
+    if (exactMatchingCompletion != null) {
+      return Object.assign({}, itemFromString, _.omitBy(exactMatchingCompletion, (val) => val == null))
+    }
+
+    const matchingCompletion = this.props.completions
+      .find((completionItem) =>
+        completionItem.name.toLowerCase() == itemFromString.name.toLowerCase()
+          && (itemFromString.category == null || itemFromString.category == completionItem.category)
+      )
+    if (matchingCompletion != null) {
+      return Object.assign({}, itemFromString, _.omitBy(matchingCompletion, (val) => val == null))
+    }
+
+    return itemFromString;
+  }
+
   handleFocus = (e: SyntheticFocusEvent<>) => {
     //clearTimeout(this.focusTimeoutId)
   }
@@ -44,7 +70,7 @@ export default class CreateItemComponent extends Component<Props, State> {
   handleChange = (e: SyntheticInputEvent<>) => { this.setState({inputValue: e.target.value}) }
 
   handleSubmit = (e: SyntheticEvent<>) => {
-    this.createItem(createLocalItemFromString(this.state.inputValue))
+    this.createItem(this.getItemInCreation())
     e.preventDefault()
   }
 
@@ -113,7 +139,7 @@ export default class CreateItemComponent extends Component<Props, State> {
 
   render() {
     const isCreatingItem = this.state.inputValue !== ""
-    const itemInCreation = createLocalItemFromString(this.state.inputValue)
+    const itemInCreation = this.getItemInCreation()
 
     return (
       <div className="CreateItemComponent" onKeyDown={this.handleKeyDown} onFocus={this.handleFocus} onBlur={this.handleBlur} ref={(root) => { this.root = root }} >
@@ -127,8 +153,8 @@ export default class CreateItemComponent extends Component<Props, State> {
           <button className="noArrowFocus">Save</button>
         </form>
         {isCreatingItem
-            ? <CompletionsComponent completions={this.props.completions} itemInCreation={itemInCreation} createItem={this.createItem}/>
-            : <SuggestionsComponent completions={this.props.completions} recentlyDeleted={this.props.recentlyDeleted} createItem={this.createItem}/>
+            ? <CompletionsComponent completions={this.props.completions}  categories={this.props.categories} itemInCreation={itemInCreation} createItem={this.createItem}/>
+            : <SuggestionsComponent completions={this.props.completions}  categories={this.props.categories} recentlyDeleted={this.props.recentlyDeleted} createItem={this.createItem}/>
         }
       </div>
     )

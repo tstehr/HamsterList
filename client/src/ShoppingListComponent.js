@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react'
-import { type ShoppingList, type CompletionItem } from 'shoppinglist-shared'
+import { type ShoppingList, type CompletionItem, type LocalItem, type CategoryDefinition } from 'shoppinglist-shared'
 import type { ConnectionState, CreateItem, DeleteItem, UpdateItem, ManualSync } from './ShoppingListContainerComponent'
 import TopBarComponent from './TopBarComponent'
 import EditItemComponent from './EditItemComponent'
@@ -9,8 +9,9 @@ import './ShoppingListComponent.css'
 
 type Props = {
   shoppingList: ShoppingList,
-  recentlyDeleted: $ReadOnlyArray<string>,
+  recentlyDeleted: $ReadOnlyArray<LocalItem>,
   completions: $ReadOnlyArray<CompletionItem>,
+  categories: $ReadOnlyArray<CategoryDefinition>,
   connectionState: ConnectionState,
   syncing: boolean,
   lastSyncFailed: boolean,
@@ -33,13 +34,14 @@ export default class ShoppingListComponent extends Component<Props> {
         <div  className="ShoppingListComponent__body">
           <ul className="ShoppingListComponent__section">
             {this.props.shoppingList.items.map((item) =>
-              <EditItemComponent  key={item.id} item={item} deleteItem={this.props.deleteItem} updateItem={this.props.updateItem} />
+              <EditItemComponent  key={item.id} item={item} categories={this.props.categories} deleteItem={this.props.deleteItem} updateItem={this.props.updateItem} />
             )}
           </ul>
           <div className="ShoppingListComponent__section">
             <CreateItemComponent
               recentlyDeleted={this.props.recentlyDeleted}
               completions={this.props.completions}
+              categories={this.props.categories}
               createItem={this.props.createItem} />
           </div>
         </div>

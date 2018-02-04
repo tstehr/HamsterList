@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react'
-import { type Item, itemToString, createLocalItemFromString } from 'shoppinglist-shared'
+import { type Item, type LocalItem, type CategoryDefinition, itemToString, createLocalItemFromString, createCategoryDefinition } from 'shoppinglist-shared'
 import type { DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
 import ItemComponent from './ItemComponent'
 import CategoryComponent from './CategoryComponent'
@@ -8,6 +8,7 @@ import './EditItemComponent.css'
 
 type Props = {
   item: Item,
+  categories: $ReadOnlyArray<CategoryDefinition>,
   deleteItem: DeleteItem,
   updateItem: UpdateItem,
 }
@@ -29,7 +30,12 @@ export default class EditItemComponent extends Component<Props, State> {
   }
 
   saveItem() {
-    const updatedItem = createLocalItemFromString(this.state.inputValue)
+    const itemFromString : LocalItem = createLocalItemFromString(this.state.inputValue, this.props.categories)
+    // $FlowFixMe
+    const updatedItem: LocalItem = {
+      ...itemFromString,
+      category: itemFromString.category || this.props.item.category,
+    }
     this.props.updateItem(this.props.item.id, updatedItem)
   }
 
@@ -64,7 +70,7 @@ export default class EditItemComponent extends Component<Props, State> {
   render() {
     return (
       <li className="EditItemComponent" tabIndex="0">
-          <CategoryComponent categoryName={this.props.item.category} />
+          <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories}/>
           <div className="EditItemComponent__name">
             {
               this.state.hasFocus

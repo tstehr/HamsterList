@@ -5,12 +5,16 @@ import { type CategoryDefinition, createCategoryDefinition } from 'shoppinglist-
 import { createServerShoppingList } from './ServerShoppingList'
 import { type DB, updateInArray } from './DB'
 import { type ShoppingListRequest } from './ShoppingListController'
+import { type ShoppingListChangeCallback } from './SocketController'
+
 
 export default class CategoriesController {
   db: DB
+  changeCallback: ShoppingListChangeCallback
 
-  constructor(db: DB) {
+  constructor(db: DB, changeCallback: ShoppingListChangeCallback) {
     this.db = db
+    this.changeCallback = changeCallback
   }
 
   handleGet = (req: ShoppingListRequest, res: express$Response) => {
@@ -38,6 +42,7 @@ export default class CategoriesController {
     })
 
     this.db.write().then(() => {
+      this.changeCallback(updatedList)
       res.json(categories)
     })
   }

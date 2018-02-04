@@ -1,12 +1,13 @@
 // @flow
 import React, { Component } from 'react'
 import fuzzy from 'fuzzy'
-import { type LocalItem, type CompletionItem, itemToString } from 'shoppinglist-shared'
+import { type LocalItem, type CompletionItem, type CategoryDefinition, itemToString } from 'shoppinglist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 
 type Props = {
   itemInCreation: LocalItem,
   completions: $ReadOnlyArray<CompletionItem>,
+  categories: $ReadOnlyArray<CategoryDefinition>,
   createItem: (item: LocalItem) => void,
 }
 
@@ -51,18 +52,17 @@ export default class CompletionsComponent extends Component<Props, State> {
 
     const completionItems = sortedCompletions
       .map((completionItem) => Object.assign({}, this.props.itemInCreation, completionItem))
-      .filter((item) => itemToString(item).toLowerCase() !== itemToString(this.props.itemInCreation).toLowerCase())
-
-    console.log(this.props.completions)
+      .filter((item) => itemToString(item).toLowerCase() !== itemToString(this.props.itemInCreation).toLowerCase()
+        || item.category != this.props.itemInCreation.category)
 
     return (
       <ul onFocus={this.handleFocus} onBlur={this.handleBlur}>
         <li key={this.props.itemInCreation.name} style={{display:"block"}}>
-          <CreateItemButtonComponent item={this.props.itemInCreation} createItem={this.props.createItem} focused={!this.state.hasFocus} noArrowFocus/>
+          <CreateItemButtonComponent item={this.props.itemInCreation} categories={this.props.categories} createItem={this.props.createItem} focused={!this.state.hasFocus} noArrowFocus/>
         </li>
         {completionItems.map((item) =>
           <li key={item.name+'_'+item.category} style={{display:"block"}}>
-            <CreateItemButtonComponent item={item} createItem={this.props.createItem}/>
+            <CreateItemButtonComponent item={item} categories={this.props.categories} createItem={this.props.createItem}/>
           </li>
         )}
       </ul>

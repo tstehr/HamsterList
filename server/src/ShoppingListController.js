@@ -53,7 +53,7 @@ export default class ShoppingListController {
   handlePut = (req: ShoppingListRequest, res: express$Response) => {
     let bodyList
     try {
-      bodyList = createShoppingList({items: [], ...req.body})
+      bodyList = createShoppingList({items: [], ...req.body}, req.list.categories)
     } catch (e) {
       res.status(400).json({error: e.message})
       return

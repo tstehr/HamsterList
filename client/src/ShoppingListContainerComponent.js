@@ -6,8 +6,8 @@ import lodashId from 'lodash-id'
 import deepFreeze from 'deep-freeze'
 import React, { Component } from 'react'
 import {
-  type SyncedShoppingList, type ShoppingList, type CompletionItem, type LocalItem, type Item, type UUID,
-  createShoppingList, createSyncedShoppingList, itemToString, createRandomUUID,
+  type SyncedShoppingList, type ShoppingList, type CompletionItem, type LocalItem, type Item, type CategoryDefinition, type UUID,
+  createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, itemToString, createRandomUUID,
   mergeShoppingLists
 } from 'shoppinglist-shared'
 import ShoppingListComponent from './ShoppingListComponent'
@@ -27,8 +27,9 @@ type Props = {
 
 type ClientShoppingList = {
   previousSync: ?SyncedShoppingList,
-  recentlyDeleted: $ReadOnlyArray<string>,
+  recentlyDeleted: $ReadOnlyArray<LocalItem>,
   completions: $ReadOnlyArray<CompletionItem>,
+  categories: $ReadOnlyArray<CategoryDefinition>,
   loaded: boolean,
   dirty: boolean,
   syncing: boolean,
@@ -49,16 +50,13 @@ const initialState: ClientShoppingList = deepFreeze({
   previousSync: null,
   recentlyDeleted: [],
   completions: [],
+  categories: [],
   loaded: false,
   dirty: false,
   syncing: false,
   lastSyncFailed: false,
   connectionState: "disconnected",
 })
-
-function getShoppingList(clientShoppingList: ClientShoppingList): ShoppingList {
-  return createShoppingList(_.pick(clientShoppingList, ['id', 'title', 'items']))
-}
 
 class HTTPErrorStatusError extends Error {
   code: number
@@ -82,19 +80,16 @@ function responseToJSON(res: Response) {
 }
 
 export default class ShoppingListContainerComponent extends Component<Props, State> {
-  requestSync: () => Promise<void>
   db: Object
   socket: ?WebSocket
   supressSave: boolean
   isInSyncMethod: boolean
   waitForOnlineTimeoutId: number
   changePushSyncTimeoutId: number
+  requestSyncTimeoutId: number
 
   constructor(props: Props) {
     super(props)
-
-    // $FlowFixMe
-    this.requestSync = _.debounce(this.sync.bind(this), 500)
 
     const adapter = new LocalStorage('db')
     this.db = low(adapter)
@@ -214,7 +209,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   sync(manuallyTriggered: boolean = false) {
-    this.requestSync.cancel()
+    window.clearTimeout(this.requestSyncTimeoutId)
 
     if (this.isInSyncMethod) {
       console.log('Sync concurrent entry')
@@ -227,22 +222,13 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     })
 
     let syncPromise
+    let preSyncShoppingList
+
     if (!this.state.loaded) {
       console.log('initial sync!')
-      syncPromise = fetch(`/api/${this.props.listid}/sync`)
-        .then(responseToJSON)
-        .then(json => {
-          const serverSyncedShoppingList = createSyncedShoppingList(json)
-          const serverShoppingList = _.omit(serverSyncedShoppingList, 'token')
-
-          return {
-            ...serverShoppingList,
-            previousSync: serverSyncedShoppingList,
-            dirty: false
-          }
-        })
+      syncPromise = fetch(`/api/${this.props.listid}/sync`).then(responseToJSON)
     } else {
-      const preSyncShoppingList = getShoppingList(this.state)
+      preSyncShoppingList = this.getShoppingList(this.state)
 
       syncPromise = fetch(`/api/${this.props.listid}/sync`, {
           headers: {
@@ -256,44 +242,52 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           })
         })
         .then(responseToJSON)
-        .then(json => {
-          const serverSyncedShoppingList = createSyncedShoppingList(json)
-
-          const serverShoppingList = _.omit(serverSyncedShoppingList, 'token')
-          const clientShoppingList = getShoppingList(this.state)
-          const dirty = !_.isEqual(preSyncShoppingList, clientShoppingList)
-          const newShoppingList = mergeShoppingLists(preSyncShoppingList, clientShoppingList, serverShoppingList)
-
-          const revSL = {...newShoppingList, items: [...newShoppingList.items].reverse()}
-
-          return {
-            ...revSL,
-            previousSync: serverSyncedShoppingList,
-            dirty: dirty
-          }
-        })
     }
 
     const completionsPromise = fetch(`/api/${this.props.listid}/completions`).then(responseToJSON)
+    const categoriesPromise =  fetch(`/api/${this.props.listid}/categories`).then(responseToJSON)
 
-    Promise.all([syncPromise, completionsPromise])
-      .then(([syncState, completions]) => {
-        const newState = {
-          completions: completions,
-          syncing: false,
-          loaded: true,
-          lastSyncFailed: false,
-          ...syncState,
-        }
+    Promise.all([syncPromise, completionsPromise, categoriesPromise])
+      .then(([syncJson, completionsJson, categoriesJson]) => {
+        this.setState((prevState) => {
+          const categories = categoriesJson.map(createCategoryDefinition)
+          const completions = completionsJson.map(createCompletionItem)
 
-        this.setState(newState)
-        this.isInSyncMethod = false
-        console.log('done syncing')
+          // don't sort shopping list from server, we need it in server order for previousSync
+          const serverSyncedShoppingList = createSyncedShoppingList(syncJson, null)
+          const serverShoppingList = _.omit(serverSyncedShoppingList, 'token')
 
-        if (syncState.dirty) {
-          console.warn('dirty after sync, resyncing')
-          this.sync();
-        }
+          let dirty, newShoppingList
+          if (preSyncShoppingList != null) {
+            const clientShoppingList = this.getShoppingList(prevState)
+            dirty = !_.isEqual(preSyncShoppingList, clientShoppingList)
+            newShoppingList = mergeShoppingLists(preSyncShoppingList, clientShoppingList, serverShoppingList, categories)
+          } else {
+            newShoppingList = serverShoppingList
+            dirty = false
+          }
+
+          const syncState: $Shape<State> = {
+            completions: completions,
+            categories: categories,
+            dirty: dirty,
+            syncing: false,
+            loaded: true,
+            lastSyncFailed: false,
+            previousSync: serverSyncedShoppingList,
+            ...newShoppingList,
+          }
+
+          this.isInSyncMethod = false
+          console.log('done syncing')
+
+          if (syncState.dirty) {
+            console.warn('dirty after sync, resyncing')
+            this.requestSync(0)
+          }
+
+          return syncState
+        })
       })
       .catch(e => {
         let failedState = {
@@ -306,6 +300,14 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       })
   }
 
+  getShoppingList(clientShoppingList: ClientShoppingList): ShoppingList {
+    return createShoppingList(_.pick(clientShoppingList, ['id', 'title', 'items']), this.state.categories)
+  }
+
+  requestSync = (delay: number = 500) => {
+      window.clearTimeout(this.requestSyncTimeoutId)
+      this.requestSyncTimeoutId = window.setTimeout(this.sync.bind(this), delay)
+  }
 
   handleStorage = (e: StorageEvent) => {
     // TODO filter for list
@@ -325,8 +327,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   createItem = (localItem: LocalItem) => {
     const item = {...localItem, id: createRandomUUID()}
     this.setState((prevState) => {
-      const str = itemToString(item)
-      const recentlyDeleted = prevState.recentlyDeleted.filter((strRepr) => strRepr !== str)
+      const recentlyDeleted = prevState.recentlyDeleted.filter((delItem) => !_.isEqual(delItem, localItem))
       return {
         items: [...prevState.items, item],
         recentlyDeleted: recentlyDeleted,
@@ -341,9 +342,9 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       if (toDelete == null) {
         return {}
       }
-      const str = itemToString(toDelete)
+      const localToDelete = _.omit(toDelete, 'id')
       const listItems = [...prevState.items].filter((item) => item.id !== id)
-      let recentlyDeleted = [...prevState.recentlyDeleted.filter((strRepr) => strRepr !== str), str]
+      let recentlyDeleted = [...prevState.recentlyDeleted.filter((item) => !_.isEqual(item, localToDelete)), localToDelete]
       recentlyDeleted = recentlyDeleted.slice(Math.max(0, recentlyDeleted.length - 10), recentlyDeleted.length)
       return {
         items: listItems,
@@ -373,9 +374,10 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       <div>
         {this.state.loaded &&
           <ShoppingListComponent
-            shoppingList={getShoppingList(this.state)}
+            shoppingList={this.getShoppingList(this.state)}
             recentlyDeleted={this.state.recentlyDeleted}
             completions={this.state.completions}
+            categories={this.state.categories}
             connectionState={this.state.connectionState}
             syncing={this.state.syncing}
             lastSyncFailed={this.state.lastSyncFailed}

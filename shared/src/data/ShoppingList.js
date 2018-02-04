@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { type Iteratee } from 'lodash'
 import deepFreeze from 'deep-freeze'
 import { type Item, createItem, mergeItems } from './Item'
+import { type CategoryDefinition } from './CategoryDefinition'
 import { type UUID } from '../util/uuid'
 import { checkKeys, checkAttributeType } from '../util/validation'
 
@@ -19,26 +20,29 @@ export type ShoppingList = {
   [any]: empty
 }
 
-export function createShoppingList(shoppingListSpec: any): ShoppingList {
+export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnlyArray<CategoryDefinition>): ShoppingList {
   checkKeys(shoppingListSpec, ['id', 'title', 'items'])
   checkAttributeType(shoppingListSpec, 'id', 'string')
   checkAttributeType(shoppingListSpec, 'title', 'string')
   checkAttributeType(shoppingListSpec, 'items', 'array')
 
-  const items = shoppingListSpec.items.map(createItem)
-  const sortedItems = _.sortBy(items, (['name', 'id'] : Array<Iteratee<Item>>))
-  //console.log("items", items)
-  //console.log("sorted", sortedItems)
+
+  let items = shoppingListSpec.items.map(createItem)
+  if (categories != null) {
+    const categoryIds = categories.map((cat) => cat.id)
+    const categoryIteratee = (item: Item) => convertSmallerZeroToInf(categoryIds.indexOf(item.category))
+    items = _.sortBy(items, ([categoryIteratee, getNameLowerCase, 'id'] : Array<Iteratee<Item>>))
+  }
 
   const shoppingList = {}
   shoppingList.id = shoppingListSpec.id
   shoppingList.title = shoppingListSpec.title
-  shoppingList.items = sortedItems
+  shoppingList.items = items
 
   return deepFreeze(shoppingList)
 }
 
-export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, server: ShoppingList): ShoppingList {
+export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, server: ShoppingList, categories: ?$ReadOnlyArray<CategoryDefinition>): ShoppingList {
   const newList = {}
   newList.id = base.id
 
@@ -76,11 +80,19 @@ export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, ser
   newList.items = newList.items.concat(_.chain(serverMap).pick(newServerIds).values().value())
 
 
-  return createShoppingList(newList)
+  return createShoppingList(newList, categories)
 }
 
 function mergeHandleDelete(newList: any, base: Item, remaining: Item) {
   if (!_.isEqual(base, remaining)) {
     newList.items.push(remaining)
   }
+}
+
+function convertSmallerZeroToInf(index: number) {
+  return index < 0 ? Infinity : index
+}
+
+function getNameLowerCase(named: {name: string}) {
+  return named.name.toLowerCase()
 }

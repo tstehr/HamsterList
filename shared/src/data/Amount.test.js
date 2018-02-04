@@ -35,13 +35,14 @@ describe("createAmount", () => {
   it("Creates Amount from object", () => {
     const amount : Amount = createAmount({
       value: 5,
+      unit: null,
     })
   })
 
   it("Creates Amount from object with unit", () => {
     const amount : Amount = createAmount({
       value: 5,
-      unit: 'kg'
+      unit: 'kg',
     })
   })
 
@@ -123,6 +124,7 @@ describe('createCookingAmount', () => {
     const derived = createCookingAmount(amount)
     expect(derived).toEqual({
       value: 10,
+      unit: null,
     })
   })
 

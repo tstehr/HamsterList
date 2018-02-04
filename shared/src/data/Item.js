@@ -6,6 +6,7 @@ import mathjs from 'mathjs'
 import { type UUID, createUUID } from '../util/uuid'
 import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
 import { type Amount, createAmount, createAmountFromString, mergeAmounts } from './Amount'
+import { type CategoryDefinition } from './CategoryDefinition'
 
 export type CompletionItem = {
   +name: string,
@@ -57,7 +58,18 @@ export function createLocalItem(localItemSpec: any): LocalItem {
 }
 
 
-export function createLocalItemFromString(stringRepresentation: string): LocalItem {
+export function createLocalItemFromString(stringRepresentation: string, categories: $ReadOnlyArray<CategoryDefinition>): LocalItem {
+  let category: ?UUID = null
+  const categoryResult = stringRepresentation.match(/^\s*\(([^\)]+)\)(.*)$/u)
+  if (categoryResult != null) {
+    const shortName = categoryResult[1]
+    const categoryCandidate = categories.find(cat => cat.shortName == shortName)
+    if (categoryCandidate) {
+      category = categoryCandidate.id
+      stringRepresentation = categoryResult[2]
+    }
+  }
+
   const split = stringRepresentation.trim().split(/\s+/)
 
   for (let i = split.length; i > 0; i--) {
@@ -66,7 +78,8 @@ export function createLocalItemFromString(stringRepresentation: string): LocalIt
       const amount = createAmountFromString(str)
       return createLocalItem({
         name: split.slice(i, split.length).join(" "),
-        amount: amount
+        amount: amount,
+        category: category,
       })
     } catch (e) {
       if (!e instanceof SyntaxError) {
@@ -75,7 +88,10 @@ export function createLocalItemFromString(stringRepresentation: string): LocalIt
     }
   }
 
-  return createLocalItem({name: split.join(" ")})
+  return createLocalItem({
+    name: split.join(" "),
+    category: category,
+  })
 }
 
 export function createItem(itemSpec: any): Item {
@@ -90,16 +106,17 @@ export function createItem(itemSpec: any): Item {
 }
 
 export function itemToString(item: BaseItem): string {
+  const name = item.name != null ? item.name.trim() : ""
   const amount = item.amount
   if (amount != null) {
     const unit = amount.unit
     if (unit != null) {
-      return `${mathjs.round(amount.value, 2)} ${unit.trim()} ${item.name.trim()}`
+      return `${mathjs.round(amount.value, 2)} ${unit.trim()} ${name}`
     } else {
-      return `${mathjs.round(amount.value, 2)} ${item.name.trim()}`
+      return `${mathjs.round(amount.value, 2)} ${name}`
     }
   } else {
-    return item.name.trim()
+    return name
   }
 }
 
