@@ -26,6 +26,8 @@ export default function CreateItemButtonComponent(props: Props) {
 
   return <button className={className} onClick={() => props.createItem(props.item)}>
     <CategoryComponent categoryId={props.item.category} categories={props.categories}/>
-    <ItemComponent item={props.item} />
+    <div className="CreateItemButtonComponent__name">
+      <ItemComponent item={props.item}/>
+    </div>
   </button>
 }

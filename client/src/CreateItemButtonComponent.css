@@ -1,9 +1,9 @@
 .CreateItemButtonComponent {
   position: relative;
   display: flex;
+  align-items: center;
   width: 100%;
   height: 3rem;
-  padding: .5rem;
   border: solid #4CAF50;
   border-width: 1px 0;
   border-radius: 0;
@@ -26,11 +26,18 @@
   left: .5rem;
   top: 0;
   opacity: 0;
+  transition: opacity 100ms 0ms;
 }
 .CreateItemButtonComponent:focus::before, .CreateItemButtonComponent.focused::before {
   opacity: 1;
   transition: opacity 100ms 50ms;
 }
+
+.CreateItemButtonComponent__name {
+  flex: 1;
+  padding-left: .5rem;
+}
+
 @media (min-width: 30rem) {
   .CreateItemButtonComponent {
     border: 0;
