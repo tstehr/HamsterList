@@ -39,7 +39,9 @@ export default class TopBarComponent extends Component<Props, State> {
     return (
       <div className={className}>
         <div className="TopBarComponent__content">
-          <span>{this.props.connectionState}<br />{this.props.lastSyncFailed ? "fail" : "works"}</span>
+          <div className="TopBarComponent__status">
+            <span>{this.props.connectionState}<br />{this.props.lastSyncFailed ? "fail" : "works"}</span>
+          </div>
           {
             this.state.hasFocus
               ? <input type="text"
@@ -47,7 +49,7 @@ export default class TopBarComponent extends Component<Props, State> {
                   onBlur={this.handleBlur} onChange={this.handleChange}
                   ref={(input) => this.input = input}
                 />
-              : <h1 tabIndex="0" onFocus={this.handleFocus}>{this.props.title}</h1>
+              : <h1 tabIndex="0" onFocus={this.handleFocus}><span>{this.props.title}</span></h1>
           }
           <button onClick={this.props.manualSync}>{this.props.syncing ? "Syncing" : "Sync"}</button>
         </div>
