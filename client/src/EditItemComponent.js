@@ -4,6 +4,7 @@ import { type Item, type LocalItem, type CategoryDefinition, itemToString, creat
 import type { DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
 import ItemComponent from './ItemComponent'
 import CategoryComponent from './CategoryComponent'
+import KeyFocusComponent from './KeyFocusComponent'
 import './EditItemComponent.css'
 
 type Props = {
@@ -15,16 +16,19 @@ type Props = {
 
 type State = {
   hasFocus: boolean,
+  isEditing: boolean,
   inputValue: string,
 }
 
 export default class EditItemComponent extends Component<Props, State> {
   input: ?HTMLInputElement
+  itemDiv: ?HTMLDivElement
 
   constructor(props: Props) {
     super(props)
     this.state = {
       hasFocus: false,
+      isEditing: false,
       inputValue: ""
     }
   }
@@ -40,25 +44,32 @@ export default class EditItemComponent extends Component<Props, State> {
   }
 
   handleFocus = () => {
-    this.setState({
+    this.setState((prevState) => ({
       hasFocus: true,
+      isEditing: prevState.hasFocus ? false : true,
       inputValue: itemToString(this.props.item)
-    })
+    }))
   }
+
   handleBlur = () => {
     this.saveItem()
     this.setState({
-      hasFocus: false
+      hasFocus: false,
+      isEditing: false
     })
   }
+
   handleSumbit = (e: SyntheticEvent<>) => {
     this.saveItem()
+    this.setState({
+      isEditing: false
+    })
     e.preventDefault()
   }
-  handleKeyDown = (e: SyntheticKeyboardEvent<>) => {
+  handleInputKeyDown = (e: SyntheticKeyboardEvent<>) => {
     if (e.key === 'Escape') {
       this.setState({
-        hasFocus: false,
+        isEditing: false,
         inputValue: itemToString(this.props.item)
       })
       e.preventDefault()
@@ -67,34 +78,64 @@ export default class EditItemComponent extends Component<Props, State> {
   handleChange = (e: SyntheticInputEvent<>) => { this.setState({inputValue: e.target.value}) }
 
 
+  handleDivKeyDown = (e: SyntheticKeyboardEvent<>) => {
+    if (e.key === 'Enter') {
+      this.setState({
+        hasFocus: true,
+        isEditing: true,
+        inputValue: itemToString(this.props.item)
+      })
+      e.preventDefault()
+    }
+  }
+
+  handleDivClick = (e: SyntheticEvent<>) => {
+    this.setState({
+      hasFocus: true,
+      isEditing: true,
+      inputValue: itemToString(this.props.item)
+    })
+  }
+
+
   render() {
     return (
-      <li className="EditItemComponent" tabIndex="0">
+        <KeyFocusComponent direction="horizontal" rootTagName="li" className="EditItemComponent">
           <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories}/>
           <div className="EditItemComponent__name">
             {
-              this.state.hasFocus
+              this.state.isEditing
               ? <form onSubmit={this.handleSumbit} style={{height:"100%"}}>
                   <input type="text"
+                    className="KeyFocusComponent--defaultFocus"
                     value={this.state.inputValue}
                     onBlur={this.handleBlur} onChange={this.handleChange}
-                    onKeyDown={this.handleKeyDown}
+                    onKeyDown={this.handleInputKeyDown}
                     ref={(input) => this.input = input}
                   />
                 </form>
-              : <div tabIndex="0" onFocus={this.handleFocus}>
+              : <div tabIndex="0"
+                  className="KeyFocusComponent--defaultFocus"
+                  onFocus={this.handleFocus} onBlur={this.handleBlur}
+                  onKeyDown={this.handleDivKeyDown} onClick={this.handleDivClick}
+                  ref={(itemDiv) => this.itemDiv = itemDiv}
+                >
                   <ItemComponent item={this.props.item} />
                 </div>
             }
           </div>
           <button onClick={() => this.props.deleteItem(this.props.item.id)}>Delete</button>
-      </li>
+        </KeyFocusComponent>
     )
   }
 
   componentDidUpdate(){
-    if (this.state.hasFocus && this.input != null) {
-      this.input.focus()
+    if (this.state.hasFocus) {
+      if (this.input != null) {
+        this.input.focus()
+      } else if (this.itemDiv != null){
+        this.itemDiv.focus()
+      }
     }
   }
 }

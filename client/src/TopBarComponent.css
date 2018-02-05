@@ -12,7 +12,7 @@
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: stretch;
 }
 @media (min-width: 40rem) {
   .TopBarComponent__content {
@@ -34,12 +34,14 @@
   height: 3rem;
   flex-shrink: 0;
 }
-.TopBarComponent__content > h1 {
+.TopBarComponent__content > h1,
+.TopBarComponent__content > input {
   font-weight: bold;
   font-size: 2rem;
   white-space: nowrap;
   text-overflow: ellipsis;
   flex-shrink: 1;
+  flex-grow: 1;
   min-width: 0;
   overflow: hidden;
   padding: 0 .5rem;

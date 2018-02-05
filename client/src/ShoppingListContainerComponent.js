@@ -14,6 +14,7 @@ import ShoppingListComponent from './ShoppingListComponent'
 
 export type ConnectionState = "disconnected" | "polling" | "socket"
 
+export type UpdateListTitle = (newTitle: string) => void
 export type CreateItem = (item: LocalItem) => void
 export type DeleteItem = (id: UUID) => void
 export type UpdateItem = (id: UUID, localItem: LocalItem) => void
@@ -324,6 +325,15 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     this.waitForOnline()
   }
 
+  updateListTitle = (newTitle: string) => {
+    this.setState((prevState) => {
+      return {
+        title: newTitle,
+        dirty: true,
+      }
+    }, this.requestSync)
+  }
+
   createItem = (localItem: LocalItem) => {
     const item = {...localItem, id: createRandomUUID()}
     this.setState((prevState) => {
@@ -382,7 +392,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             syncing={this.state.syncing}
             lastSyncFailed={this.state.lastSyncFailed}
             dirty={this.state.dirty}
-            createItem={this.createItem} deleteItem={this.deleteItem}
+            updateListTitle={this.updateListTitle} createItem={this.createItem} deleteItem={this.deleteItem}
             updateItem={this.updateItem} manualSync={this.initiateSyncConnection.bind(this)}
           />
         }

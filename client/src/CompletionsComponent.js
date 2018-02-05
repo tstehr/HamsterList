@@ -1,5 +1,6 @@
 // @flow
-import React, { Component } from 'react'
+// $FlowFixMe
+import React, { Component, Fragment } from 'react'
 import fuzzy from 'fuzzy'
 import { type LocalItem, type CompletionItem, type CategoryDefinition, itemToString } from 'shoppinglist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
@@ -16,32 +17,11 @@ type State = {
 }
 
 export default class CompletionsComponent extends Component<Props, State> {
-  focusTimeoutId: ?number
-
   constructor(props: Props) {
     super(props)
     this.state = {
       hasFocus: false
     }
-  }
-
-  handleFocus = (e: SyntheticFocusEvent<>) => {
-    clearTimeout(this.focusTimeoutId)
-    this.setState({
-      hasFocus: true
-    })
-  }
-
-  handleBlur = (e: SyntheticFocusEvent<>) => {
-    this.focusTimeoutId = setTimeout(() => {
-      this.setState({
-        hasFocus: false
-      })
-    }, 0)
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.focusTimeoutId)
   }
 
   render() {
@@ -56,16 +36,11 @@ export default class CompletionsComponent extends Component<Props, State> {
         || item.category != this.props.itemInCreation.category)
 
     return (
-      <ul onFocus={this.handleFocus} onBlur={this.handleBlur}>
-        <li key={this.props.itemInCreation.name} style={{display:"block"}}>
-          <CreateItemButtonComponent item={this.props.itemInCreation} categories={this.props.categories} createItem={this.props.createItem} focused={!this.state.hasFocus} noArrowFocus/>
-        </li>
+      <Fragment>
         {completionItems.map((item) =>
-          <li key={item.name+'_'+item.category} style={{display:"block"}}>
-            <CreateItemButtonComponent item={item} categories={this.props.categories} createItem={this.props.createItem}/>
-          </li>
+            <CreateItemButtonComponent key={item.name+'_'+item.category} item={item} categories={this.props.categories} createItem={this.props.createItem}/>
         )}
-      </ul>
+      </Fragment>
     )
   }
 }

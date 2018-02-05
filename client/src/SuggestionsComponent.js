@@ -1,5 +1,6 @@
 // @flow
-import React from 'react'
+// $FlowFixMe
+import React, { Fragment } from 'react'
 import { type LocalItem, type CompletionItem, type CategoryDefinition, itemToString } from 'shoppinglist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 
@@ -12,14 +13,12 @@ type Props = {
 
 export default function SuggestionsComponent(props: Props) {
   return (
-    <ul>
+    <Fragment>
       {[...props.recentlyDeleted].reverse().map((item) => {
         return (
-          <li key={itemToString(item)+'_'+item.category} style={{display:"block"}}>
-            <CreateItemButtonComponent item={item} createItem={props.createItem} categories={props.categories}/>
-          </li>
+          <CreateItemButtonComponent key={itemToString(item)+'_'+(item.category || 'undefined')} item={item} createItem={props.createItem} categories={props.categories}/>
         )
       })}
-    </ul>
+    </Fragment>
   )
 }

@@ -11,7 +11,9 @@ type Props = {
   categories: $ReadOnlyArray<CategoryDefinition>,
   createItem: CreateItem,
   focused?: boolean,
-  noArrowFocus?: boolean
+  noArrowFocus?: boolean,
+  onFocus?: (SyntheticFocusEvent<>) => void,
+  onBlur?: (SyntheticFocusEvent<>) => void
 }
 
 export default function CreateItemButtonComponent(props: Props) {
@@ -20,11 +22,11 @@ export default function CreateItemButtonComponent(props: Props) {
     classes.push("focused")
   }
   if (props.noArrowFocus) {
-    classes.push("noArrowFocus")
+    classes.push("KeyFocusComponent--noFocus")
   }
   const className = classes.join(" ")
 
-  return <button className={className} onClick={() => props.createItem(props.item)}>
+  return <button className={className} onClick={() => props.createItem(props.item)} onFocus={props.onFocus} onBlur={props.onBlur}>
     <CategoryComponent categoryId={props.item.category} categories={props.categories}/>
     <div className="CreateItemButtonComponent__name">
       <ItemComponent item={props.item}/>
