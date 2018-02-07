@@ -1,4 +1,5 @@
 // @flow
+import path from 'path'
 import express from 'express'
 import bodyParser from 'body-parser'
 import expressWs from 'express-ws'
@@ -64,6 +65,7 @@ db.load()
     app.use('/api', router)
     if (app.get('env') === 'production') {
       app.use(express.static('../client/build'))
+      app.use((req: express$Request, res: express$Response) => res.sendFile(path.resolve('../client/build/index.html')))
     }
     app.listen(port)
     console.log(`Listening on port ${port}`)
