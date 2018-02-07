@@ -5,10 +5,17 @@
   align-items: stretch;
   border-bottom: 1px solid #eee;
 }
+
+.EditItemComponent__category {
+  font-size: 1rem;
+  font-family: inherit;
+  border: 0;
+  background: transparent;
+}
+
 .EditItemComponent__name {
   flex: 1;
 }
-
 .EditItemComponent__name > div,
 .EditItemComponent__name form,
 .EditItemComponent__name input {
