@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react'
 import { type ShoppingList, type CompletionItem, type LocalItem, type CategoryDefinition } from 'shoppinglist-shared'
-import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, ManualSync } from './ShoppingListContainerComponent'
+import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
 import TopBarComponent from './TopBarComponent'
 import EditItemComponent from './EditItemComponent'
 import CreateItemComponent from './CreateItemComponent'
@@ -21,10 +21,18 @@ type Props = {
   createItem: CreateItem,
   deleteItem: DeleteItem,
   updateItem: UpdateItem,
-  manualSync: ManualSync,
+  manualSync: () => void,
+  clearLocalStorage: () => void,
 }
 
 export default class ShoppingListComponent extends Component<Props> {
+  clearLocalStorage = () => {
+    const performClear = window.confirm('This will delete any unsynced data and your recently deleted items. Continue?')
+    if (performClear) {
+      this.props.clearLocalStorage()
+    }
+  }
+
   render() {
     return (
       <div className="ShoppingListComponent">
@@ -49,7 +57,9 @@ export default class ShoppingListComponent extends Component<Props> {
           </div>
         </div>
         <div className="ShoppingListComponent__footer">
-          platzhlter
+          <h2>Debug</h2>
+          <button type="button" onClick={this.props.manualSync}>Force Sync</button>
+          <button type="button" onClick={this.clearLocalStorage}>Clear Local Storage</button>
         </div>
       </div>
     )

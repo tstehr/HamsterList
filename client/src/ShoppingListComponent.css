@@ -5,6 +5,14 @@
   max-width: 30rem;
   margin: 0 auto 2rem;
 }
+.ShoppingListComponent__footer {
+  max-width: 30rem;
+  margin: 2rem auto;
+}
+.ShoppingListComponent__footer button {
+  margin: .2rem;
+  padding: .2rem;
+}
 @media (min-width: 30rem) {
   .ShoppingListComponent__body {
     margin-top: 4rem;
@@ -26,6 +34,10 @@
   .ShoppingListComponent__section:first-child {
     padding-left: 1rem;
   }
+  .ShoppingListComponent__footer {
+    max-width: 60rem;
+    padding: 0 1rem;
+  }
 }
 
 @media (min-width: 50rem) {
@@ -37,5 +49,8 @@
   }
   .ShoppingListComponent__section:first-child {
     padding-left: 2rem;
+  }
+  .ShoppingListComponent__footer {
+    padding: 0 2rem;
   }
 }

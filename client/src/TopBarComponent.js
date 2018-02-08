@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react'
-import { type ConnectionState, type ManualSync, type UpdateListTitle } from './ShoppingListContainerComponent'
+import { type ConnectionState, type UpdateListTitle } from './ShoppingListContainerComponent'
 import './TopBarComponent.css'
 
 type Props = {
@@ -9,13 +9,21 @@ type Props = {
   syncing: boolean,
   lastSyncFailed: boolean,
   dirty: boolean,
-  manualSync: ManualSync,
+  manualSync: () => void,
   updateListTitle: UpdateListTitle,
 }
 
 type State = {
   hasFocus: boolean,
   inputValue: string
+}
+
+const variantSelector15 = String.fromCharCode(0xfe0e)
+
+const stateMapping: {[ConnectionState]: string} = {
+  "disconnected": "✖",
+  "polling": `⬆${variantSelector15}`,
+  "socket": `⬆${variantSelector15}⬇${variantSelector15}`
 }
 
 export default class TopBarComponent extends Component<Props, State> {
@@ -29,19 +37,28 @@ export default class TopBarComponent extends Component<Props, State> {
     }
   }
 
+  onStatusClick = (e: SyntheticEvent<>) => {
+    this.props.manualSync()
+    e.preventDefault()
+  }
+
   render() {
     const classes = ["TopBarComponent"]
     if (this.props.dirty) {
       classes.push("TopBarComponent--dirty")
     }
-    const className = classes.join(" ")
+
+    const statusClasses = ["TopBarComponent__status"]
+    if (this.props.syncing) {
+      statusClasses.push("TopBarComponent__status--syncing")
+    }
+    if (this.props.lastSyncFailed || this.props.connectionState == 'disconnected') {
+      statusClasses.push("TopBarComponent__status--failure")
+    }
 
     return (
-      <div className={className}>
+      <div className={classes.join(" ")}>
         <div className="TopBarComponent__content">
-          <div className="TopBarComponent__status">
-            <span>{this.props.connectionState}<br />{this.props.lastSyncFailed ? "fail" : "works"}</span>
-          </div>
           {
             this.state.hasFocus
               ? <input type="text"
@@ -51,7 +68,9 @@ export default class TopBarComponent extends Component<Props, State> {
                 />
               : <h1 tabIndex="0" onFocus={this.handleFocus}><span>{this.props.title}</span></h1>
           }
-          <button onClick={this.props.manualSync}>{this.props.syncing ? "Syncing" : "Sync"}</button>
+          <button className={statusClasses.join(" ")} onClick={this.onStatusClick}>
+            <span>{stateMapping[this.props.connectionState]}</span>
+          </button>
         </div>
       </div>
     )
