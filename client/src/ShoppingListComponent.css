@@ -54,3 +54,28 @@
     padding: 0 2rem;
   }
 }
+
+.ShoppingListComponent__emptyList {
+  text-align: center;
+  padding: 2rem 0 0;
+}
+.ShoppingListComponent__emptyList p {
+  margin-bottom: .2rem;
+}
+@media (min-width: 30rem) {
+  .ShoppingListComponent__emptyList {
+    padding: .5rem;
+    background-color: #f7f7f7;
+  }
+}
+.ShoppingListComponent__emptyList__addCallout--twoCol {
+  display: none;
+}
+@media (min-width: 40rem) {
+  .ShoppingListComponent__emptyList__addCallout--twoCol {
+    display: block;
+  }
+  .ShoppingListComponent__emptyList__addCallout--singleCol {
+    display: none;
+  }
+}

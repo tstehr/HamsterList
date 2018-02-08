@@ -44,9 +44,17 @@ export default class ShoppingListComponent extends Component<Props> {
         />
         <div  className="ShoppingListComponent__body">
           <KeyFocusComponent direction="vertical" rootTagName="ul" className="ShoppingListComponent__section">
-            {this.props.shoppingList.items.map((item) =>
+          {this.props.shoppingList.items.map((item) =>
               <EditItemComponent  key={item.id} item={item} categories={this.props.categories} deleteItem={this.props.deleteItem} updateItem={this.props.updateItem} />
-            )}
+
+          )}
+          {!this.props.shoppingList.items.length &&
+            <div className="ShoppingListComponent__emptyList">
+              <p>Empty list, nothing needed 🎉</p>
+              <p className="ShoppingListComponent__emptyList__addCallout--singleCol">⬇️ Add some new stuff below ⬇️</p>
+              <p className="ShoppingListComponent__emptyList__addCallout--twoCol">➡️ Add some new stuff to the right ➡️</p>
+            </div>
+          }
           </KeyFocusComponent>
           <div className="ShoppingListComponent__section">
             <CreateItemComponent
