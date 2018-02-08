@@ -111,7 +111,7 @@ export default class CreateItemComponent extends Component<Props, State> {
             <button>Save</button>
           </form>
           {isCreatingItem &&
-            <CreateItemButtonComponent item={itemInCreation} categories={this.props.categories} createItem={this.props.createItem} noArrowFocus focused={this.state.formHasFocus} />
+            <CreateItemButtonComponent item={itemInCreation} categories={this.props.categories} createItem={this.createItem} noArrowFocus focused={this.state.formHasFocus} />
           }
           {isCreatingItem
               ? <CompletionsComponent completions={this.props.completions}  categories={this.props.categories} itemInCreation={itemInCreation} createItem={this.createItem}/>
