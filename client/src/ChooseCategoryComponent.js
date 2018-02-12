@@ -25,24 +25,24 @@ export default class ChooseCategoryComponent extends Component<Props> {
     const target = document.querySelector('#modal-root')
 
     if (target != null) {
+      const count = Math.ceil((this.props.categories.length+1)/10)*10
+
       return ReactDOM.createPortal(
         (
-          <div className="ChooseCategoryComponent" onClick={this.createOnClick(this.props.categoryId)}>
-            <div className="ChooseCategoryComponent__window">
-              <KeyFocusComponent direction="vertical" rootTagName="div">
-                {
-                  this.props.categories.map((category) => (
-                    <button type="button" key={category.id} onClick={this.createOnClick(category.id)}>
-                      <CategoryComponent category={category} /> {category.name}
-                    </button>
-                  ))
-                }
-                <button type="button" key="undefined"  onClick={this.createOnClick(null)}>
-                  <CategoryComponent /> Remove category
-                </button>
-                <a href="#" onClick={this.createOnClick(this.props.categoryId)}>Cancel</a>
-              </KeyFocusComponent>
-            </div>
+          <div className="ChooseCategoryComponent" onClick={this.createOnClick(this.props.categoryId)} data-categorycount={count}>
+            <KeyFocusComponent direction="vertical" rootTagName="div" className="ChooseCategoryComponent__window">
+              {
+                this.props.categories.map((category) => (
+                  <button type="button" key={category.id} onClick={this.createOnClick(category.id)}>
+                    <CategoryComponent category={category} /><div>{category.name}</div>
+                  </button>
+                ))
+              }
+              <button type="button" key="undefined"  onClick={this.createOnClick(null)}>
+                <CategoryComponent /><div>Remove category</div>
+              </button>
+              <a href="#" onClick={this.createOnClick(this.props.categoryId)}>Cancel</a>
+            </KeyFocusComponent>
           </div>
         ), target
       )

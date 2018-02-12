@@ -1,6 +1,7 @@
 .CategoryComponent {
   width: 3rem;
   height: 3rem;
+  flex-shrink: 0;
 }
 .CategoryComponent__circle {
   width: 80%;
@@ -11,4 +12,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.CategoryComponent__circle span {
+  display: inline-block;
+  padding-top: .15rem;
 }

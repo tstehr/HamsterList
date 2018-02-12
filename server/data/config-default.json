@@ -11,18 +11,46 @@
       "lightText": false
     },
     {
-      "id": "7ca893d0-bc4f-4a79-bdc1-3853cec70001",
-      "name": "Milchprodukte",
-      "shortName": "M",
-      "color": "#FFEB3B",
+      "id": "4bc55d27-697b-489a-b40c-bb6f93f2b1ab",
+      "name": "Gewürze",
+      "shortName": "G",
+      "color": "#D7CCC8",
+      "lightText": false
+    },
+    {
+      "id": "a81135b8-700b-4059-9f80-c60dece41d59",
+      "name": "Müsli",
+      "shortName": "MÜ",
+      "color": "#DCEDC8",
       "lightText": false
     },
     {
       "id": "99d11658-9a39-4636-a610-85a9789c846b",
       "name": "Backzutaten",
       "shortName": "BZ",
-      "color": "#6D4C41",
+      "color": "#A1887F",
       "lightText": true
+    },
+    {
+      "id": "ba9a2df5-e422-4624-9d0e-827276a8ed8a",
+      "name": "Nudeln, Reis, Hülsenfrüchte",
+      "shortName": "N",
+      "color": "#FFECB3",
+      "lightText": false
+    },
+    {
+      "id": "fe38c7b6-24cd-4716-aec4-8671a653c1fa",
+      "name": "Öl, Essig, Soßen",
+      "shortName": "Ö",
+      "color": "#FBC02D",
+      "lightText": false
+    },
+    {
+      "id": "7ca893d0-bc4f-4a79-bdc1-3853cec70001",
+      "name": "Milchprodukte und Kühlung",
+      "shortName": "M",
+      "color": "#FFEB3B",
+      "lightText": false
     },
     {
       "id": "b68d25e8-5fa0-4f83-9408-6c306ddb8c21",
@@ -39,6 +67,13 @@
       "lightText": true
     },
     {
+      "id": "8ae7d8eb-d90c-4674-93ed-1d496f7564ec",
+      "name": "Brot und Backwaren",
+      "shortName": "B",
+      "color": "#6D4C41",
+      "lightText": true
+    },
+    {
       "id": "bef7bffc-6f54-450a-804e-799d1da5b976",
       "name": "Konserven",
       "shortName": "K",
@@ -46,10 +81,31 @@
       "lightText": true
     },
     {
+      "id": "89054c0e-cdff-490c-adc4-443064a6a252",
+      "name": "Feinkost",
+      "shortName": "F",
+      "color": "#673AB7",
+      "lightText": true
+    },
+    {
+      "id": "32667676-8bad-4c48-86e4-e83a2daf3f5e",
+      "name": "Süßes und Snacks",
+      "shortName": "S",
+      "color": "#FF6F00",
+      "lightText": false
+    },
+    {
       "id": "3aae3d52-a2a4-4826-868e-3ec317c5a39b",
-      "name": "Haushaltswaren",
+      "name": "Haushaltswaren und Kosmetik",
       "shortName": "H",
       "color": "#C2185B",
+      "lightText": true
+    },
+    {
+      "id": "cc334d58-be2a-4b40-8435-cadc31c72fdf",
+      "name": "Getränke",
+      "shortName": "G",
+      "color": "#1976D2",
       "lightText": true
     }
   ]
