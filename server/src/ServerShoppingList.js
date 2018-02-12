@@ -34,8 +34,6 @@ export function createServerShoppingList(serverShoppingListSpec: any): ServerSho
   serverShoppingList.recentlyUsed = recentlyUsed
   serverShoppingList.categories = categories
 
-  console.log(`Created shopping list ${serverShoppingList.id}`)
-
   return deepFreeze(serverShoppingList)
 }
 

@@ -23,7 +23,10 @@ import TokenCreator from './TokenCreator'
 nconf.env({
     lowerCase: true,
     transform: (obj) => {
-      obj.key = camelCase(obj.key)
+      const camelCased = camelCase(obj.key)
+      if (camelCased.length > 0) {
+        obj.key = camelCased
+      }
       return obj
     }
   })
@@ -59,7 +62,7 @@ db.load()
     const tokenCreator = new TokenCreator(nconf.get('secret'))
 
     const socketController = new SocketController(tokenCreator)
-    const shoppingListController = new ShoppingListController(db, socketController.notifiyChanged)
+    const shoppingListController = new ShoppingListController(db, socketController.notifiyChanged, nconf.get('defaultCategories'))
     const itemController = new ItemController(db, socketController.notifiyChanged)
     const syncController = new SyncController(db, socketController.notifiyChanged, tokenCreator)
     const categoriesController = new CategoriesController(db, socketController.notifiyChanged)
@@ -92,13 +95,14 @@ db.load()
       res.status(404).json({error: "This route doesn't exist."})
     })
 
-    var port = nconf.get('port')
-
     app.use('/api', router)
+
     if (nconf.get('nodeEnv') === 'production') {
       app.use(express.static('../client/build'))
       app.use((req: express$Request, res: express$Response) => res.sendFile(path.resolve('../client/build/index.html')))
     }
+
+    var port = nconf.get('port')
     app.listen(port)
     console.log(`Listening on port ${port}`)
   })

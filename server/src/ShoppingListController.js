@@ -1,6 +1,6 @@
 // @flow
 import express from 'express'
-import { type ShoppingList, createShoppingList } from 'shoppinglist-shared'
+import { type ShoppingList, createShoppingList, CategoryDefinition } from 'shoppinglist-shared'
 import { type DB, updateInArray } from './DB'
 import { type ServerShoppingList, createServerShoppingList, getBaseShoppingList } from './ServerShoppingList'
 import { type ShoppingListChangeCallback } from './SocketController'
@@ -11,10 +11,12 @@ export type ShoppingListRequest = { listid: string, list: ServerShoppingList } &
 export default class ShoppingListController {
   db: DB
   changeCallback: ShoppingListChangeCallback
+  defaultCategories: $ReadOnlyArray<CategoryDefinition>
 
-  constructor(db: DB, changeCallback: ShoppingListChangeCallback) {
+  constructor(db: DB, changeCallback: ShoppingListChangeCallback, defaultCategories: $ReadOnlyArray<CategoryDefinition>) {
     this.db = db
     this.changeCallback = changeCallback
+    this.defaultCategories = defaultCategories
   }
 
   handleParamListid = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
@@ -26,10 +28,10 @@ export default class ShoppingListController {
     } else {
        const updatedList: ServerShoppingList = createServerShoppingList({
          id: req.listid,
-         title: `New List (${new Date().toUTCString()})`,
+         title: req.listid,
          items: [],
          recentlyUsed: [],
-         categories: [],
+         categories: this.defaultCategories,
        })
        this.db.set({
          ...this.db.get(),
