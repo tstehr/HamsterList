@@ -1,16 +1,18 @@
 // @flow
 import _ from 'lodash'
 import WebSocket from 'ws'
-import { createToken } from './token'
+import TokenCreator from './TokenCreator'
 import { type ServerShoppingList, getBaseShoppingList } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 
 export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 
 export default class SocketController {
+  tokenCreator: TokenCreator
   registeredWebSockets: {[string]: WebSocket[]}
 
-  constructor() {
+  constructor(tokenCreator: TokenCreator) {
+    this.tokenCreator = tokenCreator
     this.registeredWebSockets = {}
 
     const interval = setInterval(() => {
@@ -61,7 +63,7 @@ export default class SocketController {
   notifiyChanged: ShoppingListChangeCallback = (list: ServerShoppingList) => {
     if (this.registeredWebSockets[list.id] != null) {
       for (const ws of this.registeredWebSockets[list.id]) {
-        ws.send(createToken(getBaseShoppingList(list)))
+        ws.send(this.tokenCreator.createToken(getBaseShoppingList(list)))
       }
     }
   }

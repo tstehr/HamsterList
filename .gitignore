@@ -12,8 +12,9 @@ build/
 # flow
 flow-typed/
 
-# server data folder
-/server/data/
+# server folder
+server/state/
+server/config.json
 
 # misc
 .DS_Store

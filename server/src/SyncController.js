@@ -8,19 +8,21 @@ import { type ShoppingListRequest } from './ShoppingListController'
 import { type ShoppingListChangeCallback } from './SocketController'
 import * as ShoppingListController from './ShoppingListController'
 import { updateRecentlyUsed } from './ItemController'
-import { setToken, validateToken } from './token'
+import TokenCreator from './TokenCreator'
 
 export default class SyncController {
   db: DB
   changeCallback: ShoppingListChangeCallback
+  tokenCreator: TokenCreator
 
-  constructor(db: DB, changeCallback: ShoppingListChangeCallback) {
+  constructor(db: DB, changeCallback: ShoppingListChangeCallback, tokenCreator: TokenCreator) {
     this.db = db
     this.changeCallback = changeCallback
+    this.tokenCreator = tokenCreator
   }
 
   handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
-    res.send(setToken(getBaseShoppingList(req.list)))
+    res.send(this.tokenCreator.setToken(getBaseShoppingList(req.list)))
   }
 
   handlePost = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
@@ -37,7 +39,7 @@ export default class SyncController {
       return
     }
 
-    if (!validateToken(syncRequest.previousSync)) {
+    if (!this.tokenCreator.validateToken(syncRequest.previousSync)) {
       res.status(400).json({error: 'previousSync is no valid SyncedList'})
       return
     }
@@ -64,7 +66,7 @@ export default class SyncController {
 
     this.db.write().then(() => {
       this.changeCallback(mergedServerShoppingList)
-      res.send(setToken(merged))
+      res.send(this.tokenCreator.setToken(merged))
     })
   }
 }

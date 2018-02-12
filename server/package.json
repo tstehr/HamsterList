@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "production": "NODE_ENV=production node build/index.js",
-    "start": "nodemon --watch src --watch data/options.json5 --exec babel-node src/index.js",
+    "start": "nodemon --watch src --exec babel-node src/index.js",
     "build": "npm run build:clean && npm run build:babel",
     "build:clean": "rm -rf ./build",
     "build:babel": "npx babel src --out-dir build --source-maps",
@@ -14,14 +14,16 @@
   },
   "dependencies": {
     "body-parser": "^1.18.2",
+    "camel-case": "^3.0.0",
     "deep-freeze": "0.0.1",
     "express": "^4.16.2",
     "express-rest": "^1.0.4",
     "express-ws": "^3.0.0",
-    "fs-extra": "^4.0.2",
+    "fs-extra": "^5.0.0",
     "json-stable-stringify": "^1.0.1",
     "json5": "^0.5.1",
     "lodash": "^4.17.4",
+    "nconf": "^0.10.0",
     "shoppinglist-shared": "link:../shared",
     "ws": "^3.3.1"
   },

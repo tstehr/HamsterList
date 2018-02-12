@@ -1,0 +1,56 @@
+{
+  "nodeEnv": "development",
+  "port": 4000,
+  "databaseFilePath": "state/db.json",
+  "defaultCategories": [
+    {
+      "id": "6ca0f054-209c-46c9-b337-6088f7a530ab",
+      "name": "Obst und Gemüse",
+      "shortName": "OG",
+      "color": "#8BC34A",
+      "lightText": false
+    },
+    {
+      "id": "7ca893d0-bc4f-4a79-bdc1-3853cec70001",
+      "name": "Milchprodukte",
+      "shortName": "M",
+      "color": "#FFEB3B",
+      "lightText": false
+    },
+    {
+      "id": "99d11658-9a39-4636-a610-85a9789c846b",
+      "name": "Backzutaten",
+      "shortName": "BZ",
+      "color": "#6D4C41",
+      "lightText": true
+    },
+    {
+      "id": "b68d25e8-5fa0-4f83-9408-6c306ddb8c21",
+      "name": "Tiefkühlprodukte",
+      "shortName": "TK",
+      "color": "#81D4FA",
+      "lightText": false
+    },
+    {
+      "id": "d8006f37-da28-4829-aedc-13a7cf6957fa",
+      "name": "Fleisch",
+      "shortName": "F",
+      "color": "#D32F2F",
+      "lightText": true
+    },
+    {
+      "id": "bef7bffc-6f54-450a-804e-799d1da5b976",
+      "name": "Konserven",
+      "shortName": "K",
+      "color": "#757575",
+      "lightText": true
+    },
+    {
+      "id": "3aae3d52-a2a4-4826-868e-3ec317c5a39b",
+      "name": "Haushaltswaren",
+      "shortName": "H",
+      "color": "#C2185B",
+      "lightText": true
+    }
+  ]
+}
