@@ -29,10 +29,11 @@ nconf.env({
         obj.key = camelCased
       }
       return obj
-    }
+    },
+    parseValues: true
   })
 
-nconf.argv()
+nconf.argv({parseValues: true})
 
 nconf.defaults({
   configFile: path.resolve('config.json')
@@ -48,11 +49,18 @@ if(!fs.existsSync(nconf.get('configFile'))) {
 nconf.file('user', nconf.get('configFile'))
 nconf.required(['secret'])
 
-if (nconf.get('https')) {
-  nconf.required(['keyFile', 'certFile'])
-}
-
 nconf.file('default', path.resolve('data/config-default.json'))
+
+if (nconf.get('https')) {
+  nconf.required(['keyFile', 'certFile', 'httpsPort'])
+}
+if (nconf.get('http')) {
+  nconf.required(['port'])
+}
+if (!nconf.get('http') && !nconf.get('https')) {
+  console.error('Either http or https must be enabled!')
+  process.exit(1)
+}
 
 
 const db = new DB(nconf.get('databaseFilePath'))
@@ -104,7 +112,7 @@ db.load()
       app.use((req: express$Request, res: express$Response) => res.sendFile(path.resolve('../client/build/index.html')))
     }
 
-    var server: Server
+
     if (nconf.get('https')) {
       let options
       try {
@@ -116,18 +124,27 @@ db.load()
         console.error(`File "${e.path}" couldn't be found`)
         process.exit(1)
       }
+
       // $FlowFixMe
-      server = https.createServer(options, app)
-    } else {
-      server = http.createServer(app)
+      const server = https.createServer(options, app)
+
+      socketController.initializeFor(server)
+
+      var port = nconf.get('httpsPort')
+      // $FlowFixMe
+      server.listen(port)
+      console.log(`HTTPS server listening on port ${port} `)
     }
 
-    socketController.initialize(server)
+    if (nconf.get('http')) {
+      const server = http.createServer(app)
+      socketController.initializeFor(server)
 
-    var port = nconf.get('port')
-    // $FlowFixMe
-    server.listen(port)
-    console.log(`Listening as ${nconf.get('https') ? 'https' : 'http'} server on port ${port} `)
+      var port = nconf.get('port')
+      // $FlowFixMe
+      server.listen(port)
+      console.log(`HTTP server listening on port ${port} `)
+    }
   })
   .catch(e => {
     console.log(e)

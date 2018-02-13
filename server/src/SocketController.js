@@ -10,7 +10,6 @@ export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 export default class SocketController {
   tokenCreator: TokenCreator
   registeredWebSockets: {[string]: WebSocket[]}
-  wss: WebSocket.Server
 
   constructor(tokenCreator: TokenCreator) {
     this.tokenCreator = tokenCreator
@@ -34,12 +33,12 @@ export default class SocketController {
     }, 30000);
   }
 
-  initialize(server: Server) {
-    this.wss = new WebSocket.Server({
+  initializeFor(server: Server) {
+    const wss = new WebSocket.Server({
       server: server
     })
 
-    this.wss.on('connection', (ws, req: Request) => {
+    wss.on('connection', (ws, req: Request) => {
       const match = req.url.match(/\/api\/([^\/]+)\/socket/)
       if (match == null) {
         ws.close()
@@ -58,7 +57,7 @@ export default class SocketController {
     this.registeredWebSockets[listid].push(ws)
 
     ws.isAlive = true
-    
+
     // $FlowFixMe
     const ua = req.headers['user-agent'] || "UnknownUA"
     // $FlowFixMe

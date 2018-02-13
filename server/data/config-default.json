@@ -1,6 +1,8 @@
 {
   "nodeEnv": "development",
+  "http": true,
   "port": 4000,
+  "httpsPort": 4443,
   "databaseFilePath": "state/db.json",
   "defaultCategories": [
     {
