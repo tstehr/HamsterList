@@ -11,4 +11,9 @@ body {
 button {
   cursor: pointer;
   -webkit-appearance: none;
+  background: white;
+  border: none;
+  font-family: inherit;
+  font-size: .8rem;
+  border: 1px solid black;
 }
