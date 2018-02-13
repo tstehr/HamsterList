@@ -157,13 +157,12 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
 
     let base: string
-    if (!process.env.REACT_APP_SOCKET_URL) {
-      const protocol = (window.location.protocol === "https:") ? "wss://" : "ws://"
-      const base = protocol + window.location.host
-    } else {
+    if (process.env.REACT_APP_SOCKET_URL) {
       base = process.env.REACT_APP_SOCKET_URL
+    } else {
+      const protocol = (window.location.protocol === "https:") ? "wss://" : "ws://"
+      base = protocol + window.location.host
     }
-
 
     let onopenTimoutId: number
     this.socket = new WebSocket(base + `/api/${this.props.listid}/socket`);
