@@ -36,6 +36,7 @@
   font-size: 2rem;
   font-family: inherit;
   letter-spacing: -.65rem;
+  transition: all 200ms ease-in-out;
 }
 .TopBarComponent__status--syncing {
   animation: 1s ease-in infinite blink;
@@ -46,6 +47,13 @@
 .TopBarComponent__status--failure.TopBarComponent__status--syncing {
   animation: 1s ease-in infinite blinkRed;
 }
+.TopBarComponent__status--synced {
+  color: rgba(76, 175, 80, 1); /*#4CAF50*/
+}
+.TopBarComponent__status--synced.TopBarComponent__status--syncing {
+  animation: 1s ease-in infinite blinkGreen;
+}
+
 .TopBarComponent__content > h1,
 .TopBarComponent__content > input {
   font-weight: bold;
@@ -62,30 +70,36 @@
   margin-left: 3.5rem;
 }
 
-.TopBarComponent--dirty .TopBarComponent__content > h1,
-.TopBarComponent--dirty .TopBarComponent__content > input {
-  font-style: italic;
-}
-
 @keyframes blink {
   0% {
-    text-shadow: 0 0 0px rgba(0, 0, 0, .6);/**/
+    text-shadow: 0 0 0px rgba(0, 0, 0, .6);
   }
   90% {
-    text-shadow: 0 0 20px rgba(0, 0, 0, .4);/**/
+    text-shadow: 0 0 20px rgba(0, 0, 0, .4);
   }
   100% {
-    text-shadow: 0 0 20px rgba(0, 0, 0, .0);/**/
+    text-shadow: 0 0 20px rgba(0, 0, 0, .0);
   }
 }
 @keyframes blinkRed {
   0% {
-    text-shadow: 0 0 0px rgba(244, 67, 54, .6);/**/
+    text-shadow: 0 0 0px rgba(244, 67, 54, .6);
   }
   90% {
-    text-shadow: 0 0 20px rgba(244, 67, 54, .4);/**/
+    text-shadow: 0 0 20px rgba(244, 67, 54, .4);
   }
   100% {
-    text-shadow: 0 0 20px rgba(244, 67, 54, .0);/**/
+    text-shadow: 0 0 20px rgba(244, 67, 54, .0);
+  }
+}
+@keyframes blinkGreen {
+  0% {
+    text-shadow: 0 0 0px rgba(76, 175, 80, .6);
+  }
+  90% {
+    text-shadow: 0 0 20px rgba(76, 175, 80, .4);
+  }
+  100% {
+    text-shadow: 0 0 20px rgba(76, 175, 80, .0);
   }
 }
