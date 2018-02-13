@@ -33,6 +33,14 @@ export default class ShoppingListComponent extends Component<Props> {
     }
   }
 
+  componentDidMount() {
+    document.title = this.props.shoppingList.title
+  }
+
+  componentWillReceiveProps() {
+    document.title = this.props.shoppingList.title
+  }
+
   render() {
     return (
       <div className="ShoppingListComponent">
