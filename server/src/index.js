@@ -52,7 +52,18 @@ nconf.file('default', path.resolve('data/config-default.json'))
 const db = new DB(nconf.get('databaseFilePath'))
 
 const app = express()
-expressWs(app)
+
+if (nconf.get('keyFile') && nconf.get('certFile')) {
+  expressWs(app, null, {
+    wsOptions: {
+      key: fs.readFileSync(nconf.get('keyFile')),
+      cert: fs.readFileSync(nconf.get('certFile'))
+    }
+  })
+} else {
+  expressWs(app)
+}
+
 
 db.load()
   .then(() => {
