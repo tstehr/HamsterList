@@ -57,7 +57,11 @@ export default class SocketController {
     ws.on('pong', () => {
       ws.isAlive = true;
       console.log(`Pong: ${ws.debugIdentifier}`)
-    });
+    })
+
+    ws.on('error', (e) => {
+      console.log(e)
+    })
   }
 
   notifiyChanged: ShoppingListChangeCallback = (list: ServerShoppingList) => {
