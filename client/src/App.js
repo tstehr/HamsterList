@@ -48,7 +48,7 @@ export default class App extends Component<void, State> {
     return (
       <Switch>
         <Route exact path='/' component={undefined}/>
-        <Route path='/:listid' component={ShoppingListContainerWrapperComponent}/>
+        <Route path='/:listid' exact component={ShoppingListContainerWrapperComponent}/>
       </Switch>
     )
   }
