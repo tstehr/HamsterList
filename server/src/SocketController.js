@@ -10,6 +10,7 @@ export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 export default class SocketController {
   tokenCreator: TokenCreator
   registeredWebSockets: {[string]: WebSocket[]}
+  wss: WebSocket.Server
 
   constructor(tokenCreator: TokenCreator) {
     this.tokenCreator = tokenCreator
@@ -33,15 +34,35 @@ export default class SocketController {
     }, 30000);
   }
 
-  handleWs = (ws: WebSocket, req: ShoppingListRequest) => {
-    if (this.registeredWebSockets[req.listid] == null) {
-      this.registeredWebSockets[req.listid] = []
+  initialize(server: Server) {
+    this.wss = new WebSocket.Server({
+      server: server
+    })
+
+    this.wss.on('connection', (ws, req: Request) => {
+      const match = req.url.match(/\/api\/([^\/]+)\/socket/)
+      if (match == null) {
+        ws.close()
+        return
+      }
+      const listid = match[1]
+
+      this.handleWs(ws, req, listid)
+    })
+  }
+
+  handleWs = (ws: WebSocket, req: Request, listid: string) => {
+    if (this.registeredWebSockets[listid] == null) {
+      this.registeredWebSockets[listid] = []
     }
-    this.registeredWebSockets[req.listid].push(ws)
+    this.registeredWebSockets[listid].push(ws)
 
     ws.isAlive = true
+    
     // $FlowFixMe
-    ws.debugIdentifier = `${req.listid} ${req.connection.remoteAddress} ${req.get('User-Agent').split(' ').pop()}`
+    const ua = req.headers['user-agent'] || "UnknownUA"
+    // $FlowFixMe
+    ws.debugIdentifier = `${listid} ${req.connection.remoteAddress} ${ua.split(' ').pop()}` // TODO
 
     console.log(`Connected: ${ws.debugIdentifier}`)
 
@@ -50,7 +71,7 @@ export default class SocketController {
     })
 
     ws.on('close', () => {
-      this.registeredWebSockets[req.listid].splice(this.registeredWebSockets[req.listid].indexOf(ws), 1)
+      this.registeredWebSockets[listid].splice(this.registeredWebSockets[listid].indexOf(ws), 1)
       console.log(`Disconnected: ${ws.debugIdentifier}`)
     })
 

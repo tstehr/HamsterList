@@ -1,9 +1,10 @@
 // @flow
 import path from 'path'
 import fs from 'fs-extra'
+import http from 'http'
+import https from 'https'
 import express from 'express'
 import bodyParser from 'body-parser'
-import expressWs from 'express-ws'
 import WebSocket from 'ws'
 import nconf from 'nconf'
 import camelCase from 'camel-case'
@@ -34,8 +35,8 @@ nconf.env({
 nconf.argv()
 
 nconf.defaults({
-    configFile: path.resolve('config.json')
-  })
+  configFile: path.resolve('config.json')
+})
 
 if(!fs.existsSync(nconf.get('configFile'))) {
   console.log("First run, creating config file with random secret")
@@ -46,24 +47,16 @@ if(!fs.existsSync(nconf.get('configFile'))) {
 
 nconf.file('user', nconf.get('configFile'))
 nconf.required(['secret'])
+
+if (nconf.get('https')) {
+  nconf.required(['keyFile', 'certFile'])
+}
+
 nconf.file('default', path.resolve('data/config-default.json'))
 
 
 const db = new DB(nconf.get('databaseFilePath'))
-
 const app = express()
-
-if (nconf.get('keyFile') && nconf.get('certFile')) {
-  expressWs(app, null, {
-    wsOptions: {
-      key: fs.readFileSync(nconf.get('keyFile')),
-      cert: fs.readFileSync(nconf.get('certFile'))
-    }
-  })
-} else {
-  expressWs(app)
-}
-
 
 db.load()
   .then(() => {
@@ -73,6 +66,7 @@ db.load()
     const tokenCreator = new TokenCreator(nconf.get('secret'))
 
     const socketController = new SocketController(tokenCreator)
+
     const shoppingListController = new ShoppingListController(db, socketController.notifiyChanged, nconf.get('defaultCategories'))
     const itemController = new ItemController(db, socketController.notifiyChanged)
     const syncController = new SyncController(db, socketController.notifiyChanged, tokenCreator)
@@ -99,9 +93,6 @@ db.load()
     router.get('/:listid/sync', syncController.handleGet)
     router.post('/:listid/sync', syncController.handlePost)
 
-    // $FlowFixMe
-    router.ws('/:listid/socket', socketController.handleWs)
-
     router.use('*', (req: express$Request, res: express$Response) => {
       res.status(404).json({error: "This route doesn't exist."})
     })
@@ -113,9 +104,27 @@ db.load()
       app.use((req: express$Request, res: express$Response) => res.sendFile(path.resolve('../client/build/index.html')))
     }
 
+    var server: Server
+    if (nconf.get('https')) {
+      try {
+        server = https.createServer({
+          key: fs.readFileSync(nconf.get('keyFile')),
+          cert: fs.readFileSync(nconf.get('certFile'))
+        }, app)
+      } catch (e) {
+        console.error(`File "${e.path}" couldn't be found`)
+        process.exit(1)
+      }
+    } else {
+      server = http.createServer(app)
+    }
+
+    socketController.initialize(server)
+
     var port = nconf.get('port')
-    app.listen(port)
-    console.log(`Listening on port ${port}`)
+    // $FlowFixMe
+    server.listen(port)
+    console.log(`Listening as ${nconf.get('https') ? 'https' : 'http'} server on port ${port} `)
   })
   .catch(e => {
     console.log(e)
