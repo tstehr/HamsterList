@@ -1,6 +1,6 @@
 {
   "name": "shoppinglist-client",
-  "version": "1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "deep-freeze": "^0.0.1",
