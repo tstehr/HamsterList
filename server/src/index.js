@@ -106,15 +106,18 @@ db.load()
 
     var server: Server
     if (nconf.get('https')) {
+      let options
       try {
-        server = https.createServer({
+        options = {
           key: fs.readFileSync(nconf.get('keyFile')),
           cert: fs.readFileSync(nconf.get('certFile'))
-        }, app)
+        }
       } catch (e) {
         console.error(`File "${e.path}" couldn't be found`)
         process.exit(1)
       }
+      // $FlowFixMe
+      server = https.createServer(options, app)
     } else {
       server = http.createServer(app)
     }
