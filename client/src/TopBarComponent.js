@@ -15,7 +15,8 @@ type Props = {
 
 type State = {
   hasFocus: boolean,
-  inputValue: string
+  inputValue: string,
+  fakeSyncing: boolean
 }
 
 const variantSelector15 = String.fromCharCode(0xfe0e)
@@ -28,12 +29,14 @@ const stateMapping: {[ConnectionState]: string} = {
 
 export default class TopBarComponent extends Component<Props, State> {
   input: ?HTMLInputElement
+  stopSyncingTimeoutId: number
 
   constructor(props: Props) {
     super(props)
     this.state = {
       hasFocus: false,
-      inputValue: ""
+      inputValue: "",
+      fakeSyncing: false
     }
   }
 
@@ -42,19 +45,32 @@ export default class TopBarComponent extends Component<Props, State> {
     e.preventDefault()
   }
 
+  componentWillReceiveProps(newProps: Props) {
+    if (newProps.syncing) {
+      this.setState({
+        fakeSyncing: true
+      })
+      clearTimeout(this.stopSyncingTimeoutId)
+      this.stopSyncingTimeoutId = setTimeout(() => {
+        this.setState({fakeSyncing: false})
+      }, 1500)
+    }
+  }
+
   render() {
     const classes = ["TopBarComponent"]
     if (this.props.dirty) {
       classes.push("TopBarComponent--dirty")
     }
 
+    const showSyncing = this.props.syncing || this.state.fakeSyncing
     const statusClasses = ["TopBarComponent__status"]
-    if (this.props.syncing) {
+    if (showSyncing) {
       statusClasses.push("TopBarComponent__status--syncing")
     }
     if (this.props.lastSyncFailed || this.props.connectionState == 'disconnected') {
       statusClasses.push("TopBarComponent__status--failure")
-    } else if (!this.props.dirty) {
+    } else if (!this.props.dirty && !showSyncing) {
       statusClasses.push("TopBarComponent__status--synced")
     }
 
