@@ -33,7 +33,7 @@ export default class CompletionsComponent extends Component<Props, State> {
     const completionItems = sortedCompletions
       .map((completionItem) => Object.assign({}, this.props.itemInCreation, completionItem))
       .filter((item) => itemToString(item).toLowerCase() !== itemToString(this.props.itemInCreation).toLowerCase()
-        || item.category != this.props.itemInCreation.category)
+        || item.category !== this.props.itemInCreation.category)
 
     return (
       <Fragment>

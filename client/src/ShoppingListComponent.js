@@ -58,9 +58,17 @@ export default class ShoppingListComponent extends Component<Props> {
           )}
           {!this.props.shoppingList.items.length &&
             <div className="ShoppingListComponent__emptyList">
-              <p>Empty list, nothing needed 🎉</p>
-              <p className="ShoppingListComponent__emptyList__addCallout--singleCol">⬇️ Add some new stuff below ⬇️</p>
-              <p className="ShoppingListComponent__emptyList__addCallout--twoCol">➡️ Add some new stuff to the right ➡️</p>
+              <p>Empty list, nothing needed <span role="img" aria-label="Party Popper">🎉</span></p>
+              <p className="ShoppingListComponent__emptyList__addCallout--singleCol">
+                <span role="img" aria-label="Arrow to entry form">⬇️ </span>
+                Add some new stuff below
+                <span role="img" aria-label="Arrow to entry form">⬇️ </span>
+              </p>
+              <p className="ShoppingListComponent__emptyList__addCallout--twoCol">
+                <span role="img" aria-label="Arrow to entry form">➡️</span>
+                Add some new stuff to the right
+                <span role="img" aria-label="Arrow to entry form">➡️</span>
+              </p>
             </div>
           }
           </KeyFocusComponent>

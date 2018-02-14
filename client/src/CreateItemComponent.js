@@ -1,8 +1,8 @@
 // @flow
 // $FlowFixMe
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import _ from 'lodash'
-import { type LocalItem, type CompletionItem, type CategoryDefinition, type UUID, createLocalItemFromString } from 'shoppinglist-shared'
+import { type LocalItem, type CompletionItem, type CategoryDefinition, createLocalItemFromString } from 'shoppinglist-shared'
 import type { CreateItem } from './ShoppingListContainerComponent'
 import CompletionsComponent from './CompletionsComponent'
 import SuggestionsComponent from './SuggestionsComponent'
@@ -42,8 +42,8 @@ export default class CreateItemComponent extends Component<Props, State> {
 
     const exactMatchingCompletion = this.props.completions
       .find((completionItem) =>
-        completionItem.name == itemFromString.name
-          && (itemFromString.category == null || itemFromString.category == completionItem.category)
+        completionItem.name === itemFromString.name
+          && (itemFromString.category == null || itemFromString.category === completionItem.category)
       )
     if (exactMatchingCompletion != null) {
       return Object.assign({}, itemFromString, _.omitBy(exactMatchingCompletion, (val) => val == null))
@@ -51,8 +51,8 @@ export default class CreateItemComponent extends Component<Props, State> {
 
     const matchingCompletion = this.props.completions
       .find((completionItem) =>
-        completionItem.name.toLowerCase() == itemFromString.name.toLowerCase()
-          && (itemFromString.category == null || itemFromString.category == completionItem.category)
+        completionItem.name.toLowerCase() === itemFromString.name.toLowerCase()
+          && (itemFromString.category == null || itemFromString.category === completionItem.category)
       )
     if (matchingCompletion != null) {
       return Object.assign({}, itemFromString, _.omitBy(matchingCompletion, (val) => val == null))

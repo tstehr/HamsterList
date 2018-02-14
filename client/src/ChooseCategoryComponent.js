@@ -41,7 +41,7 @@ export default class ChooseCategoryComponent extends Component<Props> {
               <button type="button" key="undefined"  onClick={this.createOnClick(null)}>
                 <CategoryComponent /><div>Remove category</div>
               </button>
-              <a href="#" onClick={this.createOnClick(this.props.categoryId)}>Cancel</a>
+              <button onClick={this.createOnClick(this.props.categoryId)} className="ChooseCategoryComponent__cancel">Cancel</button>
             </KeyFocusComponent>
           </div>
         ), target

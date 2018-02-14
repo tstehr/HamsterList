@@ -1,5 +1,5 @@
 // @flow
-import React, { Component, type Node, type Element } from 'react'
+import React, { Component, type Node } from 'react'
 
 type Direction = 'horizontal' | 'vertical'
 type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight'
@@ -28,6 +28,9 @@ export default class KeyFocusComponent extends Component<Props> {
       case 'vertical':
         this.back = 'ArrowUp'
         this.forward = 'ArrowDown'
+        break;
+      default:
+        throw new Error('Unknown direction')
     }
   }
 
@@ -92,12 +95,12 @@ export default class KeyFocusComponent extends Component<Props> {
     if (defaultFocus != null) {
       return true
     }
-    return el.tabIndex != null && el.tabIndex != -1
+    return el.tabIndex != null && el.tabIndex !== -1
   }
 
   render() {
     const Component = this.props.rootTagName
-    const className = this.props.className != null ? this.props.className + " " + "KeyFocusComponent" : "KeyFocusComponent"
+    const className = this.props.className != null ? this.props.className + " KeyFocusComponent" : "KeyFocusComponent"
 
     return <Component onKeyDown={this.handleKeyDown} ref={(root) => this.root = root} className={className}>
       {this.props.children}

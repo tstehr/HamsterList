@@ -18,13 +18,11 @@
   font-size: 1rem;
   font-family: inherit;
   text-align: left;
+  height: 3rem;
 }
-.ChooseCategoryComponent button:last-of-type {
+.ChooseCategoryComponent button.ChooseCategoryComponent__cancel {
   border-width: 2px 0;
-}
-.ChooseCategoryComponent a {
-  margin-top: .5rem;
-  display: inline-block;
+  padding: .0 .5rem;
 }
 @media (min-width: 40rem) and (min-height: 40rem) {
   .ChooseCategoryComponent {
@@ -45,5 +43,10 @@
     color: #fff;
     margin: .5rem 0;
     padding-right: .5rem;
+  }
+  .ChooseCategoryComponent button.ChooseCategoryComponent__cancel {
+    border: 0;
+    background: #f7f7f7;
+    color: black;
   }
 }

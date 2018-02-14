@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react'
-import { type Item, type LocalItem, type CategoryDefinition, type UUID, itemToString, createLocalItemFromString, createCategoryDefinition } from 'shoppinglist-shared'
+import { type Item, type LocalItem, type CategoryDefinition, type UUID, itemToString, createLocalItemFromString } from 'shoppinglist-shared'
 import type { DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
 import ItemComponent from './ItemComponent'
 import CategoryComponent from './CategoryComponent'

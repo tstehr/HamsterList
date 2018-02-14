@@ -68,7 +68,7 @@ export default class TopBarComponent extends Component<Props, State> {
     if (showSyncing) {
       statusClasses.push("TopBarComponent__status--syncing")
     }
-    if (this.props.lastSyncFailed || this.props.connectionState == 'disconnected') {
+    if (this.props.lastSyncFailed || this.props.connectionState === 'disconnected') {
       statusClasses.push("TopBarComponent__status--failure")
     } else if (!this.props.dirty && !showSyncing) {
       statusClasses.push("TopBarComponent__status--synced")

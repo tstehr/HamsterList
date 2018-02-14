@@ -7,7 +7,7 @@ import deepFreeze from 'deep-freeze'
 import React, { Component } from 'react'
 import {
   type SyncedShoppingList, type ShoppingList, type CompletionItem, type LocalItem, type Item, type CategoryDefinition, type UUID,
-  createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, itemToString, createRandomUUID,
+  createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, createRandomUUID,
   mergeShoppingLists
 } from 'shoppinglist-shared'
 import ShoppingListComponent from './ShoppingListComponent'

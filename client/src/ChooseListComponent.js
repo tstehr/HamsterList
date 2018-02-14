@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import {  Redirect } from 'react-router-dom'
 import { createRandomUUID } from 'shoppinglist-shared'
 import './ChooseListComponent.css'
 import { responseToJSON } from './utils';
@@ -19,8 +19,9 @@ export default class ChooseListComponent extends Component<void, State> {
   }
 
   onSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
-    const formData = new FormData(e.target)
+    const formData = new FormData(e.currentTarget)
     this.setState({
+      // $FlowFixMe
       listid: formData.get('listid')
     })
     e.preventDefault()
