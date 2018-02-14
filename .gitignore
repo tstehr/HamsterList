@@ -16,6 +16,9 @@ flow-typed/
 server/state/
 server/config.json
 
+# client build config
+env.sh
+
 # misc
 .DS_Store
 .env.local
