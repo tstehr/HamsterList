@@ -25,7 +25,7 @@
     "flow": "flow"
   },
   "proxy": {
-    "/api/\\w+/socket": {
+    "/api/[^\\\\]+/socket": {
       "target": "ws://localhost:4000",
       "ws": true
     },
