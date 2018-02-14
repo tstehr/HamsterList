@@ -86,9 +86,7 @@ Used for sync with offline-capable clients to get an initial state from which to
 
 Used for sync with offline-capable clients. This is __not__ a REST endpoint!
 
-To use the sync endpoint the client should persistently store the response of the last sync[^initial] and send it together with the current local state. The client state and the server state will then be merged to produce a new state, which is sent as response.
-
-[^initial]: Use the GET endpoint to obtain an initial sync state.
+To use the sync endpoint the client should persistently store the response of the last sync and send it together with the current local state. The client state and the server state will then be merged to produce a new state, which is sent as response. Use the GET endpoint to obtain an initial sync state.
 
 ## Change Notifications
 
@@ -96,7 +94,7 @@ Clients can connect to the server to receive notifications when a [ShoppingList]
 
 Whenever the list is touched[^touch] on the server, its current token is pushed to the client. The client can compare it to the token of its previous sync to determine whether a sync is necessary.
 
-[^touch]: A touch indicates a server operation on the [ShoppingList], e.g. a PUT on an [Item] or a POST to `/:listid/sync`. The operation may have not changed the [ShoppingList] at all. However, every change is guaranteed to be a touch ($\text{change} \implies \text{touch}$).
+Note: A touch indicates a server operation on the [ShoppingList], e.g. a PUT on an [Item] or a POST to `/:listid/sync`. The operation may have not changed the [ShoppingList] at all. However, every change is guaranteed to be a touch.
 
 ## Data Types
 
@@ -123,15 +121,18 @@ This object represents a shopping list.
 
 This object represents an item on a shopping list.
 
-| Field    | Type            | Description                                 |
-|----------|-----------------|---------------------------------------------|
-| id       | String, UUID-v4 | Unique identifier of the item               |
-| name     | String          | Description of the item to be bought        |
-| amount   | [Amount]        | *Optional.*[^amount] The amount of the item |
-| category | String, UUID-v4 | *Optional.* ID of the item's category[^cat] |
+| Field    | Type            | Description                                                 |
+|----------|-----------------|-------------------------------------------------------------|
+| id       | String, UUID-v4 | Unique identifier of the item                               |
+| name     | String          | Description of the item to be bought                        |
+| amount   | [Amount]        | *Optional.*<sup>[AM](#AM)</sup>The amount of the item       |
+| category | String, UUID-v4 | *Optional.* ID of the item's category<sup>[CAT](#CAT)</sup> |
 
-[^amount]: If *amount* is not set an Item will be treated as having `amount.value = 1` and no `amount.unit`.
-[^cat]: Clients should treat a category that is not in the categories for the list as if the category was not set.
+
+<a name="AM">AM</a>: If *amount* is not set an Item will be treated as having `amount.value = 1` and no `amount.unit`.
+
+<a name="CAT">CAT</a>:  Clients should treat a category that is not in the categories for the list as if the category was not set.
+
 
 #### String representation
 
@@ -177,15 +178,15 @@ This object represents an amount of an item.
 
 This object represents a category of items.
 
-| Field     | Type                            | Description                                        |
-|-----------|---------------------------------|----------------------------------------------------|
-| id        | String, UUID-v4                 | Unique identifier of the category                  |
-| name      | String                          | Description of the category                        |
-| shortName | String                          | Short name of the category                         |
-| color     | String, valid CSS color[^color] | Color of the category                              |
-| lightText | boolean                         | Should light text be used with the color?          |
+| Field     | Type                                          | Description                                        |
+|-----------|-----------------------------------------------|----------------------------------------------------|
+| id        | String, UUID-v4                               | Unique identifier of the category                  |
+| name      | String                                        | Description of the category                        |
+| shortName | String                                        | Short name of the category                         |
+| color     | String, valid CSS color<sup>[COL](#COL)</sup> | Color of the category                              |
+| lightText | boolean                                       | Should light text be used with the color?          |
 
-[^color]: The color should be a valid color value according to sections 4.1 -- 4.3 of the [CSS Color Module Level 3] specification.
+<a name="COL">COL</a>: The color should be a valid color value according to sections 4.1 -- 4.3 of the [CSS Color Module Level 3] specification.
 
 [CSS Color Module Level 3]: https://www.w3.org/TR/2017/CR-css-color-3-20171205/
 
