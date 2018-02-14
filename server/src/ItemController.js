@@ -128,7 +128,7 @@ export default class ItemController {
     if (item != null) {
       const changedList = {
         ...req.list,
-        items: req.list.items.filter((item) => item.id === req.itemid),
+        items: req.list.items.filter((item) => item.id !== req.itemid),
         recentlyUsed: updateRecentlyUsed(req.list.recentlyUsed, item)
       }
 
