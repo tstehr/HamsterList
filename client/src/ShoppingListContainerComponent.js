@@ -11,6 +11,7 @@ import {
   mergeShoppingLists
 } from 'shoppinglist-shared'
 import ShoppingListComponent from './ShoppingListComponent'
+import { responseToJSON } from './utils';
 
 export type ConnectionState = "disconnected" | "polling" | "socket"
 
@@ -56,27 +57,6 @@ const initialState: ClientShoppingList = deepFreeze({
   lastSyncFailed: false,
   connectionState: "disconnected",
 })
-
-class HTTPErrorStatusError extends Error {
-  code: number
-
-  constructor(msg: String, code: number) {
-    super(msg)
-    this.code = code
-    Error.captureStackTrace(this, HTTPErrorStatusError)
-  }
-}
-
-function responseToJSON(res: Response) {
-  if (!res.ok) {
-    return res.json()
-      .then(json => {
-        const errorMessage = json && json.error
-        throw new HTTPErrorStatusError(errorMessage, res.status)
-      })
-  }
-  return res.json()
-}
 
 export default class ShoppingListContainerComponent extends Component<Props, State> {
   db: Object

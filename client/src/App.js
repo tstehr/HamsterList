@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
 
+import ChooseListComponent from './ChooseListComponent'
 import ShoppingListContainerComponent from './ShoppingListContainerComponent'
 
 type State = {
@@ -47,7 +48,7 @@ export default class App extends Component<void, State> {
   render() {
     return (
       <Switch>
-        <Route exact path='/' component={undefined}/>
+        <Route exact path='/' component={ChooseListComponent}/>
         <Route path='/:listid' exact component={ShoppingListContainerWrapperComponent}/>
       </Switch>
     )

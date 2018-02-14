@@ -1,0 +1,48 @@
+.ChooseListComponent {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ChooseListComponent__content {
+  width: 100%;
+  max-width: 30rem;
+  padding: .5rem;
+}
+
+.ChooseListComponent__content h1 {
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.ChooseListComponent__content p {
+  margin: 2rem 0;
+}
+
+.ChooseListComponent__randomButton {
+  border: 0;
+  background-color: #4CAF50;
+  line-height: 3rem;
+  color: #fff;
+  padding: 0 1rem;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.ChooseListComponent__openForm {
+  display: flex;
+  height: 3rem;
+  border: 2px solid #4CAF50;
+}
+.ChooseListComponent__openForm > input {
+  flex: 1;
+  border: 0;
+  padding: .5rem;
+  font-size: 1rem;
+  font-family: inherit;
+}
+.ChooseListComponent__openForm > button {
+  width: 3rem;
+}
