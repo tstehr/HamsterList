@@ -11,7 +11,7 @@
     "lodash-id": "^0.14.0",
     "lowdb": "^1.0.0",
     "material-color-hash": "^0.1.4",
-    "mathjs": "^3.16.5",
+    "mathjs": "^3.20.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-scripts": "1.1.0",
