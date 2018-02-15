@@ -136,7 +136,7 @@ This object represents an item on a shopping list.
 
 #### String representation
 
-An item has a canonical string representation. Clients are advised to use this representation when displaying items as strings. The string representation is be created as follows:
+An item has a canonical string representation. Clients are advised to use this representation when displaying items as strings. The string representation can be created as follows:
 
 ```
 itemToString(item)
