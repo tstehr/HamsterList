@@ -2,7 +2,7 @@
   min-height: 3rem;
   transition: min-height 200ms ease-in-out;
 }
-.CreateItemComponent:focus-within {
+.CreateItemComponent--creatingItem {
   min-height: 33rem; /* 12 * 3rem */
 }
 .CreateItemComponent__form {
@@ -62,7 +62,7 @@
   .CreateItemComponent {
     min-height: 3.5rem;
   }
-  .CreateItemComponent:focus-within {
+  .CreateItemComponent--creatingItem {
     min-height: 39.5rem; /* 11 * 3.5rem */
   }
   .CreateItemComponent__form {

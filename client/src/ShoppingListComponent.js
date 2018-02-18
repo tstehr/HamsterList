@@ -56,7 +56,10 @@ export default class ShoppingListComponent extends Component<Props> {
             direction="vertical" rootTagName="ul" className="ShoppingListComponent__section ShoppingListComponent__list"
             style={{minHeight: `${Math.max(3*this.props.shoppingList.items.length + 3, 7.5)}rem`}}
           >
-            <FlipMove typeName={null} duration="250" staggerDurationBy="10" staggerDelayBy="10">
+            <FlipMove
+              typeName={null} duration="250" staggerDurationBy="10" staggerDelayBy="10"
+              enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
+            >
               {this.props.shoppingList.items.map((item) =>
                   <EditItemComponent  key={item.id} item={item} categories={this.props.categories} deleteItem={this.props.deleteItem} updateItem={this.props.updateItem} />
 

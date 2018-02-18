@@ -5,6 +5,7 @@ import React, { Component } from 'react'
 import FlipMove from 'react-flip-move'
 import fuzzy from 'fuzzy'
 import { type LocalItem, type CompletionItem, type CategoryDefinition, itemToString } from 'shoppinglist-shared'
+import type { CreateItem } from './ShoppingListContainerComponent'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 
 type Props = {
@@ -16,7 +17,8 @@ type Props = {
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   recentlyDeleted: $ReadOnlyArray<LocalItem>,
-  createItem: (item: LocalItem) => void,
+  createItem: CreateItem,
+  focusInput: () => void,
 }
 
 export default class CompletionsComponent extends Component<Props> {
@@ -44,6 +46,7 @@ export default class CompletionsComponent extends Component<Props> {
   render() {
     return (
       <FlipMove typeName={null} duration="250" staggerDurationBy="10" staggerDelayBy="10"
+        enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
         disableAllAnimations={this.props.disableAllAnimations}
       >
         {this.props.isCreatingItem &&
