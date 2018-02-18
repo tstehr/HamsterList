@@ -1,46 +1,67 @@
 // @flow
 // $FlowFixMe
-import React, { Component, Fragment } from 'react'
+import _ from 'lodash'
+import React, { Component } from 'react'
+import FlipMove from 'react-flip-move'
 import fuzzy from 'fuzzy'
 import { type LocalItem, type CompletionItem, type CategoryDefinition, itemToString } from 'shoppinglist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 
 type Props = {
-  itemInCreation: LocalItem,
+  isCreatingItem: boolean,
+  isMultiline: boolean,
+  focusItemsInCreation: boolean,
+  disableAllAnimations: boolean,
+  itemsInCreation: $ReadOnlyArray<LocalItem>,
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
+  recentlyDeleted: $ReadOnlyArray<LocalItem>,
   createItem: (item: LocalItem) => void,
 }
 
-type State = {
-  hasFocus: boolean
-}
-
-export default class CompletionsComponent extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props)
-    this.state = {
-      hasFocus: false
+export default class CompletionsComponent extends Component<Props> {
+  getCompletionItems() {
+    if (!this.props.isCreatingItem) {
+      return [...this.props.recentlyDeleted].reverse().slice(0, 10)
     }
+    const itemInCreation = this.props.itemsInCreation[0]
+    if (itemInCreation == null) {
+      return []
+    }
+
+    const itemInCreationName = itemInCreation.name
+
+    const results = fuzzy.filter(itemInCreationName, this.props.completions, {extract: item => item.name})
+    const sortedCompletions = results.map(el => el.original)
+
+    return sortedCompletions
+      .map((completionItem) => Object.assign({}, itemInCreation, completionItem))
+      .filter((item) => itemToString(item).toLowerCase() !== itemToString(itemInCreation).toLowerCase()
+        || item.category !== itemInCreation.category)
+      .slice(0, 10)
   }
 
   render() {
-    const itemInCreationName = this.props.itemInCreation.name
-
-    const results = fuzzy.filter(itemInCreationName, this.props.completions, {extract: item => item.name})
-    const sortedCompletions = results.map(el => el.original).slice(0, 10)
-
-    const completionItems = sortedCompletions
-      .map((completionItem) => Object.assign({}, this.props.itemInCreation, completionItem))
-      .filter((item) => itemToString(item).toLowerCase() !== itemToString(this.props.itemInCreation).toLowerCase()
-        || item.category !== this.props.itemInCreation.category)
-
     return (
-      <Fragment>
-        {completionItems.map((item) =>
-            <CreateItemButtonComponent key={item.name+'_'+item.category} item={item} categories={this.props.categories} createItem={this.props.createItem}/>
-        )}
-      </Fragment>
+      <FlipMove typeName={null} duration="250" staggerDurationBy="10" staggerDelayBy="10"
+        disableAllAnimations={this.props.disableAllAnimations}
+      >
+        {this.props.isCreatingItem &&
+          this.props.itemsInCreation.map((item, i) =>
+            <CreateItemButtonComponent key={`iic_${i}`}
+              item={item} categories={this.props.categories} createItem={this.props.createItem}
+              noArrowFocus focused={this.props.focusItemsInCreation}
+            />
+          )
+        }
+        {!this.props.isMultiline &&
+          this.getCompletionItems().map(item =>
+            <CreateItemButtonComponent key={itemToString(item) + (item.category || 'undefined')}
+              item={item} categories={this.props.categories} createItem={this.props.createItem}
+            />
+          )
+        }
+      </FlipMove>
     )
   }
 }

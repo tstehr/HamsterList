@@ -1,26 +1,69 @@
 .CreateItemComponent {
-  border: solid #4CAF50;
-  border-width: 1px 0;
+  min-height: 3rem;
+  transition: min-height 200ms ease-in-out;
+}
+.CreateItemComponent:focus-within {
+  min-height: 33rem; /* 12 * 3rem */
 }
 .CreateItemComponent__form {
+  position: relative;
   display: flex;
-  height: 3rem;
   border: solid #4CAF50;
-  border-width: 1px 0;
+  border-width: 2px 0;
 }
-.CreateItemComponent__form > input {
+.CreateItemComponent__form__inputWrapper {
+  position: relative;
+  min-height: calc(3rem - 4px);
+  max-height: calc(3rem - 4px);
+  cursor: text;
   flex: 1;
-  border: 0;
-  padding: .5rem;
-  font-size: 1rem;
-  font-family: inherit;
+  transition-property: min-height, max-height;
+  transition-duration: 100ms;
+  transition-timing-function: ease-out;
 }
-.CreateItemComponent__form > button {
+.CreateItemComponent__form__inputWrapper:focus-within {
+  box-shadow: 0 0 5px blue, inset 0 0 5px blue;
+}
+.CreateItemComponent__form--multiline .CreateItemComponent__form__inputWrapper {
+  min-height: 10rem;
+  max-height: 25rem;
+}
+.CreateItemComponent__form__inputWrapper > textarea {
+  display: block;
+  border: 0;
+  padding: calc(1rem - 2px) .5rem;
+  font-size: 1rem;
+  line-height: 1rem;
+  font-family: inherit;
+  resize: none;
+  width: 100%;
+  min-height: calc(3rem - 4px);
+  max-height: 25rem;
+  background: transparent;
+}
+.CreateItemComponent__form__inputWrapper > textarea:focus {
+  box-shadow: none;
+}
+.CreateItemComponent__form__toggleMultiline {
+  position: absolute;
+  top: 0;
+  right: 3rem;
+  width: 3rem;
+  height: calc(3rem - 4px);
+  font-size: 1.5rem;
+  border: 0;
+  background: transparent;
+  color: #999;
+}
+.CreateItemComponent__form__save {
   width: 3rem;
 }
 @media (min-width: 30rem) {
   .CreateItemComponent {
-    border: 0;
+    min-height: 3.5rem;
+  }
+  .CreateItemComponent:focus-within {
+    min-height: 39.5rem; /* 11 * 3.5rem */
   }
   .CreateItemComponent__form {
     border-width: 2px;

@@ -1,5 +1,6 @@
 // @flow
 import React, { Component, type Node } from 'react'
+import _ from 'lodash'
 
 type Direction = 'horizontal' | 'vertical'
 type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight'
@@ -37,8 +38,12 @@ export default class KeyFocusComponent extends Component<Props> {
   handleKeyDown = (e: SyntheticKeyboardEvent<>) => {
     if ((e.key === this.back || e.key === this.forward) && this.root != null) {
       const root = this.root
-      const focusable: HTMLElement[] = [...root.children]
-        .filter((el) => this.canReceiveFocus(el))
+      const tmp: $ReadOnlyArray<HTMLElement> = this.transitiveClosure([...root.children],
+          (el) => el.classList.contains("KeyFocusComponent--ignore") ? [...el.children] : []
+        )
+
+      const focusable = tmp
+        .filter((el) => this.canReceiveFocus(el) && !el.classList.contains("KeyFocusComponent--ignore"))
         .map((element) => element.querySelector('.KeyFocusComponent--defaultFocus') || element)
 
       const focused = root.querySelector(':focus')
@@ -98,11 +103,20 @@ export default class KeyFocusComponent extends Component<Props> {
     return el.tabIndex != null && el.tabIndex !== -1
   }
 
+  transitiveClosure<I>(input: $ReadOnlyArray<I>, continuation: (I) => [I]): $ReadOnlyArray<I> {
+    const working = [...input]
+    for (const el of working) {
+      working.splice(working.length, 0, ...continuation(el))
+    }
+    return Object.freeze(working)
+  }
+
   render() {
     const Component = this.props.rootTagName
     const className = this.props.className != null ? this.props.className + " KeyFocusComponent" : "KeyFocusComponent"
+    const passthroughProps = _.omit(this.props, ['rootTagName', 'className', 'children', 'direction'])
 
-    return <Component onKeyDown={this.handleKeyDown} ref={(root) => this.root = root} className={className}>
+    return <Component onKeyDown={this.handleKeyDown} ref={(root) => this.root = root} className={className} {...passthroughProps}>
       {this.props.children}
     </Component>
   }

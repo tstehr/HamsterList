@@ -3,7 +3,10 @@
 }
 .ShoppingListComponent__section {
   max-width: 30rem;
-  margin: 0 auto 2rem;
+  margin: 0 auto;
+}
+.ShoppingListComponent__list {
+  transition: min-height 200ms ease-in-out;
 }
 .ShoppingListComponent__footer {
   max-width: 30rem;

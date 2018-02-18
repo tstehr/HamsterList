@@ -17,3 +17,9 @@ button {
   font-size: .8rem;
   border: 1px solid black;
 }
+
+
+:focus {
+  outline: none;
+  box-shadow: 0 0 3px blue, inset 0 0 3px blue;
+}

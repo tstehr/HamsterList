@@ -13,7 +13,9 @@
     "material-color-hash": "^0.1.4",
     "mathjs": "^3.20.2",
     "react": "^16.2.0",
+    "react-autosize-textarea": "^3.0.2",
     "react-dom": "^16.2.0",
+    "react-flip-move": "^3.0.1",
     "react-scripts": "1.1.0",
     "shoppinglist-shared": "link:../shared"
   },
