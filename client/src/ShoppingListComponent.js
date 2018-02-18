@@ -70,12 +70,12 @@ export default class ShoppingListComponent extends Component<Props> {
                   <p className="ShoppingListComponent__emptyList__addCallout--singleCol">
                     <span role="img" aria-label="Arrow to entry form">⬇️ </span>
                     Add some new stuff below
-                    <span role="img" aria-label="Arrow to entry form">⬇️ </span>
+                    <span role="img" aria-label="Arrow to entry form"> ⬇️</span>
                   </p>
                   <p className="ShoppingListComponent__emptyList__addCallout--twoCol">
-                    <span role="img" aria-label="Arrow to entry form">➡️</span>
+                    <span role="img" aria-label="Arrow to entry form">➡️ </span>
                     Add some new stuff to the right
-                    <span role="img" aria-label="Arrow to entry form">➡️</span>
+                    <span role="img" aria-label="Arrow to entry form"> ➡️</span>
                   </p>
                 </div>
               }
