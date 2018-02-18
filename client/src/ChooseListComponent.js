@@ -22,7 +22,7 @@ export default class ChooseListComponent extends Component<void, State> {
     const formData = new FormData(e.currentTarget)
     this.setState({
       // $FlowFixMe
-      listid: formData.get('listid')
+      listid: formData.get('listid').trim()
     })
     e.preventDefault()
   }
