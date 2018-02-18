@@ -49,7 +49,8 @@ export default class CompletionsComponent extends Component<Props> {
         {this.props.isCreatingItem &&
           this.props.itemsInCreation.map((item, i) =>
             <CreateItemButtonComponent key={`iic_${i}`}
-              item={item} categories={this.props.categories} createItem={this.props.createItem}
+              item={item} categories={this.props.categories}
+              createItem={this.props.createItem} focusInput={this.props.focusInput}
               noArrowFocus focused={this.props.focusItemsInCreation}
             />
           )
@@ -57,7 +58,8 @@ export default class CompletionsComponent extends Component<Props> {
         {!this.props.isMultiline &&
           this.getCompletionItems().map(item =>
             <CreateItemButtonComponent key={itemToString(item) + (item.category || 'undefined')}
-              item={item} categories={this.props.categories} createItem={this.props.createItem}
+              item={item} categories={this.props.categories}
+              createItem={this.props.createItem} focusInput={this.props.focusInput}
             />
           )
         }

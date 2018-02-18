@@ -148,10 +148,13 @@ export default class CreateItemComponent extends Component<Props, State> {
 
   createItem = (item: LocalItem) => {
     this.setState({inputValue: ""})
+    this.props.createItem(item)
+  }
+
+  focusInput = () => {
     if (this.input != null) {
       this.input.focus()
     }
-    this.props.createItem(item)
   }
 
   hasMulipleLines() {
@@ -198,7 +201,7 @@ export default class CreateItemComponent extends Component<Props, State> {
               focusItemsInCreation={this.state.formHasFocus} disableAllAnimations={this.state.changingQuickly}
               completions={this.props.completions} categories={this.props.categories}
               itemsInCreation={itemsInCreation} recentlyDeleted={this.props.recentlyDeleted}
-              createItem={this.createItem}
+              createItem={this.createItem} focusInput={this.focusInput}
             />
           </div>
         </KeyFocusComponent>
