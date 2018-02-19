@@ -28,7 +28,8 @@
   min-height: 10rem;
   max-height: 25rem;
 }
-.CreateItemComponent__form__inputWrapper > textarea {
+.CreateItemComponent__form__inputWrapper > textarea,
+.CreateItemComponent__form__inputWrapper__placeholder {
   display: block;
   border: 0;
   padding: calc(1rem - 2px) .5rem;
@@ -37,12 +38,21 @@
   font-family: inherit;
   resize: none;
   width: 100%;
+}
+.CreateItemComponent__form__inputWrapper > textarea {
   min-height: calc(3rem - 4px);
   max-height: 25rem;
   background: transparent;
 }
 .CreateItemComponent__form__inputWrapper > textarea:focus {
   box-shadow: none;
+}
+.CreateItemComponent__form__inputWrapper__placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #999;
+  user-select: none;
 }
 .CreateItemComponent__form__toggleMultiline {
   position: absolute;

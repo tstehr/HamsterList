@@ -184,11 +184,15 @@ export default class CreateItemComponent extends Component<Props, State> {
             <div className="CreateItemComponent__form__inputWrapper" onClick={() => this.input && this.input.focus()}>
               <AutosizeTextarea
                 type="text" className="KeyFocusComponent--defaultFocus"
-                placeholder={isMultiline ? "New Item 1\nNew Item 2\n…" : "New Item"}
                 value={this.state.inputValue}
                 onChange={this.handleChange} onKeyDown={this.handleKeyDownTextarea}
                 innerRef={(input) => { this.input = input }}
               />
+              {!isCreatingItem &&
+                <div className="CreateItemComponent__form__inputWrapper__placeholder">
+                  {isMultiline ? <span>New Item 1<br />New Item 2<br />…</span> : "New Item"}
+                </div>
+              }
             </div>
             <button type="button" className="CreateItemComponent__form__toggleMultiline" onClick={this.handleToggleMultiline}>
               {isMultiline ? "▲" : "▼" }
