@@ -60,7 +60,7 @@ export default class CompletionsComponent extends Component<Props> {
         }
         {!this.props.isMultiline &&
           this.getCompletionItems().map(item =>
-            <CreateItemButtonComponent key={itemToString(item) + (item.category || 'undefined')}
+            <CreateItemButtonComponent key={itemToString(item)}
               item={item} categories={this.props.categories}
               createItem={this.props.createItem} focusInput={this.props.focusInput}
             />

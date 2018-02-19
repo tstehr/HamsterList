@@ -150,7 +150,7 @@ export default class ItemController {
 export function updateRecentlyUsed(recentlyUsed: RecentlyUsedArray, item: Item): RecentlyUsedArray {
   const completionItem = createCompletionItem(_.pick(item, 'name', 'category'))
 
-  const entryIdx = _.findIndex(recentlyUsed, entry => _.isEqual(entry.item, completionItem))
+  const entryIdx = _.findIndex(recentlyUsed, entry => entry.item.name.trim().toLowerCase() === completionItem.name.trim().toLowerCase())
 
   if (entryIdx === -1) {
     return [...recentlyUsed, {

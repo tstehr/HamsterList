@@ -321,7 +321,9 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   createItem = (localItem: LocalItem) => {
     const item = {...localItem, id: createRandomUUID()}
     this.setState((prevState) => {
-      const recentlyDeleted = prevState.recentlyDeleted.filter((delItem) => !_.isEqual(delItem, localItem))
+      const recentlyDeleted = prevState.recentlyDeleted.filter(
+        (delItem) => delItem.name.trim().toLowerCase() !== item.name.trim().toLowerCase()
+      )
       return {
         items: [...prevState.items, item],
         recentlyDeleted: recentlyDeleted,
@@ -338,7 +340,10 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       }
       const localToDelete = _.omit(toDelete, 'id')
       const listItems = [...prevState.items].filter((item) => item.id !== id)
-      let recentlyDeleted = [...prevState.recentlyDeleted.filter((item) => !_.isEqual(item, localToDelete)), localToDelete]
+      let recentlyDeleted = [
+        ...prevState.recentlyDeleted.filter((item) => item.name.trim().toLowerCase() !== localToDelete.name.trim().toLowerCase()),
+        localToDelete
+      ]
       recentlyDeleted = recentlyDeleted.slice(Math.max(0, recentlyDeleted.length - 10), recentlyDeleted.length)
       return {
         items: listItems,
@@ -356,8 +361,13 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       const index = _.findIndex(listItems, (item) => item.id === id)
       listItems[index] = item
 
+      const recentlyDeleted = prevState.recentlyDeleted.filter(
+        (delItem) => delItem.name.trim().toLowerCase() !== item.name.trim().toLowerCase()
+      )
+
       return {
         items: listItems,
+        recentlyDeleted: recentlyDeleted,
         dirty: true
       }
     }, this.requestSync)
