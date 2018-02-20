@@ -20,6 +20,8 @@ type Props = {
 
 type State = {
   inputValue: string,
+  itemsForInputLines: $ReadOnlyArray<LocalItem | null>,
+  itemsInCreation: $ReadOnlyArray<LocalItem>,
   formHasFocus: boolean,
   forceMultiline: boolean,
   changingQuickly: boolean
@@ -37,6 +39,8 @@ export default class CreateItemComponent extends Component<Props, State> {
     super(props)
     this.state = {
       inputValue: "",
+      itemsForInputLines: [],
+      itemsInCreation: [],
       formHasFocus: false,
       forceMultiline: false,
       changingQuickly: false
@@ -44,13 +48,13 @@ export default class CreateItemComponent extends Component<Props, State> {
     this.lastChange = Date.now()
   }
 
-  getItemsInCreation(): $ReadOnlyArray<LocalItem> {
-    return this.state.inputValue
+  getItemsForInputLines(inputValue: string): $ReadOnlyArray<LocalItem | null> {
+    return inputValue
       .split("\n")
       .map(str => str.trim())
-      .filter(str => str != "")
-      .map(str => createLocalItemFromString(str, this.props.categories))
-      .map(this.matchCategory.bind(this))
+      .map(str => str === "" ? null : str)
+      .map(str => str != null ? createLocalItemFromString(str, this.props.categories) : null)
+      .map(item => item != null ? this.matchCategory(item) : null)
   }
 
   matchCategory(itemFromString: LocalItem): LocalItem {
@@ -76,8 +80,8 @@ export default class CreateItemComponent extends Component<Props, State> {
   }
 
   saveItems() {
-    this.getItemsInCreation().map(this.props.createItem)
-    this.setState({inputValue: ""})
+    this.state.itemsInCreation.map(this.props.createItem)
+    this.setState(this.createInputValueUpdate(""))
     if (this.input != null) {
       this.input.focus()
     }
@@ -105,9 +109,21 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
 
     this.setState({
-      inputValue: e.target.value,
+      ...this.createInputValueUpdate(e.target.value),
       changingQuickly: changingQuickly,
     })
+  }
+
+  createInputValueUpdate(newInputValue: string) {
+    const itemsForInputLines = this.getItemsForInputLines(newInputValue)
+    // $FlowFixMe (see https://github.com/facebook/flow/issues/1414)
+    const itemsInCreation: $ReadOnlyArray<LocalItem> = itemsForInputLines.filter(itm => itm != null)
+
+    return {
+      inputValue: newInputValue,
+      itemsForInputLines: itemsForInputLines,
+      itemsInCreation: itemsInCreation,
+    }
   }
 
   handleSubmit = (e: SyntheticEvent<>) => {
@@ -147,7 +163,17 @@ export default class CreateItemComponent extends Component<Props, State> {
   }
 
   createItem = (item: LocalItem) => {
-    this.setState({inputValue: ""})
+    if (!this.isMultiline()) {
+      this.setState(this.createInputValueUpdate(""))
+    } else {
+      const lineIndex = this.state.itemsForInputLines.indexOf(item)
+      if (lineIndex !== -1) {
+        const lines = this.state.inputValue.split("\n")
+        lines.splice(lineIndex, 1)
+        const newInputValue = lines.join("\n")
+        this.setState(this.createInputValueUpdate(newInputValue))
+      }
+    }
     this.props.createItem(item)
   }
 
@@ -168,7 +194,7 @@ export default class CreateItemComponent extends Component<Props, State> {
   render() {
     const isCreatingItem = this.state.inputValue !== ""
     const isMultiline = this.isMultiline()
-    const itemsInCreation = this.getItemsInCreation()
+    const itemsInCreation = this.state.itemsInCreation
 
     const t = _.filter()
 
