@@ -19,12 +19,11 @@ export default class ChooseListComponent extends Component<void, State> {
   }
 
   onSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
-    const formData = new FormData(e.currentTarget)
+    e.preventDefault()
     this.setState({
       // $FlowFixMe
-      listid: formData.get('listid').trim()
+      listid: e.currentTarget.elements['listid'].value
     })
-    e.preventDefault()
   }
 
   async createRandomList() {
