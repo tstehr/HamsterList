@@ -21,9 +21,16 @@
     },
     {
       "id": "a81135b8-700b-4059-9f80-c60dece41d59",
-      "name": "Müsli",
-      "shortName": "MÜ",
+      "name": "Müsli und Brotaufstrich",
+      "shortName": "MB",
       "color": "#DCEDC8",
+      "lightText": false
+    },
+    {
+      "id": "43dc8a9f-31a3-491c-ba14-b7abf5a07381",
+      "name": "Reis und Hülsenfrüchte",
+      "shortName": "R",
+      "color": "#FFFFFF",
       "lightText": false
     },
     {
@@ -35,7 +42,7 @@
     },
     {
       "id": "ba9a2df5-e422-4624-9d0e-827276a8ed8a",
-      "name": "Nudeln, Reis, Hülsenfrüchte",
+      "name": "Nudeln",
       "shortName": "N",
       "color": "#FFECB3",
       "lightText": false
