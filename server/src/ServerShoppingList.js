@@ -3,7 +3,8 @@ import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import { type Item, type ShoppingList, type CompletionItem, type CategoryDefinition, createShoppingList, checkKeys, checkAttributeType, createCompletionItem, createCategoryDefinition } from 'shoppinglist-shared'
 
-export type RecentlyUsedArray = $ReadOnlyArray<{lastUsedTimestamp: number, uses: number, item: CompletionItem}>
+export type RecentlyUsed = {lastUsedTimestamp: number, uses: number, item: CompletionItem}
+export type RecentlyUsedArray = $ReadOnlyArray<RecentlyUsed>
 
 export type ServerShoppingList = {
   +id: string,

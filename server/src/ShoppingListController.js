@@ -1,6 +1,6 @@
 // @flow
 import express from 'express'
-import { type ShoppingList, createShoppingList, CategoryDefinition } from 'shoppinglist-shared'
+import { type ShoppingList, type CategoryDefinition , createShoppingList} from 'shoppinglist-shared'
 import { type DB, updateInArray } from './DB'
 import { type ServerShoppingList, createServerShoppingList, getBaseShoppingList } from './ServerShoppingList'
 import { type ShoppingListChangeCallback } from './SocketController'

@@ -1,17 +1,21 @@
 // @flow
 import _ from 'lodash'
 import express from 'express'
+import { type RecentlyUsedArray } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 
 export default class CompletionsController {
   handleGet = (req: ShoppingListRequest, res: express$Response) => {
-    const recentlyUsed = req.list.recentlyUsed
-    // $FlowFixMe
-    const sortedRecentlyUsed = _.orderBy(recentlyUsed,
-      [entry => frecency(entry)], ['desc']
-    )
-    res.json(sortedRecentlyUsed.map(entry => entry.item))
+    res.json(getSortedCompletions( req.list.recentlyUsed))
   }
+}
+
+export function getSortedCompletions(recentlyUsed: RecentlyUsedArray) {
+  // $FlowFixMe
+  const sortedRecentlyUsed = _.orderBy(recentlyUsed,
+    [entry => frecency(entry)], ['desc']
+  )
+  return sortedRecentlyUsed.map(entry => entry.item)
 }
 
 function frecency(entry: {lastUsedTimestamp: number, uses: number}) {

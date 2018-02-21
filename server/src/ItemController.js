@@ -3,12 +3,14 @@ import _ from 'lodash'
 import express from 'express'
 import {
   type Item, type LocalItem, type CompletionItem, type UUID,
-  createItem, createLocalItem, createLocalItemFromString, createCompletionItem, createUUID, createRandomUUID
+  createItem, createLocalItem, createLocalItemFromString, createCompletionItem, createUUID, createRandomUUID,
+  addMatchingCategory
 } from 'shoppinglist-shared'
 import { type DB, updateInArray } from './DB'
 import { type ServerShoppingList, type RecentlyUsedArray } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 import { type ShoppingListChangeCallback } from './SocketController'
+import { getSortedCompletions } from './CompletionsController'
 
 
 export type ItemIdRequest = {itemid: UUID} & ShoppingListRequest
@@ -46,6 +48,7 @@ export default class ItemController {
     try {
       if (req.query.parse != null) {
         localItem = createLocalItemFromString(req.body, req.list.categories)
+        localItem = addMatchingCategory(localItem, getSortedCompletions(req.list.recentlyUsed))
       } else {
         localItem = createLocalItem(req.body)
       }
@@ -80,6 +83,7 @@ export default class ItemController {
     try {
       if (req.query.parse != null) {
         let localItem = createLocalItemFromString(req.body, req.list.categories)
+        localItem = addMatchingCategory(localItem, getSortedCompletions(req.list.recentlyUsed))
         item = {...localItem, id: req.itemid}
       } else {
         item = createItem(req.body)
@@ -149,23 +153,24 @@ export default class ItemController {
 
 export function updateRecentlyUsed(recentlyUsed: RecentlyUsedArray, item: Item): RecentlyUsedArray {
   const completionItem = createCompletionItem(_.pick(item, 'name', 'category'))
-
   const entryIdx = _.findIndex(recentlyUsed, entry => entry.item.name.trim().toLowerCase() === completionItem.name.trim().toLowerCase())
 
+  const result = [...recentlyUsed]
+
   if (entryIdx === -1) {
-    return [...recentlyUsed, {
+    result.push({
       lastUsedTimestamp: Date.now(),
       uses: 1,
       item: completionItem
-    }]
+    })
   } else {
     const entry = recentlyUsed[entryIdx]
-    const result = [...recentlyUsed]
     result.splice(entryIdx, 1, {
       lastUsedTimestamp: Date.now(),
       uses: entry.uses + 1,
       item: completionItem
     })
-    return result
   }
+
+  return result
 }

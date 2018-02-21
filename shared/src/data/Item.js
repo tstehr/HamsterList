@@ -152,6 +152,28 @@ export function mergeItems(base: Item, client: Item, server: Item): Item {
   return createItem(newItem)
 }
 
+export function addMatchingCategory(item: LocalItem, completions: $ReadOnlyArray<CompletionItem>): LocalItem {
+  const exactMatchingCompletion = completions
+    .find((completionItem) =>
+      completionItem.name === item.name
+        && (item.category == null || item.category === completionItem.category)
+    )
+  if (exactMatchingCompletion != null) {
+    return Object.assign({}, item, _.omitBy(exactMatchingCompletion, (val) => val == null))
+  }
+
+  const matchingCompletion = completions
+    .find((completionItem) =>
+      completionItem.name.toLowerCase() === item.name.toLowerCase()
+        && (item.category == null || item.category === completionItem.category)
+    )
+  if (matchingCompletion != null) {
+    return Object.assign({}, item, _.omitBy(matchingCompletion, (val) => val == null))
+  }
+
+  return item
+}
+
 // export function updateLocalItem(localItem: Item, localItemSpec: Object): Item {
 //   return createLocalItem(_.merge({}, ((localItem : any): Object), localItemSpec))
 // }

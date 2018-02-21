@@ -3,7 +3,7 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 import AutosizeTextarea from 'react-autosize-textarea'
-import { type LocalItem, type CompletionItem, type CategoryDefinition, createLocalItemFromString, itemToString } from 'shoppinglist-shared'
+import { type LocalItem, type CompletionItem, type CategoryDefinition, createLocalItemFromString, itemToString, addMatchingCategory } from 'shoppinglist-shared'
 import type { CreateItem } from './ShoppingListContainerComponent'
 import CompletionsComponent from './CompletionsComponent'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
@@ -54,29 +54,7 @@ export default class CreateItemComponent extends Component<Props, State> {
       .map(str => str.trim())
       .map(str => str === "" ? null : str)
       .map(str => str != null ? createLocalItemFromString(str, this.props.categories) : null)
-      .map(item => item != null ? this.matchCategory(item) : null)
-  }
-
-  matchCategory(itemFromString: LocalItem): LocalItem {
-    const exactMatchingCompletion = this.props.completions
-      .find((completionItem) =>
-        completionItem.name === itemFromString.name
-          && (itemFromString.category == null || itemFromString.category === completionItem.category)
-      )
-    if (exactMatchingCompletion != null) {
-      return Object.assign({}, itemFromString, _.omitBy(exactMatchingCompletion, (val) => val == null))
-    }
-
-    const matchingCompletion = this.props.completions
-      .find((completionItem) =>
-        completionItem.name.toLowerCase() === itemFromString.name.toLowerCase()
-          && (itemFromString.category == null || itemFromString.category === completionItem.category)
-      )
-    if (matchingCompletion != null) {
-      return Object.assign({}, itemFromString, _.omitBy(matchingCompletion, (val) => val == null))
-    }
-
-    return itemFromString;
+      .map(item => item != null ? addMatchingCategory(item, this.props.completions) : null)
   }
 
   saveItems() {
