@@ -77,16 +77,19 @@ function getUpdatedItems(oldList: ShoppingList, newList: ShoppingList): $ReadOnl
 
   const ids = _.uniq([..._.keys(oldMap), ..._.keys(newMap)])
 
-  const updated = []
+  const updated: Item[] = []
 
   for (const id: UUID of ids) {
-    const oldItem = oldMap[id]
-    const newItem = newMap[id]
+    const oldItem: ?Item = oldMap[id]
+    const newItem: ?Item = newMap[id]
 
-    if (!_.isEqual(oldItem, newItem)) {
-      updated.push(newItem || oldItem)
+    // deletes don't count as updates
+    if (!_.isEqual(oldItem, newItem) && newItem != null) {
+      updated.push(newItem)
     }
   }
+
+  console.log(updated)
 
   return deepFreeze(updated)
 }

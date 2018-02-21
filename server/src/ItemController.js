@@ -133,7 +133,6 @@ export default class ItemController {
       const changedList = {
         ...req.list,
         items: req.list.items.filter((item) => item.id !== req.itemid),
-        recentlyUsed: updateRecentlyUsed(req.list.recentlyUsed, item)
       }
 
       this.db.set({
