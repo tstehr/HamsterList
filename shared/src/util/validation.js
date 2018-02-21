@@ -26,8 +26,11 @@ export function checkAttributeType(object: Object, key: string, type: AttributeT
 
 export function nullSafe<T, R>(func: (T) => R): (?T) => ?R {
   return function(p : ?T) {
-    if (p == null) {
+    if (p === null) {
       return null
+    }
+    if (p === undefined) {
+      return undefined
     }
     return func(p)
   }

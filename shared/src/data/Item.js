@@ -10,19 +10,19 @@ import { type CategoryDefinition } from './CategoryDefinition'
 
 export type CompletionItem = {
   +name: string,
-  +category: ?UUID
+  +category: ?UUID // undefined = no category specified | null = category explicitly set to not set
 }
 
 export type BaseItem = {
   +name: string,
   +amount: ?Amount,
-  +category: ?UUID
+  +category: ?UUID // undefined = no category specified | null = category explicitly set to not set
 }
 
 export type LocalItem = {
   +name: string,
   +amount: ?Amount,
-  +category: ?UUID,
+  +category: ?UUID, // undefined = no category specified | null = category explicitly set to not set
   [any]: empty
 }
 
@@ -30,7 +30,7 @@ export type Item = {
   +id: UUID,
   +name: string,
   +amount: ?Amount,
-  +category: ?UUID,
+  +category: ?UUID, // undefined = no category specified | null = category explicitly set to not set
   [any]: empty
 }
 
@@ -59,14 +59,20 @@ export function createLocalItem(localItemSpec: any): LocalItem {
 
 
 export function createLocalItemFromString(stringRepresentation: string, categories: $ReadOnlyArray<CategoryDefinition>): LocalItem {
-  let category: ?UUID = null
+  let category: ?UUID = undefined
   const categoryResult = stringRepresentation.match(/^\s*\(([^\)]+)\)(.*)$/u)
   if (categoryResult != null) {
     const shortName = categoryResult[1]
-    const categoryCandidate = categories.find(cat => cat.shortName == shortName)
-    if (categoryCandidate) {
-      category = categoryCandidate.id
+    console.log(shortName, shortName === "?")
+    if (shortName === "?") {
+      category = null
       stringRepresentation = categoryResult[2]
+    } else {
+      const categoryCandidate = categories.find(cat => cat.shortName == shortName)
+      if (categoryCandidate) {
+        category = categoryCandidate.id
+        stringRepresentation = categoryResult[2]
+      }
     }
   }
 
@@ -156,7 +162,7 @@ export function addMatchingCategory(item: LocalItem, completions: $ReadOnlyArray
   const exactMatchingCompletion = completions
     .find((completionItem) =>
       completionItem.name === item.name
-        && (item.category == null || item.category === completionItem.category)
+        && (item.category === undefined || item.category === completionItem.category)
     )
   if (exactMatchingCompletion != null) {
     return Object.assign({}, item, _.omitBy(exactMatchingCompletion, (val) => val == null))
@@ -165,7 +171,7 @@ export function addMatchingCategory(item: LocalItem, completions: $ReadOnlyArray
   const matchingCompletion = completions
     .find((completionItem) =>
       completionItem.name.toLowerCase() === item.name.toLowerCase()
-        && (item.category == null || item.category === completionItem.category)
+        && (item.category === undefined || item.category === completionItem.category)
     )
   if (matchingCompletion != null) {
     return Object.assign({}, item, _.omitBy(matchingCompletion, (val) => val == null))
