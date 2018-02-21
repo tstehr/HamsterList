@@ -89,7 +89,5 @@ function getUpdatedItems(oldList: ShoppingList, newList: ShoppingList): $ReadOnl
     }
   }
 
-  console.log(updated)
-
   return deepFreeze(updated)
 }
