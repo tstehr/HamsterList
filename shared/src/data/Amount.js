@@ -14,6 +14,16 @@ export type Amount = {
   [any]: empty
 }
 
+mathjs.createUnit("tbsp", {
+  definition: "1 tablespoon",
+  aliases: ["EL"]
+})
+
+mathjs.createUnit("tsp", {
+  definition: "1 teaspoon",
+  aliases: ["TL"]
+})
+
 export function createUnit(unitSpec: string): Unit {
   const unit = unitSpec.trim()
   // check if mathjs considers it a valid unit (will throw if not)
@@ -61,8 +71,8 @@ export function mergeAmounts(base: ?Amount, client: ?Amount, server: ?Amount): ?
     return client
   }
 
-  let mathjsClient = client != null ? amountToMathjsValue(client) : 1
-  let mathjsServer = server != null ? amountToMathjsValue(server) : 1
+  let mathjsClient = amountToMathjsValue(client)
+  let mathjsServer = amountToMathjsValue(server)
   try {
     if (mathjs.compare(mathjsClient, mathjsServer) > 0) {
       return client
@@ -72,6 +82,23 @@ export function mergeAmounts(base: ?Amount, client: ?Amount, server: ?Amount): ?
   } catch (e) {
     return client
   }
+}
+
+export function getSIUnit(amount: Amount) {
+  const mathjsValue = amountToMathjsValue(amount)
+  if (mathjsValue instanceof mathjs.type.Unit) {
+    return mathjsValue.toSI().toJSON().unit
+  } else {
+    return null
+  }
+}
+
+export function addAmounts(a1: ?Amount, a2: ?Amount) {
+  const mv1 = amountToMathjsValue(a1)
+  const mv2 = amountToMathjsValue(a2)
+  const mres = mathjs.add(mv1, mv2)
+  const normalizedResult = mres instanceof mathjs.type.Unit ? mathjsUnitToCookingMathjsUnit(mres) : mres
+  return mathjsValueToAmount(normalizedResult)
 }
 
 type MathjsValue = mathjs.type.Unit | mathjs.type.BigNumber | mathjs.type.Fraction | number
@@ -89,19 +116,21 @@ function toNumber(mathjsValue: MathjsValue): number {
   }
 }
 
-function mathjsValueToAmount(mathjsValue: MathjsValue): Amount{
+function mathjsValueToAmount(mathjsValue: MathjsValue): Amount {
   return createAmount({
     value: toNumber(mathjsValue),
     unit: mathjsValue instanceof mathjs.type.Unit ? mathjsValue.toJSON().unit : undefined
   })
 }
 
-function amountToMathjsValue(amount: Amount): MathjsValue {
+function amountToMathjsValue(amount: ?Amount): MathjsValue {
+  if (amount == null) {
+    return 1
+  }
   if (amount.unit != null) {
     return mathjs.unit(amount.value, amount.unit)
-  } else {
-    return amount.value
   }
+  return amount.value
 }
 
 function mathjsUnitToCookingMathjsUnit(mathjsUnit: mathjs.type.Unit): mathjs.type.Unit {

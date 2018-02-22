@@ -2,7 +2,7 @@
 import jest from 'jest'
 import {
   type Amount, type AmountValue, type Unit,
-  createAmount, createAmountFromString, createCookingAmount, createAmountValue, createUnit, mergeAmounts
+  createAmount, createAmountFromString, createCookingAmount, createAmountValue, createUnit, mergeAmounts, getSIUnit, addAmounts
 } from './Amount'
 
 describe(`createAmountValue`, () => {
@@ -201,5 +201,53 @@ describe('mergeAmounts', () => {
       const server = createAmountFromString("14 kg")
       const merged = mergeAmounts(base, client, server)
       expect(merged).toEqual(client)
+  })
+})
+
+describe('getSIUnit', () => {
+  it('Gets a SI uni from imperial', () => {
+    const amount = createAmountFromString('5 floz')
+    const derived = createCookingAmount(amount)
+    expect(getSIUnit(amount)).toEqual('m^3')
+  })
+
+  it('Gets a SI unit from liters', () => {
+    const amount = createAmountFromString('20 ml')
+    const derived = createCookingAmount(amount)
+    expect(getSIUnit(amount)).toEqual('m^3')
+  })
+
+  it('Returns null for amounts without unit', () => {
+    const amount = createAmountFromString('20')
+    const derived = createCookingAmount(amount)
+    expect(getSIUnit(amount)).toEqual(null)
+  })
+})
+
+describe('addAmounts', () => {
+  it('Adds two volumes', () => {
+    const a1 = createAmountFromString("5 l")
+    const a2 = createAmountFromString("500 ml")
+    expect(addAmounts(a1, a2)).toEqual({
+      value: 5.5,
+      unit: 'l'
+    })
+  })
+
+  it('Adds two volumes with different units', () => {
+    const a1 = createAmountFromString("50 ml")
+    const a2 = createAmountFromString("3 EL")
+    const result = addAmounts(a1, a2)
+    expect(result.unit).toEqual("ml")
+    expect(result.value).toBeCloseTo(95)
+  })
+
+  it('Doesn\'t add two volumes with incompatible units', () => {
+    const a1 = createAmountFromString("50 ml")
+    const a2 = createAmountFromString("30 g")
+
+    expect(() => {
+      addAmounts(a1, a2)
+    }).toThrow('Units do not match')
   })
 })

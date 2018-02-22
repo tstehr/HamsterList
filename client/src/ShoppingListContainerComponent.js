@@ -17,7 +17,7 @@ export type ConnectionState = "disconnected" | "polling" | "socket"
 
 export type UpdateListTitle = (newTitle: string) => void
 export type CreateItem = (item: LocalItem) => void
-export type DeleteItem = (id: UUID) => void
+export type DeleteItem = (id: UUID, addToRecentlyDeleted?: boolean) => void
 export type UpdateItem = (id: UUID, localItem: LocalItem) => void
 
 type Props = {
@@ -332,7 +332,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }, this.requestSync)
   }
 
-  deleteItem = (id: UUID) => {
+  deleteItem = (id: UUID, addToRecentlyDeleted?: boolean = true) => {
     this.setState((prevState) => {
       const toDelete = prevState.items.find((item) => item.id === id)
       if (toDelete == null) {
@@ -340,11 +340,14 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       }
       const localToDelete = _.omit(toDelete, 'id')
       const listItems = [...prevState.items].filter((item) => item.id !== id)
-      let recentlyDeleted = [
-        ...prevState.recentlyDeleted.filter((item) => item.name.trim().toLowerCase() !== localToDelete.name.trim().toLowerCase()),
-        localToDelete
-      ]
+
+      let recentlyDeleted = prevState.recentlyDeleted
+        .filter((item) => item.name.trim().toLowerCase() !== localToDelete.name.trim().toLowerCase())
+      if (addToRecentlyDeleted) {
+        recentlyDeleted.push(localToDelete)
+      }
       recentlyDeleted = recentlyDeleted.slice(Math.max(0, recentlyDeleted.length - 10), recentlyDeleted.length)
+
       return {
         items: listItems,
         recentlyDeleted: recentlyDeleted,
