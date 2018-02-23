@@ -26,8 +26,13 @@ export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnly
   checkAttributeType(shoppingListSpec, 'title', 'string')
   checkAttributeType(shoppingListSpec, 'items', 'array')
 
-
   let items = shoppingListSpec.items.map(createItem)
+
+  let duplicatedIds = _.chain(items).groupBy('id').entries().filter(([id, items]) => items.length > 1).map(([id, items]) => id).value()
+  if (duplicatedIds.length > 0) {
+    throw new TypeError(`ShoppingList "${shoppingListSpec.title}" has duplicated ids: ${duplicatedIds.join(', ')}`)
+  }
+
   if (categories != null) {
     const categoryIds = categories.map((cat) => cat.id)
     const categoryIteratee = (item: Item) => convertSmallerZeroToInf(categoryIds.indexOf(item.category))
