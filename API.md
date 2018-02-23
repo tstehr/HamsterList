@@ -48,7 +48,7 @@ Gets the current items of the list.
 
 Creates a new item, `id` must be omitted in body and will be assigned by the server. If you wish to create items with the `id` assigned by the client, use the PUT endpoint instead.
 
-Clients may choose to send an item's [string representation](#string-representation) instead of the item by appending the query parameter `parse` (`/:listid/items?parse`).
+Clients may also send an item's [string representation](#string-representation).
 
 On success, returns the newly created with status *201 Created*. The *Location* header will contain the URL of the new item.
 
@@ -56,7 +56,7 @@ On success, returns the newly created with status *201 Created*. The *Location* 
 
 Creates or updates item, `id`  in body and `:id` in the URL must be equal.
 
-Clients may choose to send an item's [string representation](#string-representation) instead of the item by appending the query parameter `parse` (`/:listid/items/:id?parse`).
+Clients may also send an item's [string representation](#string-representation).
 
 On success, may return status *200 Success* for successful update or *201 Created* for successful creation.
 
@@ -88,11 +88,13 @@ Used for sync with offline-capable clients. This is __not__ a REST endpoint!
 
 To use the sync endpoint the client should persistently store the response of the last sync and send it together with the current local state. The client state and the server state will then be merged to produce a new state, which is sent as response. Use the GET endpoint to obtain an initial sync state.
 
+Note that in `currentState`, you may also send an item's [string representation](#string-representation) instead of the item.
+
 ## Change Notifications
 
 Clients can connect to the server to receive notifications when a [ShoppingList] is updated. For this the server provides a WebSocket at `/:listid/socket`.
 
-Whenever the list is touched[^touch] on the server, its current token is pushed to the client. The client can compare it to the token of its previous sync to determine whether a sync is necessary.
+Whenever the list is touched on the server, its current token is pushed to the client. The client can compare it to the token of its previous sync to determine whether a sync is necessary.
 
 Note: A touch indicates a server operation on the [ShoppingList], e.g. a PUT on an [Item] or a POST to `/:listid/sync`. The operation may have not changed the [ShoppingList] at all. However, every change is guaranteed to be a touch.
 
@@ -151,8 +153,14 @@ itemToString(item)
 
 Note that two different items my share the same string description, e.g.  for `item1 = {name: "kg", amount: {value: 1}}` and `item2 = {name: "", amount: {value: 1, unit: "kg"} }`
 
-When having the server parse the string representation you may  prepend the `shortName` of a [CategoryDefinition] in parentheses to assign that category to the item, e.g. `(M) 1 litre Milk` to assign the category with `shortName = m`.
+Instead of the object as specified above clients may also send the following object to have the server parse the string representation.
 
+| Field                | Type            | Description                             |
+|----------------------|-----------------|-----------------------------------------|
+| id                   | String, UUID-v4 | Unique identifier of the item           |
+| stringRepresentation | String          | String representation of the item       |
+
+When having the server parse the string representation you may prepend the `shortName` of a [CategoryDefinition] in parentheses to assign that category to the item, e.g. `(M) 1 litre Milk` to assign the category with `shortName = M`.
 
 ### CompletionItem
 

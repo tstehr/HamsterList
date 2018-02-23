@@ -23,7 +23,6 @@ export type LocalItem = {
   +name: string,
   +amount: ?Amount,
   +category: ?UUID, // undefined = no category specified | null = category explicitly set to not set
-  [any]: empty
 }
 
 export type Item = {
@@ -31,8 +30,8 @@ export type Item = {
   +name: string,
   +amount: ?Amount,
   +category: ?UUID, // undefined = no category specified | null = category explicitly set to not set
-  [any]: empty
 }
+
 
 export function createCompletionItem(completionItemSpec: any): CompletionItem {
   checkKeys(completionItemSpec, ['name', 'category'])
@@ -45,6 +44,7 @@ export function createCompletionItem(completionItemSpec: any): CompletionItem {
 
   return deepFreeze(item)
 }
+
 
 export function createLocalItem(localItemSpec: any): LocalItem {
   const localItem = createCompletionItem(_.omit(localItemSpec, ['amount']))
@@ -100,6 +100,16 @@ export function createLocalItemFromString(stringRepresentation: string, categori
   })
 }
 
+
+
+export function createLocalItemFromItemStringRepresentation(itemStringRepresentation: any, categories: $ReadOnlyArray<CategoryDefinition>): LocalItem {
+  checkKeys(itemStringRepresentation, ['stringRepresentation'])
+  checkAttributeType(itemStringRepresentation, 'stringRepresentation', 'string')
+
+  return createLocalItemFromString(itemStringRepresentation.stringRepresentation, categories)
+}
+
+
 export function createItem(itemSpec: any): Item {
   const localItem = createLocalItem(_.omit(itemSpec, ['id']))
   checkAttributeType(itemSpec, 'id', 'string')
@@ -107,6 +117,16 @@ export function createItem(itemSpec: any): Item {
   const item = {}
   Object.assign(item, localItem)
   item.id = createUUID(itemSpec.id)
+
+  return deepFreeze(item)
+}
+
+export function createItemFromItemStringRepresentation(itemStringRepresentation: any, categories: $ReadOnlyArray<CategoryDefinition>): Item {
+  const localItem = createLocalItemFromItemStringRepresentation(_.omit(itemStringRepresentation, ['id']), categories)
+
+  const item = {}
+  Object.assign(item, localItem)
+  item.id = createUUID(itemStringRepresentation.id)
 
   return deepFreeze(item)
 }
@@ -158,13 +178,14 @@ export function mergeItems(base: Item, client: Item, server: Item): Item {
   return createItem(newItem)
 }
 
-export function addMatchingCategory(item: LocalItem, completions: $ReadOnlyArray<CompletionItem>): LocalItem {
+export function addMatchingCategory<T: LocalItem>(item: T, completions: $ReadOnlyArray<CompletionItem>): T {
   const exactMatchingCompletion = completions
     .find((completionItem) =>
       completionItem.name === item.name
         && (item.category === undefined || item.category === completionItem.category)
     )
   if (exactMatchingCompletion != null) {
+    // $FlowFixMe
     return Object.assign({}, item, _.omitBy(exactMatchingCompletion, (val) => val == null))
   }
 
@@ -174,6 +195,7 @@ export function addMatchingCategory(item: LocalItem, completions: $ReadOnlyArray
         && (item.category === undefined || item.category === completionItem.category)
     )
   if (matchingCompletion != null) {
+    // $FlowFixMe
     return Object.assign({}, item, _.omitBy(matchingCompletion, (val) => val == null))
   }
 

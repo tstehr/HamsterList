@@ -4,7 +4,7 @@ import express from 'express'
 import {
   type Item, type LocalItem, type CompletionItem, type UUID,
   createItem, createLocalItem, createLocalItemFromString, createCompletionItem, createUUID, createRandomUUID,
-  addMatchingCategory
+  addMatchingCategory, createLocalItemFromItemStringRepresentation, createItemFromItemStringRepresentation
 } from 'shoppinglist-shared'
 import { type DB, updateInArray } from './DB'
 import { type ServerShoppingList, type RecentlyUsedArray } from './ServerShoppingList'
@@ -46,8 +46,9 @@ export default class ItemController {
   handlePost = (req: ShoppingListRequest, res: express$Response) => {
     let localItem: LocalItem
     try {
-      if (req.query.parse != null) {
-        localItem = createLocalItemFromString(req.body, req.list.categories)
+      // $FlowFixMe
+      if (req.body.stringRepresentation != null) {
+        localItem = createLocalItemFromItemStringRepresentation(req.body, req.list.categories)
         localItem = addMatchingCategory(localItem, getSortedCompletions(req.list.recentlyUsed))
       } else {
         localItem = createLocalItem(req.body)
@@ -81,10 +82,10 @@ export default class ItemController {
   handlePut = (req: ItemIdRequest, res: express$Response) => {
     let item: Item
     try {
-      if (req.query.parse != null) {
-        let localItem = createLocalItemFromString(req.body, req.list.categories)
-        localItem = addMatchingCategory(localItem, getSortedCompletions(req.list.recentlyUsed))
-        item = {...localItem, id: req.itemid}
+      // $FlowFixMe
+      if (req.body.stringRepresentation != null) {
+        item = createItemFromItemStringRepresentation(req.body, req.list.categories)
+        item = addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
       } else {
         item = createItem(req.body)
       }

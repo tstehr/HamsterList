@@ -1,14 +1,19 @@
 // @flow
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
-import { type ShoppingList, type SyncRequest, type Item, type UUID, createShoppingList, createSyncRequest, mergeShoppingLists } from 'shoppinglist-shared'
+import {
+  type ShoppingList, type SyncRequest, type Item, type UUID,
+  createShoppingList, createSyncRequest, mergeShoppingLists, addMatchingCategory, createItemFromItemStringRepresentation
+} from 'shoppinglist-shared'
 import { type DB, updateInArray } from './DB'
 import { type ServerShoppingList, getBaseShoppingList, createServerShoppingList } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 import { type ShoppingListChangeCallback } from './SocketController'
 import * as ShoppingListController from './ShoppingListController'
 import { updateRecentlyUsed } from './ItemController'
+import { getSortedCompletions } from './CompletionsController'
 import TokenCreator from './TokenCreator'
+
 
 export default class SyncController {
   db: DB
@@ -28,6 +33,19 @@ export default class SyncController {
   handlePost = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     let syncRequest: SyncRequest
     try {
+      // Convert stringRepresentation items to full items
+      // $FlowFixMe
+      if (req.body && req.body.currentState && Array.isArray(req.body.currentState.items)) {
+        // $FlowFixMe
+        req.body.currentState.items = req.body.currentState.items.map(itemSpec => {
+          if (itemSpec.stringRepresentation == null) {
+            return itemSpec
+          }
+          let item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
+          return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
+        })
+      }
+
       syncRequest = createSyncRequest(req.body)
     } catch (e) {
       res.status(400).json({error: e.message})
