@@ -24,6 +24,16 @@ export function checkAttributeType(object: Object, key: string, type: AttributeT
   }
 }
 
+export function errorMap<I, O>(array: I[], transformer: (I) => O): O[] {
+  return array.map((el, i) => {
+    try {
+      return transformer(el)
+    } catch (e) {
+      throw new TypeError(`Error in element ${i}: ${e.message}`)
+    }
+  })
+}
+
 export function nullSafe<T, R>(func: (T) => R): (?T) => ?R {
   return function(p : ?T) {
     if (p === null) {

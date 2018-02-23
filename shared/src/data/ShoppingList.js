@@ -5,7 +5,7 @@ import deepFreeze from 'deep-freeze'
 import { type Item, createItem, mergeItems } from './Item'
 import { type CategoryDefinition } from './CategoryDefinition'
 import { type UUID } from '../util/uuid'
-import { checkKeys, checkAttributeType } from '../util/validation'
+import { checkKeys, checkAttributeType, errorMap } from '../util/validation'
 
 export type BaseShoppingList = {
   +id: string,
@@ -26,7 +26,7 @@ export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnly
   checkAttributeType(shoppingListSpec, 'title', 'string')
   checkAttributeType(shoppingListSpec, 'items', 'array')
 
-  let items = shoppingListSpec.items.map(createItem)
+  let items = errorMap(shoppingListSpec.items, createItem)
 
   let duplicatedIds = _.chain(items).groupBy('id').entries().filter(([id, items]) => items.length > 1).map(([id, items]) => id).value()
   if (duplicatedIds.length > 0) {

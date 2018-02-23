@@ -38,8 +38,16 @@ export function createSyncRequest(syncRequestSpec: any): SyncRequest {
   checkAttributeType(syncRequestSpec, 'currentState', 'object')
 
   const syncRequest = {}
-  syncRequest.previousSync = createSyncedShoppingList(syncRequestSpec.previousSync, null)
-  syncRequest.currentState = createShoppingList(syncRequestSpec.currentState, null)
+  try {
+    syncRequest.previousSync = createSyncedShoppingList(syncRequestSpec.previousSync, null)
+  } catch (e) {
+    throw new TypeError(`Error in previousSync: ${e.message}`)
+  }
+  try {
+    syncRequest.currentState = createShoppingList(syncRequestSpec.currentState, null)
+  } catch (e) {
+    throw new TypeError(`Error in previousSync: ${e.message}`)
+  }
 
   return deepFreeze(syncRequest)
 }
