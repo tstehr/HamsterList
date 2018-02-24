@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react'
+import { withRouter, Link, Route } from 'react-router-dom'
 import { type Item, type LocalItem, type CategoryDefinition, type UUID, itemToString, createLocalItemFromString } from 'shoppinglist-shared'
 import type { DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
 import ItemComponent from './ItemComponent'
@@ -18,9 +19,9 @@ type Props = {
 type State = {
   hasFocus: boolean,
   isEditing: boolean,
-  isChoosingCategory: boolean,
   inputValue: string,
 }
+
 
 export default class EditItemComponent extends Component<Props, State> {
   input: ?HTMLInputElement
@@ -31,8 +32,7 @@ export default class EditItemComponent extends Component<Props, State> {
     this.state = {
       hasFocus: false,
       isEditing: false,
-      isChoosingCategory: false,
-      inputValue: ""
+      inputValue: "",
     }
   }
 
@@ -52,7 +52,6 @@ export default class EditItemComponent extends Component<Props, State> {
       category: category
     }
     this.props.updateItem(this.props.item.id, updatedItem)
-    this.setState({isChoosingCategory: false})
   }
 
   handleFocus = () => {
@@ -113,9 +112,14 @@ export default class EditItemComponent extends Component<Props, State> {
   render() {
     return (
         <KeyFocusComponent direction="horizontal" rootTagName="li" className="EditItemComponent">
-          <button type="button" onClick={() => this.setState({isChoosingCategory: true})} className="EditItemComponent__category">
-            <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories} />
-          </button>
+          <Route render={({history, location, match}) =>
+            <button type="button" className="EditItemComponent__category"
+              onClick={() => history.push(`/${match.params.listid}/${this.props.item.id}/category`)}
+            >
+              <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories} />
+            </button>
+          } />
+
           <div className="EditItemComponent__name">
             {
               this.state.isEditing
@@ -139,8 +143,16 @@ export default class EditItemComponent extends Component<Props, State> {
             }
           </div>
           <button onClick={() => this.props.deleteItem(this.props.item.id)}>Delete</button>
-          {this.state.isChoosingCategory &&
-            <ChooseCategoryComponent categories={this.props.categories} categoryId={this.props.item.category} updateCategory={this.updateCategory}/>}
+
+          <Route path={`/:listid/${this.props.item.id}/category`} render={({history, match}) =>
+            <ChooseCategoryComponent
+              categories={this.props.categories} categoryId={this.props.item.category}
+              updateCategory={(category) => {
+                this.updateCategory(category)
+                history.push(`/${match.params.listid}`)
+              }}
+            />
+          } />
         </KeyFocusComponent>
     )
   }
