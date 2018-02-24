@@ -2,17 +2,21 @@
 
 if [ -f env.sh ]
 then
-  echo "Using env.sh"
+  echo "[prepare] Using env.sh"
   source ./env.sh
 fi
 
-./install.sh
+./install.sh | sed "s/^/[install] /"
+
 cd shared
-yarn build
+yarn build | sed "s/^/[build] [shared] /"
+
 cd ../server
-yarn build
+yarn build | sed "s/^/[build] [server] /"
+
 cd ../client
-yarn build
+yarn build | sed "s/^/[build] [client] /"
+
 cd ../
 
 rm -rf server/static
