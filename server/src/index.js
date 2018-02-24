@@ -105,11 +105,6 @@ db.load()
       res.status(404).json({error: "This route doesn't exist."})
     })
 
-    app.use('*', (req: express$Request, res: express$Response, next) => {
-      console.log(req)
-      next()
-    })
-
     app.use('/api', router)
 
     if (nconf.get('nodeEnv') === 'production') {
