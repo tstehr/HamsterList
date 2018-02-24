@@ -15,6 +15,7 @@ flow-typed/
 # server folder
 server/state/
 server/config.json
+server/static/
 
 # client build config
 env.sh

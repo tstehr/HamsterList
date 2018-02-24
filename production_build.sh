@@ -13,3 +13,7 @@ cd ../server
 yarn build
 cd ../client
 yarn build
+cd ../
+
+rm -rf server/static
+mv client/build server/static

@@ -105,11 +105,16 @@ db.load()
       res.status(404).json({error: "This route doesn't exist."})
     })
 
+    app.use('*', (req: express$Request, res: express$Response, next) => {
+      console.log(req)
+      next()
+    })
+
     app.use('/api', router)
 
     if (nconf.get('nodeEnv') === 'production') {
-      app.use(express.static('../client/build'))
-      app.use((req: express$Request, res: express$Response) => res.sendFile(path.resolve('../client/build/index.html')))
+      app.use(express.static('static'))
+      app.use((req: express$Request, res: express$Response) => res.sendFile(path.resolve('static/index.html')))
     }
 
 
