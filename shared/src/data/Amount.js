@@ -32,6 +32,12 @@ export function createUnit(unitSpec: string): Unit {
 }
 
 export function createAmountValue(valueSpec: number): AmountValue {
+  if (Number.isNaN(valueSpec)) {
+    throw new TypeError('AmountValue may not be NaN')
+  }
+  if (!Number.isFinite(valueSpec)) {
+    throw new TypeError('AmountValue must be finite')
+  }
   if (valueSpec <= 0) {
     throw new TypeError('AmountValue can only be positive')
   }

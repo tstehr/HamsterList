@@ -98,6 +98,12 @@ describe('createAmountFromString', () => {
   it("Creates Amount with unit", () => {
     const amount = createAmountFromString('(17 - 3) m/s^2')
   })
+
+  it('Handles "1/0" correctly', () => {
+    expect(() => {
+      createAmountFromString('1/0')
+    }).toThrow('AmountValue must be finite')
+  })
 })
 
 describe('createCookingAmount', () => {
