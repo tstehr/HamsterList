@@ -4,6 +4,7 @@ import { type Iteratee } from 'lodash'
 import deepFreeze from 'deep-freeze'
 import { type Item, createItem, mergeItems } from './Item'
 import { type CategoryDefinition } from './CategoryDefinition'
+import { type CategoryOrder, sortItems } from './Order'
 import { type UUID } from '../util/uuid'
 import { checkKeys, checkAttributeType, errorMap } from '../util/validation'
 
@@ -34,9 +35,7 @@ export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnly
   }
 
   if (categories != null) {
-    const categoryIds = categories.map((cat) => cat.id)
-    const categoryIteratee = (item: Item) => convertSmallerZeroToInf(categoryIds.indexOf(item.category))
-    items = _.sortBy(items, ([categoryIteratee, getNameLowerCase, 'id'] : Array<Iteratee<Item>>))
+    items = sortItems(items, categories.map((cat) => cat.id))
   }
 
   const shoppingList = {}
@@ -45,6 +44,13 @@ export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnly
   shoppingList.items = items
 
   return deepFreeze(shoppingList)
+}
+
+export function sortShoppingList(shoppingList: ShoppingList, categoryOrder: $ReadOnlyArray<?UUID>) {
+  return {
+    ...shoppingList,
+    items: sortItems(shoppingList.items, categoryOrder)
+  }
 }
 
 export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, server: ShoppingList, categories: ?$ReadOnlyArray<CategoryDefinition>): ShoppingList {
@@ -92,12 +98,4 @@ function mergeHandleDelete(newList: any, base: Item, remaining: Item) {
   if (!_.isEqual(base, remaining)) {
     newList.items.push(remaining)
   }
-}
-
-function convertSmallerZeroToInf(index: number) {
-  return index < 0 ? Infinity : index
-}
-
-function getNameLowerCase(named: {name: string}) {
-  return named.name.toLowerCase()
 }
