@@ -162,6 +162,8 @@ Instead of the object as specified above clients may also send the following obj
 
 When having the server parse the string representation you may prepend the `shortName` of a [CategoryDefinition] in parentheses to assign that category to the item, e.g. `(M) 1 litre Milk` to assign the category with `shortName = M`.
 
+If no category is present when parsing the string representation the server will try to assign a matching category from an internal list of recently used categories. 
+
 ### CompletionItem
 
 This object represents an item for purposes of completions. This is essentially [Item], but simplified.
