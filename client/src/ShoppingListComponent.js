@@ -1,13 +1,11 @@
 // @flow
 import React, { Component } from 'react'
 import _ from 'lodash'
-import FlipMove from 'react-flip-move'
 import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
 import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
 import TopBarComponent from './TopBarComponent'
-import EditItemComponent from './EditItemComponent'
 import CreateItemComponent from './CreateItemComponent'
-import KeyFocusComponent from './KeyFocusComponent'
+import ShoppingListItemsComponent from './ShoppingListItemsComponent';
 import './ShoppingListComponent.css'
 
 type Props = {
@@ -87,35 +85,11 @@ export default class ShoppingListComponent extends Component<Props> {
           dirty={this.props.dirty}
         />
         <div  className="ShoppingListComponent__body">
-          <KeyFocusComponent
-            direction="vertical" rootTagName="ul" className="ShoppingListComponent__section ShoppingListComponent__list"
-            style={{minHeight: `${Math.max(3*this.props.shoppingList.items.length + 3, 7.5)}rem`}}
-          >
-            <FlipMove
-              typeName={null} duration="250" staggerDurationBy="10" staggerDelayBy="10"
-              enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
-            >
-              {this.props.shoppingList.items.map((item) =>
-                  <EditItemComponent  key={item.id} item={item} categories={this.props.categories} deleteItem={this.props.deleteItem} updateItem={this.props.updateItem} />
-
-              )}
-              {!this.props.shoppingList.items.length &&
-                <div className="ShoppingListComponent__emptyList">
-                  <p>Empty list, nothing needed <span role="img" aria-label="Party Popper">🎉</span></p>
-                  <p className="ShoppingListComponent__emptyList__addCallout--singleCol">
-                    <span role="img" aria-label="Arrow to entry form">⬇️ </span>
-                    Add some new stuff below
-                    <span role="img" aria-label="Arrow to entry form"> ⬇️</span>
-                  </p>
-                  <p className="ShoppingListComponent__emptyList__addCallout--twoCol">
-                    <span role="img" aria-label="Arrow to entry form">➡️ </span>
-                    Add some new stuff to the right
-                    <span role="img" aria-label="Arrow to entry form"> ➡️</span>
-                  </p>
-                </div>
-              }
-            </FlipMove>
-          </KeyFocusComponent>
+          <div className="ShoppingListComponent__section">
+            <ShoppingListItemsComponent items={this.props.shoppingList.items} categories={this.props.categories}
+              updateItem={this.props.updateItem} deleteItem={this.props.deleteItem}
+            />
+          </div>
           <div className="ShoppingListComponent__section">
             <CreateItemComponent
               recentlyDeleted={this.props.recentlyDeleted}
