@@ -12,21 +12,7 @@ type Props = {
 
 
 export default function CategoryComponent(props: Props) {
-  let category : ?CategoryDefinition
-  if (props.category != null) {
-    category = props.category
-  } else if (props.categories != null && props.categoryId != null){
-    category = _.find(props.categories, (category) => category.id === props.categoryId)
-  }
-  if (category == null) {
-    category = createCategoryDefinition({
-      "id": "00000000-0000-4000-b000-000000000000",
-      "name": "Unknown Category",
-      "shortName": "?",
-      "color": "#ccc",
-      "lightText": false
-    })
-  }
+  let category = getCategory(props)
 
   const initials = category.shortName
   const style = {
@@ -37,4 +23,38 @@ export default function CategoryComponent(props: Props) {
   return <div className="CategoryComponent" title={category.name}>
     <div className="CategoryComponent__circle" style={style}><span>{initials}</span></div>
   </div>
+}
+
+const unknownCategory = createCategoryDefinition({
+  "id": "ffffffff-ffff-4fff-bfff-ffffffffffff",
+  "name": "Unknown Category",
+  "shortName": "?",
+  "color": "#ccc",
+  "lightText": false
+})
+
+const variantSelector15 = String.fromCharCode(0xfe0e)
+
+const invalidCategory = createCategoryDefinition({
+  "id": "00000000-0000-4000-b000-000000000000",
+  "name": "Invalid Category",
+  "shortName": `╳`,
+  "color": "#000",
+  "lightText": true
+})
+
+function getCategory(props: Props): CategoryDefinition {
+  if (props.category != null) {
+    return props.category
+  }
+  if (props.categories == null || props.categoryId == null) {
+    return unknownCategory
+  }
+
+  const category = _.find(props.categories, (category) => category.id === props.categoryId)
+  if (category != null) {
+    return category
+  }
+
+  return invalidCategory
 }
