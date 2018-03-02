@@ -9,6 +9,7 @@ import { createUUID } from '../util/uuid';
 describe('createOrder', () => {
   it('Creates an order from a valid spec', () => {
     const order = createOrder({
+      id: '579562a4-8be6-464c-9011-e87042b6241b',
       name: 'real',
       categoryOrder: [
         "8178a592-7783-4755-9202-8e463ab23234",
@@ -20,6 +21,7 @@ describe('createOrder', () => {
   it(`Doesn't create an order with additional keys`, () => {
     expect(() => {
       createOrder({
+        id: '579562a4-8be6-464c-9011-e87042b6241b',
         name: 'real',
         categoryOrder: [
           "8178a592-7783-4755-9202-8e463ab23234",
@@ -55,6 +57,7 @@ describe('sortItems', () => {
   ]
 
   const order = createOrder({
+    id: '579562a4-8be6-464c-9011-e87042b6241b',
     name: 'real',
     categoryOrder: [
       "8178a592-7783-4755-9202-8e463ab23234",

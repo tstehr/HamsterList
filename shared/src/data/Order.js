@@ -9,16 +9,19 @@ import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/valid
 export type CategoryOrder = $ReadOnlyArray<?UUID>
 
 export type Order = {
+  +id: UUID,
   +name: string,
   +categoryOrder: CategoryOrder
 }
 
 export function createOrder(orderSpec: any): Order {
-  checkKeys(orderSpec, ['name', 'categoryOrder'])
+  checkKeys(orderSpec, ['id', 'name', 'categoryOrder'])
+  checkAttributeType(orderSpec, 'id', 'string')
   checkAttributeType(orderSpec, 'name', 'string')
   checkAttributeType(orderSpec, 'categoryOrder', 'array')
 
   const order = {}
+  order.id = createUUID(orderSpec.id)
   order.name = orderSpec.name.trim()
   order.categoryOrder = errorMap(orderSpec.categoryOrder, nullSafe(createUUID))
 
