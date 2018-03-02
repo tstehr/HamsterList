@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { type Iteratee } from 'lodash'
 import { type Item } from './Item'
 import { type UUID, createUUID } from '../util/uuid'
-import { checkKeys, checkAttributeType, errorMap } from '../util/validation'
+import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/validation'
 
 export type CategoryOrder = $ReadOnlyArray<?UUID>
 
@@ -20,16 +20,23 @@ export function createOrder(orderSpec: any): Order {
 
   const order = {}
   order.name = orderSpec.name.trim()
-  order.categoryOrder = errorMap(orderSpec.categoryOrder, createUUID)
+  order.categoryOrder = errorMap(orderSpec.categoryOrder, nullSafe(createUUID))
 
   return deepFreeze(order)
 }
 
 
 export function sortItems(items: $ReadOnlyArray<Item>, categoryOrder: CategoryOrder): $ReadOnlyArray<Item> {
-  const categoryIteratee = (item: Item) => convertSmallerZeroToInf(categoryOrder.indexOf(item.category))
+  const categoryIteratee = (item: Item) => convertSmallerZeroToInf(categoryOrder.indexOf(undefinedToNull(item.category)))
   // sortBy doesn't mutate, but isn't annotated correctly...
   return _.sortBy(((items: any): Item[]), ([categoryIteratee, getNameLowerCase, 'id'] : Array<Iteratee<Item>>))
+}
+
+function undefinedToNull<T>(input: ?T): ?T {
+  if (input === undefined) {
+    return null
+  }
+  return input
 }
 
 
