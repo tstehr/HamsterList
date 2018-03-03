@@ -19,6 +19,7 @@ import SocketController from './SocketController'
 import SyncController from './SyncController'
 import CompletionsController from './CompletionsController'
 import CategoriesController from './CategoriesController'
+import OrdersController from './OrdersController'
 import TokenCreator from './TokenCreator'
 
 nconf.env({
@@ -79,6 +80,7 @@ db.load()
     const itemController = new ItemController(db, socketController.notifiyChanged)
     const syncController = new SyncController(db, socketController.notifiyChanged, tokenCreator)
     const categoriesController = new CategoriesController(db, socketController.notifiyChanged)
+    const ordersController = new OrdersController(db, socketController.notifiyChanged)
     const completionsController = new CompletionsController()
 
     router.param('listid', shoppingListController.handleParamListid)
@@ -97,6 +99,9 @@ db.load()
 
     router.get('/:listid/categories', categoriesController.handleGet)
     router.put('/:listid/categories', categoriesController.handlePut)
+
+    router.get('/:listid/orders', ordersController.handleGet)
+    router.put('/:listid/orders', ordersController.handlePut)
 
     router.get('/:listid/sync', syncController.handleGet)
     router.post('/:listid/sync', syncController.handlePost)

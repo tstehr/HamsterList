@@ -32,6 +32,7 @@ export default class ShoppingListController {
          items: [],
          recentlyUsed: [],
          categories: this.defaultCategories,
+         orders: []
        })
        this.db.set({
          ...this.db.get(),
