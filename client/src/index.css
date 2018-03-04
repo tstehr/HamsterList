@@ -19,7 +19,7 @@ button {
 }
 
 
-:focus {
+:not(select):focus {
   outline: none;
   box-shadow: 0 0 3px blue, inset 0 0 3px blue;
 }

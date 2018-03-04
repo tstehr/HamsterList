@@ -1,31 +1,42 @@
 // @flow
 import React, { Component } from 'react'
+import _ from 'lodash'
 import FlipMove from 'react-flip-move'
-import { type Item, type CategoryDefinition } from 'shoppinglist-shared'
+import { type Item, type CategoryDefinition, type Order, type UUID, sortItems, createOrder } from 'shoppinglist-shared'
 import KeyFocusComponent from './KeyFocusComponent'
 import EditItemComponent from './EditItemComponent'
-import type { DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
+import type { DeleteItem, UpdateItem, SelectOrder } from './ShoppingListContainerComponent'
+import OrderSelectComponent from './OrderSelectComponent'
 import './ShoppingListItemsComponent.css'
 
 type Props = {
   items: $ReadOnlyArray<Item>,
   categories: $ReadOnlyArray<CategoryDefinition>,
+  orders: $ReadOnlyArray<Order>,
+  selectedOrder: ?UUID,
+  selectOrder: SelectOrder,
   deleteItem: DeleteItem,
   updateItem: UpdateItem,
+  selectOrder: SelectOrder,
 }
 
 export default function ShoppingListItemsComponent(props: Props) {
+  const order = _.find(props.orders, _.matchesProperty('id', props.selectedOrder))
+  const items = order == null ? props.items : sortItems(props.items, order.categoryOrder)
+
   return (<KeyFocusComponent
     direction="vertical" rootTagName="ul" className=" ShoppingListItemsComponent"
-    style={{minHeight: `${Math.max(3*props.items.length + 3, 7.5)}rem`}}
+    style={{minHeight: `${Math.max(3*props.items.length + 6, 11)}rem`}}
   >
     <FlipMove
       typeName={null} duration="250" staggerDurationBy="10" staggerDelayBy="10"
       enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
     >
-      {props.items.map((item) =>
+      {!!props.items.length && !!props.orders.length &&
+        <OrderSelectComponent key="OrderSelectComponent" orders={props.orders} selectOrder={props.selectOrder} selectedOrder={props.selectedOrder}/>
+      }
+      {items.map((item) =>
           <EditItemComponent  key={item.id} item={item} categories={props.categories} deleteItem={props.deleteItem} updateItem={props.updateItem} />
-
       )}
       {!props.items.length &&
         <div className="ShoppingListItemsComponent__emptyList">

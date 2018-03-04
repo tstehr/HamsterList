@@ -1,8 +1,8 @@
 // @flow
 import React, { Component } from 'react'
 import _ from 'lodash'
-import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
-import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
+import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, type Order, type UUID, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
+import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder } from './ShoppingListContainerComponent'
 import TopBarComponent from './TopBarComponent'
 import CreateItemComponent from './CreateItemComponent'
 import ShoppingListItemsComponent from './ShoppingListItemsComponent';
@@ -13,6 +13,8 @@ type Props = {
   recentlyDeleted: $ReadOnlyArray<LocalItem>,
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
+  orders: $ReadOnlyArray<Order>,
+  selectedOrder: ?UUID,
   connectionState: ConnectionState,
   syncing: boolean,
   lastSyncFailed: boolean,
@@ -21,6 +23,7 @@ type Props = {
   createItem: CreateItem,
   deleteItem: DeleteItem,
   updateItem: UpdateItem,
+  selectOrder: SelectOrder,
   manualSync: () => void,
   clearLocalStorage: () => void,
 }
@@ -35,6 +38,10 @@ export default class ShoppingListComponent extends Component<Props> {
 
   componentDidMount() {
     document.title = this.props.shoppingList.title
+    // "hide" OrderSelectComponent for mobile (reveal by scrolling up)
+    if (window.matchMedia("(max-width: 30rem)").matches) {
+      window.scrollTo(0, 38)
+    }
   }
 
   componentWillReceiveProps() {
@@ -87,7 +94,9 @@ export default class ShoppingListComponent extends Component<Props> {
         <div  className="ShoppingListComponent__body">
           <div className="ShoppingListComponent__section">
             <ShoppingListItemsComponent items={this.props.shoppingList.items} categories={this.props.categories}
+              orders={this.props.orders} selectedOrder={this.props.selectedOrder}
               updateItem={this.props.updateItem} deleteItem={this.props.deleteItem}
+              selectOrder={this.props.selectOrder}
             />
           </div>
           <div className="ShoppingListComponent__section">

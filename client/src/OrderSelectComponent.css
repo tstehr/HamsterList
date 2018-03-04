@@ -1,0 +1,23 @@
+.OrderSelectComponent {
+  background: #f7f7f7;
+  display: flex;
+  padding: .5rem;
+  height: 2.5rem;
+  align-items: center;
+}
+.OrderSelectComponent__text {
+  padding-right: .5rem;
+}
+.OrderSelectComponent__select {
+  flex: 1;
+}
+@media (min-width: 30rem) {
+  .OrderSelectComponent {
+    margin-bottom: .5rem;
+    padding: .75rem;
+    height: 3rem;
+    background: #4CAF50;
+    color: #fff;
+    scroll-snap-coordinate: 0 -4rem;
+  }
+}

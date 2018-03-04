@@ -6,9 +6,10 @@ import lodashId from 'lodash-id'
 import deepFreeze from 'deep-freeze'
 import React, { Component } from 'react'
 import {
-  type SyncedShoppingList, type ShoppingList, type CompletionItem, type LocalItem, type Item, type CategoryDefinition, type UUID,
+  type SyncedShoppingList, type ShoppingList, type CompletionItem, type LocalItem, type Item, type CategoryDefinition,
+  type Order, type UUID,
   createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, createRandomUUID,
-  mergeShoppingLists
+  mergeShoppingLists, createOrder
 } from 'shoppinglist-shared'
 import ShoppingListComponent from './ShoppingListComponent'
 import { responseToJSON } from './utils';
@@ -19,6 +20,7 @@ export type UpdateListTitle = (newTitle: string) => void
 export type CreateItem = (item: LocalItem) => void
 export type DeleteItem = (id: UUID, addToRecentlyDeleted?: boolean) => void
 export type UpdateItem = (id: UUID, localItem: LocalItem) => void
+export type SelectOrder = (id: ?UUID) => void
 
 type Props = {
   listid: string,
@@ -30,6 +32,8 @@ type ClientShoppingList = {
   recentlyDeleted: $ReadOnlyArray<LocalItem>,
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
+  orders: $ReadOnlyArray<Order>,
+  selectedOrder: ?UUID,
   loaded: boolean,
   dirty: boolean,
   syncing: boolean,
@@ -51,6 +55,7 @@ const initialState: ClientShoppingList = deepFreeze({
   recentlyDeleted: [],
   completions: [],
   categories: [],
+  orders: [],
   loaded: false,
   dirty: false,
   syncing: false,
@@ -76,6 +81,10 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     this.db.defaults({lists: []}).write()
 
     this.state = this.db.get('lists').getById(this.props.listid).value() || initialState
+    // needed to work with existing local storage
+    if (!this.state.orders) {
+      this.state.orders = []
+    }
     this.supressSave = false
 
     // TODO cleanup
@@ -231,12 +240,14 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
     const completionsPromise = fetch(`/api/${this.props.listid}/completions`).then(responseToJSON)
     const categoriesPromise =  fetch(`/api/${this.props.listid}/categories`).then(responseToJSON)
+    const ordersPromise =  fetch(`/api/${this.props.listid}/orders`).then(responseToJSON)
 
-    Promise.all([syncPromise, completionsPromise, categoriesPromise])
-      .then(([syncJson, completionsJson, categoriesJson]) => {
+    Promise.all([syncPromise, completionsPromise, categoriesPromise, ordersPromise])
+      .then(([syncJson, completionsJson, categoriesJson, ordersJson]) => {
         this.setState((prevState) => {
           const categories = categoriesJson.map(createCategoryDefinition)
           const completions = completionsJson.map(createCompletionItem)
+          const orders = ordersJson.map(createOrder)
 
           // don't sort shopping list from server, we need it in server order for previousSync
           const serverSyncedShoppingList = createSyncedShoppingList(syncJson, null)
@@ -255,6 +266,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           const syncState: $Shape<State> = {
             completions: completions,
             categories: categories,
+            orders: orders,
             dirty: dirty,
             syncing: false,
             loaded: true,
@@ -376,6 +388,13 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }, this.requestSync)
   }
 
+  selectOrder = (id: ?UUID) => {
+    console.log(id)
+    this.setState({
+      selectedOrder: id
+    })
+  }
+
   render() {
     return (
       <div>
@@ -385,12 +404,15 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             recentlyDeleted={this.state.recentlyDeleted}
             completions={this.state.completions}
             categories={this.state.categories}
+            orders={this.state.orders}
+            selectedOrder={this.state.selectedOrder}
             connectionState={this.state.connectionState}
             syncing={this.state.syncing}
             lastSyncFailed={this.state.lastSyncFailed}
             dirty={this.state.dirty}
             updateListTitle={this.updateListTitle} createItem={this.createItem}
             updateItem={this.updateItem} deleteItem={this.deleteItem}
+            selectOrder={this.selectOrder}
             manualSync={this.initiateSyncConnection.bind(this)}
             clearLocalStorage={this.clearLocalStorage.bind(this)}
           />
