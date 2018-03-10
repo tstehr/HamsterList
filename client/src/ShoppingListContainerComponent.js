@@ -21,6 +21,7 @@ export type CreateItem = (item: LocalItem) => void
 export type DeleteItem = (id: UUID, addToRecentlyDeleted?: boolean) => void
 export type UpdateItem = (id: UUID, localItem: LocalItem) => void
 export type SelectOrder = (id: ?UUID) => void
+export type UpdateOrders = (orders: $ReadOnlyArray<Order>) => void
 
 type Props = {
   listid: string,
@@ -38,6 +39,7 @@ type ClientShoppingList = {
   dirty: boolean,
   syncing: boolean,
   lastSyncFailed: boolean,
+  ordersChanged: boolean,
   connectionState: ConnectionState,
   // ShoppingList
   id: string,
@@ -56,9 +58,11 @@ const initialState: ClientShoppingList = deepFreeze({
   completions: [],
   categories: [],
   orders: [],
+  selectedOrder: null,
   loaded: false,
   dirty: false,
   syncing: false,
+  ordersChanged: false,
   lastSyncFailed: false,
   connectionState: "disconnected",
 })
@@ -240,7 +244,21 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
     const completionsPromise = fetch(`/api/${this.props.listid}/completions`).then(responseToJSON)
     const categoriesPromise =  fetch(`/api/${this.props.listid}/categories`).then(responseToJSON)
-    const ordersPromise =  fetch(`/api/${this.props.listid}/orders`).then(responseToJSON)
+
+    let ordersPromise
+    if (!this.state.loaded || !this.state.ordersChanged) {
+      ordersPromise =  fetch(`/api/${this.props.listid}/orders`).then(responseToJSON)
+    } else {
+      ordersPromise =  fetch(`/api/${this.props.listid}/orders`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          method: "PUT",
+          body: JSON.stringify(this.state.orders)
+        })
+        .then(responseToJSON)
+    }
 
     Promise.all([syncPromise, completionsPromise, categoriesPromise, ordersPromise])
       .then(([syncJson, completionsJson, categoriesJson, ordersJson]) => {
@@ -271,6 +289,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             syncing: false,
             loaded: true,
             lastSyncFailed: false,
+            ordersChanged: false,
             previousSync: serverSyncedShoppingList,
             ...newShoppingList,
           }
@@ -389,10 +408,17 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   selectOrder = (id: ?UUID) => {
-    console.log(id)
     this.setState({
       selectedOrder: id
     })
+  }
+
+  updateOrders = (orders: $ReadOnlyArray<Order>) => {
+    this.setState({
+      dirty: true,
+      ordersChanged: true,
+      orders: orders
+    }, this.requestSync)
   }
 
   render() {
@@ -412,7 +438,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             dirty={this.state.dirty}
             updateListTitle={this.updateListTitle} createItem={this.createItem}
             updateItem={this.updateItem} deleteItem={this.deleteItem}
-            selectOrder={this.selectOrder}
+            selectOrder={this.selectOrder} updateOrders={this.updateOrders}
             manualSync={this.initiateSyncConnection.bind(this)}
             clearLocalStorage={this.clearLocalStorage.bind(this)}
           />

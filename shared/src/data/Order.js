@@ -3,6 +3,7 @@ import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
 import { type Iteratee } from 'lodash'
 import { type Item } from './Item'
+import { type CategoryDefinition } from './CategoryDefinition'
 import { type UUID, createUUID } from '../util/uuid'
 import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/validation'
 
@@ -32,7 +33,17 @@ export function createOrder(orderSpec: any): Order {
 export function sortItems(items: $ReadOnlyArray<Item>, categoryOrder: CategoryOrder): $ReadOnlyArray<Item> {
   const categoryIteratee = (item: Item) => convertSmallerZeroToInf(categoryOrder.indexOf(undefinedToNull(item.category)))
   // sortBy doesn't mutate, but isn't annotated correctly...
-  return _.sortBy(((items: any): Item[]), ([categoryIteratee, getNameLowerCase, 'id'] : Array<Iteratee<Item>>))
+  return _.sortBy(((items: any): Item[]), [categoryIteratee, getNameLowerCase, 'id'])
+}
+
+export function sortCategories(categories: $ReadOnlyArray<CategoryDefinition>, categoryOrder: CategoryOrder): $ReadOnlyArray<CategoryDefinition> {
+  const categoryIteratee = (cat: CategoryDefinition) => convertSmallerZeroToInf(categoryOrder.indexOf(cat.id))
+  // sortBy doesn't mutate, but isn't annotated correctly...
+  return _.sortBy(((categories: any): CategoryDefinition[]), categoryIteratee)
+}
+
+export function completeCategoryOrder(categoryOrder: CategoryOrder, categories: $ReadOnlyArray<CategoryDefinition>): CategoryOrder {
+  return sortCategories(categories, categoryOrder).map(cat => cat.id)
 }
 
 function undefinedToNull<T>(input: ?T): ?T {

@@ -4,6 +4,7 @@
   height: 3rem;
   align-items: stretch;
   border-bottom: 1px solid #eee;
+  user-select: none;
 }
 
 .EditItemComponent__category {

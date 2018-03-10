@@ -50,6 +50,8 @@ export default class App extends Component<void, State> {
       <Switch>
         <Route exact path='/' component={ChooseListComponent}/>
         <Route path='/:listid' exact component={ShoppingListContainerWrapperComponent}/>
+        <Route path='/:listid/orders' exact component={ShoppingListContainerWrapperComponent}/>
+        <Route path='/:listid/orders/:orderid' exact component={ShoppingListContainerWrapperComponent}/>
         <Route path='/:listid/:itemid/category' exact component={ShoppingListContainerWrapperComponent}/>
         <Route component={Error404}/>
       </Switch>

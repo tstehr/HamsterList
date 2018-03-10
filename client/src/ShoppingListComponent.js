@@ -1,11 +1,13 @@
 // @flow
 import React, { Component } from 'react'
+import { withRouter, Link, Route } from 'react-router-dom'
 import _ from 'lodash'
 import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, type Order, type UUID, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
-import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder } from './ShoppingListContainerComponent'
+import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder, UpdateOrders } from './ShoppingListContainerComponent'
 import TopBarComponent from './TopBarComponent'
 import CreateItemComponent from './CreateItemComponent'
-import ShoppingListItemsComponent from './ShoppingListItemsComponent';
+import ShoppingListItemsComponent from './ShoppingListItemsComponent'
+import EditOrdersComponent from './EditOrdersComponent'
 import './ShoppingListComponent.css'
 
 type Props = {
@@ -24,6 +26,7 @@ type Props = {
   deleteItem: DeleteItem,
   updateItem: UpdateItem,
   selectOrder: SelectOrder,
+  updateOrders: UpdateOrders,
   manualSync: () => void,
   clearLocalStorage: () => void,
 }
@@ -111,10 +114,16 @@ export default class ShoppingListComponent extends Component<Props> {
           <h2>Tools</h2>
           <button type="button" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
           <button type="button" onClick={this.mergeItems}>Merge</button>
+          <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Sorting</Link>
           <h2>Debug</h2>
           <button type="button" onClick={this.props.manualSync}>Force Sync</button>
           <button type="button" onClick={this.clearLocalStorage}>Clear Local Storage</button>
         </div>
+
+        <Route path={`/:listid/orders`} render={({history, match}) =>
+          <EditOrdersComponent listid={this.props.shoppingList.id} orders={this.props.orders} categories={this.props.categories}
+          updateOrders={this.props.updateOrders}/>
+        } />
       </div>
     )
   }

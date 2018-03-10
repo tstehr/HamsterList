@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 import FlipMove from 'react-flip-move'
-import { type Item, type CategoryDefinition, type Order, type UUID, sortItems, createOrder } from 'shoppinglist-shared'
+import { type Item, type CategoryDefinition, type Order, type UUID, sortItems, completeCategoryOrder } from 'shoppinglist-shared'
 import KeyFocusComponent from './KeyFocusComponent'
 import EditItemComponent from './EditItemComponent'
 import type { DeleteItem, UpdateItem, SelectOrder } from './ShoppingListContainerComponent'
@@ -22,7 +22,7 @@ type Props = {
 
 export default function ShoppingListItemsComponent(props: Props) {
   const order = _.find(props.orders, _.matchesProperty('id', props.selectedOrder))
-  const items = order == null ? props.items : sortItems(props.items, order.categoryOrder)
+  const items = order == null ? props.items : sortItems(props.items, completeCategoryOrder(order.categoryOrder, props.categories))
 
   return (<KeyFocusComponent
     direction="vertical" rootTagName="ul" className=" ShoppingListItemsComponent"

@@ -18,8 +18,38 @@ button {
   border: 1px solid black;
 }
 
-
 :not(select):focus {
   outline: none;
   box-shadow: 0 0 3px blue, inset 0 0 3px blue;
+}
+
+body {
+  --theme-color: #4CAF50;
+}
+
+.Button {
+  --button-color: var(--theme-color);
+  --button-bg-color: var(--button-color);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 3rem;
+  border: solid var(--button-color);
+  border-width: 2px 0;
+  background: white;
+  margin-bottom: -2px;
+  font-size: 1rem;
+  text-decoration: none;
+  color: black;
+}
+.Button--padded {
+  padding: 0 .5rem;
+}
+@media (min-width: 40rem) and (min-height: 40rem) {
+  .Button {
+    border: 0;
+    margin-bottom: .5rem;
+    color: white;
+    background: var(--button-bg-color);
+  }
 }
