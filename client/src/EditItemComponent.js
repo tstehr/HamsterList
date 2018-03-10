@@ -111,10 +111,10 @@ export default class EditItemComponent extends Component<Props, State> {
 
   render() {
     return (
-        <KeyFocusComponent direction="horizontal" rootTagName="li" className="EditItemComponent">
+        <li className="EditItemComponent">
           <Route render={({history, location, match}) =>
             <button type="button" className="EditItemComponent__category"
-              onClick={() => history.push(`/${match.params.listid}/${this.props.item.id}/category`)}
+              onClick={() => history.push(`/${match.params['listid'] || ''}/${this.props.item.id}/category`)}
             >
               <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories} />
             </button>
@@ -149,11 +149,11 @@ export default class EditItemComponent extends Component<Props, State> {
               categories={this.props.categories} categoryId={this.props.item.category}
               updateCategory={(category) => {
                 this.updateCategory(category)
-                history.push(`/${match.params.listid}`)
+                history.push(`/${match.params['listid'] || ''}`)
               }}
             />
           } />
-        </KeyFocusComponent>
+        </li>
     )
   }
 
