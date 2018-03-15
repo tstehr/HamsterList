@@ -13,6 +13,13 @@
       "lightText": false
     },
     {
+      "id": "8ae24539-09db-47e6-bd22-aa5f835baa33",
+      "name": "Eier",
+      "shortName": "E",
+      "color": "#8D6E63",
+      "lightText": true
+    },
+    {
       "id": "4bc55d27-697b-489a-b40c-bb6f93f2b1ab",
       "name": "Gewürze",
       "shortName": "G",
@@ -27,6 +34,13 @@
       "lightText": false
     },
     {
+      "id": "1b2e5a74-98ee-4469-b8b9-c84d9b434ee1",
+      "name": "Kaffee und Tee",
+      "shortName": "KT",
+      "color": "#4E342E",
+      "lightText": true
+    },
+    {
       "id": "43dc8a9f-31a3-491c-ba14-b7abf5a07381",
       "name": "Reis und Hülsenfrüchte",
       "shortName": "R",
@@ -37,8 +51,8 @@
       "id": "99d11658-9a39-4636-a610-85a9789c846b",
       "name": "Backzutaten",
       "shortName": "BZ",
-      "color": "#A1887F",
-      "lightText": true
+      "color": "#C6FF00",
+      "lightText": false
     },
     {
       "id": "ba9a2df5-e422-4624-9d0e-827276a8ed8a",
@@ -79,7 +93,7 @@
       "id": "8ae7d8eb-d90c-4674-93ed-1d496f7564ec",
       "name": "Brot und Backwaren",
       "shortName": "B",
-      "color": "#6D4C41",
+      "color": "#795548",
       "lightText": true
     },
     {
