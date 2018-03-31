@@ -80,7 +80,7 @@ export default class TopBarComponent extends Component<Props, State> {
       <div className={classes.join(" ")}>
         <div className="TopBarComponent__content">
           <button type="button" className="TopBarComponent__back" onClick={() => this.props.up('home')}>
-            ◀
+            {`◀${variantSelector15}`}
           </button>
           {
             this.state.hasFocus
