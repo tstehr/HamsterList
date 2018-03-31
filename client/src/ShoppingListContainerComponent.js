@@ -11,6 +11,7 @@ import {
   createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, createRandomUUID,
   mergeShoppingLists, createOrder
 } from 'shoppinglist-shared'
+import { type Up } from './HistoryTracker'
 import ShoppingListComponent from './ShoppingListComponent'
 import { responseToJSON } from './utils';
 
@@ -25,6 +26,7 @@ export type UpdateOrders = (orders: $ReadOnlyArray<Order>) => void
 
 type Props = {
   listid: string,
+  up: Up
 }
 
 
@@ -441,6 +443,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             selectOrder={this.selectOrder} updateOrders={this.updateOrders}
             manualSync={this.initiateSyncConnection.bind(this)}
             clearLocalStorage={this.clearLocalStorage.bind(this)}
+            up={this.props.up}
           />
         }
       </div>

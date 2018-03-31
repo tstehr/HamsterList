@@ -1,6 +1,6 @@
 // @flow
-// $FlowFixMe
 import _ from 'lodash'
+// $FlowFixMe
 import React, { Component, Fragment } from 'react'
 import FlipMove from 'react-flip-move'
 import fuzzy from 'fuzzy'

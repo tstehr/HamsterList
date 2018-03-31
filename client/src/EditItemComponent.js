@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 import { withRouter, Link, Route } from 'react-router-dom'
 import { type Item, type LocalItem, type CategoryDefinition, type UUID, itemToString, createLocalItemFromString } from 'shoppinglist-shared'
+import { type Up } from './HistoryTracker'
 import type { DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
 import ItemComponent from './ItemComponent'
 import CategoryComponent from './CategoryComponent'
@@ -14,6 +15,7 @@ type Props = {
   categories: $ReadOnlyArray<CategoryDefinition>,
   deleteItem: DeleteItem,
   updateItem: UpdateItem,
+  up: Up,
 }
 
 type State = {
@@ -149,7 +151,7 @@ export default class EditItemComponent extends Component<Props, State> {
               categories={this.props.categories} categoryId={this.props.item.category}
               updateCategory={(category) => {
                 this.updateCategory(category)
-                history.push(`/${match.params['listid'] || ''}`)
+                this.props.up('list')
               }}
             />
           } />

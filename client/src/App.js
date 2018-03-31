@@ -1,28 +1,33 @@
 // @flow
 import React, { Component } from 'react'
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
-
+import { type ContextRouter, BrowserRouter, Switch, Route } from 'react-router-dom'
+import HistoryTracker, { type Up } from './HistoryTracker'
 import ChooseListComponent from './ChooseListComponent'
 import ShoppingListComponent from './ShoppingListContainerComponent'
 import ShoppingListContainerComponent from './ShoppingListContainerComponent'
 
 
-function ShoppingListContainerWrapperComponent(props) {
-  return <ShoppingListContainerComponent listid={props.match.params.listid} />
+function createShoppingListContainerComponentRender(up: Up) {
+  return (props: ContextRouter) => {
+    return <ShoppingListContainerComponent listid={props.match.params['listid'] || ''} up={up}/>
+  }
 }
 
 export default class App extends Component<void> {
   render() {
     return (
       <BrowserRouter>
-        <Switch>
-          <Route exact path='/' component={ChooseListComponent}/>
-          <Route path='/:listid' exact component={ShoppingListContainerWrapperComponent}/>
-          <Route path='/:listid/orders' exact component={ShoppingListContainerWrapperComponent}/>
-          <Route path='/:listid/orders/:orderid' exact component={ShoppingListContainerWrapperComponent}/>
-          <Route path='/:listid/:itemid/category' exact component={ShoppingListContainerWrapperComponent}/>
-          <Route component={Error404}/>
-        </Switch>
+        <HistoryTracker render={(up) =>
+          <Switch>
+            <Route exact path='/' component={ChooseListComponent}/>
+            <Route path='/:listid' exact render={createShoppingListContainerComponentRender(up)}/>
+            <Route path='/:listid/orders' exact render={createShoppingListContainerComponentRender(up)}/>
+            <Route path='/:listid/orders/:orderid' exact render={createShoppingListContainerComponentRender(up)}/>
+            <Route path='/:listid/:itemid/category' exact render={createShoppingListContainerComponentRender(up)}/>
+            <Route component={Error404}/>
+          </Switch>
+        }>
+        </HistoryTracker>
       </BrowserRouter>
     )
   }

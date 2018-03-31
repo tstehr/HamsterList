@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react'
+import { type Up } from './HistoryTracker'
 import { type ConnectionState, type UpdateListTitle } from './ShoppingListContainerComponent'
 import './TopBarComponent.css'
 
@@ -11,6 +12,7 @@ type Props = {
   dirty: boolean,
   manualSync: () => void,
   updateListTitle: UpdateListTitle,
+  up: Up,
 }
 
 type State = {
@@ -77,6 +79,9 @@ export default class TopBarComponent extends Component<Props, State> {
     return (
       <div className={classes.join(" ")}>
         <div className="TopBarComponent__content">
+          <button type="button" className="TopBarComponent__back" onClick={() => this.props.up('home')}>
+            ◀
+          </button>
           {
             this.state.hasFocus
               ? <input type="text"
@@ -86,7 +91,7 @@ export default class TopBarComponent extends Component<Props, State> {
                 />
               : <h1 tabIndex="0" onFocus={this.handleFocus}><span>{this.props.title}</span></h1>
           }
-          <button className={statusClasses.join(" ")} onClick={this.onStatusClick}>
+          <button type="button" className={statusClasses.join(" ")} onClick={this.onStatusClick}>
             <span>{stateMapping[this.props.connectionState]}</span>
           </button>
         </div>

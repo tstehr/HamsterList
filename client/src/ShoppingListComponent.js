@@ -4,6 +4,7 @@ import { withRouter, Link, Route } from 'react-router-dom'
 import _ from 'lodash'
 import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, type Order, type UUID, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
 import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder, UpdateOrders } from './ShoppingListContainerComponent'
+import { type Up } from './HistoryTracker'
 import TopBarComponent from './TopBarComponent'
 import CreateItemComponent from './CreateItemComponent'
 import ShoppingListItemsComponent from './ShoppingListItemsComponent'
@@ -29,6 +30,7 @@ type Props = {
   updateOrders: UpdateOrders,
   manualSync: () => void,
   clearLocalStorage: () => void,
+  up: Up,
 }
 
 export default class ShoppingListComponent extends Component<Props> {
@@ -92,14 +94,14 @@ export default class ShoppingListComponent extends Component<Props> {
           title={this.props.shoppingList.title} connectionState={this.props.connectionState}
           syncing={this.props.syncing} lastSyncFailed={this.props.lastSyncFailed}
           manualSync={this.props.manualSync} updateListTitle={this.props.updateListTitle}
-          dirty={this.props.dirty}
+          dirty={this.props.dirty} up={this.props.up}
         />
         <div  className="ShoppingListComponent__body">
           <div className="ShoppingListComponent__section">
             <ShoppingListItemsComponent items={this.props.shoppingList.items} categories={this.props.categories}
               orders={this.props.orders} selectedOrder={this.props.selectedOrder}
               updateItem={this.props.updateItem} deleteItem={this.props.deleteItem}
-              selectOrder={this.props.selectOrder}
+              selectOrder={this.props.selectOrder} up={this.props.up}
             />
           </div>
           <div className="ShoppingListComponent__section">
@@ -122,7 +124,7 @@ export default class ShoppingListComponent extends Component<Props> {
 
         <Route path={`/:listid/orders`} render={({history, match}) =>
           <EditOrdersComponent listid={this.props.shoppingList.id} orders={this.props.orders} categories={this.props.categories}
-          updateOrders={this.props.updateOrders}/>
+          updateOrders={this.props.updateOrders} up={this.props.up}/>
         } />
       </div>
     )

@@ -25,6 +25,12 @@
     padding: 0 2rem;
   }
 }
+.TopBarComponent__back {
+  width: 3.5rem;
+  flex-shrink: 0;
+  border: 0;
+  font-size: 1.5rem;
+}
 .TopBarComponent__status {
   width: 3.5rem;
   flex-shrink: 0;
@@ -67,7 +73,6 @@
   overflow: hidden;
   text-align:center;
   line-height: 3rem;
-  margin-left: 3.5rem;
 }
 
 @keyframes blink {

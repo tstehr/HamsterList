@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import FlipMove from 'react-flip-move'
 import { type Item, type CategoryDefinition, type Order, type UUID, sortItems, completeCategoryOrder } from 'shoppinglist-shared'
+import { type Up } from './HistoryTracker'
 import KeyFocusComponent from './KeyFocusComponent'
 import EditItemComponent from './EditItemComponent'
 import type { DeleteItem, UpdateItem, SelectOrder } from './ShoppingListContainerComponent'
@@ -18,6 +19,7 @@ type Props = {
   deleteItem: DeleteItem,
   updateItem: UpdateItem,
   selectOrder: SelectOrder,
+  up: Up,
 }
 
 export default function ShoppingListItemsComponent(props: Props) {
@@ -36,7 +38,7 @@ export default function ShoppingListItemsComponent(props: Props) {
         <OrderSelectComponent key="OrderSelectComponent" orders={props.orders} selectOrder={props.selectOrder} selectedOrder={props.selectedOrder}/>
       }
       {items.map((item) =>
-          <EditItemComponent  key={item.id} item={item} categories={props.categories} deleteItem={props.deleteItem} updateItem={props.updateItem} />
+          <EditItemComponent  key={item.id} item={item} categories={props.categories} deleteItem={props.deleteItem} updateItem={props.updateItem} up={props.up}/>
       )}
       {!props.items.length &&
         <div className="ShoppingListItemsComponent__emptyList">
