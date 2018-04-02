@@ -78,7 +78,7 @@ export default class SocketController {
 
     ws.on('pong', () => {
       ws.isAlive = true;
-      ws.log.debug(`Pong`)
+      ws.log.trace(`Pong`)
     })
 
     ws.on('error', ws.log.error)
