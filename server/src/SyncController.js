@@ -71,11 +71,18 @@ export default class SyncController {
       return updateRecentlyUsed(ru, item)
     }, req.list.recentlyUsed)
 
+
+
     const mergedServerShoppingList: ServerShoppingList = {
       ...req.list,
       recentlyUsed: recentlyUsed,
       ...merged,
     }
+
+    req.log.debug({
+      base, server, client, merged,
+    })
+
 
     this.db.set({
       ...this.db.get(),
@@ -86,6 +93,7 @@ export default class SyncController {
       this.changeCallback(mergedServerShoppingList)
       res.send(this.tokenCreator.setToken(merged))
     })
+    .catch(req.log.error)
   }
 }
 

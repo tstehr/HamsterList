@@ -1,6 +1,8 @@
 // @flow
 import _ from 'lodash'
 import WebSocket from 'ws'
+import { Logger } from 'bunyan'
+import { createRandomUUID } from 'shoppinglist-shared'
 import TokenCreator from './TokenCreator'
 import { type ServerShoppingList, getBaseShoppingList } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
@@ -9,20 +11,22 @@ export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 
 export default class SocketController {
   tokenCreator: TokenCreator
+  log: Logger
   registeredWebSockets: {[string]: WebSocket[]}
 
-  constructor(tokenCreator: TokenCreator) {
+  constructor(tokenCreator: TokenCreator, log: Logger) {
     this.tokenCreator = tokenCreator
+    this.log = log
     this.registeredWebSockets = {}
 
     const interval = setInterval(() => {
       const sockets = _.chain(this.registeredWebSockets).values().flatten().value()
 
-      console.log('All connected: ' + sockets.map((ws) => ws.debugIdentifier))
+      this.log.trace(sockets.map((ws) => ws.log.fields), 'All connected' )
 
       sockets.forEach((ws) => {
         if (ws.isAlive === false) {
-          console.log(`Terminating: ${ws.debugIdentifier}`)
+          ws.log.debug(`Terminating`)
           ws.terminate()
           return
         }
@@ -51,6 +55,9 @@ export default class SocketController {
   }
 
   handleWs = (ws: WebSocket, req: Request, listid: string) => {
+    ws.log = this.log.child({id: createRandomUUID(), operation: '/socket', listid: listid})
+    ws.log.info({req: req})
+
     if (this.registeredWebSockets[listid] == null) {
       this.registeredWebSockets[listid] = []
     }
@@ -58,30 +65,23 @@ export default class SocketController {
 
     ws.isAlive = true
 
-    // $FlowFixMe
-    const ua = req.headers['user-agent'] || "UnknownUA"
-    // $FlowFixMe
-    ws.debugIdentifier = `${listid} ${req.connection.remoteAddress} ${ua.split(' ').pop()}` // TODO
-
-    console.log(`Connected: ${ws.debugIdentifier}`)
+    ws.log.debug(`Connected`)
 
     ws.on('message', (msg) => {
-      console.log(`Received: ${ws.debugIdentifier}, ${msg}`)
+      ws.log.debug(`Received: ${msg}`)
     })
 
     ws.on('close', () => {
       this.registeredWebSockets[listid].splice(this.registeredWebSockets[listid].indexOf(ws), 1)
-      console.log(`Disconnected: ${ws.debugIdentifier}`)
+      ws.log.debug(`Disconnected`)
     })
 
     ws.on('pong', () => {
       ws.isAlive = true;
-      console.log(`Pong: ${ws.debugIdentifier}`)
+      ws.log.debug(`Pong`)
     })
 
-    ws.on('error', (e) => {
-      console.log(e)
-    })
+    ws.on('error', ws.log.error)
   }
 
   notifiyChanged: ShoppingListChangeCallback = (list: ServerShoppingList) => {

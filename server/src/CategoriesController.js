@@ -45,5 +45,6 @@ export default class CategoriesController {
       this.changeCallback(updatedList)
       res.json(categories)
     })
+    .catch(req.log.error)
   }
 }

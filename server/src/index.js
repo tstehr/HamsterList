@@ -8,12 +8,13 @@ import bodyParser from 'body-parser'
 import WebSocket from 'ws'
 import nconf from 'nconf'
 import camelCase from 'camel-case'
+import bunyan from 'bunyan'
 import {
   type ShoppingList, type Item, type LocalItem, type UUID,
   createLocalItemFromString, createLocalItem, createItem, createShoppingList, createRandomUUID, createUUID
 } from 'shoppinglist-shared'
 import { DB } from './DB'
-import ShoppingListController from './ShoppingListController'
+import ShoppingListController, { type ShoppingListRequest } from './ShoppingListController'
 import ItemController from './ItemController'
 import SocketController from './SocketController'
 import SyncController from './SyncController'
@@ -21,6 +22,13 @@ import CompletionsController from './CompletionsController'
 import CategoriesController from './CategoriesController'
 import OrdersController from './OrdersController'
 import TokenCreator from './TokenCreator'
+
+
+var log = bunyan.createLogger({
+    name: 'shoppinglist',
+    serializers: bunyan.stdSerializers
+});
+
 
 nconf.env({
     lowerCase: true,
@@ -41,7 +49,7 @@ nconf.defaults({
 })
 
 if(!fs.existsSync(nconf.get('configFile'))) {
-  console.log("First run, creating config file with random secret")
+  log.info("First run, creating config file with random secret")
   fs.outputJSONSync(nconf.get('configFile'), {
     secret: TokenCreator.createRandomSecret()
   }, { spaces: 2 })
@@ -59,9 +67,11 @@ if (nconf.get('http')) {
   nconf.required(['port'])
 }
 if (!nconf.get('http') && !nconf.get('https')) {
-  console.error('Either http or https must be enabled!')
+  log.fatal('Either http or https must be enabled!')
   process.exit(1)
 }
+
+log.level(nconf.get('logLevel'))
 
 
 const db = new DB(nconf.get('databaseFilePath'))
@@ -74,9 +84,9 @@ db.load()
 
     const tokenCreator = new TokenCreator(nconf.get('secret'))
 
-    const socketController = new SocketController(tokenCreator)
+    const socketController = new SocketController(tokenCreator, log)
 
-    const shoppingListController = new ShoppingListController(db, socketController.notifiyChanged, nconf.get('defaultCategories'))
+    const shoppingListController = new ShoppingListController(db, socketController.notifiyChanged, log, nconf.get('defaultCategories'))
     const itemController = new ItemController(db, socketController.notifiyChanged)
     const syncController = new SyncController(db, socketController.notifiyChanged, tokenCreator)
     const categoriesController = new CategoriesController(db, socketController.notifiyChanged)
@@ -85,6 +95,12 @@ db.load()
 
     router.param('listid', shoppingListController.handleParamListid)
     router.param('itemid', itemController.handleParamItemid)
+
+    router.use('/:listid', (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+      req.log.info({req: req})
+      next()
+      req.log.info({res: res})
+    })
 
     router.get('/:listid', shoppingListController.handleGet)
     router.put('/:listid', shoppingListController.handlePut)
@@ -126,7 +142,7 @@ db.load()
           cert: fs.readFileSync(nconf.get('certFile'))
         }
       } catch (e) {
-        console.error(`File "${e.path}" couldn't be found`)
+        log.fatal(`File "${e.path}" couldn't be found`)
         process.exit(1)
       }
 
@@ -138,7 +154,7 @@ db.load()
       var port = nconf.get('httpsPort')
       // $FlowFixMe
       server.listen(port)
-      console.log(`HTTPS server listening on port ${port} `)
+      log.info(`HTTPS server listening on port ${port} `)
     }
 
     if (nconf.get('http')) {
@@ -148,9 +164,9 @@ db.load()
       var port = nconf.get('port')
       // $FlowFixMe
       server.listen(port)
-      console.log(`HTTP server listening on port ${port} `)
+      log.info(`HTTP server listening on port ${port} `)
     }
   })
   .catch(e => {
-    console.log(e)
+    log.fatal(e)
   })

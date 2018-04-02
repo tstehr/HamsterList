@@ -1,26 +1,35 @@
 // @flow
 import express from 'express'
-import { type ShoppingList, type CategoryDefinition , createShoppingList} from 'shoppinglist-shared'
+import { Logger } from 'bunyan'
+import { type ShoppingList, type CategoryDefinition, type UUID, createShoppingList, createRandomUUID } from 'shoppinglist-shared'
 import { type DB, updateInArray } from './DB'
 import { type ServerShoppingList, createServerShoppingList, getBaseShoppingList } from './ServerShoppingList'
 import { type ShoppingListChangeCallback } from './SocketController'
 
 
-export type ShoppingListRequest = { listid: string, list: ServerShoppingList } & express$Request
+export type ShoppingListRequest = { listid: string, list: ServerShoppingList, log: Logger, id: UUID } & express$Request
 
 export default class ShoppingListController {
   db: DB
+  log: Logger
   changeCallback: ShoppingListChangeCallback
   defaultCategories: $ReadOnlyArray<CategoryDefinition>
 
-  constructor(db: DB, changeCallback: ShoppingListChangeCallback, defaultCategories: $ReadOnlyArray<CategoryDefinition>) {
+  constructor(
+    db: DB,
+    changeCallback: ShoppingListChangeCallback,
+    log: Logger, defaultCategories:
+    $ReadOnlyArray<CategoryDefinition>
+  ) {
     this.db = db
+    this.log = log
     this.changeCallback = changeCallback
     this.defaultCategories = defaultCategories
   }
 
   handleParamListid = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     req.listid = req.params.listid
+    req.log = this.log.child({id: createRandomUUID(), operation: req.url.substring(req.listid.length + 1), listid: req.listid})
     const list = this.db.get().lists.find((list) => list.id == req.params.listid)
     if (list != null) {
       req.list = list
@@ -77,5 +86,6 @@ export default class ShoppingListController {
       this.changeCallback(updatedList)
       res.json(updatedList)
     })
+    .catch(req.log.error)
   }
 }

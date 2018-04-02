@@ -4,6 +4,7 @@
   "port": 4000,
   "httpsPort": 4443,
   "databaseFilePath": "state/db.json",
+  "logLevel": "info",
   "defaultCategories": [
     {
       "id": "6ca0f054-209c-46c9-b337-6088f7a530ab",

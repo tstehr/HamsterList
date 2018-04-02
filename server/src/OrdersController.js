@@ -45,5 +45,6 @@ export default class OrdersController {
       this.changeCallback(updatedList)
       res.json(orders)
     })
+    .catch(req.log.error)
   }
 }

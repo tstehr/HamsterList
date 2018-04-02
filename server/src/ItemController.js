@@ -77,6 +77,7 @@ export default class ItemController {
         this.changeCallback(changedList)
         res.location(`${req.baseUrl}/${req.listid}/items/${item.id}`).status(201).json(item)
       })
+      .catch(req.log.error)
   }
 
   handlePut = (req: ItemIdRequest, res: express$Response) => {
@@ -125,6 +126,7 @@ export default class ItemController {
       this.changeCallback(changedList)
       res.status(status).json(item)
     })
+    .catch(req.log.error)
   }
 
 
@@ -145,6 +147,7 @@ export default class ItemController {
           this.changeCallback(changedList)
           res.status(204).send()
         })
+        .catch(req.log.error)
     } else {
       res.status(404).json({error: `Item with id "${req.itemid}" not found!`})
     }
