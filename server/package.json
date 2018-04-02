@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "production": "NODE_ENV=production node build/index.js",
-    "start": "nodemon --watch src --exec babel-node src/index.js",
+    "start": "npx nodemon --watch src --exec npx babel-node src/index.js | npx bunyan",
     "build": "npm run build:clean && npm run build:babel",
     "build:clean": "rm -rf ./build",
     "build:babel": "npx babel src --out-dir build --source-maps",
@@ -37,6 +37,7 @@
     "babel-preset-flow": "^6.23.0",
     "chalk": "^2.3.0",
     "flow-bin": "^0.59.0",
-    "jest": "^21.2.1"
+    "jest": "^21.2.1",
+    "nodemon": "^1.17.3"
   }
 }
