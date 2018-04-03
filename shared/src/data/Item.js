@@ -5,7 +5,7 @@ import _ from 'lodash'
 import mathjs from 'mathjs'
 import { type UUID, createUUID } from '../util/uuid'
 import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
-import { type Amount, createAmount, createAmountFromString, mergeAmounts } from './Amount'
+import { type Amount, createAmount, createAmountFromString, mergeAmounts, mergeAmountsTwoWay } from './Amount'
 import { type CategoryDefinition } from './CategoryDefinition'
 
 export type CompletionItem = {
@@ -174,6 +174,22 @@ export function mergeItems(base: Item, client: Item, server: Item): Item {
    }
 
   newItem.amount = mergeAmounts(base.amount, client.amount, server.amount)
+
+  return createItem(newItem)
+}
+
+export function mergeItemsTwoWay(client: Item, server: Item): Item {
+  const newItem = {}
+  newItem.id = client.id
+
+  if (client.name.length < server.name.length) {
+    newItem.name = server.name
+  } else {
+    newItem.name = client.name
+  }
+
+  newItem.category = client.category
+  newItem.amount = mergeAmountsTwoWay(client.amount, server.amount)
 
   return createItem(newItem)
 }

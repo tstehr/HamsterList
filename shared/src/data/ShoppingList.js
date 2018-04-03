@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import { type Iteratee } from 'lodash'
 import deepFreeze from 'deep-freeze'
-import { type Item, createItem, mergeItems } from './Item'
+import { type Item, createItem, mergeItems, mergeItemsTwoWay } from './Item'
 import { type CategoryDefinition } from './CategoryDefinition'
 import { type CategoryOrder, sortItems } from './Order'
 import { type UUID } from '../util/uuid'
@@ -69,27 +69,34 @@ export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, ser
   const clientMap: {[UUID]: ?Item} = _.keyBy([...client.items], 'id')
   const serverMap: {[UUID]: ?Item} = _.keyBy([...server.items], 'id')
 
-  for (const id: UUID of _.keys(baseMap)) {
+  const allIds = _.union(_.keys(baseMap), _.keys(clientMap), _.keys(serverMap))
+
+  for (const id: UUID of allIds) {
     // $FlowFixMe
     const base: Item = baseMap[id]
     const client = clientMap[id]
     const server = serverMap[id]
 
-    if (client != null && server != null) {
-      newList.items.push(mergeItems(base, client, server))
-    } else if (client != null) {
-      mergeHandleDelete(newList, base, client)
-    } else if (server != null) {
-      mergeHandleDelete(newList, base, server)
+    console.log(id, base, client, server)
+
+    if (base == null) {
+      if (client != null && server != null) {
+        newList.items.push(mergeItemsTwoWay(client, server))
+      } else if (client != null) {
+        newList.items.push(client)
+      } else if (server != null) {
+        newList.items.push(server)
+      }
+    } else {
+      if (client != null && server != null) {
+        newList.items.push(mergeItems(base, client, server))
+      } else if (client != null) {
+        mergeHandleDelete(newList, base, client)
+      } else if (server != null) {
+        mergeHandleDelete(newList, base, server)
+      }
     }
   }
-
-  const newClientIds = _.chain(clientMap).keys().difference(_.keys(baseMap)).value()
-  newList.items = newList.items.concat(_.chain(clientMap).pick(newClientIds).values().value())
-
-  const newServerIds = _.chain(serverMap).keys().difference(_.keys(baseMap)).value()
-  newList.items = newList.items.concat(_.chain(serverMap).pick(newServerIds).values().value())
-
 
   return createShoppingList(newList, categories)
 }

@@ -77,6 +77,10 @@ export function mergeAmounts(base: ?Amount, client: ?Amount, server: ?Amount): ?
     return client
   }
 
+  return mergeAmountsTwoWay(client, server)
+}
+
+export function mergeAmountsTwoWay(client: ?Amount, server: ?Amount): ?Amount {
   let mathjsClient = amountToMathjsValue(client)
   let mathjsServer = amountToMathjsValue(server)
   try {
