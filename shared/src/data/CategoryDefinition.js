@@ -1,6 +1,6 @@
 // @flow
 import deepFreeze from 'deep-freeze'
-import onecolor from 'onecolor'
+import colorString from 'color-string'
 import { type UUID, createUUID } from '../util/uuid'
 import { checkKeys, checkAttributeType } from '../util/validation'
 
@@ -15,7 +15,8 @@ export type CategoryDefinition = {
 }
 
 export function createColor(colorSpec: string): Color {
-  if(!onecolor(colorSpec)) {
+  const color = colorString.get(colorSpec)
+  if(!color) {
     throw new Error(`The given color "${colorSpec}" is not a valid color value`)
   }
   return colorSpec

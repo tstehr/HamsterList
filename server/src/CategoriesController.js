@@ -1,7 +1,7 @@
 // @flow
 import _ from 'lodash'
 import express from 'express'
-import { type CategoryDefinition, createCategoryDefinition } from 'shoppinglist-shared'
+import { type CategoryDefinition, createCategoryDefinition, errorMap } from 'shoppinglist-shared'
 import { createServerShoppingList } from './ServerShoppingList'
 import { type DB, updateInArray } from './DB'
 import { type ShoppingListRequest } from './ShoppingListController'
@@ -28,7 +28,7 @@ export default class CategoriesController {
     }
     let categories
     try {
-      categories = req.body.map(createCategoryDefinition)
+      categories = errorMap(req.body, createCategoryDefinition)
     } catch (e) {
       res.status(400).json({error: e.message})
       return

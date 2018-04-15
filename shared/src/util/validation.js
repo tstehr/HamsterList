@@ -29,7 +29,12 @@ export function errorMap<I, O>(array: I[], transformer: (I) => O): O[] {
     try {
       return transformer(el)
     } catch (e) {
-      throw new TypeError(`Error in element ${i}: ${e.message}`)
+      const identification = getIdentification(el)
+      if (identification != null) {
+        throw new TypeError(`Error in element ${i} (${identification}): ${e.message}`)
+      } else {
+        throw new TypeError(`Error in element ${i}: ${e.message}`)
+      }
     }
   })
 }
@@ -44,6 +49,22 @@ export function nullSafe<T, R>(func: (T) => R): (?T) => ?R {
     }
     return func(p)
   }
+}
+
+const IDENTIFICATION_FIELDS = Object.freeze(['name', 'title', 'id'])
+
+function getIdentification(o: mixed): ?string {
+  if (o && typeof o === 'object') {
+    for (let identificationField of IDENTIFICATION_FIELDS) {
+      if (typeof o[identificationField]  === 'string') {
+        return `${identificationField}="${o[identificationField]}"`
+      }
+    }
+  }
+  if (typeof o === 'string') {
+    return `"${o}"`
+  }
+  return null
 }
 
 function getAttributeType(attribute: any): string {
