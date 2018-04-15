@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "production": "NODE_ENV=production node build/index.js",
-    "start": "npx nodemon --watch src --exec npx babel-node src/index.js | npx bunyan",
+    "start": "npx nodemon --watch src --watch ../shared/build --exec npx babel-node src/index.js | npx bunyan",
     "build": "npm run build:clean && npm run build:babel",
     "build:clean": "rm -rf ./build",
     "build:babel": "npx babel src --out-dir build --source-maps",
