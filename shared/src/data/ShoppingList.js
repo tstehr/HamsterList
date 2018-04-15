@@ -77,8 +77,6 @@ export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, ser
     const client = clientMap[id]
     const server = serverMap[id]
 
-    console.log(id, base, client, server)
-
     if (base == null) {
       if (client != null && server != null) {
         newList.items.push(mergeItemsTwoWay(client, server))
