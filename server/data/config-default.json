@@ -23,7 +23,7 @@
     {
       "id": "4bc55d27-697b-489a-b40c-bb6f93f2b1ab",
       "name": "Gewürze",
-      "shortName": "G",
+      "shortName": "GW",
       "color": "#D7CCC8",
       "lightText": false
     },
@@ -107,7 +107,7 @@
     {
       "id": "89054c0e-cdff-490c-adc4-443064a6a252",
       "name": "Feinkost",
-      "shortName": "F",
+      "shortName": "FK",
       "color": "#673AB7",
       "lightText": true
     },
