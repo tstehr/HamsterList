@@ -130,7 +130,7 @@ describe('createCookingAmount', () => {
     const derived = createCookingAmount(amount)
     expect(derived).toEqual({
       value: 10,
-      unit: null,
+      unit: undefined,
     })
   })
 

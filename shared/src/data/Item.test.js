@@ -40,8 +40,8 @@ describe('createLocalItemFromString', () => {
 	it('Creates a simple object', () => {
 		expect(createLocalItemFromString('Käse', categories)).toEqual({
 			name: 'Käse',
-			amount: null,
-			category: null,
+			amount: undefined,
+			category: undefined,
 		})
 	})
 
@@ -50,9 +50,9 @@ describe('createLocalItemFromString', () => {
 			name: 'Käse',
 			amount: {
 				value: 1,
-				unit: null
+				unit: undefined
 			},
-			category: null,
+			category: undefined,
 		})
 	})
 
@@ -63,7 +63,7 @@ describe('createLocalItemFromString', () => {
 				value: 1,
 				unit: 'kg'
 			},
-			category: null,
+			category: undefined,
 		})
 	})
 
@@ -74,7 +74,7 @@ describe('createLocalItemFromString', () => {
 				value: 5,
 				unit: 'l / s',
 			},
-			category: null,
+			category: undefined,
 		})
 	})
 
@@ -85,7 +85,7 @@ describe('createLocalItemFromString', () => {
 				value: 5,
 				unit: 'm^2'
 			},
-			category: null,
+			category: undefined,
 		})
 	})
 
@@ -96,31 +96,39 @@ describe('createLocalItemFromString', () => {
 				value: 25,
 				unit: 'm^2'
 			},
-			category: null,
+			category: undefined,
 		})
 	})
 
 	it('Doesn\'t create an object with unit and no amount', () => {
 		expect(createLocalItemFromString('kg Käse', categories)).toEqual({
 			name: 'kg Käse',
-			amount: null,
-			category: null,
+			amount: undefined,
+			category: undefined,
 		})
 	})
 
 	it('Doesn\'t create an object with negative amount', () => {
 		expect(createLocalItemFromString('-1 kg Käse', categories)).toEqual({
 			name: '-1 kg Käse',
-			amount: null,
-			category: null,
+			amount: undefined,
+			category: undefined,
 		})
 	})
 
 	it('Creates an object with a category', () => {
 		expect(createLocalItemFromString('(M) Milch', categories)).toEqual({
 			name: 'Milch',
-			amount: null,
+			amount: undefined,
 			category: "7ca893d0-bc4f-4a79-bdc1-3853cec70001"
+		})
+	})
+
+	it('Creates an object with no category set explicitly', () => {
+		expect(createLocalItemFromString('(?) Nix', categories)).toEqual({
+			name: 'Nix',
+			amount: undefined,
+			category: null
 		})
 	})
 })
