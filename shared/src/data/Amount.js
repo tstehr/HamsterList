@@ -57,7 +57,23 @@ export function createAmount(amountSpec: any): Amount {
 }
 
 export function createAmountFromString(amountString: string): Amount {
-  const evalResult: MathjsValue = mathjs.eval(amountString)
+  let evalResult: MathjsValue = null
+  try {
+     evalResult = mathjs.eval(amountString)
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      // retry with comma as decimal seperator and semicolon as argument seperator
+      const modAmountString = amountString.replace(/,|;/g, match => match == ',' ? '.': ',')
+      try {
+        evalResult = mathjs.eval(modAmountString)
+      } catch (e2) {
+        // Throw original for consistency
+        throw e
+      }
+    } else {
+      throw e
+    }
+  }
   return mathjsValueToAmount(evalResult)
 }
 

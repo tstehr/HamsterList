@@ -99,10 +99,54 @@ describe('createAmountFromString', () => {
     const amount = createAmountFromString('(17 - 3) m/s^2')
   })
 
+  it("Creates Amount with function call using comma as argument sepeator" , () => {
+    const amount = createAmountFromString('add(5,5)')
+    expect(amount).toEqual({
+      value: 10,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount with function call using semicolon as argument sepeator" , () => {
+    const amount = createAmountFromString('add(1;2)')
+    expect(amount).toEqual({
+      value: 3,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount with dot as decimal seperator" , () => {
+    const amount = createAmountFromString('5.5')
+    expect(amount).toEqual({
+      value: 5.5,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount with comma as decimal seperator" , () => {
+    const amount = createAmountFromString('5,5')
+    expect(amount).toEqual({
+      value: 5.5,
+      unit: undefined
+    })
+  })
+
   it('Handles "1/0" correctly', () => {
     expect(() => {
       createAmountFromString('1/0')
     }).toThrow('AmountValue must be finite')
+  })
+
+  it("Doesn't create amount for invalid syntax", () => {
+    expect(() => {
+      createAmountFromString('(5 ')
+    }).toThrow()
+  })
+
+  it("Doesn't create amount for mix of comma as decimal and argument seperator", () => {
+    expect(() => {
+      createAmountFromString('5,5 + add(5,5)')
+    }).toThrow()
   })
 })
 
