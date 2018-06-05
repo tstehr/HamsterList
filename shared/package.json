@@ -11,7 +11,7 @@
     "watch": "npm run watch:babel & npm run watch:flow",
     "watch:babel": "npx babel src --out-dir build --source-maps --watch",
     "watch:flow": "npx flow-copy-source -v src build --watch",
-    "test": "npx jest",
+    "test": "npx jest src",
     "flow": "npx flow"
   },
   "devDependencies": {
