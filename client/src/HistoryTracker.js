@@ -55,17 +55,26 @@ class UnboundHistoryTracker extends Component<Props> {
     }
   }
 
+  escapeListener = e => {
+    if (e.code === 'Escape' && !e.defaultPrevented) {
+      this.up('list')
+    }
+  }
+
   componentDidMount() {
     this.navigationStack = [this.createNavigationStackEntry(this.props.history.location)]
     this.navigationStackIndex = 0
 
     this.setupHistoryListener()
+
+    window.addEventListener('keydown', this.escapeListener)
   }
 
   componentWillUnmount() {
     if (this.unlisten) {
       this.unlisten()
     }
+    window.removeEventListener('keydown', this.escapeListener)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -102,7 +111,9 @@ class UnboundHistoryTracker extends Component<Props> {
       this.props.history.push(pathname)
     } else {
       const stepsBack = this.navigationStackIndex - idx
-      this.props.history.go(-stepsBack)
+      if (stepsBack > 0) {
+        this.props.history.go(-stepsBack)
+      }
     }
   }
 
