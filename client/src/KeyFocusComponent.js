@@ -103,7 +103,7 @@ export default class KeyFocusComponent extends Component<Props> {
     return el.tabIndex != null && el.tabIndex !== -1
   }
 
-  transitiveClosure<I>(input: $ReadOnlyArray<I>, continuation: (I) => [I]): $ReadOnlyArray<I> {
+  transitiveClosure<I>(input: $ReadOnlyArray<I>, continuation: (I) => $ReadOnlyArray<I>): $ReadOnlyArray<I> {
     const working = [...input]
     for (const el of working) {
       working.splice(working.length, 0, ...continuation(el))
