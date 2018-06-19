@@ -29,20 +29,20 @@ export default class ChooseListComponent extends Component<void, State> {
   async createRandomList() {
     const listid = createRandomUUID()
     const response = await fetch(`/api/${listid}/`, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        method: "PUT",
-        body: JSON.stringify({
-          id: listid,
-          title: `New List (${new Date().toLocaleString()})`,
-        })
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: "PUT",
+      body: JSON.stringify({
+        id: listid,
+        title: `New List (${new Date().toLocaleString()})`,
       })
-      const json = await responseToJSON(response)
-      this.setState({
-        listid: json.id
-      })
+    })
+    const json = await responseToJSON(response)
+    this.setState({
+      listid: json.id
+    })
   }
 
   render() {
