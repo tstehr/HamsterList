@@ -46,3 +46,11 @@
 .ChooseListComponent__openForm > button {
   width: 3rem;
 }
+
+.ChooseListComponent__footer {
+  font-size: .6rem;
+  color: grey;
+}
+.ChooseListComponent__footer a, .ChooseListComponent__footer a:link, .ChooseListComponent__footer a:visited {
+  color: inherit;
+}

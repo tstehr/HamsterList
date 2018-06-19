@@ -1,0 +1,9 @@
+.IconButton {
+  display: flex;
+  justify-content: center;
+  background: none;
+  border: none;
+}
+.IconButton img {
+  width: 70%;
+}

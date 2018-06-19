@@ -63,6 +63,10 @@ export default class ChooseListComponent extends Component<void, State> {
               <button>Go</button>
             </form>
           </p>
+
+          <p className="ChooseListComponent__footer">
+            <div>Icons made by <a href="https://www.flaticon.com/authors/egor-rumyantsev" title="Egor Rumyantsev">Egor Rumyantsev</a>, <a href="https://www.flaticon.com/authors/hanan" title="Hanan">Hanan</a> and <a href="https://www.flaticon.com/authors/gregor-cresnar" title="Gregor Cresnar">Gregor Cresnar</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+          </p>
         </div>
       </div>
     )

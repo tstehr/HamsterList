@@ -8,7 +8,10 @@ import ItemComponent from './ItemComponent'
 import CategoryComponent from './CategoryComponent'
 import ChooseCategoryComponent from './ChooseCategoryComponent'
 import KeyFocusComponent from './KeyFocusComponent'
+import IconButton from './IconButton'
 import './EditItemComponent.css'
+
+import wastebin from './icons/waste-bin.svg'
 
 type Props = {
   item: Item,
@@ -144,7 +147,7 @@ export default class EditItemComponent extends Component<Props, State> {
                 </div>
             }
           </div>
-          <button onClick={() => this.props.deleteItem(this.props.item.id)}>Delete</button>
+          <IconButton onClick={(e) => this.props.deleteItem(this.props.item.id)} icon={wastebin} alt="Delete" />
 
           <Route path={`/:listid/${this.props.item.id}/category`} render={({history, match}) =>
             <ChooseCategoryComponent

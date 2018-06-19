@@ -8,8 +8,10 @@ import type { CreateItem } from './ShoppingListContainerComponent'
 import CompletionsComponent from './CompletionsComponent'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 import KeyFocusComponent from './KeyFocusComponent'
+import IconButton from './IconButton'
 import './CreateItemComponent.css'
 
+import add from './icons/add.svg'
 
 type Props = {
   recentlyDeleted: $ReadOnlyArray<LocalItem>,
@@ -201,7 +203,7 @@ export default class CreateItemComponent extends Component<Props, State> {
             <button type="button" className="CreateItemComponent__form__toggleMultiline" onClick={this.handleToggleMultiline}>
               {isMultiline ? "▲" : "▼" }
             </button>
-            <button className="CreateItemComponent__form__save">Save</button>
+            <IconButton className="CreateItemComponent__form__save" icon={add} alt="Add" />
           </form>
           <div className="KeyFocusComponent--ignore" style={{position:'relative'}}>
             <CompletionsComponent
