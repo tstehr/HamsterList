@@ -40,6 +40,8 @@
   width: 100%;
 }
 .CreateItemComponent__form__inputWrapper > textarea {
+  position: relative;
+  z-index: 1;
   min-height: calc(3rem - 4px);
   max-height: 25rem;
   background: transparent;
@@ -58,6 +60,7 @@
   position: absolute;
   top: 0;
   right: 3rem;
+  z-index: 2;
   width: 3rem;
   height: calc(3rem - 4px);
   font-size: 1.5rem;
