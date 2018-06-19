@@ -22,7 +22,7 @@ export default class ChooseListComponent extends Component<void, State> {
     e.preventDefault()
     this.setState({
       // $FlowFixMe
-      listid: e.currentTarget.elements['listid'].value
+      listid: e.currentTarget.elements['listid'].value.trim()
     })
   }
 
