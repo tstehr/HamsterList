@@ -1,6 +1,7 @@
 // @flow
 export * from './util/uuid'
 export * from './util/validation'
+export * from './util/frecency'
 export * from './data/Amount'
 export * from './data/Item'
 export * from './data/ShoppingList'

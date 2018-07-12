@@ -17,18 +17,26 @@
   margin-bottom: 2rem;
 }
 
-.ChooseListComponent__content p {
+.ChooseListComponent__content section {
   margin: 2rem 0;
 }
 
-.ChooseListComponent__randomButton {
+.ChooseListComponent__recentlyUsed {
+  list-style: none;
+}
+.ChooseListComponent__randomButton, .ChooseListComponent__recentlyUsedLink {
+  display: block;
   border: 0;
   background-color: #4CAF50;
   line-height: 3rem;
   color: #fff;
   padding: 0 1rem;
   font-size: 1rem;
+  text-decoration: none;
   width: 100%;
+}
+.ChooseListComponent__recentlyUsedLink {
+  margin: .5rem 0;
 }
 
 .ChooseListComponent__openForm {

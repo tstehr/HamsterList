@@ -1,19 +1,19 @@
 // @flow
 import _ from 'lodash'
-import low from 'lowdb'
-import LocalStorage from 'lowdb/adapters/LocalStorage'
-import lodashId from 'lodash-id'
 import deepFreeze from 'deep-freeze'
 import React, { Component } from 'react'
 import {
   type SyncedShoppingList, type ShoppingList, type CompletionItem, type LocalItem, type Item, type CategoryDefinition,
   type Order, type UUID,
   createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, createRandomUUID,
-  mergeShoppingLists, createOrder
+  mergeShoppingLists, createOrder,
+  frecency
 } from 'shoppinglist-shared'
 import { type Up } from './HistoryTracker'
+import { type RecentlyUsedList } from './ChooseListComponent'
+import { responseToJSON } from './utils'
+import { createDB } from './db'
 import ShoppingListComponent from './ShoppingListComponent'
-import { responseToJSON } from './utils';
 
 export type ConnectionState = "disconnected" | "polling" | "socket"
 
@@ -81,10 +81,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   constructor(props: Props) {
     super(props)
 
-    const adapter = new LocalStorage('db')
-    this.db = low(adapter)
-    this.db._.mixin(lodashId)
-    this.db.defaults({lists: []}).write()
+    this.db = createDB()
 
     this.state = this.db.get('lists').getById(this.props.listid).value() || initialState
     // needed to work with existing local storage
@@ -105,6 +102,10 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     window.addEventListener('offline', this.handleOffline)
 
     this.initiateSyncConnection()
+
+    if (this.state.loaded) {
+      this.markListAsUsed()
+    }
   }
 
   componentWillUnmount() {
@@ -221,10 +222,11 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       syncing: true
     })
 
+    const initialSync = !this.state.loaded
     let syncPromise
     let preSyncShoppingList
 
-    if (!this.state.loaded) {
+    if (initialSync) {
       console.log('initial sync!')
       syncPromise = fetch(`/api/${this.props.listid}/sync`).then(responseToJSON)
     } else {
@@ -248,7 +250,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     const categoriesPromise =  fetch(`/api/${this.props.listid}/categories`).then(responseToJSON)
 
     let ordersPromise
-    if (!this.state.loaded || !this.state.ordersChanged) {
+    if (initialSync || !this.state.ordersChanged) {
       ordersPromise =  fetch(`/api/${this.props.listid}/orders`).then(responseToJSON)
     } else {
       ordersPromise =  fetch(`/api/${this.props.listid}/orders`, {
@@ -305,6 +307,10 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           }
 
           return syncState
+        }, () => {
+          if (initialSync) {
+            this.markListAsUsed()
+          }
         })
       })
       .catch(e => {
@@ -320,6 +326,21 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
   getShoppingList(clientShoppingList: ClientShoppingList): ShoppingList {
     return createShoppingList(_.pick(clientShoppingList, ['id', 'title', 'items']), this.state.categories)
+  }
+
+  markListAsUsed() {
+    let listUsed : RecentlyUsedList = this.db.get('recentlyUsedLists').getById(this.props.listid).value() || {
+      id: this.props.listid,
+      uses: 0,
+      lastUsedTimestamp: Date.now()
+    }
+    listUsed = {...listUsed}
+    listUsed.uses = listUsed.uses + 1
+    listUsed.lastUsedTimestamp = Date.now()
+    if (this.state.loaded) {
+      listUsed.title = this.state.title
+    }
+    this.db.get('recentlyUsedLists').upsert(listUsed).write()
   }
 
   requestSync = (delay: number = 500) => {
@@ -343,6 +364,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   updateListTitle = (newTitle: string) => {
+    this.markListAsUsed()
+
     this.setState((prevState) => {
       return {
         title: newTitle,
@@ -352,6 +375,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   createItem = (localItem: LocalItem) => {
+    this.markListAsUsed()
+
     const item = {...localItem, id: createRandomUUID()}
     this.setState((prevState) => {
       const recentlyDeleted = prevState.recentlyDeleted.filter(
@@ -366,6 +391,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   deleteItem = (id: UUID, addToRecentlyDeleted?: boolean = true) => {
+    this.markListAsUsed()
+
     this.setState((prevState) => {
       const toDelete = prevState.items.find((item) => item.id === id)
       if (toDelete == null) {
@@ -390,6 +417,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   updateItem = (id: UUID, localItem: LocalItem) => {
+    this.markListAsUsed()
+
     const item = {...localItem, id: id}
 
     this.setState((prevState) => {
@@ -416,6 +445,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   updateOrders = (orders: $ReadOnlyArray<Order>) => {
+    this.markListAsUsed()
+
     this.setState({
       dirty: true,
       ordersChanged: true,

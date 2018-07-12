@@ -1,6 +1,7 @@
 // @flow
 import _ from 'lodash'
 import express from 'express'
+import { frecency } from 'shoppinglist-shared'
 import { type RecentlyUsedArray } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 
@@ -16,10 +17,4 @@ export function getSortedCompletions(recentlyUsed: RecentlyUsedArray) {
     [entry => frecency(entry)], ['desc']
   )
   return sortedRecentlyUsed.map(entry => entry.item)
-}
-
-function frecency(entry: {lastUsedTimestamp: number, uses: number}) {
-  const minutes = (Date.now() - entry.lastUsedTimestamp) / (60 * 1000)
-  const frecency = entry.uses / minutes
-  return frecency
 }
