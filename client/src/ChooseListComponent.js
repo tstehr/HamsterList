@@ -100,22 +100,24 @@ export default class ChooseListComponent extends Component<void, State> {
             </form>
           </section>
 
-          <section>
-            <h2>Recently Used</h2>
+          {this.state.recentlyUsedLists.length > 0 &&
+            <section>
+              <h2>Recently Used</h2>
 
-            <FlipMove
-              typeName={null} duration="250" staggerDurationBy="10" staggerDelayBy="10"
-              enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
-            >
-            {
-              this.state.recentlyUsedLists.map(rul =>
-                <a className="ChooseListComponent__recentlyUsedLink" key={rul.id} href={"/"+rul.id}>{
-                  rul.title
-                }</a>
-              )
-            }
-            </FlipMove>
-          </section>
+              <FlipMove
+                typeName={null} duration="250" staggerDurationBy="10" staggerDelayBy="10"
+                enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
+              >
+              {
+                this.state.recentlyUsedLists.map(rul =>
+                  <a className="ChooseListComponent__recentlyUsedLink" key={rul.id} href={"/"+rul.id}>{
+                    rul.title
+                  }</a>
+                )
+              }
+              </FlipMove>
+            </section>
+          }
 
           <section className="ChooseListComponent__footer">
             Icons made by <a href="https://www.flaticon.com/authors/egor-rumyantsev" title="Egor Rumyantsev">Egor Rumyantsev</a>, <a href="https://www.flaticon.com/authors/hanan" title="Hanan">Hanan</a> and <a href="https://www.flaticon.com/authors/gregor-cresnar" title="Gregor Cresnar">Gregor Cresnar</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
