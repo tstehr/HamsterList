@@ -19,16 +19,16 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-flow": "^6.23.0",
-    "flow-bin": "^0.59.0",
-    "flow-copy-source": "^1.2.1",
-    "jest": "^21.2.1"
+    "flow-bin": "^0.76.0",
+    "flow-copy-source": "^2.0.1",
+    "jest": "^23.4.0"
   },
   "dependencies": {
     "color-string": "^1.5.2",
     "deep-freeze": "^0.0.1",
     "is-uuid": "^1.0.2",
     "lodash": "^4.17.4",
-    "mathjs": "^3.20.2",
+    "mathjs": "^5.0.2",
     "uuid": "^3.1.0"
   }
 }

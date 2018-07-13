@@ -13,31 +13,30 @@
     "flow": "npx flow"
   },
   "dependencies": {
-    "body-parser": "^1.18.2",
+    "body-parser": "^1.18.3",
     "bunyan": "^1.8.12",
     "camel-case": "^3.0.0",
     "deep-freeze": "0.0.1",
-    "express": "^4.16.2",
+    "express": "^4.16.3",
     "express-rest": "^1.0.4",
-    "fs-extra": "^5.0.0",
+    "fs-extra": "^6.0.1",
     "json-stable-stringify": "^1.0.1",
-    "json5": "^0.5.1",
-    "lodash": "^4.17.4",
+    "json5": "^1.0.1",
+    "lodash": "^4.17.10",
     "nconf": "^0.10.0",
     "shoppinglist-shared": "link:../shared",
-    "ws": "^3.3.1"
+    "ws": "^5.2.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-node-modules": "^0.0.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-flow": "^6.23.0",
-    "chalk": "^2.3.0",
-    "flow-bin": "^0.59.0",
-    "jest": "^21.2.1",
-    "nodemon": "^1.17.3"
+    "flow-bin": "^0.76.0",
+    "jest": "^23.4.0",
+    "nodemon": "^1.18.1"
   }
 }
