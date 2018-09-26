@@ -16,28 +16,32 @@
 
 .EditItemComponent__name {
   flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  padding-left: .5rem;
 }
-.EditItemComponent__name > div,
-.EditItemComponent__name form,
-.EditItemComponent__name input {
-  height: 100%;
-  width: 100%;
+.EditItemComponent__name:focus-within {
+  box-shadow: 0 0 3px blue, inset 0 0 3px blue;
+  background: white;
+}
+.EditItemComponent__name:focus {
+  background: transparent;
+}
+.EditItemComponent__name > * {
+  flex: 1;
   font-size: 1rem;
   font-family: inherit;
   border: 0;
+  max-height: 2.4rem;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: transparent;
+  resize: none;
 }
-
-.EditItemComponent__name > div,
-.EditItemComponent__name input {
-  padding-left: .5rem
-}
-
-.EditItemComponent__name > div {
-  display: flex;
-  align-items: center;
+.EditItemComponent__name > textarea:focus {
+  box-shadow: none;
 }
 
 @media (min-width: 30rem) {

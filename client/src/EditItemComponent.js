@@ -9,6 +9,7 @@ import CategoryComponent from './CategoryComponent'
 import ChooseCategoryComponent from './ChooseCategoryComponent'
 import KeyFocusComponent from './KeyFocusComponent'
 import IconButton from './IconButton'
+import AutosizeTextarea from 'react-autosize-textarea'
 import './EditItemComponent.css'
 
 import wastebin from './icons/waste-bin.svg'
@@ -125,28 +126,25 @@ export default class EditItemComponent extends Component<Props, State> {
             </button>
           } />
 
-          <div className="EditItemComponent__name">
-            {
-              this.state.isEditing
-              ? <form onSubmit={this.handleSumbit} style={{height:"100%"}}>
-                  <input type="text"
-                    className="KeyFocusComponent--defaultFocus"
-                    value={this.state.inputValue}
-                    onBlur={this.handleBlur} onChange={this.handleChange}
-                    onKeyDown={this.handleInputKeyDown}
-                    ref={(input) => this.input = input}
-                  />
-                </form>
-              : <div tabIndex="0"
-                  className="KeyFocusComponent--defaultFocus"
-                  onFocus={this.handleFocus} onBlur={this.handleBlur}
-                  onKeyDown={this.handleDivKeyDown} onClick={this.handleDivClick}
-                  ref={(itemDiv) => this.itemDiv = itemDiv}
-                >
-                  <ItemComponent item={this.props.item} />
-                </div>
-            }
-          </div>
+          {
+            this.state.isEditing
+            ? <form onSubmit={this.handleSumbit} className="EditItemComponent__name">
+                <AutosizeTextarea
+                  type="text" className="KeyFocusComponent--defaultFocus"
+                  value={this.state.inputValue}
+                  onBlur={this.handleBlur} onChange={this.handleChange}
+                  onKeyDown={this.handleInputKeyDown}
+                  innerRef={(input) => { this.input = input }}
+                />
+              </form>
+            : <div className="EditItemComponent__name KeyFocusComponent--defaultFocus" tabIndex="0"
+                onFocus={this.handleFocus} onBlur={this.handleBlur}
+                onKeyDown={this.handleDivKeyDown} onClick={this.handleDivClick}
+                ref={(itemDiv) => this.itemDiv = itemDiv}
+              >
+                <ItemComponent item={this.props.item} />
+              </div>
+          }
           <IconButton onClick={(e) => this.props.deleteItem(this.props.item.id)} icon={wastebin} alt="Delete" />
 
           <Route path={`/:listid/${this.props.item.id}/category`} render={({history, match}) =>
@@ -166,7 +164,7 @@ export default class EditItemComponent extends Component<Props, State> {
     if (this.state.hasFocus) {
       if (this.input != null) {
         this.input.focus()
-      } else if (this.itemDiv != null){
+      } else if (this.itemDiv != null) {
         this.itemDiv.focus()
       }
     }

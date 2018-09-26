@@ -36,6 +36,9 @@
 .CreateItemButtonComponent__name {
   flex: 1;
   padding-left: .5rem;
+  max-height: 2.4rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (min-width: 30rem) {

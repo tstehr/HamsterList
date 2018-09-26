@@ -14,10 +14,9 @@
 .CreateItemComponent__form__inputWrapper {
   position: relative;
   min-height: calc(3rem - 4px);
-  max-height: calc(3rem - 4px);
   cursor: text;
   flex: 1;
-  transition-property: min-height, max-height;
+  transition-property: min-height;
   transition-duration: 100ms;
   transition-timing-function: ease-out;
 }
@@ -57,10 +56,6 @@
   user-select: none;
 }
 .CreateItemComponent__form__toggleMultiline {
-  position: absolute;
-  top: 0;
-  right: 3rem;
-  z-index: 2;
   width: 3rem;
   height: calc(3rem - 4px);
   font-size: 1.5rem;
