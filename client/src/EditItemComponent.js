@@ -83,7 +83,15 @@ export default class EditItemComponent extends Component<Props, State> {
     })
     e.preventDefault()
   }
+
   handleInputKeyDown = (e: SyntheticKeyboardEvent<>) => {
+    if (e.key === 'Enter') {
+      this.saveItem()
+      this.setState({
+        isEditing: false
+      })
+      e.preventDefault()
+    }
     if (e.key === 'Escape') {
       this.setState({
         isEditing: false,
@@ -92,8 +100,8 @@ export default class EditItemComponent extends Component<Props, State> {
       e.preventDefault()
     }
   }
-  handleChange = (e: SyntheticInputEvent<>) => { this.setState({inputValue: e.target.value}) }
 
+  handleChange = (e: SyntheticInputEvent<>) => { this.setState({inputValue: e.target.value}) }
 
   handleDivKeyDown = (e: SyntheticKeyboardEvent<>) => {
     if (e.key === 'Enter') {
@@ -113,8 +121,7 @@ export default class EditItemComponent extends Component<Props, State> {
       inputValue: itemToString(this.props.item)
     })
   }
-
-
+  
   render() {
     return (
         <li className="EditItemComponent">
