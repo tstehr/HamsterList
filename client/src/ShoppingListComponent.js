@@ -120,6 +120,7 @@ export default class ShoppingListComponent extends Component<Props> {
           <h2>Debug</h2>
           <button type="button" onClick={this.props.manualSync}>Force Sync</button>
           <button type="button" onClick={this.clearLocalStorage}>Clear Local Storage</button>
+          <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
         </div>
 
         <Route path={`/:listid/orders`} render={({history, match}) =>
