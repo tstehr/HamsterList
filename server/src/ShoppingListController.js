@@ -7,7 +7,7 @@ import { type ServerShoppingList, createServerShoppingList, getBaseShoppingList 
 import { type ShoppingListChangeCallback } from './SocketController'
 
 
-export type ShoppingListRequest = { listid: string, list: ServerShoppingList, log: Logger, id: UUID } & express$Request
+export type ShoppingListRequest = { listid: string, list: ServerShoppingList, log: Logger } & express$Request
 
 export default class ShoppingListController {
   db: DB
