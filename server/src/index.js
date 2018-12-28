@@ -8,7 +8,7 @@ import bodyParser from 'body-parser'
 import WebSocket from 'ws'
 import nconf from 'nconf'
 import camelCase from 'camel-case'
-import bunyan from 'bunyan'
+import bunyan, { Logger } from 'bunyan'
 import {
   type ShoppingList, type Item, type LocalItem, type UUID,
   createLocalItemFromString, createLocalItem, createItem, createShoppingList, createRandomUUID, createUUID
@@ -23,6 +23,7 @@ import CategoriesController from './CategoriesController'
 import OrdersController from './OrdersController'
 import TokenCreator from './TokenCreator'
 
+export type UserRequest = { username: ?string, log: Logger } & express$Request
 
 var log = bunyan.createLogger({
     name: 'shoppinglist',
@@ -86,12 +87,18 @@ db.load()
 
     const socketController = new SocketController(tokenCreator, log)
 
-    const shoppingListController = new ShoppingListController(db, socketController.notifiyChanged, log, nconf.get('defaultCategories'))
+    const shoppingListController = new ShoppingListController(db, socketController.notifiyChanged, nconf.get('defaultCategories'))
     const itemController = new ItemController(db, socketController.notifiyChanged)
     const syncController = new SyncController(db, socketController.notifiyChanged, tokenCreator)
     const categoriesController = new CategoriesController(db, socketController.notifiyChanged)
     const ordersController = new OrdersController(db, socketController.notifiyChanged)
     const completionsController = new CompletionsController()
+
+    router.use('*', (req: UserRequest, res: express$Response, next: express$NextFunction) => {
+      req.username = req.get('X-SL-Username') || null
+      req.log = log.child({id: createRandomUUID(), username: req.username})
+      next()
+    })
 
     router.param('listid', shoppingListController.handleParamListid)
     router.param('itemid', itemController.handleParamItemid)
