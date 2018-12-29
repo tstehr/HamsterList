@@ -144,15 +144,14 @@ db.load()
       } catch (e) {
         log.fatal(`File "${e.path}" couldn't be found`)
         process.exit(1)
+        return
       }
 
-      // $FlowFixMe
       const server = https.createServer(options, app)
 
       socketController.initializeFor(server)
 
       var port = nconf.get('httpsPort')
-      // $FlowFixMe
       server.listen(port)
       log.info(`HTTPS server listening on port ${port} `)
     }
@@ -162,7 +161,6 @@ db.load()
       socketController.initializeFor(server)
 
       var port = nconf.get('port')
-      // $FlowFixMe
       server.listen(port)
       log.info(`HTTP server listening on port ${port} `)
     }

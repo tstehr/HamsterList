@@ -31,7 +31,7 @@ const stateMapping: {[ConnectionState]: string} = {
 
 export default class TopBarComponent extends Component<Props, State> {
   input: ?HTMLInputElement
-  stopSyncingTimeoutId: number
+  stopSyncingTimeoutId: TimeoutID
 
   constructor(props: Props) {
     super(props)

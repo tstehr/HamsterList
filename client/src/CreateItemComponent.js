@@ -32,9 +32,9 @@ type State = {
 export default class CreateItemComponent extends Component<Props, State> {
   root: ?HTMLDivElement
   input: ?HTMLInputElement
-  focusTimeoutId: ?number
+  focusTimeoutId: TimeoutID
   lastChange: number
-  changingQuicklyTimeoutId: ?number
+  changingQuicklyTimeoutId: TimeoutID
 
 
   constructor(props: Props) {

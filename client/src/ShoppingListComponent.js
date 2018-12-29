@@ -66,6 +66,7 @@ export default class ShoppingListComponent extends Component<Props> {
   }
 
   mergeItems = () => {
+    // $FlowFixMe
     const grouped = _.groupBy(this.props.shoppingList.items, item => {
       return JSON.stringify({
         category: item.category == null ? null : item.category,

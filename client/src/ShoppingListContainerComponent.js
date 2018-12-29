@@ -74,9 +74,9 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   socket: ?WebSocket
   supressSave: boolean
   isInSyncMethod: boolean
-  waitForOnlineTimeoutId: number
-  changePushSyncTimeoutId: number
-  requestSyncTimeoutId: number
+  waitForOnlineTimeoutId: TimeoutID
+  changePushSyncTimeoutId: TimeoutID
+  requestSyncTimeoutId: TimeoutID
 
   constructor(props: Props) {
     super(props)
@@ -160,7 +160,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       base = protocol + window.location.host
     }
 
-    let onopenTimoutId: number
+    let onopenTimoutId: TimeoutID
     this.socket = new WebSocket(base + `/api/${this.props.listid}/socket`);
     this.socket.onopen = () => {
       onopenTimoutId = setTimeout(() => {
