@@ -228,11 +228,11 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
     if (initialSync) {
       console.log('initial sync!')
-      syncPromise = fetch(`/api/${this.props.listid}/sync`).then(responseToJSON)
+      syncPromise = this.fetch(`/api/${this.props.listid}/sync`).then(responseToJSON)
     } else {
       preSyncShoppingList = this.getShoppingList(this.state)
 
-      syncPromise = fetch(`/api/${this.props.listid}/sync`, {
+      syncPromise = this.fetch(`/api/${this.props.listid}/sync`, {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -246,14 +246,14 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
         .then(responseToJSON)
     }
 
-    const completionsPromise = fetch(`/api/${this.props.listid}/completions`).then(responseToJSON)
-    const categoriesPromise =  fetch(`/api/${this.props.listid}/categories`).then(responseToJSON)
+    const completionsPromise = this.fetch(`/api/${this.props.listid}/completions`).then(responseToJSON)
+    const categoriesPromise =  this.fetch(`/api/${this.props.listid}/categories`).then(responseToJSON)
 
     let ordersPromise
     if (initialSync || !this.state.ordersChanged) {
-      ordersPromise =  fetch(`/api/${this.props.listid}/orders`).then(responseToJSON)
+      ordersPromise =  this.fetch(`/api/${this.props.listid}/orders`).then(responseToJSON)
     } else {
-      ordersPromise =  fetch(`/api/${this.props.listid}/orders`, {
+      ordersPromise =  this.fetch(`/api/${this.props.listid}/orders`, {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -326,6 +326,16 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
   getShoppingList(clientShoppingList: ClientShoppingList): ShoppingList {
     return createShoppingList(_.pick(clientShoppingList, ['id', 'title', 'items']), this.state.categories)
+  }
+
+  fetch(input: RequestInfo, init?: RequestOptions) {
+    init = init || {}
+    _.merge(init, {
+      "headers": {
+        "X-ShoppingList-Username": encodeURIComponent("test üüü 💩")
+      }
+    })
+    return fetch(input, init)
   }
 
   markListAsUsed() {

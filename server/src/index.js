@@ -95,7 +95,18 @@ db.load()
     const completionsController = new CompletionsController()
 
     router.use('*', (req: UserRequest, res: express$Response, next: express$NextFunction) => {
-      req.username = req.get('X-SL-Username') || null
+      const encodedUsername = req.get('X-ShoppingList-Username')
+      if (encodedUsername !== undefined) {
+        try {
+          req.username = decodeURIComponent(encodedUsername)
+        } catch (e) {
+          res.status(400).json({error: "Header field X-ShoppingList-Username is malformed."})
+          return
+        }
+      } else {
+        req.username = null
+      }
+
       req.log = log.child({id: createRandomUUID(), username: req.username})
       next()
     })
@@ -103,7 +114,7 @@ db.load()
     router.param('listid', shoppingListController.handleParamListid)
     router.param('itemid', itemController.handleParamItemid)
 
-    router.use('/:listid', (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+    router.use('*', (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
       req.log.info({req: req})
       next()
       req.log.info({res: res})
