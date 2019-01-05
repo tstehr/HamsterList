@@ -209,7 +209,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }
 
-  sync(manuallyTriggered: boolean = false) {
+  async sync(manuallyTriggered: boolean = false) {
     window.clearTimeout(this.requestSyncTimeoutId)
 
     if (this.isInSyncMethod) {
@@ -264,64 +264,67 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
         .then(responseToJSON)
     }
 
-    Promise.all([syncPromise, completionsPromise, categoriesPromise, ordersPromise])
-      .then(([syncJson, completionsJson, categoriesJson, ordersJson]) => {
-        this.setState((prevState) => {
-          const categories = categoriesJson.map(createCategoryDefinition)
-          const completions = completionsJson.map(createCompletionItem)
-          const orders = ordersJson.map(createOrder)
+    try {
+      const syncJson = await syncPromise
+      const completionsJson = await completionsPromise
+      const categoriesJson = await categoriesPromise
+      const ordersJson = await ordersPromise
+      
+      this.setState((prevState) => {
+        const categories = categoriesJson.map(createCategoryDefinition)
+        const completions = completionsJson.map(createCompletionItem)
+        const orders = ordersJson.map(createOrder)
 
-          // don't sort shopping list from server, we need it in server order for previousSync
-          const serverSyncedShoppingList = createSyncedShoppingList(syncJson, null)
-          const serverShoppingList = _.omit(serverSyncedShoppingList, 'token')
+        // don't sort shopping list from server, we need it in server order for previousSync
+        const serverSyncedShoppingList = createSyncedShoppingList(syncJson, null)
+        const serverShoppingList = _.omit(serverSyncedShoppingList, 'token')
 
-          let dirty, newShoppingList
-          if (preSyncShoppingList != null) {
-            const clientShoppingList = this.getShoppingList(prevState)
-            dirty = !_.isEqual(preSyncShoppingList, clientShoppingList)
-            newShoppingList = mergeShoppingLists(preSyncShoppingList, clientShoppingList, serverShoppingList, categories)
-          } else {
-            newShoppingList = serverShoppingList
-            dirty = false
-          }
-
-          const syncState: $Shape<State> = {
-            completions: completions,
-            categories: categories,
-            orders: orders,
-            dirty: dirty,
-            syncing: false,
-            loaded: true,
-            lastSyncFailed: false,
-            ordersChanged: false,
-            previousSync: serverSyncedShoppingList,
-            ...newShoppingList,
-          }
-
-          this.isInSyncMethod = false
-          console.log('done syncing')
-
-          if (syncState.dirty) {
-            console.warn('dirty after sync, resyncing')
-            this.requestSync(0)
-          }
-
-          return syncState
-        }, () => {
-          if (initialSync) {
-            this.markListAsUsed()
-          }
-        })
-      })
-      .catch(e => {
-        let failedState = {
-          lastSyncFailed: true,
-          syncing: false,
+        let dirty, newShoppingList
+        if (preSyncShoppingList != null) {
+          const clientShoppingList = this.getShoppingList(prevState)
+          dirty = !_.isEqual(preSyncShoppingList, clientShoppingList)
+          newShoppingList = mergeShoppingLists(preSyncShoppingList, clientShoppingList, serverShoppingList, categories)
+        } else {
+          newShoppingList = serverShoppingList
+          dirty = false
         }
-        this.setState(failedState)
+
+        const syncState: $Shape<State> = {
+          completions: completions,
+          categories: categories,
+          orders: orders,
+          dirty: dirty,
+          syncing: false,
+          loaded: true,
+          lastSyncFailed: false,
+          ordersChanged: false,
+          previousSync: serverSyncedShoppingList,
+          ...newShoppingList,
+        }
+
         this.isInSyncMethod = false
-        console.log('done syncing, failed', e)
+        console.log('done syncing')
+
+        if (syncState.dirty) {
+          console.warn('dirty after sync, resyncing')
+          this.requestSync(0)
+        }
+
+        return syncState
+      }, () => {
+        if (initialSync) {
+          this.markListAsUsed()
+        }
       })
+    } catch (e) {
+      let failedState = {
+        lastSyncFailed: true,
+        syncing: false,
+      }
+      this.setState(failedState)
+      this.isInSyncMethod = false
+      console.log('done syncing, failed', e)
+    }
   }
 
   getShoppingList(clientShoppingList: ClientShoppingList): ShoppingList {
