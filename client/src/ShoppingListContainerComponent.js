@@ -228,7 +228,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
     if (initialSync) {
       console.log('initial sync!')
-      syncPromise = this.fetch(`/api/${this.props.listid}/sync`).then(responseToJSON)
+      syncPromise = this.fetch(`/api/${this.props.listid}/sync`)
     } else {
       preSyncShoppingList = this.getShoppingList(this.state)
 
@@ -243,15 +243,14 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             currentState: preSyncShoppingList
           })
         })
-        .then(responseToJSON)
     }
 
-    const completionsPromise = this.fetch(`/api/${this.props.listid}/completions`).then(responseToJSON)
-    const categoriesPromise =  this.fetch(`/api/${this.props.listid}/categories`).then(responseToJSON)
+    const completionsPromise = this.fetch(`/api/${this.props.listid}/completions`)
+    const categoriesPromise =  this.fetch(`/api/${this.props.listid}/categories`)
 
     let ordersPromise
     if (initialSync || !this.state.ordersChanged) {
-      ordersPromise =  this.fetch(`/api/${this.props.listid}/orders`).then(responseToJSON)
+      ordersPromise =  this.fetch(`/api/${this.props.listid}/orders`)
     } else {
       ordersPromise =  this.fetch(`/api/${this.props.listid}/orders`, {
           headers: {
@@ -261,15 +260,14 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           method: "PUT",
           body: JSON.stringify(this.state.orders)
         })
-        .then(responseToJSON)
     }
 
     try {
-      const syncJson = await syncPromise
-      const completionsJson = await completionsPromise
-      const categoriesJson = await categoriesPromise
-      const ordersJson = await ordersPromise
-      
+      const syncJson = await responseToJSON(await syncPromise)
+      const completionsJson = await responseToJSON(await completionsPromise)
+      const categoriesJson = await responseToJSON(await categoriesPromise)
+      const ordersJson = await responseToJSON(await ordersPromise)
+
       this.setState((prevState) => {
         const categories = categoriesJson.map(createCategoryDefinition)
         const completions = completionsJson.map(createCompletionItem)
