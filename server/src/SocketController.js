@@ -1,4 +1,6 @@
 // @flow
+import http from 'http'
+import https from 'https'
 import _ from 'lodash'
 import WebSocket from 'ws'
 import { Logger } from 'bunyan'
@@ -37,7 +39,7 @@ export default class SocketController {
     }, 30000);
   }
 
-  initializeFor(server: Server) {
+  initializeFor(server: http.Server | https.Server) {
     const wss = new WebSocket.Server({
       server: server
     })
