@@ -63,12 +63,11 @@ export function createLocalItemFromString(stringRepresentation: string, categori
   const categoryResult = stringRepresentation.match(/^\s*\(([^\)]+)\)(.*)$/u)
   if (categoryResult != null) {
     const shortName = categoryResult[1]
-    console.log(shortName, shortName === "?")
     if (shortName === "?") {
       category = null
       stringRepresentation = categoryResult[2]
     } else {
-      const categoryCandidate = categories.find(cat => cat.shortName == shortName)
+      const categoryCandidate = categories.find(cat => cat.shortName.toUpperCase() == shortName.toUpperCase())
       if (categoryCandidate) {
         category = categoryCandidate.id
         stringRepresentation = categoryResult[2]
