@@ -1,10 +1,7 @@
 // @flow
-
-import jest from 'jest'
 import { createUUID } from '../util/uuid'
 import { type ShoppingList, createShoppingList, mergeShoppingLists } from './ShoppingList'
 import { createLocalItemFromString } from './Item'
-
 
 it('Creates a simple object', () => {
   const list = createShoppingList({

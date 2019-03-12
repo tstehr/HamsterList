@@ -1,7 +1,5 @@
 // @flow
 
-
-import jest from 'jest'
 import { createOrder, sortItems } from './Order'
 import { type Item, createItem } from './Item';
 import { createUUID } from '../util/uuid';
