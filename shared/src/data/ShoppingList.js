@@ -72,8 +72,7 @@ export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, ser
   const allIds = _.union(_.keys(baseMap), _.keys(clientMap), _.keys(serverMap))
 
   for (const id: UUID of allIds) {
-    // $FlowFixMe
-    const base: Item = baseMap[id]
+    const base = baseMap[id]
     const client = clientMap[id]
     const server = serverMap[id]
 
