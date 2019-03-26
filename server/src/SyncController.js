@@ -28,6 +28,7 @@ export default class SyncController {
 
   handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     res.send(this.tokenCreator.setToken(getBaseShoppingList(req.list)))
+    next()
   }
 
   handlePost = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
@@ -92,6 +93,7 @@ export default class SyncController {
     this.db.write().then(() => {
       this.changeCallback(mergedServerShoppingList)
       res.send(this.tokenCreator.setToken(merged))
+      next()
     })
     .catch(req.log.error)
   }

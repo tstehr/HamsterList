@@ -1,7 +1,10 @@
 // @flow
 import express from 'express'
 import { Logger } from 'bunyan'
-import { type ShoppingList, type CategoryDefinition, type UUID, createShoppingList, createRandomUUID } from 'shoppinglist-shared'
+import {
+  type ShoppingList, type CategoryDefinition, type UUID,
+  createShoppingList, createRandomUUID, diffShoppingLists
+} from 'shoppinglist-shared'
 import { type DB, updateInArray } from './DB'
 import { type ServerShoppingList, createServerShoppingList, getBaseShoppingList } from './ServerShoppingList'
 import { type ShoppingListChangeCallback } from './SocketController'
@@ -51,15 +54,17 @@ export default class ShoppingListController {
     }
   }
 
-  handleGet = (req: ShoppingListRequest, res: express$Response) => {
+  handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     res.json(getBaseShoppingList(req.list))
+    next()
   }
 
-  handleGetItems = (req: ShoppingListRequest, res: express$Response) => {
+  handleGetItems = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     res.json(req.list.items)
+    next()
   }
 
-  handlePut = (req: ShoppingListRequest, res: express$Response) => {
+  handlePut = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     let bodyList
     try {
       bodyList = createShoppingList({items: [], ...req.body}, req.list.categories)
@@ -82,6 +87,7 @@ export default class ShoppingListController {
     this.db.write().then(() => {
       this.changeCallback(updatedList)
       res.json(updatedList)
+      next()
     })
     .catch(req.log.error)
   }

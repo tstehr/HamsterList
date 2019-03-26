@@ -34,16 +34,17 @@ export default class ItemController {
     }
   }
 
-  handleGet = (req: ItemIdRequest, res: express$Response) => {
+  handleGet = (req: ItemIdRequest, res: express$Response, next: express$NextFunction) => {
     const item = req.list.items.find((item) => item.id === req.itemid)
     if (item!= null) {
       res.json(createItem(item))
+      next()
     } else {
       res.status(404).json({error: `Item with id "${req.itemid}" not found!`})
     }
   }
 
-  handlePost = (req: ShoppingListRequest, res: express$Response) => {
+  handlePost = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     let localItem: LocalItem
     try {
       // $FlowFixMe
@@ -76,11 +77,12 @@ export default class ItemController {
       .then(() => {
         this.changeCallback(changedList)
         res.location(`${req.baseUrl}/${req.listid}/items/${item.id}`).status(201).json(item)
+        next()
       })
       .catch(req.log.error)
   }
 
-  handlePut = (req: ItemIdRequest, res: express$Response) => {
+  handlePut = (req: ItemIdRequest, res: express$Response, next: express$NextFunction) => {
     let item: Item
     try {
       // $FlowFixMe
@@ -125,6 +127,7 @@ export default class ItemController {
     this.db.write().then(() => {
       this.changeCallback(changedList)
       res.status(status).json(item)
+      next()
     })
     .catch(req.log.error)
   }

@@ -17,11 +17,12 @@ export default class CategoriesController {
     this.changeCallback = changeCallback
   }
 
-  handleGet = (req: ShoppingListRequest, res: express$Response) => {
+  handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     res.json(req.list.categories)
+    next()
   }
 
-  handlePut = (req: ShoppingListRequest, res: express$Response) => {
+  handlePut = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     if (!Array.isArray(req.body)) {
         res.status(400).json({error: 'Must be array of categories!'})
         return
@@ -44,6 +45,7 @@ export default class CategoriesController {
     this.db.write().then(() => {
       this.changeCallback(updatedList)
       res.json(categories)
+      next()
     })
     .catch(req.log.error)
   }

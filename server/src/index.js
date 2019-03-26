@@ -11,7 +11,7 @@ import camelCase from 'camel-case'
 import bunyan, { Logger } from 'bunyan'
 import {
   type ShoppingList, type Item, type LocalItem, type UUID,
-  createLocalItemFromString, createLocalItem, createItem, createShoppingList, createRandomUUID, createUUID
+  createLocalItemFromString, createLocalItem, createItem, createShoppingList, createRandomUUID, createUUID, diffShoppingLists
 } from 'shoppinglist-shared'
 import { DB } from './DB'
 import ShoppingListController, { type ShoppingListRequest } from './ShoppingListController'
@@ -120,6 +120,8 @@ db.load()
       req.log.info({res: res})
     })
 
+
+
     router.get('/:listid', shoppingListController.handleGet)
     router.put('/:listid', shoppingListController.handlePut)
     router.get('/:listid/items', shoppingListController.handleGetItems)
@@ -140,9 +142,18 @@ db.load()
     router.get('/:listid/sync', syncController.handleGet)
     router.post('/:listid/sync', syncController.handlePost)
 
-    router.use('*', (req: express$Request, res: express$Response) => {
-      res.status(404).json({error: "This route doesn't exist."})
+    router.use('*', (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+      const list = db.get().lists.find((list) => list.id == req.list.id)
+      req.log.info(diffShoppingLists(req.list, list))
+      next()
     })
+
+    router.use('*', (req: express$Request, res: express$Response) => {
+      if (!res.headersSent) {
+        res.status(404).json({error: "This route doesn't exist."})
+      }
+    })
+
 
     app.use('/api', router)
 

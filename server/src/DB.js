@@ -1,7 +1,7 @@
 // @flow
 import fs from 'fs-extra'
 import deepFreeze from 'deep-freeze'
-import { type ServerShoppingList } from './ServerShoppingList'
+import { type ServerShoppingList, createServerShoppingList } from './ServerShoppingList'
 
 export type DBContents = {|
   +lists: $ReadOnlyArray<ServerShoppingList>
@@ -15,18 +15,23 @@ export class DB {
     this.path = path
   }
 
-  load(): Promise<DBContents> {
+  async load(): Promise<DBContents> {
     if (this.contents != null) {
-      return Promise.resolve(this.contents)
+      return this.contents
     }
-    return fs.readJson(this.path)
-      .catch(e => {
-        return { lists: [] }
-      })
-      .then(json => {
-        this.contents = deepFreeze(json)
-        return this.contents
-      })
+
+    let json
+    try {
+      json = await fs.readJson(this.path)
+    } catch (e) {
+      json = { lists: [] }
+    }
+
+    this.contents = deepFreeze({
+      lists: json.lists.map(createServerShoppingList)
+    })
+    
+    return this.contents
   }
 
   write(): Promise<void> {

@@ -17,11 +17,12 @@ export default class OrdersController {
     this.changeCallback = changeCallback
   }
 
-  handleGet = (req: ShoppingListRequest, res: express$Response) => {
+  handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     res.json(req.list.orders)
+    next()
   }
 
-  handlePut = (req: ShoppingListRequest, res: express$Response) => {
+  handlePut = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     if (!Array.isArray(req.body)) {
         res.status(400).json({error: 'Must be array of orders!'})
         return
@@ -44,6 +45,7 @@ export default class OrdersController {
     this.db.write().then(() => {
       this.changeCallback(updatedList)
       res.json(orders)
+      next()
     })
     .catch(req.log.error)
   }
