@@ -5,7 +5,7 @@ import { createItem } from './Item'
 import { type UUID, createUUID } from '../util/uuid'
 import {
   type DeleteItem, ADD_ITEM, DELETE_ITEM,
-  diffShoppingLists, createAddItem, createUpdateItem, createDeleteItem, applyDiff
+  diffShoppingLists, createDiff, generateAddItem, generateUpdateItem, generateDeleteItem, applyDiff
 } from './Change'
 
 const id = createUUID("a58df112-085f-4742-873d-8f8e31af7826")
@@ -35,9 +35,23 @@ const shoppingList = createShoppingList({
   ]
 }, [])
 
+describe('createDiff', () => {
+  it('Creates an UpdateItem', () => {
+    const diff : diff = createDiff({
+      'type': ADD_ITEM,
+      'item': {
+        "name": "loser Pfefferminztee",
+        "category": "1508d447-3e0d-4b50-bcae-ae4a9c85a3ea",
+        "id": "cbda3946-f136-4c94-8280-4931100576b4",
+        "amount": null
+      }
+    })
+  })
+})
+
 describe('diffShoppingLists', () => {
   it('Recognizes addition', () => {
-    const originalDiff = createAddItem(createItem({
+    const originalDiff = generateAddItem(createItem({
         "name": "loser Pfefferminztee",
         "category": "1508d447-3e0d-4b50-bcae-ae4a9c85a3ea",
         "id": "cbda3946-f136-4c94-8280-4931100576b4",
@@ -50,7 +64,7 @@ describe('diffShoppingLists', () => {
   })
 
   it('Recognizes update', () => {
-    const originalDiff = createUpdateItem(shoppingList, createItem({
+    const originalDiff = generateUpdateItem(shoppingList, createItem({
       "name": "Gemüse",
       "category": "6ca0f054-209c-46c9-b337-6088f7a530ab",
       "id": "cee268a4-7506-4000-a740-5c98e50809c6",
@@ -65,7 +79,7 @@ describe('diffShoppingLists', () => {
   })
 
   it('Recognizes delete', () => {
-    const originalDiff = createDeleteItem(shoppingList, createUUID("69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd"))
+    const originalDiff = generateDeleteItem(shoppingList, createUUID("69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd"))
     const newShoppingList = applyDiff(shoppingList, originalDiff)
     const diffs = diffShoppingLists(shoppingList, newShoppingList)
     expect(diffs).toHaveLength(1)
@@ -81,7 +95,7 @@ describe('applyDiff', () => {
         "id": "cbda3946-f136-4c94-8280-4931100576b4",
         "amount": null
     })
-    const result = applyDiff(shoppingList, createAddItem(item))
+    const result = applyDiff(shoppingList, generateAddItem(item))
     expect(result.items).toContainEqual(item)
   })
 
@@ -93,22 +107,22 @@ describe('applyDiff', () => {
     })
 
     expect(() => {
-      applyDiff(shoppingList, createAddItem(item))
+      applyDiff(shoppingList, generateAddItem(item))
     }).toThrow(`Can't apply diff, there already exists an item with id ${item.id}`)
   })
 
   it('Applies a UPDATE_ITEM diff', () => {
-    const result = applyDiff(shoppingList, createDeleteItem(shoppingList, createUUID("69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd")))
+    const result = applyDiff(shoppingList, generateDeleteItem(shoppingList, createUUID("69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd")))
     expect(result.items).toHaveLength(2)
   })
 
   it('Applies a DELETE_ITEM diff', () => {
-    const result = applyDiff(shoppingList, createDeleteItem(shoppingList, createUUID("69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd")))
+    const result = applyDiff(shoppingList, generateDeleteItem(shoppingList, createUUID("69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd")))
     expect(result.items).toHaveLength(2)
   })
 
   it('Doesn\'t apply DELETE_ITEM if item doesn\'t exit', () => {
-    // we don't use createDeleteItem, because we need an invalid diff
+    // we don't use generateDeleteItem, because we need an invalid diff
     const deleteItemDiff: DeleteItem = {
       type: DELETE_ITEM,
       oldItem: createItem({
@@ -124,7 +138,7 @@ describe('applyDiff', () => {
   })
 })
 
-describe('createUpdateItem', () => {
+describe('generateUpdateItem', () => {
   it('Doesn\'t create an update if nothing was changed', () => {
     const item =  createItem({
       "name": "Dosen Kichererbsen",
@@ -136,7 +150,7 @@ describe('createUpdateItem', () => {
     })
 
     expect(() => {
-      createUpdateItem(shoppingList, item)
+      generateUpdateItem(shoppingList, item)
     }).toThrow(`Can't create update for item with id ${item.id}, it is unchanged in the list.`)
   })
 
@@ -148,10 +162,8 @@ describe('createUpdateItem', () => {
       "amount": undefined
     })
 
-    console.log(shoppingList)
-
     expect(() => {
-      createUpdateItem(shoppingList, item)
+      generateUpdateItem(shoppingList, item)
     }).toThrow(`Can't create update for item with id ${item.id}, it is unchanged in the list.`)
   })
 })

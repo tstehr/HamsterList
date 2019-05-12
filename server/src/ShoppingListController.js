@@ -10,20 +10,17 @@ import { type ServerShoppingList, createServerShoppingList, getBaseShoppingList 
 import { type ShoppingListChangeCallback } from './SocketController'
 import { type UserRequest } from './index'
 
-export type ShoppingListRequest = { listid: string, list: ServerShoppingList } & UserRequest
+export type ShoppingListRequest = { listid: string, list: ServerShoppingList, updatedList?: ServerShoppingList } & UserRequest
 
 export default class ShoppingListController {
   db: DB
-  changeCallback: ShoppingListChangeCallback
   defaultCategories: $ReadOnlyArray<CategoryDefinition>
 
   constructor(
     db: DB,
-    changeCallback: ShoppingListChangeCallback,
     defaultCategories: $ReadOnlyArray<CategoryDefinition>
   ) {
     this.db = db
-    this.changeCallback = changeCallback
     this.defaultCategories = defaultCategories
   }
 
@@ -33,25 +30,17 @@ export default class ShoppingListController {
     const list = this.db.get().lists.find((list) => list.id == req.params.listid)
     if (list != null) {
       req.list = list
-      next()
     } else {
-       const updatedList: ServerShoppingList = createServerShoppingList({
+      req.list = createServerShoppingList({
          id: req.listid,
          title: req.listid,
          items: [],
          recentlyUsed: [],
          categories: this.defaultCategories,
          orders: []
-       })
-       this.db.set({
-         ...this.db.get(),
-         lists: [...this.db.get().lists, updatedList]
-       })
-       this.db.write().then(() => {
-         req.list = updatedList
-         next()
-       })
+      })
     }
+    next()
   }
 
   handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
@@ -77,18 +66,8 @@ export default class ShoppingListController {
       return
     }
 
-    const updatedList = createServerShoppingList({ ...req.list, title: bodyList.title })
+    req.updatedList = createServerShoppingList({ ...req.list, title: bodyList.title })
 
-    this.db.set({
-      ...this.db.get(),
-      lists: updateInArray(this.db.get().lists, updatedList)
-    })
-
-    this.db.write().then(() => {
-      this.changeCallback(updatedList)
-      res.json(updatedList)
-      next()
-    })
-    .catch(req.log.error)
+    res.json(req.updatedList)
   }
 }

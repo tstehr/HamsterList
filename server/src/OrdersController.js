@@ -3,20 +3,11 @@ import _ from 'lodash'
 import express from 'express'
 import { type Order, createOrder, errorMap } from 'shoppinglist-shared'
 import { createServerShoppingList } from './ServerShoppingList'
-import { type DB, updateInArray } from './DB'
 import { type ShoppingListRequest } from './ShoppingListController'
 import { type ShoppingListChangeCallback } from './SocketController'
 
 
 export default class OrdersController {
-  db: DB
-  changeCallback: ShoppingListChangeCallback
-
-  constructor(db: DB, changeCallback: ShoppingListChangeCallback) {
-    this.db = db
-    this.changeCallback = changeCallback
-  }
-
   handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     res.json(req.list.orders)
     next()
@@ -35,18 +26,9 @@ export default class OrdersController {
       return
     }
 
-    const updatedList = createServerShoppingList({ ...req.list, orders: orders })
+    req.updatedList = createServerShoppingList({ ...req.list, orders: orders })
 
-    this.db.set({
-      ...this.db.get(),
-      lists: updateInArray(this.db.get().lists, updatedList)
-    })
-
-    this.db.write().then(() => {
-      this.changeCallback(updatedList)
-      res.json(orders)
-      next()
-    })
-    .catch(req.log.error)
+    res.json(orders)
+    next()
   }
 }

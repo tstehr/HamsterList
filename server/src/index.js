@@ -13,7 +13,7 @@ import {
   type ShoppingList, type Item, type LocalItem, type UUID,
   createLocalItemFromString, createLocalItem, createItem, createShoppingList, createRandomUUID, createUUID, diffShoppingLists
 } from 'shoppinglist-shared'
-import { DB } from './DB'
+import { DB, updateInArray } from './DB'
 import ShoppingListController, { type ShoppingListRequest } from './ShoppingListController'
 import ItemController from './ItemController'
 import SocketController from './SocketController'
@@ -87,11 +87,11 @@ db.load()
 
     const socketController = new SocketController(tokenCreator, log)
 
-    const shoppingListController = new ShoppingListController(db, socketController.notifiyChanged, nconf.get('defaultCategories'))
-    const itemController = new ItemController(db, socketController.notifiyChanged)
-    const syncController = new SyncController(db, socketController.notifiyChanged, tokenCreator)
-    const categoriesController = new CategoriesController(db, socketController.notifiyChanged)
-    const ordersController = new OrdersController(db, socketController.notifiyChanged)
+    const shoppingListController = new ShoppingListController(db, nconf.get('defaultCategories'))
+    const itemController = new ItemController()
+    const syncController = new SyncController(tokenCreator)
+    const categoriesController = new CategoriesController()
+    const ordersController = new OrdersController()
     const completionsController = new CompletionsController()
 
     router.use('*', (req: UserRequest, res: express$Response, next: express$NextFunction) => {
@@ -143,8 +143,19 @@ db.load()
     router.post('/:listid/sync', syncController.handlePost)
 
     router.use('*', (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
-      const list = db.get().lists.find((list) => list.id == req.list.id)
-      req.log.info(diffShoppingLists(req.list, list))
+      if (req.list && req.updatedList) {
+        const updatedList = req.updatedList
+        socketController.notifiyChanged(updatedList)
+
+        const diffs = diffShoppingLists(req.list, updatedList)
+        req.log.info({diffs})
+
+        db.set({
+          ...db.get(),
+          lists: updateInArray(db.get().lists, updatedList)
+        })
+        db.write().catch(req.log.error)
+      }
       next()
     })
 

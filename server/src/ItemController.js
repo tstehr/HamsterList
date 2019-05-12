@@ -6,7 +6,7 @@ import {
   createItem, createLocalItem, createLocalItemFromString, createCompletionItem, createUUID, createRandomUUID,
   addMatchingCategory, createLocalItemFromItemStringRepresentation, createItemFromItemStringRepresentation
 } from 'shoppinglist-shared'
-import { type DB, updateInArray } from './DB'
+import { updateInArray } from './DB'
 import { type ServerShoppingList, type RecentlyUsedArray } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 import { type ShoppingListChangeCallback } from './SocketController'
@@ -16,14 +16,6 @@ import { getSortedCompletions } from './CompletionsController'
 export type ItemIdRequest = {itemid: UUID} & ShoppingListRequest
 
 export default class ItemController {
-  db: DB
-  changeCallback: ShoppingListChangeCallback
-
-  constructor(db: DB, changeCallback: ShoppingListChangeCallback) {
-    this.db = db
-    this.changeCallback = changeCallback
-  }
-
   handleParamItemid = (req: ItemIdRequest, res: express$Response, next: express$NextFunction) => {
     try {
       req.itemid = createUUID(req.params.itemid)
@@ -61,25 +53,14 @@ export default class ItemController {
 
     const item: Item = {...localItem, id: createRandomUUID()}
 
-
-    const changedList: ServerShoppingList = {
+    req.updatedList = {
       ...req.list,
       items: [...req.list.items, item],
       recentlyUsed: updateRecentlyUsed(req.list.recentlyUsed, item)
     }
 
-    this.db.set({
-      ...this.db.get(),
-      lists: updateInArray(this.db.get().lists, changedList)
-    })
-
-    this.db.write()
-      .then(() => {
-        this.changeCallback(changedList)
-        res.location(`${req.baseUrl}/${req.listid}/items/${item.id}`).status(201).json(item)
-        next()
-      })
-      .catch(req.log.error)
+    res.location(`${req.baseUrl}/${req.listid}/items/${item.id}`).status(201).json(item)
+    next()
   }
 
   handlePut = (req: ItemIdRequest, res: express$Response, next: express$NextFunction) => {
@@ -103,54 +84,34 @@ export default class ItemController {
     }
 
     let status: number
-    let changedList: ServerShoppingList
     if (req.list.items.find((item) => item.id === req.itemid) == null) {
       status = 201
-      changedList = {
+      req.updatedList = {
         ...req.list,
         items: [...req.list.items, item],
         recentlyUsed: updateRecentlyUsed(req.list.recentlyUsed, item)
       }
     } else {
       status = 200
-      changedList = {
+      req.updatedList = {
         ...req.list,
         items: updateInArray(req.list.items, item),
         recentlyUsed: updateRecentlyUsed(req.list.recentlyUsed, item)
       }
     }
 
-    this.db.set({
-      ...this.db.get(),
-      lists: updateInArray(this.db.get().lists, changedList)
-    })
-    this.db.write().then(() => {
-      this.changeCallback(changedList)
-      res.status(status).json(item)
-      next()
-    })
-    .catch(req.log.error)
+    res.status(status).json(item)
   }
 
 
   handleDelete = (req: ItemIdRequest, res: express$Response) => {
     const item = req.list.items.find((item) => item.id === req.itemid)
     if (item != null) {
-      const changedList = {
+      req.updatedList = {
         ...req.list,
         items: req.list.items.filter((item) => item.id !== req.itemid),
       }
-
-      this.db.set({
-        ...this.db.get(),
-        lists: updateInArray(this.db.get().lists, changedList)
-      })
-      this.db.write()
-        .then(() => {
-          this.changeCallback(changedList)
-          res.status(204).send()
-        })
-        .catch(req.log.error)
+      res.status(204).send()
     } else {
       res.status(404).json({error: `Item with id "${req.itemid}" not found!`})
     }

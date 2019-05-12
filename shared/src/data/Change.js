@@ -1,10 +1,14 @@
 // @flow
 import _ from 'lodash'
 import { type UUID } from '../util/uuid'
-import { type Item } from './Item'
-import { type ShoppingList } from './ShoppingList'
+import { type Item, createItem } from './Item'
+import { type BaseShoppingList, type ShoppingList } from './ShoppingList'
+import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
 
 
+export type Change = {|
+  +username: String,
+|}
 
 export const ADD_ITEM: 'ADD_ITEM' = 'ADD_ITEM'
 export type AddItem = {|
@@ -27,7 +31,7 @@ export type DeleteItem = {|
 
 export type Diff = AddItem | UpdateItem | DeleteItem
 
-export function diffShoppingLists(oldShoppingList: ShoppingList, newShoppingList: ShoppingList): $ReadOnlyArray<Diff> {
+export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShoppingList: BaseShoppingList): $ReadOnlyArray<Diff> {
   const diffs = []
 
   const oldMap: {[UUID]: ?Item} = _.keyBy([...oldShoppingList.items], 'id')
@@ -41,11 +45,11 @@ export function diffShoppingLists(oldShoppingList: ShoppingList, newShoppingList
 
     try {
       if (oldItem != null && newItem != null) {
-        diffs.push(createUpdateItem(oldShoppingList, newItem))
+        diffs.push(generateUpdateItem(oldShoppingList, newItem))
       } else if (oldItem != null) {
-        diffs.push(createDeleteItem(oldShoppingList, id))
+        diffs.push(generateDeleteItem(oldShoppingList, id))
       } else if (newItem != null) {
-        diffs.push(createAddItem(newItem))
+        diffs.push(generateAddItem(newItem))
       }
     } catch(e) {
       // TypeError means that the diff couldn't be created, which means it isn't needed. We can safely ignore those.
@@ -59,14 +63,46 @@ export function diffShoppingLists(oldShoppingList: ShoppingList, newShoppingList
   return diffs
 }
 
-export function createAddItem(newItem: Item): AddItem {
+export function createDiff(diffSpec: any): Diff {
+  checkAttributeType(diffSpec, 'type', 'string')
+
+  let diff: Diff
+
+  const type = diffSpec.type
+  if (type === ADD_ITEM) {
+    checkKeys(diffSpec, ['type', 'item'])
+    diff = {
+      type: ADD_ITEM,
+      item: createItem(diffSpec.item),
+    }
+  } else if (type === UPDATE_ITEM) {
+      checkKeys(diffSpec, ['type', 'oldItem', 'item'])
+      diff = {
+        type: UPDATE_ITEM,
+        oldItem: createItem(diffSpec.oldItem),
+        item: createItem(diffSpec.item),
+      }
+  } else if (type === DELETE_ITEM) {
+      checkKeys(diffSpec, ['type', 'oldItem'])
+      diff = {
+        type: DELETE_ITEM,
+        oldItem: createItem(diffSpec.oldItem)
+      }
+  } else {
+    throw new TypeError(`Unknown diff type ${type}`)
+  }
+
+  return diff
+}
+
+export function generateAddItem(newItem: Item): AddItem {
   return {
     type: ADD_ITEM,
     item: newItem,
   }
 }
 
-export function createUpdateItem(shoppingList: ShoppingList, newItem: Item): UpdateItem {
+export function generateUpdateItem(shoppingList: ShoppingList, newItem: Item): UpdateItem {
   const oldItem = shoppingList.items.find((item) => item.id === newItem.id)
   if (!oldItem) {
     throw TypeError(`Can't create update for item with id ${newItem.id}, it doesn't exist in list.`)
@@ -81,7 +117,7 @@ export function createUpdateItem(shoppingList: ShoppingList, newItem: Item): Upd
   }
 }
 
-export function createDeleteItem(shoppingList: ShoppingList, itemid: UUID): DeleteItem {
+export function generateDeleteItem(shoppingList: ShoppingList, itemid: UUID): DeleteItem {
   const oldItem = shoppingList.items.find((item) => item.id === itemid)
   if (!oldItem) {
     throw TypeError(`Can't create delete item with id ${itemid}, it doesn't exist in list.`)

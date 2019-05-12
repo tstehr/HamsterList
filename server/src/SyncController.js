@@ -5,7 +5,6 @@ import {
   type ShoppingList, type SyncRequest, type Item, type UUID,
   createShoppingList, createSyncRequest, mergeShoppingLists, addMatchingCategory, createItemFromItemStringRepresentation
 } from 'shoppinglist-shared'
-import { type DB, updateInArray } from './DB'
 import { type ServerShoppingList, getBaseShoppingList, createServerShoppingList } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 import { type ShoppingListChangeCallback } from './SocketController'
@@ -16,13 +15,9 @@ import TokenCreator from './TokenCreator'
 
 
 export default class SyncController {
-  db: DB
-  changeCallback: ShoppingListChangeCallback
   tokenCreator: TokenCreator
 
-  constructor(db: DB, changeCallback: ShoppingListChangeCallback, tokenCreator: TokenCreator) {
-    this.db = db
-    this.changeCallback = changeCallback
+  constructor(tokenCreator: TokenCreator) {
     this.tokenCreator = tokenCreator
   }
 
@@ -72,9 +67,7 @@ export default class SyncController {
       return updateRecentlyUsed(ru, item)
     }, req.list.recentlyUsed)
 
-
-
-    const mergedServerShoppingList: ServerShoppingList = {
+    req.updatedList = {
       ...req.list,
       recentlyUsed: recentlyUsed,
       ...merged,
@@ -84,18 +77,7 @@ export default class SyncController {
       base, server, client, merged,
     })
 
-
-    this.db.set({
-      ...this.db.get(),
-      lists: updateInArray(this.db.get().lists, mergedServerShoppingList)
-    })
-
-    this.db.write().then(() => {
-      this.changeCallback(mergedServerShoppingList)
-      res.send(this.tokenCreator.setToken(merged))
-      next()
-    })
-    .catch(req.log.error)
+    res.send(this.tokenCreator.setToken(merged))
   }
 }
 
