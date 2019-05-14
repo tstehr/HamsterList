@@ -10,7 +10,7 @@ import nconf from 'nconf'
 import camelCase from 'camel-case'
 import bunyan, { Logger } from 'bunyan'
 import {
-  type ShoppingList, type Item, type LocalItem, type UUID,
+  type ShoppingList, type Item, type LocalItem, type Change, type UUID,
   createLocalItemFromString, createLocalItem, createItem, createShoppingList, createRandomUUID, createUUID, diffShoppingLists
 } from 'shoppinglist-shared'
 import { DB, updateInArray } from './DB'
@@ -87,7 +87,8 @@ db.load()
 
     const socketController = new SocketController(tokenCreator, log)
 
-    const shoppingListController = new ShoppingListController(db, nconf.get('defaultCategories'))
+    const shoppingListController = new ShoppingListController(db, nconf.get('defaultCategories'), tokenCreator,
+      socketController.notifiyChanged)
     const itemController = new ItemController()
     const syncController = new SyncController(tokenCreator)
     const categoriesController = new CategoriesController()
@@ -120,8 +121,6 @@ db.load()
       req.log.info({res: res})
     })
 
-
-
     router.get('/:listid', shoppingListController.handleGet)
     router.put('/:listid', shoppingListController.handlePut)
     router.get('/:listid/items', shoppingListController.handleGetItems)
@@ -142,29 +141,13 @@ db.load()
     router.get('/:listid/sync', syncController.handleGet)
     router.post('/:listid/sync', syncController.handlePost)
 
-    router.use('*', (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
-      if (req.list && req.updatedList) {
-        const updatedList = req.updatedList
-        socketController.notifiyChanged(updatedList)
-
-        const diffs = diffShoppingLists(req.list, updatedList)
-        req.log.info({diffs})
-
-        db.set({
-          ...db.get(),
-          lists: updateInArray(db.get().lists, updatedList)
-        })
-        db.write().catch(req.log.error)
-      }
-      next()
-    })
+    router.use('*', shoppingListController.saveUpdatedList)
 
     router.use('*', (req: express$Request, res: express$Response) => {
       if (!res.headersSent) {
         res.status(404).json({error: "This route doesn't exist."})
       }
     })
-
 
     app.use('/api', router)
 

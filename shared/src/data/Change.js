@@ -1,13 +1,18 @@
 // @flow
 import _ from 'lodash'
+import deepFreeze from 'deep-freeze'
+
 import { type UUID } from '../util/uuid'
 import { type Item, createItem } from './Item'
 import { type BaseShoppingList, type ShoppingList } from './ShoppingList'
-import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
+import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/validation'
 
 
 export type Change = {|
-  +username: String,
+  +username: string,
+  +token: string,
+  +date: Date,
+  +diffs: $ReadOnlyArray<Diff>
 |}
 
 export const ADD_ITEM: 'ADD_ITEM' = 'ADD_ITEM'
@@ -31,36 +36,26 @@ export type DeleteItem = {|
 
 export type Diff = AddItem | UpdateItem | DeleteItem
 
-export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShoppingList: BaseShoppingList): $ReadOnlyArray<Diff> {
-  const diffs = []
+export function createChange(changeSpec: any): Change {
+  checkKeys(changeSpec, ['username', 'token', 'date', 'diffs'])
+  checkAttributeType(changeSpec, 'username', 'string', true)
+  checkAttributeType(changeSpec, 'token', 'string')
+  checkAttributeType(changeSpec, 'date', 'string')
+  checkAttributeType(changeSpec, 'diffs', 'array')
 
-  const oldMap: {[UUID]: ?Item} = _.keyBy([...oldShoppingList.items], 'id')
-  const newMap: {[UUID]: ?Item} = _.keyBy([...newShoppingList.items], 'id')
-
-  const allIds = _.union(_.keys(oldMap), _.keys(newMap))
-
-  for (const id: UUID of allIds) {
-    const oldItem = oldMap[id]
-    const newItem = newMap[id]
-
-    try {
-      if (oldItem != null && newItem != null) {
-        diffs.push(generateUpdateItem(oldShoppingList, newItem))
-      } else if (oldItem != null) {
-        diffs.push(generateDeleteItem(oldShoppingList, id))
-      } else if (newItem != null) {
-        diffs.push(generateAddItem(newItem))
-      }
-    } catch(e) {
-      // TypeError means that the diff couldn't be created, which means it isn't needed. We can safely ignore those.
-      if (!(e instanceof TypeError)) {
-        throw e
-      }
-    }
-
+  const date = new Date(changeSpec.date)
+  if (isNaN(date.getTime())) {
+    throw new TypeError('Expected attribute "date" to be formatted as an ISO 8061 date')
   }
 
-  return diffs
+  const change = {
+    username: changeSpec.username,
+    token: changeSpec.token,
+    date: date,
+    diffs: errorMap(changeSpec.diffs, createDiff),
+  }
+
+  return deepFreeze(change)
 }
 
 export function createDiff(diffSpec: any): Diff {
@@ -93,6 +88,39 @@ export function createDiff(diffSpec: any): Diff {
   }
 
   return diff
+}
+
+
+export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShoppingList: BaseShoppingList): $ReadOnlyArray<Diff> {
+  const diffs = []
+
+  const oldMap: {[UUID]: ?Item} = _.keyBy([...oldShoppingList.items], 'id')
+  const newMap: {[UUID]: ?Item} = _.keyBy([...newShoppingList.items], 'id')
+
+  const allIds = _.union(_.keys(oldMap), _.keys(newMap))
+
+  for (const id: UUID of allIds) {
+    const oldItem = oldMap[id]
+    const newItem = newMap[id]
+
+    try {
+      if (oldItem != null && newItem != null) {
+        diffs.push(generateUpdateItem(oldShoppingList, newItem))
+      } else if (oldItem != null) {
+        diffs.push(generateDeleteItem(oldShoppingList, id))
+      } else if (newItem != null) {
+        diffs.push(generateAddItem(newItem))
+      }
+    } catch(e) {
+      // TypeError means that the diff couldn't be created, which means it isn't needed. We can safely ignore those.
+      if (!(e instanceof TypeError)) {
+        throw e
+      }
+    }
+
+  }
+
+  return diffs
 }
 
 export function generateAddItem(newItem: Item): AddItem {

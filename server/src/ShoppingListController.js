@@ -2,26 +2,34 @@
 import express from 'express'
 import { Logger } from 'bunyan'
 import {
-  type ShoppingList, type CategoryDefinition, type UUID,
+  type ShoppingList, type CategoryDefinition, type Change, type UUID,
   createShoppingList, createRandomUUID, diffShoppingLists
 } from 'shoppinglist-shared'
 import { type DB, updateInArray } from './DB'
 import { type ServerShoppingList, createServerShoppingList, getBaseShoppingList } from './ServerShoppingList'
 import { type ShoppingListChangeCallback } from './SocketController'
 import { type UserRequest } from './index'
+import TokenCreator from './TokenCreator'
 
 export type ShoppingListRequest = { listid: string, list: ServerShoppingList, updatedList?: ServerShoppingList } & UserRequest
+
 
 export default class ShoppingListController {
   db: DB
   defaultCategories: $ReadOnlyArray<CategoryDefinition>
+  tokenCreator: TokenCreator
+  changeCallback: ShoppingListChangeCallback
 
   constructor(
     db: DB,
-    defaultCategories: $ReadOnlyArray<CategoryDefinition>
+    defaultCategories: $ReadOnlyArray<CategoryDefinition>,
+    tokenCreator: TokenCreator,
+    changeCallback: ShoppingListChangeCallback,
   ) {
     this.db = db
     this.defaultCategories = defaultCategories
+    this.tokenCreator = tokenCreator
+    this.changeCallback = changeCallback
   }
 
   handleParamListid = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
@@ -69,5 +77,42 @@ export default class ShoppingListController {
     req.updatedList = createServerShoppingList({ ...req.list, title: bodyList.title })
 
     res.json(req.updatedList)
+  }
+
+  saveUpdatedList = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+    if (req.list && req.updatedList) {
+      const updatedList = req.updatedList
+      this.changeCallback(updatedList)
+
+      const token = this.tokenCreator.createToken(getBaseShoppingList(updatedList))
+      const diffs = diffShoppingLists(req.list, updatedList)
+
+      let newList: ServerShoppingList
+      if (diffs.length > 0) {
+        const change: Change = {
+          username: req.username != null ? req.username : "Anonymus" ,
+          token: token,
+          date: new Date(),
+          diffs: diffs
+        }
+
+        const changes = [...updatedList.changes, change]
+        const truncatedChanges = changes.slice(Math.max(0, changes.length - 500), changes.length)
+
+        newList = {
+          ...updatedList,
+          changes
+        }
+      } else {
+        newList = updatedList
+      }
+
+      this.db.set({
+        ...this.db.get(),
+        lists: updateInArray(this.db.get().lists, newList)
+      })
+      this.db.write().catch(req.log.error)
+    }
+    next()
   }
 }
