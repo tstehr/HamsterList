@@ -78,6 +78,8 @@ export default class SyncController {
     })
 
     res.send(this.tokenCreator.setToken(merged))
+
+    next()
   }
 }
 
