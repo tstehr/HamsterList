@@ -21,6 +21,7 @@ import SyncController from './SyncController'
 import CompletionsController from './CompletionsController'
 import CategoriesController from './CategoriesController'
 import OrdersController from './OrdersController'
+import ChangesController from './ChangesController'
 import TokenCreator from './TokenCreator'
 
 export type UserRequest = { username: ?string, log: Logger } & express$Request
@@ -94,6 +95,7 @@ db.load()
     const categoriesController = new CategoriesController()
     const ordersController = new OrdersController()
     const completionsController = new CompletionsController()
+    const changesController = new ChangesController()
 
     router.use('*', (req: UserRequest, res: express$Response, next: express$NextFunction) => {
       const encodedUsername = req.get('X-ShoppingList-Username')
@@ -137,6 +139,8 @@ db.load()
 
     router.get('/:listid/orders', ordersController.handleGet)
     router.put('/:listid/orders', ordersController.handlePut)
+
+    router.get('/:listid/changes', changesController.handleGet)
 
     router.get('/:listid/sync', syncController.handleGet)
     router.post('/:listid/sync', syncController.handlePost)
