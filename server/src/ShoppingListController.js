@@ -1,5 +1,7 @@
 // @flow
 import express from 'express'
+import _ from 'lodash'
+import differenceInDays from 'date-fns/difference_in_days'
 import { Logger } from 'bunyan'
 import {
   type ShoppingList, type CategoryDefinition, type Change, type UUID,
@@ -96,8 +98,15 @@ export default class ShoppingListController {
           diffs: diffs
         }
 
-        const changes = [...updatedList.changes, change]
-        const truncatedChanges = changes.slice(Math.max(0, changes.length - 500), changes.length)
+        const allChanges = [...updatedList.changes, change]
+
+        const now = new Date()
+        // index of first change that is newer than 14 days
+        const dateIndex = _.findIndex(allChanges, (c) => differenceInDays(now, c.date) < 14)
+        // index of first change that is more than 200
+        const lengthIndex = Math.max(0, allChanges.length - 200)
+        // slice away the oldest changes
+        const changes = allChanges.slice(Math.min(dateIndex, lengthIndex), allChanges.length)
 
         newList = {
           ...updatedList,
