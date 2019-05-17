@@ -4,10 +4,10 @@ import deepFreeze from 'deep-freeze'
 import React, { Component } from 'react'
 import {
   type SyncedShoppingList, type ShoppingList, type CompletionItem, type LocalItem, type Item, type CategoryDefinition,
-  type Order, type UUID,
+  type Order, type Change, type UUID,
   createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, createRandomUUID,
-  mergeShoppingLists, createOrder,
-  frecency
+  mergeShoppingLists, createOrder, createChange,
+  frecency,
 } from 'shoppinglist-shared'
 import { type Up } from './HistoryTracker'
 import { type RecentlyUsedList } from './ChooseListComponent'
@@ -36,6 +36,7 @@ type ClientShoppingList = {
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   orders: $ReadOnlyArray<Order>,
+  changes: $ReadOnlyArray<Change>,
   selectedOrder: ?UUID,
   loaded: boolean,
   dirty: boolean,
@@ -60,6 +61,7 @@ const initialState: ClientShoppingList = deepFreeze({
   completions: [],
   categories: [],
   orders: [],
+  changes: [],
   selectedOrder: null,
   loaded: false,
   dirty: false,
@@ -83,17 +85,16 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
     this.db = createDB()
 
-    this.state = this.db.get('lists').getById(this.props.listid).value() || initialState
+    this.state = this.getStateFromLocalStorage()
     // needed to work with existing local storage
     if (!this.state.orders) {
       this.state.orders = []
     }
-    this.supressSave = false
+    if (!this.state.changes) {
+      this.state.changes = []
+    }
 
-    // TODO cleanup
-    setInterval(() => {
-      //console.log(`Socket state: ${this.socket && this.socket.readyState}`)
-    }, 1000)
+    this.supressSave = false
   }
 
   componentDidMount() {
@@ -128,9 +129,21 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   load(callback? : () => void) {
+    console.log('date?', this.state.changes && this.state.changes[0].date instanceof Date)
+
     console.info('load')
     this.supressSave = true
-    this.setState(this.db.read().get('lists').getById(this.props.listid).value() || initialState, callback)
+    this.setState(this.getStateFromLocalStorage(), callback)
+  }
+
+  getStateFromLocalStorage(): State {
+    const dbState = this.db.read().get('lists').getById(this.props.listid).value()
+    if (dbState) {
+      dbState.changes = dbState.changes.map(createChange)
+      return dbState
+    } else {
+      return initialState
+    }
   }
 
   clearLocalStorage() {
@@ -263,18 +276,23 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
 
     try {
-      const syncJson = await responseToJSON(await syncPromise)
-      const completionsJson = await responseToJSON(await completionsPromise)
-      const categoriesJson = await responseToJSON(await categoriesPromise)
-      const ordersJson = await responseToJSON(await ordersPromise)
+      // don't sort shopping list from server, we need it in server order for previousSync
+      const serverSyncedShoppingList = createSyncedShoppingList(await responseToJSON(await syncPromise), null)
+      const categories = (await responseToJSON(await categoriesPromise)).map(createCategoryDefinition)
+      const completions = (await responseToJSON(await completionsPromise)).map(createCompletionItem)
+      const orders =  (await responseToJSON(await ordersPromise)).map(createOrder)
+
+      // get changes using new token
+      let changesPromise
+      if (this.state.changes.length > 0) {
+        const prevToken = this.state.changes[this.state.changes.length - 1].token
+        changesPromise = this.fetch(`/api/${this.props.listid}/changes?oldest=${prevToken}&newest=${serverSyncedShoppingList.token}`)
+      } else {
+        changesPromise = this.fetch(`/api/${this.props.listid}/changes?newest=${serverSyncedShoppingList.token}`)
+      }
+      const newChanges = (await responseToJSON(await changesPromise)).map(createChange)
 
       this.setState((prevState) => {
-        const categories = categoriesJson.map(createCategoryDefinition)
-        const completions = completionsJson.map(createCompletionItem)
-        const orders = ordersJson.map(createOrder)
-
-        // don't sort shopping list from server, we need it in server order for previousSync
-        const serverSyncedShoppingList = createSyncedShoppingList(syncJson, null)
         const serverShoppingList = _.omit(serverSyncedShoppingList, 'token')
 
         let dirty, newShoppingList
@@ -287,11 +305,21 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           dirty = false
         }
 
+        let changes
+        if (newChanges.length === 0) {
+          changes = prevState.changes
+        } else if (prevState.changes.length !== 0 && newChanges[0].token === prevState.changes[prevState.changes.length - 1].token) {
+          changes = [...prevState.changes, ...newChanges.slice(1)]
+        } else {
+          changes = newChanges
+        }
+
         const syncState: $Shape<State> = {
-          completions: completions,
-          categories: categories,
-          orders: orders,
-          dirty: dirty,
+          completions,
+          categories,
+          orders,
+          changes,
+          dirty,
           syncing: false,
           loaded: true,
           lastSyncFailed: false,
