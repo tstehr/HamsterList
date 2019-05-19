@@ -51,10 +51,14 @@ export class DB {
 }
 
 
-export function updateInArray<T, U: {+id: T}>(arr: $ReadOnlyArray<U>, toUpdate: U): Array<U> {
+export function updateInArray<T, U: {+id: T}>(arr: $ReadOnlyArray<U>, toUpdate: U, insertIfNotFound: boolean=false): Array<U> {
   const index = arr.findIndex((arrEl) => arrEl.id == toUpdate.id)
   if (index === -1) {
-    throw new Error(`Element is not in array!`)
+    if (!insertIfNotFound) {
+      throw new Error(`Element is not in array!`)
+    }
+    const newArr = [...arr, toUpdate]
+    return deepFreeze(newArr)
   }
   const newArr = [...arr]
   newArr.splice(index, 1, toUpdate)

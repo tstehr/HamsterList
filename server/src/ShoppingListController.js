@@ -118,7 +118,7 @@ export default class ShoppingListController {
 
       this.db.set({
         ...this.db.get(),
-        lists: updateInArray(this.db.get().lists, newList)
+        lists: updateInArray(this.db.get().lists, newList, true)
       })
       this.db.write().catch(req.log.error)
     }
