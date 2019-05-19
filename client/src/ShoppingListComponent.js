@@ -2,13 +2,14 @@
 import React, { Component } from 'react'
 import { withRouter, Link, Route } from 'react-router-dom'
 import _ from 'lodash'
-import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, type Order, type UUID, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
-import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder, UpdateOrders } from './ShoppingListContainerComponent'
+import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, type Order, type Change, type UUID, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
+import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder, UpdateOrders, SetUsername } from './ShoppingListContainerComponent'
 import { type Up } from './HistoryTracker'
 import TopBarComponent from './TopBarComponent'
 import CreateItemComponent from './CreateItemComponent'
 import ShoppingListItemsComponent from './ShoppingListItemsComponent'
 import EditOrdersComponent from './EditOrdersComponent'
+import ChangesComponent from './ChangesComponent'
 import './ShoppingListComponent.css'
 
 type Props = {
@@ -17,7 +18,9 @@ type Props = {
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   orders: $ReadOnlyArray<Order>,
+  changes: $ReadOnlyArray<Change>,
   selectedOrder: ?UUID,
+  username: ?string,
   connectionState: ConnectionState,
   syncing: boolean,
   lastSyncFailed: boolean,
@@ -28,6 +31,7 @@ type Props = {
   updateItem: UpdateItem,
   selectOrder: SelectOrder,
   updateOrders: UpdateOrders,
+  setUsername: SetUsername,
   manualSync: () => void,
   clearLocalStorage: () => void,
   up: Up,
@@ -51,6 +55,10 @@ export default class ShoppingListComponent extends Component<Props> {
 
   componentWillReceiveProps() {
     document.title = this.props.shoppingList.title
+  }
+
+  editUsername = (e: SyntheticEvent<HTMLInputElement>) => {
+    this.props.setUsername(e.currentTarget.value)
   }
 
   convertToCookingAmounts = () =>{
@@ -111,10 +119,12 @@ export default class ShoppingListComponent extends Component<Props> {
               completions={this.props.completions}
               categories={this.props.categories}
               createItem={this.props.createItem} />
+            <ChangesComponent changes={this.props.changes} />
           </div>
         </div>
         <div className="ShoppingListComponent__footer">
           <h2>Tools</h2>
+          <label>Username: <input type="text" placeholder="username" defaultValue={this.props.username} onBlur={this.editUsername}/></label>
           <button type="button" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
           <button type="button" onClick={this.mergeItems}>Merge</button>
           <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Sorting</Link>

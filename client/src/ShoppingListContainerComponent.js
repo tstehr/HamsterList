@@ -23,6 +23,7 @@ export type DeleteItem = (id: UUID, addToRecentlyDeleted?: boolean) => void
 export type UpdateItem = (id: UUID, localItem: LocalItem) => void
 export type SelectOrder = (id: ?UUID) => void
 export type UpdateOrders = (orders: $ReadOnlyArray<Order>) => void
+export type SetUsername = (newUsername: ?string) => void
 
 type Props = {
   listid: string,
@@ -38,6 +39,7 @@ type ClientShoppingList = {
   orders: $ReadOnlyArray<Order>,
   changes: $ReadOnlyArray<Change>,
   selectedOrder: ?UUID,
+  username: ?string,
   loaded: boolean,
   dirty: boolean,
   syncing: boolean,
@@ -63,6 +65,7 @@ const initialState: ClientShoppingList = deepFreeze({
   orders: [],
   changes: [],
   selectedOrder: null,
+  username: null,
   loaded: false,
   dirty: false,
   syncing: false,
@@ -361,7 +364,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     init = init || {}
     _.merge(init, {
       "headers": {
-        "X-ShoppingList-Username": encodeURIComponent("test üüü 💩")
+        "X-ShoppingList-Username": this.state.username ? encodeURIComponent(this.state.username) : ""
       }
     })
     return fetch(input, init)
@@ -493,6 +496,10 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }, this.requestSync)
   }
 
+  setUsername = (username: ?string) => {
+    this.setState({ username })
+  }
+
   render() {
     return (
       <div>
@@ -503,7 +510,9 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             completions={this.state.completions}
             categories={this.state.categories}
             orders={this.state.orders}
+            changes={this.state.changes}
             selectedOrder={this.state.selectedOrder}
+            username={this.state.username}
             connectionState={this.state.connectionState}
             syncing={this.state.syncing}
             lastSyncFailed={this.state.lastSyncFailed}
@@ -511,6 +520,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             updateListTitle={this.updateListTitle} createItem={this.createItem}
             updateItem={this.updateItem} deleteItem={this.deleteItem}
             selectOrder={this.selectOrder} updateOrders={this.updateOrders}
+            setUsername={this.setUsername}
             manualSync={this.initiateSyncConnection.bind(this)}
             clearLocalStorage={this.clearLocalStorage.bind(this)}
             up={this.props.up}
