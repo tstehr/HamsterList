@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import {
-  type Item, type ShoppingList, type CompletionItem, type CategoryDefinition, type Order, type Change,
+  type Item, type ShoppingList, type SyncedShoppingList, type CompletionItem, type CategoryDefinition, type Order, type Change,
   createShoppingList, checkKeys, checkAttributeType, createCompletionItem, createCategoryDefinition, createOrder, createChange
 } from 'shoppinglist-shared'
 
@@ -51,4 +51,13 @@ export function createServerShoppingList(serverShoppingListSpec: any): ServerSho
 
 export function getBaseShoppingList(serverShoppingList: ServerShoppingList): ShoppingList {
   return createShoppingList(_.pick(serverShoppingList, ['id', 'title', 'items']), serverShoppingList.categories)
+}
+
+export function getSyncedShoppingList(serverShoppingList: ServerShoppingList): SyncedShoppingList {
+  const changeId = serverShoppingList.changes.length === 0 ? null : _.last(serverShoppingList.changes).id
+  return {
+    ...getBaseShoppingList(serverShoppingList),
+    token: "",
+    changeId
+  }
 }

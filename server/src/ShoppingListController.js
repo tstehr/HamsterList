@@ -85,7 +85,6 @@ export default class ShoppingListController {
   saveUpdatedList = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     if (req.list && req.updatedList) {
       const updatedList = req.updatedList
-      this.changeCallback(updatedList)
 
       const diffs = diffShoppingLists(req.list, updatedList)
 
@@ -112,11 +111,12 @@ export default class ShoppingListController {
           ...updatedList,
           changes
         }
+        req.updatedList = newList
       } else {
         newList = updatedList
       }
 
-      req.updatedList = newList
+      this.changeCallback(newList)
 
       this.db.set({
         ...this.db.get(),

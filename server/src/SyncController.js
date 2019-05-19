@@ -5,7 +5,7 @@ import {
   type ShoppingList, type SyncRequest, type SyncedShoppingList, type Item, type UUID,
   createShoppingList, createSyncRequest, mergeShoppingLists, addMatchingCategory, createItemFromItemStringRepresentation
 } from 'shoppinglist-shared'
-import { type ServerShoppingList, getBaseShoppingList, createServerShoppingList } from './ServerShoppingList'
+import { type ServerShoppingList, getBaseShoppingList, getSyncedShoppingList, createServerShoppingList } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 import { type ShoppingListChangeCallback } from './SocketController'
 import * as ShoppingListController from './ShoppingListController'
@@ -22,7 +22,7 @@ export default class SyncController {
   }
 
   handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
-    res.send(this._getSyncedShoppingList(req.list))
+    res.send(this.tokenCreator.setToken(getSyncedShoppingList(req.list)))
     next()
   }
 
@@ -80,20 +80,12 @@ export default class SyncController {
     next()
 
     if (req.updatedList != null) {
-      res.send(this._getSyncedShoppingList(req.updatedList))
+      res.send(this.tokenCreator.setToken(getSyncedShoppingList(req.updatedList)))
+    } else {
+      res.status(500).send({error: 'req.updatedList was null'})
     }
-
   }
 
-  _getSyncedShoppingList(list: ServerShoppingList): SyncedShoppingList {
-    const changeId = list.changes.length === 0 ? null : _.last(list.changes).id
-    const syncedShoppingList: SyncedShoppingList = {
-      ...getBaseShoppingList(list),
-      token: "",
-      changeId
-    }
-    return this.tokenCreator.setToken(syncedShoppingList)
-  }
 }
 
 
