@@ -1,7 +1,7 @@
 // @flow
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
-import { type UUID, createUUID } from '../util/UUID'
+import { type UUID, createUUID } from '../util/uuid'
 import { type Item } from './Item'
 import { type ShoppingList, createShoppingList } from './ShoppingList'
 import { type CategoryDefinition } from './CategoryDefinition'
