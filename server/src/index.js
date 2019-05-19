@@ -24,7 +24,7 @@ import OrdersController from './OrdersController'
 import ChangesController from './ChangesController'
 import TokenCreator from './TokenCreator'
 
-export type UserRequest = { username: ?string, log: Logger } & express$Request
+export type UserRequest = { id: UUID, username: ?string, log: Logger } & express$Request
 
 var log = bunyan.createLogger({
     name: 'shoppinglist',
@@ -97,7 +97,12 @@ db.load()
     const completionsController = new CompletionsController()
     const changesController = new ChangesController()
 
+    router.param('listid', shoppingListController.handleParamListid)
+    router.param('itemid', itemController.handleParamItemid)
+
     router.use('*', (req: UserRequest, res: express$Response, next: express$NextFunction) => {
+      req.id = createRandomUUID()
+
       const encodedUsername = req.get('X-ShoppingList-Username')
       if (encodedUsername !== undefined) {
         try {
@@ -110,16 +115,15 @@ db.load()
         req.username = null
       }
 
-      req.log = log.child({id: createRandomUUID(), username: req.username})
-      next()
-    })
+      req.log = log.child({ id: req.id, username: req.username })
 
-    router.param('listid', shoppingListController.handleParamListid)
-    router.param('itemid', itemController.handleParamItemid)
-
-    router.use('*', (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
       req.log.info({req: req})
+
       next()
+
+      if (!res.headersSent) {
+        res.status(404).json({error: "This route doesn't exist."})
+      }
       req.log.info({res: res})
     })
 
@@ -147,11 +151,6 @@ db.load()
 
     router.use('*', shoppingListController.saveUpdatedList)
 
-    router.use('*', (req: express$Request, res: express$Response) => {
-      if (!res.headersSent) {
-        res.status(404).json({error: "This route doesn't exist."})
-      }
-    })
 
     app.use('/api', router)
 

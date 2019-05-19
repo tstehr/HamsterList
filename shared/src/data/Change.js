@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 
-import { type UUID } from '../util/uuid'
+import { type UUID, createUUID } from '../util/uuid'
 import { type Item, createItem } from './Item'
 import { type BaseShoppingList, type ShoppingList } from './ShoppingList'
 import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/validation'
@@ -10,7 +10,7 @@ import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/valid
 
 export type Change = {|
   +username: string,
-  +token: string,
+  +id: UUID,
   +date: Date,
   +diffs: $ReadOnlyArray<Diff>
 |}
@@ -37,9 +37,9 @@ export type DeleteItem = {|
 export type Diff = AddItem | UpdateItem | DeleteItem
 
 export function createChange(changeSpec: any): Change {
-  checkKeys(changeSpec, ['username', 'token', 'date', 'diffs'])
+  checkKeys(changeSpec, ['username', 'id', 'date', 'diffs'])
   checkAttributeType(changeSpec, 'username', 'string', true)
-  checkAttributeType(changeSpec, 'token', 'string')
+  checkAttributeType(changeSpec, 'id', 'string')
   checkAttributeType(changeSpec, 'date', 'string')
   checkAttributeType(changeSpec, 'diffs', 'array')
 
@@ -50,7 +50,7 @@ export function createChange(changeSpec: any): Change {
 
   const change = {
     username: changeSpec.username,
-    token: changeSpec.token,
+    id: createUUID(changeSpec.id),
     date: date,
     diffs: errorMap(changeSpec.diffs, createDiff),
   }

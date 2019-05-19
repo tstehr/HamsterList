@@ -47,7 +47,8 @@ export default class ShoppingListController {
          items: [],
          recentlyUsed: [],
          categories: this.defaultCategories,
-         orders: []
+         orders: [],
+         changes: [],
       })
     }
     next()
@@ -86,14 +87,13 @@ export default class ShoppingListController {
       const updatedList = req.updatedList
       this.changeCallback(updatedList)
 
-      const token = this.tokenCreator.createToken(getBaseShoppingList(updatedList))
       const diffs = diffShoppingLists(req.list, updatedList)
 
       let newList: ServerShoppingList
       if (diffs.length > 0) {
         const change: Change = {
           username: req.username != null ? req.username : "Anonymus" ,
-          token: token,
+          id: req.id,
           date: new Date(),
           diffs: diffs
         }
@@ -115,6 +115,8 @@ export default class ShoppingListController {
       } else {
         newList = updatedList
       }
+
+      req.updatedList = newList
 
       this.db.set({
         ...this.db.get(),

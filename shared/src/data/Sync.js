@@ -1,16 +1,18 @@
 // @flow
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
+import { type UUID, createUUID } from '../util/UUID'
 import { type Item } from './Item'
 import { type ShoppingList, createShoppingList } from './ShoppingList'
 import { type CategoryDefinition } from './CategoryDefinition'
-import { checkKeys, checkAttributeType } from '../util/validation'
+import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
 
 
 export type SyncedShoppingList = {
   +id: string,
   +title: string,
   +token: string,
+  +changeId: ?UUID,
   +items: $ReadOnlyArray<Item>,
   [any]: empty
 }
@@ -22,12 +24,14 @@ export type SyncRequest = {
 }
 
 export function createSyncedShoppingList(syncedShoppingListSpec: any, categories: ?$ReadOnlyArray<CategoryDefinition>): SyncedShoppingList {
-  const shoppingList = createShoppingList(_.omit(syncedShoppingListSpec, ['token']), categories)
+  const shoppingList = createShoppingList(_.omit(syncedShoppingListSpec, ['token', 'changeId']), categories)
   checkAttributeType(syncedShoppingListSpec, 'token', 'string')
+  checkAttributeType(syncedShoppingListSpec, 'changeId', 'string', true)
 
   const syncedShoppingList = {}
   Object.assign(syncedShoppingList, shoppingList)
   syncedShoppingList.token = syncedShoppingListSpec.token
+  syncedShoppingList.changeId = nullSafe(createUUID)(syncedShoppingListSpec.changeId)
 
   return deepFreeze(syncedShoppingList)
 }

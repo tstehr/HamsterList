@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import {
-  type ShoppingList, type SyncRequest, type Item, type UUID,
+  type ShoppingList, type SyncRequest, type SyncedShoppingList, type Item, type UUID,
   createShoppingList, createSyncRequest, mergeShoppingLists, addMatchingCategory, createItemFromItemStringRepresentation
 } from 'shoppinglist-shared'
 import { type ServerShoppingList, getBaseShoppingList, createServerShoppingList } from './ServerShoppingList'
@@ -22,7 +22,7 @@ export default class SyncController {
   }
 
   handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
-    res.send(this.tokenCreator.setToken(getBaseShoppingList(req.list)))
+    res.send(this._getSyncedShoppingList(req.list))
     next()
   }
 
@@ -77,11 +77,26 @@ export default class SyncController {
       base, server, client, merged,
     })
 
-    res.send(this.tokenCreator.setToken(merged))
-
     next()
+
+    if (req.updatedList != null) {
+      res.send(this._getSyncedShoppingList(req.updatedList))
+    }
+
+  }
+
+  _getSyncedShoppingList(list: ServerShoppingList): SyncedShoppingList {
+    const changeId = list.changes.length === 0 ? null : _.last(list.changes).id
+    const syncedShoppingList: SyncedShoppingList = {
+      ...getBaseShoppingList(list),
+      token: "",
+      changeId
+    }
+    return this.tokenCreator.setToken(syncedShoppingList)
   }
 }
+
+
 
 function getUpdatedItems(oldList: ShoppingList, newList: ShoppingList): $ReadOnlyArray<Item> {
   const oldMap: {[UUID]: ?Item} = _.keyBy([...oldList.items], 'id')

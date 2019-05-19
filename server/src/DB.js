@@ -30,7 +30,7 @@ export class DB {
     this.contents = deepFreeze({
       lists: json.lists.map(createServerShoppingList)
     })
-    
+
     return this.contents
   }
 
