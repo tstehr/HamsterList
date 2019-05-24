@@ -1,6 +1,5 @@
 // @flow
 import _ from 'lodash'
-// $FlowFixMe
 import React, { Component, Fragment } from 'react'
 import FlipMove from 'react-flip-move'
 import fuzzy from 'fuzzy'
@@ -22,7 +21,7 @@ type Props = {
 }
 
 export default class CompletionsComponent extends Component<Props> {
-  getCompletionItems() {
+  getCompletionItems(): $ReadOnlyArray<LocalItem> {
     if (!this.props.isCreatingItem) {
       return [...this.props.recentlyDeleted].reverse().slice(0, 10)
     }
@@ -49,7 +48,6 @@ export default class CompletionsComponent extends Component<Props> {
 
   render() {
     const itemToKey = new Map()
-    // $FlowFixMe
     const itemsByRepr = _.groupBy(this.props.itemsInCreation, itemToString)
     for (const [repr, items] of Object.entries(itemsByRepr)) {
       for (const [iStr, item] of Object.entries(items)) {
