@@ -1,10 +1,10 @@
 // @flow
-import React, { Component } from 'react'
+import React, { Component, Element } from 'react'
 import _ from 'lodash'
 import FlipMove from 'react-flip-move'
-import { type Change } from 'shoppinglist-shared'
 import distanceInWordsToNow from 'date-fns/distance_in_words_to_now'
-
+import { type Change, type Diff, ADD_ITEM, UPDATE_ITEM, DELETE_ITEM, itemToString } from 'shoppinglist-shared'
+import ItemComponent from './ItemComponent'
 
 type Props = {
   changes: $ReadOnlyArray<Change>,
@@ -18,16 +18,29 @@ export default function ChangesComponent(props: Props) {
     enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
   >
     {changes.map(c =>
-      <div key={c.date.toISOString() + '_' + c.token}>
+      <div key={c.date.toISOString() + '_' + c.id}>
         <h2>{c.username} - {distanceInWordsToNow(c.date)} ago</h2>
         {c.diffs.map(d =>
-          <div>{d.type}</div>
+          <div>{createDiffElement(d)}</div>
         )}
       </div>
     )}
   </FlipMove>)
 }
 
-function createChangeString() {
+function createDiffElement(diff: Diff): Element<*> {
+  if (diff.type === UPDATE_ITEM) {
+    return <span>Changed <ItemComponent item={diff.oldItem} /> to <ItemComponent item={diff.item} /></span>
+  }
 
+  if (diff.type === ADD_ITEM) {
+    return <span>Added <ItemComponent item={diff.item} /></span>
+  }
+
+  if (diff.type === DELETE_ITEM) {
+    return <span>Deleted <ItemComponent item={diff.oldItem} /></span>
+  }
+
+  (diff: empty)
+  throw TypeError(`Diff to be applied is not an element of type 'Diff'`)
 }

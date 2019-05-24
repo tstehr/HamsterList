@@ -285,19 +285,23 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       const completions = (await responseToJSON(await completionsPromise)).map(createCompletionItem)
       const orders =  (await responseToJSON(await ordersPromise)).map(createOrder)
 
-      // get changes using new token
+      // get changes using new changeId
+      const currentChangeId = serverSyncedShoppingList.changeId
       let changesPromise
-      if (this.state.changes.length > 0) {
-        const prevToken = this.state.changes[this.state.changes.length - 1].token
-        changesPromise = this.fetch(`/api/${this.props.listid}/changes?oldest=${prevToken}&newest=${serverSyncedShoppingList.token}`)
+      if (this.state.changes.length > 0 && currentChangeId != null) {
+        const prevChangeId = _.last(this.state.changes).id
+        changesPromise = this.fetch(`/api/${this.props.listid}/changes?oldest=${prevChangeId}&newest=${currentChangeId}`)
+      } else if (currentChangeId != null) {
+        changesPromise = this.fetch(`/api/${this.props.listid}/changes?newest=${currentChangeId}`)
       } else {
-        changesPromise = this.fetch(`/api/${this.props.listid}/changes?newest=${serverSyncedShoppingList.token}`)
+        changesPromise = this.fetch(`/api/${this.props.listid}/changes`)
       }
       const newChanges = (await responseToJSON(await changesPromise)).map(createChange)
 
       this.setState((prevState) => {
-        const serverShoppingList = _.omit(serverSyncedShoppingList, 'token')
+        const serverShoppingList: ShoppingList = _.omit(serverSyncedShoppingList, 'token', 'changeId')
 
+        // get new shopping list and determine if there were further local changes while syncing
         let dirty, newShoppingList
         if (preSyncShoppingList != null) {
           const clientShoppingList = this.getShoppingList(prevState)
@@ -308,12 +312,17 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           dirty = false
         }
 
+        // add newly fetched changes to local changes
         let changes
         if (newChanges.length === 0) {
+          // no new changes, keep the old ones
           changes = prevState.changes
-        } else if (prevState.changes.length !== 0 && newChanges[0].token === prevState.changes[prevState.changes.length - 1].token) {
+        } else if (prevState.changes.length !== 0 && _.first(newChanges).id === _.last(prevState.changes).id) {
+          // the new changes connect to the local ones (latest of the old is oldest of the new), append
           changes = [...prevState.changes, ...newChanges.slice(1)]
         } else {
+          // there are new changes which don't connect up. this means the local changes were quite old, and no longer cached by the server
+          // we evict them and replace by the new ones
           changes = newChanges
         }
 
