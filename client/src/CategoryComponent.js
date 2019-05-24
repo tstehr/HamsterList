@@ -25,6 +25,21 @@ export default function CategoryComponent(props: Props) {
   </div>
 }
 
+export function CategoryTextComponent(props: Props) {
+  let category = getCategory(props)
+  if (category === unknownCategory) {
+    return null
+  }
+
+  const initials = category.shortName
+  const style = {
+    backgroundColor: category.color,
+    color:category.lightText ? '#fff' : '#000'
+  }
+
+  return <span className="CategoryTextComponent" title={category.name} style={style}>{initials}</span>
+}
+
 const unknownCategory = createCategoryDefinition({
   "id": "ffffffff-ffff-4fff-bfff-ffffffffffff",
   "name": "Unknown Category",

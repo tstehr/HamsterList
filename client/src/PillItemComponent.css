@@ -1,0 +1,9 @@
+.PillItemComponent {
+    display: inline-block;
+    padding: .2em .4em;
+    border-radius: .8em;
+    background: hsl(0, 0%, 90%);
+}
+.PillItemComponent .CategoryTextComponent {
+    margin: -.2em .2em -.2em -.4em;
+}

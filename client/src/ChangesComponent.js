@@ -1,13 +1,14 @@
 // @flow
-import React, { Component, Element } from 'react'
+import React, { Component, type Element } from 'react'
 import _ from 'lodash'
 import FlipMove from 'react-flip-move'
 import distanceInWordsToNow from 'date-fns/distance_in_words_to_now'
-import { type Change, type Diff, ADD_ITEM, UPDATE_ITEM, DELETE_ITEM, itemToString } from 'shoppinglist-shared'
-import ItemComponent from './ItemComponent'
+import { type Item, type Change, type Diff, type CategoryDefinition, ADD_ITEM, UPDATE_ITEM, DELETE_ITEM } from 'shoppinglist-shared'
+import PillItemComponent from './PillItemComponent'
 
 type Props = {
   changes: $ReadOnlyArray<Change>,
+  categories: $ReadOnlyArray<CategoryDefinition>,
 }
 
 export default function ChangesComponent(props: Props) {
@@ -21,26 +22,32 @@ export default function ChangesComponent(props: Props) {
       <div key={c.date.toISOString() + '_' + c.id}>
         <h2>{c.username} - {distanceInWordsToNow(c.date)} ago</h2>
         {c.diffs.map(d =>
-          <div>{createDiffElement(d)}</div>
+        <div><DiffComponent diff={d} categories={props.categories} /></div> 
         )}
       </div>
     )}
   </FlipMove>)
 }
 
-function createDiffElement(diff: Diff): Element<*> {
+function DiffComponent(props: { diff: Diff, categories: $ReadOnlyArray<CategoryDefinition> }) {
+  const diff = props.diff
+
   if (diff.type === UPDATE_ITEM) {
-    return <span>Changed <ItemComponent item={diff.oldItem} /> to <ItemComponent item={diff.item} /></span>
+    return <span>
+      Changed <PillItemComponent item={diff.oldItem} categories={props.categories} /> to <PillItemComponent item={diff.item} categories={props.categories} />
+    </span>
   }
 
   if (diff.type === ADD_ITEM) {
-    return <span>Added <ItemComponent item={diff.item} /></span>
+    return <span>Added <PillItemComponent item={diff.item} categories={props.categories} /></span>
   }
 
   if (diff.type === DELETE_ITEM) {
-    return <span>Deleted <ItemComponent item={diff.oldItem} /></span>
+    return <span>Deleted <PillItemComponent item={diff.oldItem} categories={props.categories} /></span>
   }
 
   (diff: empty)
   throw TypeError(`Diff to be applied is not an element of type 'Diff'`)
 }
+
+

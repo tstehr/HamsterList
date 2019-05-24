@@ -4,6 +4,7 @@ import React from 'react'
 import { type Amount, type BaseItem } from 'shoppinglist-shared'
 
 
+
 function AmountComponent(props: {amount: ?Amount}) {
   const amount = props.amount
   if (amount != null) {

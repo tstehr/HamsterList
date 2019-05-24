@@ -119,7 +119,10 @@ export default class ShoppingListComponent extends Component<Props> {
               completions={this.props.completions}
               categories={this.props.categories}
               createItem={this.props.createItem} />
-            <ChangesComponent changes={this.props.changes} />
+            <ChangesComponent 
+              changes={this.props.changes} 
+              categories={this.props.categories}
+            />
           </div>
         </div>
         <div className="ShoppingListComponent__footer">

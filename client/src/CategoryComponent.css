@@ -16,3 +16,11 @@
 .CategoryComponent__circle span {
   display: inline-block;
 }
+
+.CategoryTextComponent {
+  display: inline-block;
+  padding: .2em .4em;
+  min-width: 1.6em;
+  border-radius: .8em;
+  text-align: center;
+}
