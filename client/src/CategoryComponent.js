@@ -44,7 +44,7 @@ const unknownCategory = createCategoryDefinition({
   "id": "ffffffff-ffff-4fff-bfff-ffffffffffff",
   "name": "Unknown Category",
   "shortName": "?",
-  "color": "#ccc",
+  "color": "hsl(0, 0%, 80%)",
   "lightText": false
 })
 
@@ -54,7 +54,7 @@ const invalidCategory = createCategoryDefinition({
   "id": "00000000-0000-4000-b000-000000000000",
   "name": "Invalid Category",
   "shortName": `╳`,
-  "color": "#000",
+  "color": "black",
   "lightText": true
 })
 

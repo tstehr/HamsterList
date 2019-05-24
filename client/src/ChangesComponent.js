@@ -20,9 +20,11 @@ export default function ChangesComponent(props: Props) {
   >
     {changes.map(c =>
       <div key={c.date.toISOString() + '_' + c.id}>
-        <h2>{c.username} - {distanceInWordsToNow(c.date)} ago</h2>
         {c.diffs.map(d =>
-        <div><DiffComponent diff={d} categories={props.categories} /></div> 
+          <div>
+            {c.username} - {distanceInWordsToNow(c.date)} ago:&nbsp;
+            <DiffComponent diff={d} categories={props.categories} />
+          </div> 
         )}
       </div>
     )}
