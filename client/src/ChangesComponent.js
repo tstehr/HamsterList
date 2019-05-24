@@ -48,7 +48,7 @@ function DiffComponent(props: { diff: Diff, categories: $ReadOnlyArray<CategoryD
     return <span>Deleted <PillItemComponent item={diff.oldItem} categories={props.categories} /></span>
   }
 
-  (diff: empty)
+  (diff: empty) || _.identity() // https://stackoverflow.com/a/54030217
   throw TypeError(`Diff to be applied is not an element of type 'Diff'`)
 }
 
