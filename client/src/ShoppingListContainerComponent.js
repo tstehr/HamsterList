@@ -443,20 +443,38 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   createItem = (localItem: LocalItem) => {
-    const item = {...localItem, id: createRandomUUID()}
-    const diff = generateAddItem(item)
-    this.applyDiff(diff)
+    try {
+      const item = {...localItem, id: createRandomUUID()}
+      const diff = generateAddItem(item)
+      this.applyDiff(diff)
+    } catch (e) {
+      if (!(e instanceof TypeError)) {
+        throw e
+      }
+    }
   }
 
   deleteItem = (id: UUID) => {
-    const diff = generateDeleteItem(this.getShoppingList(this.state), id)
-    this.applyDiff(diff)
+    try {
+      const diff = generateDeleteItem(this.getShoppingList(this.state), id)
+      this.applyDiff(diff)
+    } catch (e) {
+      if (!(e instanceof TypeError)) {
+        throw e
+      }
+    }
   }
 
   updateItem = (id: UUID, localItem: LocalItem) => {
     const item = {...localItem, id: id}
-    const diff = generateUpdateItem(this.getShoppingList(this.state), item)
-    this.applyDiff(diff)
+    try {
+      const diff = generateUpdateItem(this.getShoppingList(this.state), item)
+      this.applyDiff(diff)
+    } catch (e) {
+      if (!(e instanceof TypeError)) {
+        throw e
+      }
+    }
   }
 
   selectOrder = (id: ?UUID) => {
@@ -494,6 +512,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             changes={this.state.changes}
             selectedOrder={this.state.selectedOrder}
             username={this.state.username}
+            unsyncedChanges={this.state.unsyncedChanges}
             connectionState={this.state.connectionState}
             syncing={this.state.syncing}
             lastSyncFailed={this.state.lastSyncFailed}

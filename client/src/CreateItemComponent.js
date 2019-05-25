@@ -20,6 +20,7 @@ import add from './icons/add.svg'
 type Props = {|
   completions: $ReadOnlyArray<CompletionItem>,
   changes: $ReadOnlyArray<Change>,
+  unsyncedChanges: $ReadOnlyArray<Change>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   createItem: CreateItem,
 |}
@@ -218,6 +219,7 @@ export default class CreateItemComponent extends Component<Props, State> {
             />}
             {!isCreatingItem && <ChangesComponent 
               changes={this.props.changes} 
+              unsyncedChanges={this.props.unsyncedChanges}
               categories={this.props.categories}
             />}
           </div>

@@ -6,3 +6,6 @@
     margin-bottom: .5rem;
     line-height: 1.2em;
 }
+.DiffComponent--unsynced {
+    color: grey;
+}

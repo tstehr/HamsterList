@@ -19,7 +19,8 @@ type Props = {
   orders: $ReadOnlyArray<Order>,
   changes: $ReadOnlyArray<Change>,
   selectedOrder: ?UUID,
-  username: ?string,
+  username: ?string,  
+  unsyncedChanges: $ReadOnlyArray<Change>,
   connectionState: ConnectionState,
   syncing: boolean,
   lastSyncFailed: boolean,
@@ -115,6 +116,7 @@ export default class ShoppingListComponent extends Component<Props> {
           <div className="ShoppingListComponent__section">
             <CreateItemComponent
               changes={this.props.changes} 
+              unsyncedChanges={this.props.unsyncedChanges}
               completions={this.props.completions}
               categories={this.props.categories}
               createItem={this.props.createItem} />
