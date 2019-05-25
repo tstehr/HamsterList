@@ -1,0 +1,8 @@
+.ChangesComponent {
+    list-style: none;
+}
+
+.DiffComponent {
+    margin-bottom: .5rem;
+    line-height: 1.2em;
+}

@@ -3,7 +3,7 @@
   transition: min-height 200ms ease-in-out;
 }
 .CreateItemComponent--creatingItem {
-  min-height: 33rem; /* 12 * 3rem */
+  min-height: calc(12 * 3rem);
 }
 .CreateItemComponent__form {
   position: relative;
@@ -71,7 +71,7 @@
     min-height: 3.5rem;
   }
   .CreateItemComponent--creatingItem {
-    min-height: 39.5rem; /* 11 * 3.5rem */
+    min-height: calc(12 * 3.5rem);
   }
   .CreateItemComponent__form {
     border-width: 2px;

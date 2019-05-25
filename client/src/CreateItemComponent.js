@@ -3,22 +3,26 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 import AutosizeTextarea from 'react-autosize-textarea'
-import { type LocalItem, type CompletionItem, type CategoryDefinition, createLocalItemFromString, itemToString, addMatchingCategory } from 'shoppinglist-shared'
+import { 
+  type LocalItem, type CompletionItem, type CategoryDefinition, type Change, 
+  createLocalItemFromString, itemToString, addMatchingCategory 
+} from 'shoppinglist-shared'
 import type { CreateItem } from './ShoppingListContainerComponent'
 import CompletionsComponent from './CompletionsComponent'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 import KeyFocusComponent from './KeyFocusComponent'
 import IconButton from './IconButton'
+import ChangesComponent from './ChangesComponent'
 import './CreateItemComponent.css'
 
 import add from './icons/add.svg'
 
-type Props = {
-  recentlyDeleted: $ReadOnlyArray<LocalItem>,
+type Props = {|
   completions: $ReadOnlyArray<CompletionItem>,
+  changes: $ReadOnlyArray<Change>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   createItem: CreateItem,
-}
+|}
 
 type State = {
   inputValue: string,
@@ -206,13 +210,16 @@ export default class CreateItemComponent extends Component<Props, State> {
             <IconButton className="CreateItemComponent__form__save" icon={add} alt="Add" />
           </form>
           <div className="KeyFocusComponent--ignore" style={{position:'relative'}}>
-            <CompletionsComponent
-              isCreatingItem={isCreatingItem} isMultiline={isMultiline}
-              focusItemsInCreation={this.state.formHasFocus} disableAllAnimations={this.state.changingQuickly}
+            {isCreatingItem && <CompletionsComponent
+              focusItemsInCreation={this.state.formHasFocus}
               completions={this.props.completions} categories={this.props.categories}
-              itemsInCreation={itemsInCreation} recentlyDeleted={this.props.recentlyDeleted}
+              itemsInCreation={itemsInCreation}
               createItem={this.createItem} focusInput={this.focusInput}
-            />
+            />}
+            {!isCreatingItem && <ChangesComponent 
+              changes={this.props.changes} 
+              categories={this.props.categories}
+            />}
           </div>
         </KeyFocusComponent>
 

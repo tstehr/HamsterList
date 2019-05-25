@@ -14,7 +14,6 @@ import './ShoppingListComponent.css'
 
 type Props = {
   shoppingList: ShoppingList,
-  recentlyDeleted: $ReadOnlyArray<LocalItem>,
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   orders: $ReadOnlyArray<Order>,
@@ -39,7 +38,7 @@ type Props = {
 
 export default class ShoppingListComponent extends Component<Props> {
   clearLocalStorage = () => {
-    const performClear = window.confirm('This will delete any unsynced data and your recently deleted items. Continue?')
+    const performClear = window.confirm('This will delete any unsynced data. Continue?')
     if (performClear) {
       this.props.clearLocalStorage()
     }
@@ -115,17 +114,13 @@ export default class ShoppingListComponent extends Component<Props> {
           </div>
           <div className="ShoppingListComponent__section">
             <CreateItemComponent
-              recentlyDeleted={this.props.recentlyDeleted}
+              changes={this.props.changes} 
               completions={this.props.completions}
               categories={this.props.categories}
               createItem={this.props.createItem} />
-            <ChangesComponent 
-              changes={this.props.changes} 
-              categories={this.props.categories}
-            />
           </div>
         </div>
-        <div className="ShoppingListComponent__footer">
+        <footer className="ShoppingListComponent__footer">
           <h2>Tools</h2>
           <label>Username: <input type="text" placeholder="username" defaultValue={this.props.username} onBlur={this.editUsername}/></label>
           <button type="button" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
@@ -135,7 +130,7 @@ export default class ShoppingListComponent extends Component<Props> {
           <button type="button" onClick={this.props.manualSync}>Force Sync</button>
           <button type="button" onClick={this.clearLocalStorage}>Clear Local Storage</button>
           <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
-        </div>
+        </footer>
 
         <Route path={`/:listid/orders`} render={({history, match}) =>
           <EditOrdersComponent listid={this.props.shoppingList.id} orders={this.props.orders} categories={this.props.categories}
