@@ -8,7 +8,7 @@
 .CreateItemComponent__form {
   position: relative;
   display: flex;
-  border: solid #4CAF50;
+  border: solid var(--theme-color);
   border-width: 2px 0;
 }
 .CreateItemComponent__form__inputWrapper {

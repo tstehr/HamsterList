@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  border: solid #4CAF50;
+  border: solid var(--theme-color);
   border-width: 2px 0 0;
   font-size: 1rem;
   font-family: inherit;
@@ -39,7 +39,7 @@
   .ChooseCategoryComponent button {
     display: inline-flex;
     border: 0;
-    background: #4CAF50;
+    background: var(--theme-color);
     color: #fff;
     margin: .5rem 0;
     padding-right: .5rem;

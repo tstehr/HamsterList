@@ -16,7 +16,7 @@
     margin-bottom: .5rem;
     padding: .75rem;
     height: 3rem;
-    background: #4CAF50;
+    background: var(--theme-color);
     color: #fff;
     scroll-snap-coordinate: 0 -4rem;
   }

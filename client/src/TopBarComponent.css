@@ -2,7 +2,7 @@
   position: fixed;
   z-index: 100;
   top: 0;
-  border-bottom: 2px solid #4CAF50;
+  border-bottom: 2px solid var(--theme-color);
   background: white;
   width: 100%;
 }

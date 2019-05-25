@@ -4,7 +4,7 @@
   align-items: center;
   width: 100%;
   height: 3rem;
-  border: solid #4CAF50;
+  border: solid var(--theme-color);
   border-width: 0 0 2px;
   border-radius: 0;
   font-size: 1rem;
@@ -44,7 +44,7 @@
 @media (min-width: 30rem) {
   .CreateItemButtonComponent {
     border: 0;
-    background-color: #4CAF50;
+    background-color: var(--theme-color);
     color: #fff;
     margin-bottom: .5rem;
   }
