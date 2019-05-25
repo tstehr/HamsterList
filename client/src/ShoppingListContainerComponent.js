@@ -33,7 +33,6 @@ type Props = {
 
 type ClientShoppingList = {
   previousSync: ?SyncedShoppingList,
-  recentlyDeleted: $ReadOnlyArray<LocalItem>,
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   orders: $ReadOnlyArray<Order>,
@@ -59,7 +58,6 @@ const initialState: ClientShoppingList = deepFreeze({
   title: "",
   items: [],
   previousSync: null,
-  recentlyDeleted: [],
   completions: [],
   categories: [],
   orders: [],
@@ -430,38 +428,21 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
     const item = {...localItem, id: createRandomUUID()}
     this.setState((prevState) => {
-      const recentlyDeleted = prevState.recentlyDeleted.filter(
-        (delItem) => delItem.name.trim().toLowerCase() !== item.name.trim().toLowerCase()
-      )
       return {
         items: [...prevState.items, item],
-        recentlyDeleted: recentlyDeleted,
         dirty: true,
       }
     }, this.requestSync)
   }
 
-  deleteItem = (id: UUID, addToRecentlyDeleted?: boolean = true) => {
+  deleteItem = (id: UUID) => {
     this.markListAsUsed()
 
     this.setState((prevState) => {
-      const toDelete = prevState.items.find((item) => item.id === id)
-      if (toDelete == null) {
-        return {}
-      }
-      const localToDelete = _.omit(toDelete, 'id')
       const listItems = [...prevState.items].filter((item) => item.id !== id)
-
-      let recentlyDeleted = prevState.recentlyDeleted
-        .filter((item) => item.name.trim().toLowerCase() !== localToDelete.name.trim().toLowerCase())
-      if (addToRecentlyDeleted) {
-        recentlyDeleted.push(localToDelete)
-      }
-      recentlyDeleted = recentlyDeleted.slice(Math.max(0, recentlyDeleted.length - 10), recentlyDeleted.length)
 
       return {
         items: listItems,
-        recentlyDeleted: recentlyDeleted,
         dirty: true,
       }
     }, this.requestSync)
@@ -477,13 +458,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       const index = _.findIndex(listItems, (item) => item.id === id)
       listItems[index] = item
 
-      const recentlyDeleted = prevState.recentlyDeleted.filter(
-        (delItem) => delItem.name.trim().toLowerCase() !== item.name.trim().toLowerCase()
-      )
-
       return {
         items: listItems,
-        recentlyDeleted: recentlyDeleted,
         dirty: true
       }
     }, this.requestSync)
@@ -515,7 +491,6 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
         {this.state.loaded &&
           <ShoppingListComponent
             shoppingList={this.getShoppingList(this.state)}
-            recentlyDeleted={this.state.recentlyDeleted}
             completions={this.state.completions}
             categories={this.state.categories}
             orders={this.state.orders}
