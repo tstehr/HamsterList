@@ -254,10 +254,10 @@ export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): ?D
     const oldItem = diff.oldItem
     const oldItemInList = shoppingList.items.find(i => i.id === oldItem.id)
     if (oldItemInList != null) {
-      return {
-        type: UPDATE_ITEM,
-        oldItem: oldItemInList,
-        item: diff.item
+      if (_.isEqual(oldItemInList, diff.item)) {
+        return null
+      } else {
+        return generateUpdateItem(shoppingList, diff.item)
       }
     } else {
       return generateAddItem(diff.item)
