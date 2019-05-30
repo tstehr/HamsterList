@@ -56,12 +56,12 @@ export default function ChangesComponent(props: Props) {
   const changes = allChanges.slice(start, end)
   
   return (
-  <div className="KeyFocusComponent--ignore" >
+  <div className="ChangesComponent" >
      {start > 0 && 
       <button type="button" className="PaddedButton" onClick={loadNewer}>Show newer changes</button> 
     }
     <FlipMove
-      typeName="ul" className="ChangesComponent KeyFocusComponent--ignore"
+      typeName="ul" className="ChangesComponent__list"
       duration="250" staggerDelayBy="10"
       enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
     >
@@ -102,7 +102,7 @@ type DiffProps = {
 
 export class DiffComponent extends Component<DiffProps> {
   render() {
-    const elClasses = classNames('DiffComponent', 'KeyFocusComponent--ignore', {
+    const elClasses = classNames('DiffComponent', {
       'DiffComponent--unsynced': this.props.unsynced,
       'DiffComponent--expanded': this.props.detailsExpanded,
     })
@@ -115,8 +115,10 @@ export class DiffComponent extends Component<DiffProps> {
 
     const reverseDiff = createReverseDiff(this.props.diff)
     const applicableDiff = this.props.createApplicableDiff(reverseDiff)
+    const reverseEqualApplicable = _.isEqual(reverseDiff, applicableDiff)
 
-    const undo = () => {
+    const undo = (e) => {
+      e.preventDefault()
       if (applicableDiff != null) {
         try {
           this.props.applyDiff(applicableDiff)
@@ -126,10 +128,8 @@ export class DiffComponent extends Component<DiffProps> {
       }
     }
 
- 
-
     return <li className={elClasses}>
-      <header className="KeyFocusComponent--ignore">
+      <header>
         <button type="button" onClick={this.props.onHeaderClick} className="DiffComponent__headerButton">
           {this.props.change.username != null && this.props.change.username.trim() !== ''
             ? this.props.change.username
@@ -141,16 +141,19 @@ export class DiffComponent extends Component<DiffProps> {
       </header>
       <ul className="DiffComponent__details">
         <li><time dateTime={date.toISOString()} title={absoluteDateString}>{dateString}</time></li>
-        {applicableDiff != null &&
-          <li>
-            <button type="button" className="LinkButton" onClick={undo}>Undo
-              {
-                !_.isEqual(reverseDiff, applicableDiff) &&
-                  <>&nbsp; ({this.createDiffElement(applicableDiff, 'PRESENT')})</>
-              }
-            </button>
-          </li>
-        }
+        <li>
+          {/* Use a link even if undo isn't possible so focus isn't lost after undo */}
+          <a href="#" onClick={undo} tabIndex={this.props.detailsExpanded ? 0 : -1} role="button" 
+            className={classNames('DiffComponent__UndoLink', { 'DiffComponent__UndoLink--disabled': applicableDiff == null })}>
+            {applicableDiff != null
+              ? <>
+                Undo 
+                {!reverseEqualApplicable && <>&nbsp;({this.createDiffElement(applicableDiff, 'PRESENT')})</>}
+              </>
+              : "Can't undo"
+            } 
+          </a>
+        </li>
       </ul>
     </li> 
   }

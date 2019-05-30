@@ -27,7 +27,7 @@ export default class OrderSelectComponent extends Component<Props> {
     return (
       <label className="OrderSelectComponent">
         <span className="OrderSelectComponent__text">Sorting:</span>
-        <select className="OrderSelectComponent__select" value={order != null ? order.id : "default"} onChange={this.handleChange}>
+        <select className="OrderSelectComponent__select KeyFocusComponent--noFocus" value={order != null ? order.id : "default"} onChange={this.handleChange}>
           <option value="default" key="default">Default</option>)
           {
             this.props.orders.map((order) => <option value={order.id} key={order.id}>{order.name}</option>)

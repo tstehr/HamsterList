@@ -38,18 +38,14 @@ export default class KeyFocusComponent extends Component<Props> {
   handleKeyDown = (e: SyntheticKeyboardEvent<>) => {
     if ((e.key === this.back || e.key === this.forward) && this.root != null) {
       const root = this.root
-      const tmp: $ReadOnlyArray<HTMLElement> = this.transitiveClosure([...root.children],
-          (el) => el.classList.contains("KeyFocusComponent--ignore") ? [...el.children] : []
-        )
-
-      const focusable = tmp
-        .filter((el) => this.canReceiveFocus(el) && !el.classList.contains("KeyFocusComponent--ignore"))
-        .map((element) => element.querySelector('.KeyFocusComponent--defaultFocus') || element)
 
       const focused = root.querySelector(':focus')
       if (focused == null) {
         return
       }
+
+      const all: HTMLElement[] = [...root.querySelectorAll('*')]
+      const focusable = all.filter((el) => this.canReceiveFocus(el))
 
       let newIndex
 
@@ -62,7 +58,6 @@ export default class KeyFocusComponent extends Component<Props> {
             newIndex = index + 1
         }
       } else {
-        const all: HTMLElement[] = [...root.querySelectorAll('*')]
         const index = all.indexOf(focused)
         let search
         if (e.key === this.back) {
@@ -96,19 +91,7 @@ export default class KeyFocusComponent extends Component<Props> {
     if (el.classList.contains('KeyFocusComponent--noFocus')) {
       return false
     }
-    const defaultFocus = el.querySelector('.KeyFocusComponent--defaultFocus')
-    if (defaultFocus != null) {
-      return true
-    }
     return el.tabIndex != null && el.tabIndex !== -1
-  }
-
-  transitiveClosure<I>(input: $ReadOnlyArray<I>, continuation: (I) => $ReadOnlyArray<I>): $ReadOnlyArray<I> {
-    const working = [...input]
-    for (let i = 0; i < working.length; i++) {
-      working.splice(i + 1, 0, ...continuation(working[i]))
-    }
-    return Object.freeze(working)
   }
 
   render() {

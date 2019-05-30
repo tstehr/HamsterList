@@ -201,18 +201,18 @@ export default class CreateItemComponent extends Component<Props, State> {
                 </div>
               }
               <AutosizeTextarea
-                type="text" className="KeyFocusComponent--defaultFocus"
+                type="text"
                 value={this.state.inputValue}
                 onChange={this.handleChange} onKeyDown={this.handleKeyDownTextarea}
                 innerRef={(input) => { this.input = input }}
               />
             </div>
-            <button type="button" className="CreateItemComponent__form__toggleMultiline" onClick={this.handleToggleMultiline}>
+            <button type="button" className="CreateItemComponent__form__toggleMultiline KeyFocusComponent--noFocus" onClick={this.handleToggleMultiline}>
               {isMultiline ? "▲" : "▼" }
             </button>
-            <IconButton className="CreateItemComponent__form__save" icon={add} alt="Add" />
+            <IconButton className="CreateItemComponent__form__save KeyFocusComponent--noFocus" icon={add} alt="Add" />
           </form>
-          <div className="KeyFocusComponent--ignore" style={{position:'relative'}}>
+          <div style={{position:'relative'}}>
             {isCreatingItem && <CompletionsComponent
               focusItemsInCreation={this.state.formHasFocus}
               completions={this.props.completions} categories={this.props.categories}

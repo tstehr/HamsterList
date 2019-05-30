@@ -3,6 +3,7 @@
     padding: .1em .6em;
     border-radius: .8em;
     background: hsl(0, 0%, 90%);
+    color: black;
 }
 .PillItemComponent .CategoryTextComponent {
     margin: -.1em 0 -.1em -.6em;

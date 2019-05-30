@@ -127,8 +127,6 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   load(callback? : () => void) {
-    console.log('date?', this.state.changes && this.state.changes[0].date instanceof Date)
-
     console.info('load')
     this.supressSave = true
     this.setState(this.getStateFromLocalStorage(), callback)

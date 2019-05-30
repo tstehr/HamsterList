@@ -19,8 +19,11 @@ button {
 }
 
 button.LinkButton {
+  all: unset;
+  display: inline;
+  text-align: left;
   background: transparent;
-  bordeR: none;
+  border: none;
   font-size: 1em;
 }
 a, .LinkButton {
