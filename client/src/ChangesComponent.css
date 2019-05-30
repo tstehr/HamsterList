@@ -3,9 +3,32 @@
 }
 
 .DiffComponent {
-    margin-bottom: .5rem;
     line-height: 1.2em;
 }
-.DiffComponent--unsynced {
+.DiffComponent__headerButton {
+    margin-top: .5rem;
+    font-size: 1em;
+    border: 0;
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+.DiffComponent--unsynced .DiffComponent__headerButton  {
     color: grey;
+}
+.DiffComponent__details {
+    display: flex;
+    color: grey;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: 100ms ease-in-out;
+    transition-property: max-height, opacity;
+}
+.DiffComponent__details li:not(:first-child)::before {
+    content: '\00a0|\00a0';
+}
+.DiffComponent--expanded .DiffComponent__details  {
+    max-height: 5em;
+    opacity: 1;
 }

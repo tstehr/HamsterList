@@ -106,7 +106,10 @@ db.load()
       const encodedUsername = req.get('X-ShoppingList-Username')
       if (encodedUsername !== undefined) {
         try {
-          req.username = decodeURIComponent(encodedUsername)
+          req.username = decodeURIComponent(encodedUsername).trim()
+          if (req.username === "") {
+            req.username = null
+          }
         } catch (e) {
           res.status(400).json({error: "Header field X-ShoppingList-Username is malformed."})
           return

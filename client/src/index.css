@@ -18,6 +18,20 @@ button {
   border: 1px solid black;
 }
 
+button.LinkButton {
+  background: transparent;
+  bordeR: none;
+  font-size: 1em;
+}
+a, .LinkButton {
+  color: blue;
+  text-decoration: underline;
+}
+a:focus, .LinkButton:focus {
+  color: red;
+}
+
+
 :not(select):focus {
   outline: none;
   box-shadow: 0 0 3px blue, inset 0 0 3px blue;
@@ -25,6 +39,11 @@ button {
 
 body {
   --theme-color: #4CAF50;
+}
+
+button.PaddedButton {
+  margin: .2rem;
+  padding: .2rem;
 }
 
 .Button {

@@ -26,7 +26,7 @@ export default class OrdersController {
       return
     }
 
-    req.updatedList = createServerShoppingList({ ...req.list, orders: orders })
+    req.updatedList = { ...req.list, orders: orders }
 
     res.json(orders)
     next()

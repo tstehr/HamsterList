@@ -7,7 +7,7 @@ import {
   type Order, type Change, type Diff, type UUID,
   createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, createRandomUUID,
   mergeShoppingLists, createOrder, createChange, 
-  generateAddItem, generateDeleteItem, generateUpdateItem, applyDiff,
+  generateAddItem, generateDeleteItem, generateUpdateItem, applyDiff, createApplicableDiff,
   frecency,
 } from 'shoppinglist-shared'
 import { type Up } from './HistoryTracker'
@@ -24,7 +24,9 @@ export type DeleteItem = (id: UUID, addToRecentlyDeleted?: boolean) => void
 export type UpdateItem = (id: UUID, localItem: LocalItem) => void
 export type SelectOrder = (id: ?UUID) => void
 export type UpdateOrders = (orders: $ReadOnlyArray<Order>) => void
-export type SetUsername = (newUsername: ?string) => void
+export type SetUsername = (username: ?string) => void
+export type ApplyDiff = (diff: Diff) => void
+export type CreateApplicableDiff = (diff: Diff) => ?Diff
 
 type Props = {
   listid: string,
@@ -138,6 +140,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       // add default value for any keys not present in db
       const state = {...initialState, ...dbState}
       state.changes = state.changes.map(createChange)
+      state.unsyncedChanges = state.unsyncedChanges.map(createChange)
       return state
     } else {
       return initialState
@@ -392,25 +395,33 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     this.db.get('recentlyUsedLists').upsert(listUsed).write()
   }
 
-  applyDiff(diff: Diff) {
+  applyDiff = (diff: Diff) => {
     this.markListAsUsed()
-
+    
     this.setState((prevState) => {
-      const localChange: Change = {
-        id: createRandomUUID(),
-        username: this.state.username || 'You',
-        date: new Date(),
-        diffs: [diff],
-      }
-      const newList = applyDiff(this.getShoppingList(prevState), diff)
-      return {
-        ...newList,
-        unsyncedChanges: [...prevState.unsyncedChanges, localChange],
-        dirty: true,
+      try {
+        const localChange: Change = {
+          id: createRandomUUID(),
+          username: this.state.username,
+          date: new Date(),
+          diffs: [diff],
+        }
+        const newList = applyDiff(this.getShoppingList(prevState), diff)
+        return {
+          ...newList,
+          unsyncedChanges: [...prevState.unsyncedChanges, localChange],
+          dirty: true,
+        }
+      } catch (e) {
+        console.error('Error while applying diff', diff, e)
       }
     }, this.requestSync)
   }
- 
+
+  createApplicableDiff = (diff: Diff): ?Diff => {
+    return createApplicableDiff(this.getShoppingList(this.state), diff)
+  }
+
   requestSync = (delay: number = 500) => {
       window.clearTimeout(this.requestSyncTimeoutId)
       this.requestSyncTimeoutId = window.setTimeout(this.sync.bind(this), delay)
@@ -443,26 +454,14 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   createItem = (localItem: LocalItem) => {
-    try {
-      const item = {...localItem, id: createRandomUUID()}
-      const diff = generateAddItem(item)
-      this.applyDiff(diff)
-    } catch (e) {
-      if (!(e instanceof TypeError)) {
-        throw e
-      }
-    }
+    const item = {...localItem, id: createRandomUUID()}
+    const diff = generateAddItem(item)
+    this.applyDiff(diff)
   }
 
   deleteItem = (id: UUID) => {
-    try {
-      const diff = generateDeleteItem(this.getShoppingList(this.state), id)
-      this.applyDiff(diff)
-    } catch (e) {
-      if (!(e instanceof TypeError)) {
-        throw e
-      }
-    }
+    const diff = generateDeleteItem(this.getShoppingList(this.state), id)
+    this.applyDiff(diff)
   }
 
   updateItem = (id: UUID, localItem: LocalItem) => {
@@ -475,6 +474,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
         throw e
       }
     }
+
   }
 
   selectOrder = (id: ?UUID) => {
@@ -494,9 +494,15 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   setUsername = (username: ?string) => {
+    if (username != null) {
+      username = username.trim()
+      if (username === '') {
+        username = null
+      }      
+    }
     this.setState((prevState) => ({ 
       username,
-      unsyncedChanges: prevState.unsyncedChanges.map( c => ({ ...c, username: username || 'You' }) )
+      unsyncedChanges: prevState.unsyncedChanges.map( c => ({ ...c, username }) )
     }))
   }
 
@@ -521,6 +527,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             updateItem={this.updateItem} deleteItem={this.deleteItem}
             selectOrder={this.selectOrder} updateOrders={this.updateOrders}
             setUsername={this.setUsername}
+            applyDiff={this.applyDiff}
+            createApplicableDiff={this.createApplicableDiff}
             manualSync={this.initiateSyncConnection.bind(this)}
             clearLocalStorage={this.clearLocalStorage.bind(this)}
             up={this.props.up}

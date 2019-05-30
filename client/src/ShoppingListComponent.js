@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { withRouter, Link, Route } from 'react-router-dom'
 import _ from 'lodash'
 import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, type Order, type Change, type UUID, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
-import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder, UpdateOrders, SetUsername } from './ShoppingListContainerComponent'
+import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder, UpdateOrders, SetUsername, ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
 import { type Up } from './HistoryTracker'
 import TopBarComponent from './TopBarComponent'
 import CreateItemComponent from './CreateItemComponent'
@@ -32,6 +32,8 @@ type Props = {
   selectOrder: SelectOrder,
   updateOrders: UpdateOrders,
   setUsername: SetUsername,
+  applyDiff: ApplyDiff,
+  createApplicableDiff: CreateApplicableDiff,
   manualSync: () => void,
   clearLocalStorage: () => void,
   up: Up,
@@ -119,18 +121,20 @@ export default class ShoppingListComponent extends Component<Props> {
               unsyncedChanges={this.props.unsyncedChanges}
               completions={this.props.completions}
               categories={this.props.categories}
-              createItem={this.props.createItem} />
+              createItem={this.props.createItem} 
+              applyDiff={this.props.applyDiff} 
+              createApplicableDiff={this.props.createApplicableDiff} />
           </div>
         </div>
         <footer className="ShoppingListComponent__footer">
           <h2>Tools</h2>
           <label>Username: <input type="text" placeholder="username" defaultValue={this.props.username} onBlur={this.editUsername}/></label>
-          <button type="button" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
-          <button type="button" onClick={this.mergeItems}>Merge</button>
+          <button type="button" className="PaddedButton" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
+          <button type="button" className="PaddedButton" onClick={this.mergeItems}>Merge</button>
           <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Sorting</Link>
           <h2>Debug</h2>
-          <button type="button" onClick={this.props.manualSync}>Force Sync</button>
-          <button type="button" onClick={this.clearLocalStorage}>Clear Local Storage</button>
+          <button type="button" className="PaddedButton" onClick={this.props.manualSync}>Force Sync</button>
+          <button type="button" className="PaddedButton" onClick={this.clearLocalStorage}>Clear Local Storage</button>
           <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
         </footer>
 

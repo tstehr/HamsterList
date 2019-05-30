@@ -7,7 +7,7 @@ import {
   type LocalItem, type CompletionItem, type CategoryDefinition, type Change, 
   createLocalItemFromString, itemToString, addMatchingCategory 
 } from 'shoppinglist-shared'
-import type { CreateItem } from './ShoppingListContainerComponent'
+import type { CreateItem, ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
 import CompletionsComponent from './CompletionsComponent'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 import KeyFocusComponent from './KeyFocusComponent'
@@ -23,6 +23,8 @@ type Props = {|
   unsyncedChanges: $ReadOnlyArray<Change>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   createItem: CreateItem,
+  applyDiff: ApplyDiff,
+  createApplicableDiff: CreateApplicableDiff,
 |}
 
 type State = {
@@ -221,6 +223,8 @@ export default class CreateItemComponent extends Component<Props, State> {
               changes={this.props.changes} 
               unsyncedChanges={this.props.unsyncedChanges}
               categories={this.props.categories}
+              applyDiff={this.props.applyDiff}
+              createApplicableDiff={this.props.createApplicableDiff}
             />}
           </div>
         </KeyFocusComponent>

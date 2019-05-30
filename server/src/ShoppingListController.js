@@ -91,7 +91,7 @@ export default class ShoppingListController {
       let newList: ServerShoppingList
       if (diffs.length > 0) {
         const change: Change = {
-          username: req.username != null ? req.username : "Anonymus" ,
+          username: req.username,
           id: req.id,
           date: new Date(),
           diffs: diffs

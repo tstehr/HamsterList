@@ -2,48 +2,89 @@
 import React, { Component, type Element, useState, useRef } from 'react'
 import _ from 'lodash'
 import FlipMove from 'react-flip-move'
-import distanceInWordsToNow from 'date-fns/distance_in_words_to_now'
+import distanceInWords from 'date-fns/distance_in_words'
+import differenceInHours from 'date-fns/difference_in_hours'
+import format from 'date-fns/format'
 import classNames from 'classnames'
-import { type Item, type Change, type Diff, type CategoryDefinition, ADD_ITEM, UPDATE_ITEM, DELETE_ITEM } from 'shoppinglist-shared'
+import { type Item, type Change, type Diff, type CategoryDefinition, ADD_ITEM, UPDATE_ITEM, DELETE_ITEM, createReverseDiff } from 'shoppinglist-shared'
 import PillItemComponent from './PillItemComponent'
+import type { ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
 import './ChangesComponent.css'
 
 type Props = {
   changes: $ReadOnlyArray<Change>,
   unsyncedChanges: $ReadOnlyArray<Change>,
   categories: $ReadOnlyArray<CategoryDefinition>,
+  applyDiff: ApplyDiff, 
+  createApplicableDiff: CreateApplicableDiff,
 }
 
 const defaultChangeLength = 15
+const maxChangeLength = 50
 
 export default function ChangesComponent(props: Props) {
-  const [length, setLength] = useState(defaultChangeLength)
+  const [start, setStart] = useState(0)
+  const [end, setEnd] = useState(defaultChangeLength)
+  const [detailsExpandedDiff, setDetailsExpandedDiff] = useState({ changeId: null, diffIndex: NaN})
 
-  // last length changes, then all unsynced changes
-  const changes = [...props.changes.slice(Math.max(props.changes.length - length, 0), props.changes.length), ...props.unsyncedChanges]
-  changes.reverse()
+  // changes chronologically
+  const allChanges = [...props.changes, ...props.unsyncedChanges].map((change, changeIndex) => ({ change, changeIndex, unsynced: changeIndex >= props.changes.length }))
+  allChanges.reverse()
 
+  const loadOlder = () => {
+    const newEnd = Math.min(end + defaultChangeLength, allChanges.length)
+    setEnd(newEnd)
+    if (newEnd - start > maxChangeLength) {
+      setStart(Math.max(newEnd - maxChangeLength, 0))
+    }
+  }
+  
+  const loadNewer = () => {
+    const newStart = Math.max(start - defaultChangeLength, 0)
+    setStart(newStart)
+    if (newStart - end > maxChangeLength) {
+      const newEnd = Math.min(newStart + maxChangeLength, allChanges.length)
+    }
+  }
+
+  const reset = () => {
+    window.scrollTo({top: 0, left: 0, behavior: 'smooth'})
+    setStart(0)
+    setEnd(defaultChangeLength)
+  }
+
+  const changes = allChanges.slice(start, end)
+  
   return (
   <div className="KeyFocusComponent--ignore" >
+     {start > 0 && 
+      <button type="button" className="PaddedButton" onClick={loadNewer}>Show newer changes</button> 
+    }
     <FlipMove
       typeName="ul" className="ChangesComponent KeyFocusComponent--ignore"
       duration="250" staggerDelayBy="10"
       enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
     >
-      {_.flatMap(changes, (change, changeIndex) =>
-        change.diffs.map((diff, diffIndex) => 
-          <DiffComponent key={`${change.id}_${diffIndex}`} 
+      {_.flatMap(changes, ({change, changeIndex, unsynced}) => 
+        change.diffs.map((diff, diffIndex) => {
+          const detailsExpanded = detailsExpandedDiff.changeId === change.id && detailsExpandedDiff.diffIndex == diffIndex
+          return <DiffComponent key={`${change.id}_${diffIndex}`} 
             change={change} diff={diff} categories={props.categories} 
-            unsynced={changeIndex < props.unsyncedChanges.length}
+            unsynced={unsynced} 
+            applyDiff={props.applyDiff} 
+            createApplicableDiff={props.createApplicableDiff}
+            detailsExpanded={detailsExpanded}
+            onHeaderClick={() => setDetailsExpandedDiff({ changeId: detailsExpanded ? null : change.id, diffIndex })}
           />
-        )
+        })
       )}
     </FlipMove>
-    {length !== Infinity && <>
-        <button type="button" onClick={() => setLength(length + defaultChangeLength)}>More</button> 
-        <button type="button" onClick={() => setLength(Infinity)}>Show All</button>
-    </>}
-    {length !== defaultChangeLength && <button type="button" onClick={() => {window.scrollTo({top: 0, left: 0, behavior: 'smooth'}); setLength(defaultChangeLength)}}>Reset</button>}
+    {end < allChanges.length && 
+      <button type="button" className="PaddedButton" onClick={loadOlder}>Show older changes</button> 
+    }
+    {(end !== defaultChangeLength || start !== 0) &&  
+      <button type="button" className="PaddedButton" onClick={reset}>Reset</button>
+    }
   </div>
   )
 }
@@ -51,38 +92,84 @@ export default function ChangesComponent(props: Props) {
 type DiffProps = { 
   change: Change, 
   diff: Diff, 
+  categories: $ReadOnlyArray<CategoryDefinition>,
   unsynced: boolean,
-  categories: $ReadOnlyArray<CategoryDefinition> 
+  detailsExpanded: boolean,
+  applyDiff: ApplyDiff,
+  createApplicableDiff: CreateApplicableDiff,
+  onHeaderClick: () => void,
 }
 
 export class DiffComponent extends Component<DiffProps> {
   render() {
-    const elClasses = classNames('DiffComponent', {
+    const elClasses = classNames('DiffComponent', 'KeyFocusComponent--ignore', {
       'DiffComponent--unsynced': this.props.unsynced,
+      'DiffComponent--expanded': this.props.detailsExpanded,
     })
 
+    const date = this.props.change.date
+    const now = new Date()
+    const absoluteDateString = format(date, 'YYYY-MM-DD HH:mm')
+    const hours = differenceInHours(now, date)
+    const dateString = hours < 12 ? `${distanceInWords(now, date)} ago` : absoluteDateString
+
+    const reverseDiff = createReverseDiff(this.props.diff)
+    const applicableDiff = this.props.createApplicableDiff(reverseDiff)
+
+    const undo = () => {
+      if (applicableDiff != null) {
+        try {
+          this.props.applyDiff(applicableDiff)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+    }
+
+ 
+
     return <li className={elClasses}>
-      {this.props.change.username}:&nbsp;
-      {this.createDiffElement()}
+      <header className="KeyFocusComponent--ignore">
+        <button type="button" onClick={this.props.onHeaderClick} className="DiffComponent__headerButton">
+          {this.props.change.username != null && this.props.change.username.trim() !== ''
+            ? this.props.change.username
+            : <em>{this.props.unsynced ? 'You' : 'Anonymus'}</em>
+          }
+          :&nbsp;
+          {this.createDiffElement(this.props.diff, 'PAST')}
+        </button>
+      </header>
+      <ul className="DiffComponent__details">
+        <li><time dateTime={date.toISOString()} title={absoluteDateString}>{dateString}</time></li>
+        {applicableDiff != null &&
+          <li>
+            <button type="button" className="LinkButton" onClick={undo}>Undo
+              {
+                !_.isEqual(reverseDiff, applicableDiff) &&
+                  <>&nbsp; ({this.createDiffElement(applicableDiff, 'PRESENT')})</>
+              }
+            </button>
+          </li>
+        }
+      </ul>
     </li> 
   }
 
-  createDiffElement(): React$Node {
-    const diff = this.props.diff
+  createDiffElement(diff: Diff, tense: 'PAST' | 'PRESENT'): React$Node {
     const categories = this.props.categories
 
     if (diff.type === UPDATE_ITEM) {
       return <>
-        Changed <PillItemComponent item={diff.oldItem} categories={categories} /> to <PillItemComponent item={diff.item} categories={categories} />
+        {tense === 'PAST' ? 'Changed' : 'Change'} <PillItemComponent item={diff.oldItem} categories={categories} /> to <PillItemComponent item={diff.item} categories={categories} />
       </>
     }
 
     if (diff.type === ADD_ITEM) {
-      return <>Added <PillItemComponent item={diff.item} categories={categories} /></>
+      return <>{tense === 'PAST' ? 'Added' : 'Add'} <PillItemComponent item={diff.item} categories={categories} /></>
     }
 
     if (diff.type === DELETE_ITEM) {
-      return <>Deleted <PillItemComponent item={diff.oldItem} categories={categories} /></>
+      return <>{tense === 'PAST' ? 'Deleted' : 'Delete'}  <PillItemComponent item={diff.oldItem} categories={categories} /></>
     }
 
     return (diff: empty) || <>Unknown diff type</> // https://stackoverflow.com/a/54030217

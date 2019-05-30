@@ -9,7 +9,7 @@ import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/valid
 
 
 export type Change = {|
-  +username: string,
+  +username: ?string,
   +id: UUID,
   +date: Date,
   +diffs: $ReadOnlyArray<Diff>
@@ -160,6 +160,7 @@ export function applyDiff(shoppingList: ShoppingList, diff: Diff): ShoppingList 
   if (diff.type === ADD_ITEM) {
     const item = diff.item
     if (shoppingList.items.some((i) => i.id === item.id)) {
+      // TODO error type
       throw Error(`Can't apply diff, there already exists an item with id ${item.id}`)
     }
 
@@ -196,6 +197,15 @@ export function applyDiff(shoppingList: ShoppingList, diff: Diff): ShoppingList 
   throw TypeError(`Diff to be applied is not an element of type 'Diff'`)
 }
 
+export function isDiffApplicable(shoppingList: ShoppingList, diff: Diff): boolean {
+  try {
+    const newList = applyDiff(shoppingList, diff)
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
 
 export function createReverseDiff(diff: Diff): Diff {
   if (diff.type === ADD_ITEM) {
@@ -224,6 +234,52 @@ export function createReverseDiff(diff: Diff): Diff {
   throw TypeError(`Diff to be reversed is not of type 'Diff'`)
 }
 
+
+export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): ?Diff {
+  if (isDiffApplicable(shoppingList, diff)) {
+    return diff
+  }
+
+  if (diff.type === ADD_ITEM) {
+    const item = diff.item
+    const oldItemInList = shoppingList.items.find(i => i.id === item.id)
+    if (_.isEqual(oldItemInList, item)) {
+      return null
+    } else {
+      return generateUpdateItem(shoppingList, diff.item)
+    }
+  }
+
+  if (diff.type === UPDATE_ITEM) {
+    const oldItem = diff.oldItem
+    const oldItemInList = shoppingList.items.find(i => i.id === oldItem.id)
+    if (oldItemInList != null) {
+      return {
+        type: UPDATE_ITEM,
+        oldItem: oldItemInList,
+        item: diff.item
+      }
+    } else {
+      return generateAddItem(diff.item)
+    }
+  }
+
+  if (diff.type === DELETE_ITEM) {
+    const oldItem = diff.oldItem
+    const oldItemInList = shoppingList.items.find(i => i.id === oldItem.id)
+    if (oldItemInList != null) {
+      return {
+        type: DELETE_ITEM,
+        oldItem: oldItemInList,
+      }
+    } else {
+      return null
+    }
+  }
+
+  (diff: empty)
+  throw TypeError(`Diff to be converted to applicable diff is not an element of type 'Diff'`)
+}
 
 function _findOldItemIndex(shoppingList: ShoppingList, oldItem: Item) {
   const index = _.findIndex(shoppingList.items, (item) => _.isEqual(item, oldItem))

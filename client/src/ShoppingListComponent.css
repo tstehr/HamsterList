@@ -9,10 +9,6 @@
   max-width: 30rem;
   margin: 2rem auto;
 }
-.ShoppingListComponent__footer button {
-  margin: .2rem;
-  padding: .2rem;
-}
 @media (min-width: 30rem) {
   .ShoppingListComponent__body {
     margin-top: 4rem;
