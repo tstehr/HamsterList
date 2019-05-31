@@ -92,6 +92,18 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     this.db = createDB()
     this.state = this.getStateFromLocalStorage()
 
+    if (this.state.username == null) {
+      // take username from most frecent used list 
+      const otherUsername = getRecentlyUsedLists(this.db)
+        .map(rul => {
+          const state: State = this.db.read().get('lists').getById(rul.id).value()
+          return state && state.username
+        })
+        .find(name => name != null)
+          
+      this.state = {...this.state, username: otherUsername}
+    }
+
     this.supressSave = false
   }
 
