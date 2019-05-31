@@ -36,7 +36,7 @@ export default class KeyFocusComponent extends Component<Props> {
   }
 
   handleKeyDown = (e: SyntheticKeyboardEvent<>) => {
-    if ((e.key === this.back || e.key === this.forward) && this.root != null) {
+    if (!e.altKey && !e.ctrlKey && !e.metaKey && this.root != null && (e.key === this.back || e.key === this.forward)) {
       const root = this.root
 
       const focused = root.querySelector(':focus')
