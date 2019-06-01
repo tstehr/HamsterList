@@ -155,6 +155,7 @@ export default class ShoppingListComponent extends Component<Props> {
           {
             const item = this.props.shoppingList.items.find(i => i.id === match.params['itemid'])
             if (item == null) {
+              history.replace(`/${match.params['listid'] || ''}`)
               return null
             }
             return <ChooseCategoryComponent
