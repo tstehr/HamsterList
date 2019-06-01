@@ -1,6 +1,7 @@
 // @flow
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
+import differenceInDays from 'date-fns/difference_in_days'
 
 import { type UUID, createUUID } from '../util/uuid'
 import { type Item, createItem } from './Item'
@@ -90,6 +91,15 @@ export function createDiff(diffSpec: any): Diff {
   return diff
 }
 
+export function getOnlyNewChanges(changes: $ReadOnlyArray<Change>): $ReadOnlyArray<Change> {
+  const now = new Date()
+  // index of first change that is newer than 14 days
+  const dateIndex = _.findIndex(changes, (c) => differenceInDays(now, c.date) < 14)
+  // index of first change that is more than 200
+  const lengthIndex = Math.max(0, changes.length - 200)
+  // slice away the oldest changes
+  return changes.slice(Math.min(dateIndex, lengthIndex), changes.length)
+}
 
 export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShoppingList: BaseShoppingList): $ReadOnlyArray<Diff> {
   const diffs = []

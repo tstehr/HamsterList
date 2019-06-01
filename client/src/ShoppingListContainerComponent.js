@@ -7,7 +7,7 @@ import {
   type Order, type Change, type Diff, type UUID,
   createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, createRandomUUID,
   mergeShoppingLists, createOrder, createChange, 
-  generateAddItem, generateDeleteItem, generateUpdateItem, applyDiff, createApplicableDiff,
+  generateAddItem, generateDeleteItem, generateUpdateItem, applyDiff, createApplicableDiff, getOnlyNewChanges,
   frecency,
 } from 'shoppinglist-shared'
 import { type Up } from './HistoryTracker'
@@ -329,7 +329,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           changes = prevState.changes
         } else if (prevState.changes.length !== 0 && _.first(newChanges).id === _.last(prevState.changes).id) {
           // the new changes connect to the local ones (latest of the old is oldest of the new), append
-          changes = [...prevState.changes, ...newChanges.slice(1)]
+          changes = getOnlyNewChanges([...prevState.changes, ...newChanges.slice(1)])
         } else {
           // there are new changes which don't connect up. this means the local changes were quite old, and no longer cached by the server
           // we evict them and replace by the new ones
