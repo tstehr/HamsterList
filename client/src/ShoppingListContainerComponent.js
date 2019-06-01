@@ -465,13 +465,25 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
   createItem = (localItem: LocalItem) => {
     const item = {...localItem, id: createRandomUUID()}
-    const diff = generateAddItem(item)
-    this.applyDiff(diff)
+    try {
+      const diff = generateAddItem(item)
+      this.applyDiff(diff)
+    } catch (e) {
+      if (!(e instanceof TypeError)) {
+        throw e
+      }
+    }
   }
 
   deleteItem = (id: UUID) => {
-    const diff = generateDeleteItem(this.getShoppingList(this.state), id)
-    this.applyDiff(diff)
+    try {
+      const diff = generateDeleteItem(this.getShoppingList(this.state), id)
+      this.applyDiff(diff)
+    } catch (e) {
+      if (!(e instanceof TypeError)) {
+        throw e
+      }
+    }
   }
 
   updateItem = (id: UUID, localItem: LocalItem) => {
