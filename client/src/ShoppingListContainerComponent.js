@@ -432,7 +432,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     return createApplicableDiff(this.getShoppingList(this.state), diff)
   }
 
-  requestSync = (delay: number = 500) => {
+  requestSync = (delay: number = 1000) => {
       window.clearTimeout(this.requestSyncTimeoutId)
       this.requestSyncTimeoutId = window.setTimeout(this.sync.bind(this), delay)
   }
