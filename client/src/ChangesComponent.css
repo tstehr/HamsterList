@@ -17,6 +17,9 @@
 .DiffComponent--unsynced .DiffComponent__headerButton  {
     color: grey;
 }
+.DiffComponent__headerButton:focus, .DiffComponent__headerButton:active {
+    color: black;
+}
 .DiffComponent__details {
     padding-top: .2rem;
     font-size: .9em;
