@@ -29,7 +29,7 @@ export default function ChangesComponent(props: Props) {
   const [detailsExpandedDiff, setDetailsExpandedDiff] = useState({ changeId: null, diffIndex: NaN})
 
   // changes chronologically
-  const allDiffs = [...props.changes, ...props.unsyncedChanges].flatMap((change, changeIndex) => 
+  const allDiffs = _.flatMap([...props.changes, ...props.unsyncedChanges], (change, changeIndex) => 
     change.diffs.map((diff, diffIndex) => ({ 
       change, changeIndex, unsynced: changeIndex >= props.changes.length,
       diff, diffIndex,
