@@ -14,7 +14,7 @@
     width: 100%;
     text-align: left;
 }
-.DiffComponent--unsynced .DiffComponent__headerButton  {
+.DiffComponent--unsynced .DiffComponent__headerButton, .DiffComponent--unsynced .DiffComponent__headerButton:focus  {
     color: grey;
 }
 .DiffComponent__headerButton:focus, .DiffComponent__headerButton:active {
