@@ -11,7 +11,7 @@ type Props = {
 }
 
 
-export default function CategoryComponent(props: Props) {
+const CategoryComponent: React$ComponentType<Props> = React.memo((props: Props) => {
   let category = getCategory(props)
 
   const initials = category.shortName
@@ -23,9 +23,9 @@ export default function CategoryComponent(props: Props) {
   return <div className="CategoryComponent" title={category.name}>
     <div className="CategoryComponent__circle" style={style}><span>{initials}</span></div>
   </div>
-}
+}, _.isEqual)
 
-export function CategoryTextComponent(props: Props) {
+const CategoryTextComponent: React$ComponentType<Props> = React.memo((props: Props) => {
   let category = getCategory(props)
   if (category === unknownCategory) {
     return null
@@ -38,7 +38,7 @@ export function CategoryTextComponent(props: Props) {
   }
 
   return <span className="CategoryTextComponent" title={category.name} style={style}>{initials}</span>
-}
+}, _.isEqual)
 
 const unknownCategory = createCategoryDefinition({
   "id": "ffffffff-ffff-4fff-bfff-ffffffffffff",
@@ -73,3 +73,6 @@ function getCategory(props: Props): CategoryDefinition {
 
   return invalidCategory
 }
+
+export default CategoryComponent
+export { CategoryTextComponent }

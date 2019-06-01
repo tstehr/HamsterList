@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react'
+import _ from 'lodash'
 import { withRouter, Link, Route } from 'react-router-dom'
 import { type Item, type LocalItem, type CategoryDefinition, type UUID, itemToString, createLocalItemFromString } from 'shoppinglist-shared'
 import { type Up } from './HistoryTracker'
@@ -42,20 +43,15 @@ export default class EditItemComponent extends Component<Props, State> {
     }
   }
 
+  shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
+    return !_.isEqual(this.state, nextState) || !_.isEqual(this.props.item, nextProps.item)
+  }
+
   saveItem() {
     const itemFromString : LocalItem = createLocalItemFromString(this.state.inputValue, this.props.categories)
-    // $FlowFixMe
     const updatedItem: LocalItem = {
       ...itemFromString,
       category: itemFromString.category || this.props.item.category,
-    }
-    this.props.updateItem(this.props.item.id, updatedItem)
-  }
-
-  updateCategory = (category: ?UUID) => {
-    const updatedItem: LocalItem = {
-      ...this.props.item,
-      category: category
     }
     this.props.updateItem(this.props.item.id, updatedItem)
   }
@@ -121,7 +117,7 @@ export default class EditItemComponent extends Component<Props, State> {
       inputValue: itemToString(this.props.item)
     })
   }
-  
+
   render() {
     return (
         <li className="EditItemComponent">
@@ -153,16 +149,6 @@ export default class EditItemComponent extends Component<Props, State> {
               </div>
           }
           <IconButton onClick={(e) => this.props.deleteItem(this.props.item.id)} icon={wastebin} alt="Delete" className="KeyFocusComponent--noFocus"/>
-
-          <Route path={`/:listid/${this.props.item.id}/category`} render={({history, match}) =>
-            <ChooseCategoryComponent
-              categories={this.props.categories} categoryId={this.props.item.category}
-              updateCategory={(category) => {
-                this.updateCategory(category)
-                this.props.up('list')
-              }}
-            />
-          } />
         </li>
     )
   }

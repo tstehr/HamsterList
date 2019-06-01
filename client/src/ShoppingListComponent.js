@@ -9,7 +9,8 @@ import TopBarComponent from './TopBarComponent'
 import CreateItemComponent from './CreateItemComponent'
 import ShoppingListItemsComponent from './ShoppingListItemsComponent'
 import EditOrdersComponent from './EditOrdersComponent'
-import ChangesComponent from './ChangesComponent'
+import ChangesComponent from './ChangesComponent' 
+import ChooseCategoryComponent from './ChooseCategoryComponent'
 import './ShoppingListComponent.css'
 
 type Props = {
@@ -61,6 +62,14 @@ export default class ShoppingListComponent extends Component<Props> {
 
   editUsername = (e: SyntheticEvent<HTMLInputElement>) => {
     this.props.setUsername(e.currentTarget.value)
+  }
+
+  updateCategory = (item: Item, category: ?UUID) => {
+    const updatedItem: LocalItem = {
+      ...item,
+      category: category
+    }
+    this.props.updateItem(item.id, updatedItem)
   }
 
   convertToCookingAmounts = () =>{
@@ -141,6 +150,21 @@ export default class ShoppingListComponent extends Component<Props> {
         <Route path={`/:listid/orders`} render={({history, match}) =>
           <EditOrdersComponent listid={this.props.shoppingList.id} orders={this.props.orders} categories={this.props.categories}
           updateOrders={this.props.updateOrders} up={this.props.up}/>
+        } />
+        <Route path={`/:listid/:itemid/category`} render={({history, match}) => 
+          {
+            const item = this.props.shoppingList.items.find(i => i.id === match.params['itemid'])
+            if (item == null) {
+              return null
+            }
+            return <ChooseCategoryComponent
+              categories={this.props.categories} categoryId={item.category}
+              updateCategory={(category) => {
+                this.updateCategory(item, category)
+                this.props.up('list')
+              }}
+            />
+          }
         } />
       </div>
     )

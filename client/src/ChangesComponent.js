@@ -20,41 +20,46 @@ type Props = {
   createApplicableDiff: CreateApplicableDiff,
 }
 
-const defaultChangeLength = 15
-const maxChangeLength = 50
+const defaultDiffLength = 15
+const maxDiffLength = 50
 
 export default function ChangesComponent(props: Props) {
   const [start, setStart] = useState(0)
-  const [end, setEnd] = useState(defaultChangeLength)
+  const [end, setEnd] = useState(defaultDiffLength)
   const [detailsExpandedDiff, setDetailsExpandedDiff] = useState({ changeId: null, diffIndex: NaN})
 
   // changes chronologically
-  const allChanges = [...props.changes, ...props.unsyncedChanges].map((change, changeIndex) => ({ change, changeIndex, unsynced: changeIndex >= props.changes.length }))
-  allChanges.reverse()
+  const allDiffs = [...props.changes, ...props.unsyncedChanges].flatMap((change, changeIndex) => 
+    change.diffs.map((diff, diffIndex) => ({ 
+      change, changeIndex, unsynced: changeIndex >= props.changes.length,
+      diff, diffIndex,
+    }))
+  )
+  allDiffs.reverse()
 
   const loadOlder = () => {
-    const newEnd = Math.min(end + defaultChangeLength, allChanges.length)
+    const newEnd = Math.min(end + defaultDiffLength, allDiffs.length)
     setEnd(newEnd)
-    if (newEnd - start > maxChangeLength) {
-      setStart(Math.max(newEnd - maxChangeLength, 0))
+    if (newEnd - start > maxDiffLength) {
+      setStart(Math.max(newEnd - maxDiffLength, 0))
     }
   }
   
   const loadNewer = () => {
-    const newStart = Math.max(start - defaultChangeLength, 0)
+    const newStart = Math.max(start - defaultDiffLength, 0)
     setStart(newStart)
-    if (newStart - end > maxChangeLength) {
-      const newEnd = Math.min(newStart + maxChangeLength, allChanges.length)
+    if (newStart - end > maxDiffLength) {
+      const newEnd = Math.min(newStart + maxDiffLength, allDiffs.length)
     }
   }
 
   const reset = () => {
     window.scrollTo({top: 0, left: 0, behavior: 'smooth'})
     setStart(0)
-    setEnd(defaultChangeLength)
+    setEnd(defaultDiffLength)
   }
 
-  const changes = allChanges.slice(start, end)
+  const diffs = allDiffs.slice(start, end)
   
   return (
   <div className="ChangesComponent" >
@@ -67,9 +72,9 @@ export default function ChangesComponent(props: Props) {
       enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
     >
     {/* <ul className="ChangesComponent__list"> */}
-      {_.flatMap(changes, ({change, changeIndex, unsynced}) => 
-        change.diffs.map((diff, diffIndex) => {
-          const detailsExpanded = detailsExpandedDiff.changeId === change.id && detailsExpandedDiff.diffIndex == diffIndex
+      {
+        diffs.map(({change, changeIndex, unsynced, diff, diffIndex}) => {
+          const detailsExpanded = detailsExpandedDiff.changeId === change.id && detailsExpandedDiff.diffIndex === diffIndex
           return <DiffComponent key={`${change.id}_${diffIndex}`} 
             change={change} diff={diff} categories={props.categories} 
             unsynced={unsynced} 
@@ -79,13 +84,13 @@ export default function ChangesComponent(props: Props) {
             onHeaderClick={() => setDetailsExpandedDiff({ changeId: detailsExpanded ? null : change.id, diffIndex })}
           />
         })
-      )}
+      }
     {/* </ul> */}
     </FlipMove>
-    {end < allChanges.length && 
+    {end < allDiffs.length && 
       <button type="button" className="PaddedButton" onClick={loadOlder}>Show older changes</button> 
     }
-    {(end !== defaultChangeLength || start !== 0) &&  
+    {(end !== defaultDiffLength || start !== 0) &&  
       <button type="button" className="PaddedButton" onClick={reset}>Reset</button>
     }
   </div>

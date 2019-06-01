@@ -1,11 +1,14 @@
 // @flow
+import _ from 'lodash'
 import mathjs from 'mathjs'
 import React from 'react'
 import { type Amount, type BaseItem } from 'shoppinglist-shared'
 
+type AmountProps = {
+  amount: ?Amount
+}
 
-
-function AmountComponent(props: {amount: ?Amount}) {
+const AmountComponent: React$ComponentType<AmountProps> = React.memo((props: AmountProps) => {
   const amount = props.amount
   if (amount != null) {
     return (
@@ -17,13 +20,18 @@ function AmountComponent(props: {amount: ?Amount}) {
   } else {
     return null
   }
+}, _.isEqual)
+
+type Props = {
+  item: BaseItem
 }
 
-export default function ItemComponent(props: {item: BaseItem}) {
-  return (
-    <span>
-      <AmountComponent amount={props.item.amount} />
-      {" "} {props.item.name}
-    </span>
-  )
-}
+const ItemComponent: React$ComponentType<Props> = React.memo((props: Props) => (
+  <span>
+    <AmountComponent amount={props.item.amount} />
+    {" "} {props.item.name}
+  </span>
+), _.isEqual)
+
+export default ItemComponent
+export { AmountComponent }
