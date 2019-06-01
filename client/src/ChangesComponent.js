@@ -1,9 +1,10 @@
 // @flow
-import React, { Component, type Element, useState, useRef } from 'react'
+import React, { Component, type Element, useState, useRef, useMemo } from 'react'
 import _ from 'lodash'
 import FlipMove from 'react-flip-move'
 import distanceInWords from 'date-fns/distance_in_words'
 import differenceInHours from 'date-fns/difference_in_hours'
+import differenceInMinutes from 'date-fns/difference_in_minutes'
 import memoize from 'memoize-one'
 import format from 'date-fns/format'
 import classNames from 'classnames'
@@ -26,16 +27,34 @@ const maxDiffLength = 50
 export default function ChangesComponent(props: Props) {
   const [start, setStart] = useState(0)
   const [end, setEnd] = useState(defaultDiffLength)
-  const [detailsExpandedDiff, setDetailsExpandedDiff] = useState({ changeId: null, diffIndex: NaN})
+  const [detailsExpandedDiff, setDetailsExpandedDiff] = useState<{change: ?Change, diffIndex: number}>({ change: null, diffIndex: NaN})
 
   // changes chronologically
-  const allDiffs = _.flatMap([...props.changes, ...props.unsyncedChanges], (change, changeIndex) => 
+  const allChanges = [...props.changes, ...props.unsyncedChanges]
+
+  // if the expanded change doesn't exist anymore, search for a recent change containing the same diffs
+  // this will in most cases be the equivalent to the unsynced change that was removed during sync
+  const expandedChange = useMemo(() => {
+    const originalExpandedChange = detailsExpandedDiff.change
+    if (originalExpandedChange != null && !allChanges.some(c => c.id == originalExpandedChange.id)) {
+      const now = new Date()
+      const matchingChange = _.findLast(allChanges, c => differenceInMinutes(now, c.date) <= 5
+        && _.isEqual(originalExpandedChange.diffs, c.diffs) && originalExpandedChange.username === c.username)
+      if (matchingChange != null) {
+        return matchingChange
+      }
+    }
+    return originalExpandedChange
+  }, [detailsExpandedDiff, props.changes]);
+
+  const allDiffs = _.flatMap(allChanges, (change, changeIndex) => 
     change.diffs.map((diff, diffIndex) => ({ 
       change, changeIndex, unsynced: changeIndex >= props.changes.length,
       diff, diffIndex,
     }))
   )
   allDiffs.reverse()
+
 
   const loadOlder = () => {
     const newEnd = Math.min(end + defaultDiffLength, allDiffs.length)
@@ -74,14 +93,14 @@ export default function ChangesComponent(props: Props) {
     {/* <ul className="ChangesComponent__list"> */}
       {
         diffs.map(({change, changeIndex, unsynced, diff, diffIndex}) => {
-          const detailsExpanded = detailsExpandedDiff.changeId === change.id && detailsExpandedDiff.diffIndex === diffIndex
+          const detailsExpanded = expandedChange != null && expandedChange.id === change.id && detailsExpandedDiff.diffIndex === diffIndex
           return <DiffComponent key={`${change.id}_${diffIndex}`} 
             change={change} diff={diff} categories={props.categories} 
             unsynced={unsynced} 
             applyDiff={props.applyDiff} 
             createApplicableDiff={props.createApplicableDiff}
             detailsExpanded={detailsExpanded}
-            onHeaderClick={() => setDetailsExpandedDiff({ changeId: detailsExpanded ? null : change.id, diffIndex })}
+            onHeaderClick={() => setDetailsExpandedDiff({ change: detailsExpanded ? null : change, diffIndex })}
           />
         })
       }
