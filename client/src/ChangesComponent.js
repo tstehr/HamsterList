@@ -4,6 +4,7 @@ import _ from 'lodash'
 import FlipMove from 'react-flip-move'
 import distanceInWords from 'date-fns/distance_in_words'
 import differenceInHours from 'date-fns/difference_in_hours'
+import memoize from 'memoize-one'
 import format from 'date-fns/format'
 import classNames from 'classnames'
 import { type Item, type Change, type Diff, type CategoryDefinition, ADD_ITEM, UPDATE_ITEM, DELETE_ITEM, createReverseDiff } from 'shoppinglist-shared'
@@ -65,6 +66,7 @@ export default function ChangesComponent(props: Props) {
       duration="250" staggerDelayBy="10"
       enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
     >
+    {/* <ul className="ChangesComponent__list"> */}
       {_.flatMap(changes, ({change, changeIndex, unsynced}) => 
         change.diffs.map((diff, diffIndex) => {
           const detailsExpanded = detailsExpandedDiff.changeId === change.id && detailsExpandedDiff.diffIndex == diffIndex
@@ -78,6 +80,7 @@ export default function ChangesComponent(props: Props) {
           />
         })
       )}
+    {/* </ul> */}
     </FlipMove>
     {end < allChanges.length && 
       <button type="button" className="PaddedButton" onClick={loadOlder}>Show older changes</button> 
@@ -101,21 +104,29 @@ type DiffProps = {
 }
 
 export class DiffComponent extends Component<DiffProps> {
+  getDateString = memoize((date: Date) => {
+    const now = new Date()
+    const absoluteDateString = format(date, 'YYYY-MM-DD HH:mm')
+    const hours = differenceInHours(now, date)
+    const dateString = hours < 12 ? `${distanceInWords(now, date)} ago` : absoluteDateString
+    return [dateString, absoluteDateString, date.toISOString()]
+  }, _.isEqual)
+
+  getApplicableDiff = (diff: Diff) => {
+    const reverseDiff = createReverseDiff(this.props.diff)
+    const applicableDiff = this.props.createApplicableDiff(reverseDiff)
+    const reverseEqualApplicable = _.isEqual(reverseDiff, applicableDiff)
+    return [applicableDiff, reverseEqualApplicable];
+  }
+  
   render() {
     const elClasses = classNames('DiffComponent', {
       'DiffComponent--unsynced': this.props.unsynced,
       'DiffComponent--expanded': this.props.detailsExpanded,
     })
 
-    const date = this.props.change.date
-    const now = new Date()
-    const absoluteDateString = format(date, 'YYYY-MM-DD HH:mm')
-    const hours = differenceInHours(now, date)
-    const dateString = hours < 12 ? `${distanceInWords(now, date)} ago` : absoluteDateString
-
-    const reverseDiff = createReverseDiff(this.props.diff)
-    const applicableDiff = this.props.createApplicableDiff(reverseDiff)
-    const reverseEqualApplicable = _.isEqual(reverseDiff, applicableDiff)
+    const [dateString, absoluteDateString, isoDateString] = this.getDateString(this.props.change.date)
+    const [applicableDiff, reverseEqualApplicable] = this.getApplicableDiff(this.props.diff)
 
     const undo = (e) => {
       e.preventDefault()
@@ -140,7 +151,7 @@ export class DiffComponent extends Component<DiffProps> {
         </button>
       </header>
       <ul className="DiffComponent__details">
-        <li><time dateTime={date.toISOString()} title={absoluteDateString}>{dateString}</time></li>
+        <li><time dateTime={isoDateString} title={absoluteDateString}>{dateString}</time></li>
         <li>
           {/* Use a link even if undo isn't possible so focus isn't lost after undo */}
           <a href="#" onClick={undo} tabIndex={this.props.detailsExpanded ? 0 : -1} role="button" 
