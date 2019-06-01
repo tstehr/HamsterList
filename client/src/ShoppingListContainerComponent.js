@@ -13,7 +13,7 @@ import {
 import { type Up } from './HistoryTracker'
 import { type RecentlyUsedList } from './ChooseListComponent'
 import { responseToJSON } from './utils'
-import { createDB } from './db'
+import { createDB, getRecentlyUsedLists } from './db'
 import ShoppingListComponent from './ShoppingListComponent'
 
 export type ConnectionState = "disconnected" | "polling" | "socket"
