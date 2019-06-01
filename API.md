@@ -18,7 +18,7 @@ Endpoint-specific errors are described below.
 
 ## Username
 
-Clients should include a username to specify the name of the user that is performing the change. This name will be used TODO.
+Clients should include a username to specify the name of the user that is performing the change. This name will be used in the [Changes](#Change) caused by the user.
 
 The username is specified as a HTTP header `X-ShoppingList-Username`, where the value is [URL encoded].
 
@@ -37,6 +37,7 @@ The username is specified as a HTTP header `X-ShoppingList-Username`, where the 
 | `/:listid/items/:itemid` | DELETE | -              | -                             |
 | `/:listid/completions`   | GET    | -              | Array of [CompletionItem]     |
 | `/:listid/categories `   | GET    | -              | Array of [CategoryDefinition] |
+| `/:listid/changes`       | GET    | -              | Array of [Change]             |
 | `/:listid/categories `   | PUT    | Array of [CategoryDefinition] | Array of [CategoryDefinition] |
 | `/:listid/sync`          | GET    | -              | [SyncedShoppingList]          |
 | `/:listid/sync`          | POST   | [SyncRequest]  | [SyncedShoppingList]          |
@@ -87,6 +88,20 @@ Gets the categories for the shopping list.
 
 Updates the categories for the shopping list.
 
+### GET    /:listid/changes
+
+Gets the list of changes of the shopping list, sorted from oldest to newest. Note that the server only retains a limited number of changes. 
+
+By default, all changes are returned. To restrict the changes returned, GET parameters can be used:
+
+| Field  | Type                   | Description                                                    |
+|--------|------------------------|----------------------------------------------------------------|
+| oldest | String, UUID-v4        | Id of oldest change to include in response<sup>[CH](#CH)</sup> |
+| newest | String, UUID-v4        | Id of oldest change to include in response<sup>[CH](#CH)</sup> |
+
+<a name="CH">CH</a>: If no change with the given id is found, the parameter is ignored.
+
+
 ### GET    /:listid/sync
 
 Used for sync with offline-capable clients to get an initial state from which to sync.
@@ -114,6 +129,8 @@ Note: A touch indicates a server operation on the [ShoppingList], e.g. a PUT on 
 [CompletionItem]: #completionitem
 [Amount]: #amount
 [CategoryDefinition]: #categorydefinition
+[Change]: #change
+[Diff]: #diff
 [SyncRequest]: #syncrequest
 [SyncedShoppingList]: #syncedshoppinglist
 [Error]: #error
@@ -209,6 +226,40 @@ This object represents a category of items.
 
 [CSS Color Module Level 3]: https://www.w3.org/TR/2017/CR-css-color-3-20171205/
 
+### Change
+
+This object represents a change of the list by a user. A change is composes of one or more atomic [diffs](#Diff).
+
+| Field     | Type                               | Description                                        |
+|-----------|------------------------------------|----------------------------------------------------|
+| id        | String, UUID-v4                    | Unique identifier of the change                    |
+| date      | String, Date encoded as [ISO 8601] | Date the change was applied on the server          |
+| diffs     | Array of [Diff]                    | Diffs included in the change                       |
+
+[ISO 8601]: https://en.wikipedia.org/wiki/ISO_8601
+
+### Diff
+
+A diff represents a atomic change to a list. Diffs are differentiated by their `type` property. 
+
+The followind types are defined:
+
+| `type`        | Description                       |
+|---------------|-----------------------------------|
+| `ADD_ITEM`    | A new item was added to the list  |
+| `DELETE_ITEM` | An item was removed from the list |
+| `UPDATE_ITEM` | An item in the list was changed   |
+
+Other fields of the Diff depend on the `type` property of the Diff.
+
+| Field     | Type                          | Valid diff types             | Description                                        |
+|-----------|-------------------------------|------------------------------|----------------------------------------------------|
+| type      | String, one of the diff types | _all_                        | Type of the Diff                                   |
+| oldItem   | [Item]                        | `DELETE_ITEM`, `UPDATE_ITEM` | Item before the diff was applied                   |
+| item      | [Item]                        | `ADD_ITEM`, `UPDATE_ITEM`    | Item after the diff was applied                    |
+
+Note that new diff types may be introduced in the future. Clients should ignore diffs of unknown type.
+
 ### SyncRequest
 
 This object is sent by a client to the server when initiating sync.
@@ -222,12 +273,13 @@ This object is sent by a client to the server when initiating sync.
 
 This object is returned by the server after a finished sync. It is very similar to [ShoppingList] but contains a token for sync in addition.
 
-| Field | Type                   | Description                            |
-|-------|------------------------|----------------------------------------|
-| id    | String                 | Unique identifier of the shopping list |
-| title | String                 | Name of the shopping list              |
-| token | String                 | A token for synchronization            |
-| items | Array of [Item]        | Items of the list                      |
+| Field    | Type            | Description                                           |
+|----------|-----------------|-------------------------------------------------------|
+| id       | String          | Unique identifier of the shopping list                |
+| title    | String          | Name of the shopping list                             |
+| token    | String          | A token for synchronization                           |
+| changeId | String, UUID-v4 | Id of the latest change included in the shopping list |
+| items    | Array of [Item] | Items of the list                                     |
 
 ### Error
 
