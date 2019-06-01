@@ -1,5 +1,4 @@
 // @flow
-import jest from 'jest'
 import {
   type Amount, type AmountValue, type Unit,
   createAmount, createAmountFromString, createCookingAmount, createAmountValue, createUnit, mergeAmounts, getSIUnit, addAmounts

@@ -18,6 +18,7 @@ button {
   border: 1px solid black;
 }
 
+
 :not(select):focus {
   outline: none;
   box-shadow: 0 0 3px blue, inset 0 0 3px blue;
@@ -25,6 +26,11 @@ button {
 
 body {
   --theme-color: #4CAF50;
+}
+
+button.PaddedButton {
+  margin: .2rem;
+  padding: .2rem;
 }
 
 .Button {

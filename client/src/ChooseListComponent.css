@@ -27,7 +27,7 @@
 .ChooseListComponent__randomButton, .ChooseListComponent__recentlyUsedLink {
   display: block;
   border: 0;
-  background-color: #4CAF50;
+  background-color: var(--theme-color);
   line-height: 3rem;
   color: #fff;
   padding: 0 1rem;
@@ -42,7 +42,7 @@
 .ChooseListComponent__openForm {
   display: flex;
   height: 3rem;
-  border: 2px solid #4CAF50;
+  border: 2px solid var(--theme-color);
 }
 .ChooseListComponent__openForm > input {
   flex: 1;

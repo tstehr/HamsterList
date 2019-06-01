@@ -4,15 +4,16 @@ import deepFreeze from 'deep-freeze'
 import React, { Component } from 'react'
 import {
   type SyncedShoppingList, type ShoppingList, type CompletionItem, type LocalItem, type Item, type CategoryDefinition,
-  type Order, type UUID,
+  type Order, type Change, type Diff, type UUID,
   createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, createRandomUUID,
-  mergeShoppingLists, createOrder,
-  frecency
+  mergeShoppingLists, createOrder, createChange, 
+  generateAddItem, generateDeleteItem, generateUpdateItem, applyDiff, createApplicableDiff, getOnlyNewChanges,
+  frecency,
 } from 'shoppinglist-shared'
 import { type Up } from './HistoryTracker'
 import { type RecentlyUsedList } from './ChooseListComponent'
 import { responseToJSON } from './utils'
-import { createDB } from './db'
+import { createDB, getRecentlyUsedLists } from './db'
 import ShoppingListComponent from './ShoppingListComponent'
 
 export type ConnectionState = "disconnected" | "polling" | "socket"
@@ -23,6 +24,9 @@ export type DeleteItem = (id: UUID, addToRecentlyDeleted?: boolean) => void
 export type UpdateItem = (id: UUID, localItem: LocalItem) => void
 export type SelectOrder = (id: ?UUID) => void
 export type UpdateOrders = (orders: $ReadOnlyArray<Order>) => void
+export type SetUsername = (username: ?string) => void
+export type ApplyDiff = (diff: Diff) => void
+export type CreateApplicableDiff = (diff: Diff) => ?Diff
 
 type Props = {
   listid: string,
@@ -32,11 +36,13 @@ type Props = {
 
 type ClientShoppingList = {
   previousSync: ?SyncedShoppingList,
-  recentlyDeleted: $ReadOnlyArray<LocalItem>,
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   orders: $ReadOnlyArray<Order>,
+  changes: $ReadOnlyArray<Change>,
   selectedOrder: ?UUID,
+  username: ?string,
+  unsyncedChanges: $ReadOnlyArray<Change>,
   loaded: boolean,
   dirty: boolean,
   syncing: boolean,
@@ -56,11 +62,13 @@ const initialState: ClientShoppingList = deepFreeze({
   title: "",
   items: [],
   previousSync: null,
-  recentlyDeleted: [],
   completions: [],
   categories: [],
   orders: [],
+  changes: [],
   selectedOrder: null,
+  username: null,
+  unsyncedChanges: [],
   loaded: false,
   dirty: false,
   syncing: false,
@@ -82,18 +90,21 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     super(props)
 
     this.db = createDB()
+    this.state = this.getStateFromLocalStorage()
 
-    this.state = this.db.get('lists').getById(this.props.listid).value() || initialState
-    // needed to work with existing local storage
-    if (!this.state.orders) {
-      this.state.orders = []
+    if (this.state.username == null) {
+      // take username from most frecent used list 
+      const otherUsername = getRecentlyUsedLists(this.db)
+        .map(rul => {
+          const state: State = this.db.read().get('lists').getById(rul.id).value()
+          return state && state.username
+        })
+        .find(name => name != null)
+          
+      this.state = {...this.state, username: otherUsername}
     }
-    this.supressSave = false
 
-    // TODO cleanup
-    setInterval(() => {
-      //console.log(`Socket state: ${this.socket && this.socket.readyState}`)
-    }, 1000)
+    this.supressSave = false
   }
 
   componentDidMount() {
@@ -121,16 +132,34 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
   componentDidUpdate() {
     if (!this.supressSave && this.state.loaded) {
-      console.info('Save')
-      this.db.get('lists').upsert(this.state).write()
+      console.info('LOCALSTORAGE', 'Scheduled save')
+      this.save()
     }
     this.supressSave = false
   }
+  
+  save = _.debounce(() => {
+    console.info('LOCALSTORAGE',  'Save')
+    this.db.get('lists').upsert(this.state).write()
+  }, 500)
 
   load(callback? : () => void) {
-    console.info('load')
+    console.info('LOCALSTORAGE', 'Load')
     this.supressSave = true
-    this.setState(this.db.read().get('lists').getById(this.props.listid).value() || initialState, callback)
+    this.setState(this.getStateFromLocalStorage(), callback)
+  }
+
+  getStateFromLocalStorage(): State {
+    const dbState = this.db.read().get('lists').getById(this.props.listid).value()
+    if (dbState) {
+      // add default value for any keys not present in db
+      const state = {...initialState, ...dbState}
+      state.changes = state.changes.map(createChange)
+      state.unsyncedChanges = state.unsyncedChanges.map(createChange)
+      return state
+    } else {
+      return initialState
+    }
   }
 
   clearLocalStorage() {
@@ -164,35 +193,35 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     this.socket = new WebSocket(base + `/api/${this.props.listid}/socket`);
     this.socket.onopen = () => {
       onopenTimoutId = setTimeout(() => {
-        console.log('socket open')
+        console.log('SOCKET', 'socket open')
         this.setState({ connectionState: "socket" })
       }, 100)
     }
     this.socket.onmessage = evt => {
-      console.log('Receiced change push!')
+      console.log('SOCKET', 'Receiced change push!')
       clearTimeout(this.changePushSyncTimeoutId)
       this.changePushSyncTimeoutId = setTimeout(() => {
         if (this.state.previousSync != null && evt.data !== this.state.previousSync.token) {
-          console.log('Tokens dont match, syncing!')
+          console.log('SOCKET', 'Tokens dont match, syncing!')
           this.sync()
         } else {
-          console.log('Token already up to date')
+          console.log('SOCKET', 'Token already up to date')
         }
       }, 300)
     }
     this.socket.onerror = () => {
-      console.log('error')
+      console.log('SOCKET', 'error')
       clearTimeout(onopenTimoutId)
     }
     this.socket.onclose = () => {
       clearTimeout(onopenTimoutId)
-      console.log('socket closed')
+      console.log('SOCKET', 'socket closed')
       if (window.navigator.onLine) {
-        console.log('socket closed, polling')
+        console.log('SOCKET', 'socket closed, polling')
         this.setState({ connectionState: "polling" })
         setTimeout(() => this.initiateSyncConnection(), 2000)
       } else {
-        console.log('socket closed, offline')
+        console.log('SOCKET', 'socket closed, offline')
         this.setState({ connectionState: "disconnected" })
         this.waitForOnline()
       }
@@ -200,7 +229,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   waitForOnline() {
-    console.log('checking online')
+    console.log('SYNC', 'checking online')
     if (window.navigator.onLine) {
       this.initiateSyncConnection()
     } else {
@@ -209,30 +238,32 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }
 
-  sync(manuallyTriggered: boolean = false) {
+  async sync(manuallyTriggered: boolean = false) {
     window.clearTimeout(this.requestSyncTimeoutId)
 
     if (this.isInSyncMethod) {
-      console.log('Sync concurrent entry')
+      console.log('SYNC', 'Sync concurrent entry')
       return
     }
     this.isInSyncMethod = true
-    console.log('Syncing')
+    console.log('SYNC', 'Syncing')
     this.setState({
       syncing: true
     })
+
+    const preSyncUnsyncedChangesLength = this.state.unsyncedChanges.length
 
     const initialSync = !this.state.loaded
     let syncPromise
     let preSyncShoppingList
 
     if (initialSync) {
-      console.log('initial sync!')
-      syncPromise = fetch(`/api/${this.props.listid}/sync`).then(responseToJSON)
+      console.log('SYNC', 'initial sync!')
+      syncPromise = this.fetch(`/api/${this.props.listid}/sync`)
     } else {
       preSyncShoppingList = this.getShoppingList(this.state)
 
-      syncPromise = fetch(`/api/${this.props.listid}/sync`, {
+      syncPromise = this.fetch(`/api/${this.props.listid}/sync`, {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -243,17 +274,16 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             currentState: preSyncShoppingList
           })
         })
-        .then(responseToJSON)
     }
 
-    const completionsPromise = fetch(`/api/${this.props.listid}/completions`).then(responseToJSON)
-    const categoriesPromise =  fetch(`/api/${this.props.listid}/categories`).then(responseToJSON)
+    const completionsPromise = this.fetch(`/api/${this.props.listid}/completions`)
+    const categoriesPromise =  this.fetch(`/api/${this.props.listid}/categories`)
 
     let ordersPromise
     if (initialSync || !this.state.ordersChanged) {
-      ordersPromise =  fetch(`/api/${this.props.listid}/orders`).then(responseToJSON)
+      ordersPromise =  this.fetch(`/api/${this.props.listid}/orders`)
     } else {
-      ordersPromise =  fetch(`/api/${this.props.listid}/orders`, {
+      ordersPromise =  this.fetch(`/api/${this.props.listid}/orders`, {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -261,71 +291,108 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           method: "PUT",
           body: JSON.stringify(this.state.orders)
         })
-        .then(responseToJSON)
     }
 
-    Promise.all([syncPromise, completionsPromise, categoriesPromise, ordersPromise])
-      .then(([syncJson, completionsJson, categoriesJson, ordersJson]) => {
-        this.setState((prevState) => {
-          const categories = categoriesJson.map(createCategoryDefinition)
-          const completions = completionsJson.map(createCompletionItem)
-          const orders = ordersJson.map(createOrder)
+    try {
+      // don't sort shopping list from server, we need it in server order for previousSync
+      const serverSyncedShoppingList = createSyncedShoppingList(await responseToJSON(await syncPromise), null)
+      const categories = (await responseToJSON(await categoriesPromise)).map(createCategoryDefinition)
+      const completions = (await responseToJSON(await completionsPromise)).map(createCompletionItem)
+      const orders =  (await responseToJSON(await ordersPromise)).map(createOrder)
 
-          // don't sort shopping list from server, we need it in server order for previousSync
-          const serverSyncedShoppingList = createSyncedShoppingList(syncJson, null)
-          const serverShoppingList = _.omit(serverSyncedShoppingList, 'token')
+      // get changes using new changeId
+      const currentChangeId = serverSyncedShoppingList.changeId
+      let changesPromise
+      if (this.state.changes.length > 0 && currentChangeId != null) {
+        const prevChangeId = _.last(this.state.changes).id
+        changesPromise = this.fetch(`/api/${this.props.listid}/changes?oldest=${prevChangeId}&newest=${currentChangeId}`)
+      } else if (currentChangeId != null) {
+        changesPromise = this.fetch(`/api/${this.props.listid}/changes?newest=${currentChangeId}`)
+      } else {
+        changesPromise = this.fetch(`/api/${this.props.listid}/changes`)
+      }
+      const newChanges = (await responseToJSON(await changesPromise)).map(createChange)
 
-          let dirty, newShoppingList
-          if (preSyncShoppingList != null) {
-            const clientShoppingList = this.getShoppingList(prevState)
-            dirty = !_.isEqual(preSyncShoppingList, clientShoppingList)
-            newShoppingList = mergeShoppingLists(preSyncShoppingList, clientShoppingList, serverShoppingList, categories)
-          } else {
-            newShoppingList = serverShoppingList
-            dirty = false
-          }
+      this.setState((prevState) => {
+        const serverShoppingList: ShoppingList = _.omit(serverSyncedShoppingList, 'token', 'changeId')
 
-          const syncState: $Shape<State> = {
-            completions: completions,
-            categories: categories,
-            orders: orders,
-            dirty: dirty,
-            syncing: false,
-            loaded: true,
-            lastSyncFailed: false,
-            ordersChanged: false,
-            previousSync: serverSyncedShoppingList,
-            ...newShoppingList,
-          }
-
-          this.isInSyncMethod = false
-          console.log('done syncing')
-
-          if (syncState.dirty) {
-            console.warn('dirty after sync, resyncing')
-            this.requestSync(0)
-          }
-
-          return syncState
-        }, () => {
-          if (initialSync) {
-            this.markListAsUsed()
-          }
-        })
-      })
-      .catch(e => {
-        let failedState = {
-          lastSyncFailed: true,
-          syncing: false,
+        // get new shopping list and determine if there were further local changes while syncing
+        let dirty, newShoppingList
+        if (preSyncShoppingList != null) {
+          const clientShoppingList = this.getShoppingList(prevState)
+          dirty = !_.isEqual(preSyncShoppingList, clientShoppingList)
+          newShoppingList = mergeShoppingLists(preSyncShoppingList, clientShoppingList, serverShoppingList, categories)
+        } else {
+          newShoppingList = serverShoppingList
+          dirty = false
         }
-        this.setState(failedState)
+
+        // add newly fetched changes to local changes
+        let changes
+        if (newChanges.length === 0) {
+          // no new changes, keep the old ones
+          changes = prevState.changes
+        } else if (prevState.changes.length !== 0 && _.first(newChanges).id === _.last(prevState.changes).id) {
+          // the new changes connect to the local ones (latest of the old is oldest of the new), append
+          changes = getOnlyNewChanges([...prevState.changes, ...newChanges.slice(1)])
+        } else {
+          // there are new changes which don't connect up. this means the local changes were quite old, and no longer cached by the server
+          // we evict them and replace by the new ones
+          changes = newChanges
+        }
+
+        const syncState: $Shape<State> = {
+          completions,
+          categories,
+          orders,
+          changes,
+          dirty,
+          unsyncedChanges: prevState.unsyncedChanges.slice(preSyncUnsyncedChangesLength),
+          syncing: false,
+          loaded: true,
+          lastSyncFailed: false,
+          ordersChanged: false,
+          previousSync: serverSyncedShoppingList,
+          ...newShoppingList,
+        }
+
         this.isInSyncMethod = false
-        console.log('done syncing, failed', e)
+        console.log('SYNC', 'done syncing')
+
+        if (syncState.dirty) {
+          console.warn('SYNC', 'dirty after sync, resyncing')
+          this.requestSync(0)
+        }
+
+        return syncState
+      }, () => {
+        if (initialSync) {
+          this.markListAsUsed()
+        }
       })
+    } catch (e) {
+      let failedState = {
+        lastSyncFailed: true,
+        syncing: false,
+      }
+      this.setState(failedState)
+      this.isInSyncMethod = false
+      console.log('SYNC', 'done syncing, failed', e)
+    }
   }
 
   getShoppingList(clientShoppingList: ClientShoppingList): ShoppingList {
     return createShoppingList(_.pick(clientShoppingList, ['id', 'title', 'items']), this.state.categories)
+  }
+
+  fetch(input: RequestInfo, init?: RequestOptions) {
+    init = init || {}
+    _.merge(init, {
+      "headers": {
+        "X-ShoppingList-Username": this.state.username ? encodeURIComponent(this.state.username) : ""
+      }
+    })
+    return fetch(input, init)
   }
 
   markListAsUsed() {
@@ -343,7 +410,34 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     this.db.get('recentlyUsedLists').upsert(listUsed).write()
   }
 
-  requestSync = (delay: number = 500) => {
+  applyDiff = (diff: Diff) => {
+    this.markListAsUsed()
+    
+    this.setState((prevState) => {
+      try {
+        const localChange: Change = {
+          id: createRandomUUID(),
+          username: this.state.username,
+          date: new Date(),
+          diffs: [diff],
+        }
+        const newList = applyDiff(this.getShoppingList(prevState), diff)
+        return {
+          ...newList,
+          unsyncedChanges: [...prevState.unsyncedChanges, localChange],
+          dirty: true,
+        }
+      } catch (e) {
+        console.error('Error while applying diff', diff, e)
+      }
+    }, this.requestSync)
+  }
+
+  createApplicableDiff = (diff: Diff): ?Diff => {
+    return createApplicableDiff(this.getShoppingList(this.state), diff)
+  }
+
+  requestSync = (delay: number = 1000) => {
       window.clearTimeout(this.requestSyncTimeoutId)
       this.requestSyncTimeoutId = window.setTimeout(this.sync.bind(this), delay)
   }
@@ -375,67 +469,39 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   createItem = (localItem: LocalItem) => {
-    this.markListAsUsed()
-
     const item = {...localItem, id: createRandomUUID()}
-    this.setState((prevState) => {
-      const recentlyDeleted = prevState.recentlyDeleted.filter(
-        (delItem) => delItem.name.trim().toLowerCase() !== item.name.trim().toLowerCase()
-      )
-      return {
-        items: [...prevState.items, item],
-        recentlyDeleted: recentlyDeleted,
-        dirty: true,
+    try {
+      const diff = generateAddItem(item)
+      this.applyDiff(diff)
+    } catch (e) {
+      if (!(e instanceof TypeError)) {
+        throw e
       }
-    }, this.requestSync)
+    }
   }
 
-  deleteItem = (id: UUID, addToRecentlyDeleted?: boolean = true) => {
-    this.markListAsUsed()
-
-    this.setState((prevState) => {
-      const toDelete = prevState.items.find((item) => item.id === id)
-      if (toDelete == null) {
-        return {}
+  deleteItem = (id: UUID) => {
+    try {
+      const diff = generateDeleteItem(this.getShoppingList(this.state), id)
+      this.applyDiff(diff)
+    } catch (e) {
+      if (!(e instanceof TypeError)) {
+        throw e
       }
-      const localToDelete = _.omit(toDelete, 'id')
-      const listItems = [...prevState.items].filter((item) => item.id !== id)
-
-      let recentlyDeleted = prevState.recentlyDeleted
-        .filter((item) => item.name.trim().toLowerCase() !== localToDelete.name.trim().toLowerCase())
-      if (addToRecentlyDeleted) {
-        recentlyDeleted.push(localToDelete)
-      }
-      recentlyDeleted = recentlyDeleted.slice(Math.max(0, recentlyDeleted.length - 10), recentlyDeleted.length)
-
-      return {
-        items: listItems,
-        recentlyDeleted: recentlyDeleted,
-        dirty: true,
-      }
-    }, this.requestSync)
+    }
   }
 
   updateItem = (id: UUID, localItem: LocalItem) => {
-    this.markListAsUsed()
-
     const item = {...localItem, id: id}
-
-    this.setState((prevState) => {
-      const listItems = [...prevState.items]
-      const index = _.findIndex(listItems, (item) => item.id === id)
-      listItems[index] = item
-
-      const recentlyDeleted = prevState.recentlyDeleted.filter(
-        (delItem) => delItem.name.trim().toLowerCase() !== item.name.trim().toLowerCase()
-      )
-
-      return {
-        items: listItems,
-        recentlyDeleted: recentlyDeleted,
-        dirty: true
+    try {
+      const diff = generateUpdateItem(this.getShoppingList(this.state), item)
+      this.applyDiff(diff)
+    } catch (e) {
+      if (!(e instanceof TypeError)) {
+        throw e
       }
-    }, this.requestSync)
+    }
+
   }
 
   selectOrder = (id: ?UUID) => {
@@ -454,17 +520,32 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }, this.requestSync)
   }
 
+  setUsername = (username: ?string) => {
+    if (username != null) {
+      username = username.trim()
+      if (username === '') {
+        username = null
+      }      
+    }
+    this.setState((prevState) => ({ 
+      username,
+      unsyncedChanges: prevState.unsyncedChanges.map( c => ({ ...c, username }) )
+    }))
+  }
+
   render() {
     return (
       <div>
         {this.state.loaded &&
           <ShoppingListComponent
             shoppingList={this.getShoppingList(this.state)}
-            recentlyDeleted={this.state.recentlyDeleted}
             completions={this.state.completions}
             categories={this.state.categories}
             orders={this.state.orders}
+            changes={this.state.changes}
             selectedOrder={this.state.selectedOrder}
+            username={this.state.username}
+            unsyncedChanges={this.state.unsyncedChanges}
             connectionState={this.state.connectionState}
             syncing={this.state.syncing}
             lastSyncFailed={this.state.lastSyncFailed}
@@ -472,6 +553,9 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             updateListTitle={this.updateListTitle} createItem={this.createItem}
             updateItem={this.updateItem} deleteItem={this.deleteItem}
             selectOrder={this.selectOrder} updateOrders={this.updateOrders}
+            setUsername={this.setUsername}
+            applyDiff={this.applyDiff}
+            createApplicableDiff={this.createApplicableDiff}
             manualSync={this.initiateSyncConnection.bind(this)}
             clearLocalStorage={this.clearLocalStorage.bind(this)}
             up={this.props.up}

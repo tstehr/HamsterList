@@ -2,8 +2,8 @@
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
 import FlipMove from 'react-flip-move'
-import { createRandomUUID, frecency } from 'shoppinglist-shared'
-import { createDB } from './db'
+import { createRandomUUID } from 'shoppinglist-shared'
+import { createDB, getRecentlyUsedLists } from './db'
 import { responseToJSON } from './utils';
 import './ChooseListComponent.css'
 
@@ -29,14 +29,8 @@ export default class ChooseListComponent extends Component<void, State> {
 
     this.state = {
       listid: null,
-      recentlyUsedLists: this.getRecentlyUsedLists(),
+      recentlyUsedLists: getRecentlyUsedLists(this.db),
     }
-  }
-
-  getRecentlyUsedLists() {
-    return this.db.get('recentlyUsedLists')
-      .orderBy([entry => frecency(entry)], ['desc'])
-      .value()
   }
 
   componentDidMount() {
@@ -50,7 +44,7 @@ export default class ChooseListComponent extends Component<void, State> {
   handleStorage = () => {
     this.db.read()
     this.setState({
-      recentlyUsedLists: this.getRecentlyUsedLists(),
+      recentlyUsedLists: getRecentlyUsedLists(this.db),
     })
   }
 

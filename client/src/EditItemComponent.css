@@ -48,7 +48,7 @@
 @media (min-width: 30rem) {
   .EditItemComponent {
     border: 0;
-    background-color: #f7f7f7;
+    background-color: hsl(0, 0%, 97%);
     margin-bottom: .5rem;
   }
 }

@@ -1,5 +1,4 @@
 // @flow
-import jest from 'jest'
 import { type CategoryDefinition, createCategoryDefinition } from './CategoryDefinition'
 import { type UUID, createUUID } from '../util/uuid'
 

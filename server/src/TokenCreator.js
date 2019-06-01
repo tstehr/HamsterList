@@ -17,16 +17,16 @@ export default class TokenCreator {
     this.secret = secret
   }
 
-  setToken(list: BaseShoppingList): SyncedShoppingList {
-    return createSyncedShoppingList({...list, token: this.createToken(list)}, null)
+  setToken(list: SyncedShoppingList): SyncedShoppingList {
+    return {...list, token: this.createToken(list)}
   }
 
   validateToken(list: SyncedShoppingList): boolean {
-    return list.token === this.setToken(list).token
+    return list.token === this.createToken(list)
   }
 
-  createToken(list: BaseShoppingList): string {
-    const secretList = createSyncedShoppingList({...list, token: this.secret}, null)
+  createToken(list: SyncedShoppingList): string {
+    const secretList: SyncedShoppingList = {...list, token: this.secret}
     const secretListJSON = stringify(secretList)
     return crypto.createHash('sha256').update(secretListJSON).digest('hex')
   }

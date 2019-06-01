@@ -8,12 +8,12 @@ import bodyParser from 'body-parser'
 import WebSocket from 'ws'
 import nconf from 'nconf'
 import camelCase from 'camel-case'
-import bunyan from 'bunyan'
+import bunyan, { Logger } from 'bunyan'
 import {
-  type ShoppingList, type Item, type LocalItem, type UUID,
-  createLocalItemFromString, createLocalItem, createItem, createShoppingList, createRandomUUID, createUUID
+  type ShoppingList, type Item, type LocalItem, type Change, type UUID,
+  createLocalItemFromString, createLocalItem, createItem, createShoppingList, createRandomUUID, createUUID, diffShoppingLists
 } from 'shoppinglist-shared'
-import { DB } from './DB'
+import { DB, updateInArray } from './DB'
 import ShoppingListController, { type ShoppingListRequest } from './ShoppingListController'
 import ItemController from './ItemController'
 import SocketController from './SocketController'
@@ -21,8 +21,10 @@ import SyncController from './SyncController'
 import CompletionsController from './CompletionsController'
 import CategoriesController from './CategoriesController'
 import OrdersController from './OrdersController'
+import ChangesController from './ChangesController'
 import TokenCreator from './TokenCreator'
 
+export type UserRequest = { id: UUID, username: ?string, log: Logger } & express$Request
 
 var log = bunyan.createLogger({
     name: 'shoppinglist',
@@ -86,19 +88,45 @@ db.load()
 
     const socketController = new SocketController(tokenCreator, log)
 
-    const shoppingListController = new ShoppingListController(db, socketController.notifiyChanged, log, nconf.get('defaultCategories'))
-    const itemController = new ItemController(db, socketController.notifiyChanged)
-    const syncController = new SyncController(db, socketController.notifiyChanged, tokenCreator)
-    const categoriesController = new CategoriesController(db, socketController.notifiyChanged)
-    const ordersController = new OrdersController(db, socketController.notifiyChanged)
+    const shoppingListController = new ShoppingListController(db, nconf.get('defaultCategories'), tokenCreator,
+      socketController.notifiyChanged)
+    const itemController = new ItemController()
+    const syncController = new SyncController(tokenCreator)
+    const categoriesController = new CategoriesController()
+    const ordersController = new OrdersController()
     const completionsController = new CompletionsController()
+    const changesController = new ChangesController()
 
     router.param('listid', shoppingListController.handleParamListid)
     router.param('itemid', itemController.handleParamItemid)
 
-    router.use('/:listid', (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+    router.use('*', (req: UserRequest, res: express$Response, next: express$NextFunction) => {
+      req.id = createRandomUUID()
+
+      const encodedUsername = req.get('X-ShoppingList-Username')
+      if (encodedUsername !== undefined) {
+        try {
+          req.username = decodeURIComponent(encodedUsername).trim()
+          if (req.username === "") {
+            req.username = null
+          }
+        } catch (e) {
+          res.status(400).json({error: "Header field X-ShoppingList-Username is malformed."})
+          return
+        }
+      } else {
+        req.username = null
+      }
+
+      req.log = log.child({ id: req.id, username: req.username })
+
       req.log.info({req: req})
+
       next()
+
+      if (!res.headersSent) {
+        res.status(404).json({error: "This route doesn't exist."})
+      }
       req.log.info({res: res})
     })
 
@@ -119,12 +147,13 @@ db.load()
     router.get('/:listid/orders', ordersController.handleGet)
     router.put('/:listid/orders', ordersController.handlePut)
 
+    router.get('/:listid/changes', changesController.handleGet)
+
     router.get('/:listid/sync', syncController.handleGet)
     router.post('/:listid/sync', syncController.handlePost)
 
-    router.use('*', (req: express$Request, res: express$Response) => {
-      res.status(404).json({error: "This route doesn't exist."})
-    })
+    router.use('*', shoppingListController.saveUpdatedList)
+
 
     app.use('/api', router)
 

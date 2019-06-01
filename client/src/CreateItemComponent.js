@@ -3,22 +3,29 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 import AutosizeTextarea from 'react-autosize-textarea'
-import { type LocalItem, type CompletionItem, type CategoryDefinition, createLocalItemFromString, itemToString, addMatchingCategory } from 'shoppinglist-shared'
-import type { CreateItem } from './ShoppingListContainerComponent'
+import { 
+  type LocalItem, type CompletionItem, type CategoryDefinition, type Change, 
+  createLocalItemFromString, itemToString, addMatchingCategory 
+} from 'shoppinglist-shared'
+import type { CreateItem, ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
 import CompletionsComponent from './CompletionsComponent'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 import KeyFocusComponent from './KeyFocusComponent'
 import IconButton from './IconButton'
+import ChangesComponent from './ChangesComponent'
 import './CreateItemComponent.css'
 
 import add from './icons/add.svg'
 
-type Props = {
-  recentlyDeleted: $ReadOnlyArray<LocalItem>,
+type Props = {|
   completions: $ReadOnlyArray<CompletionItem>,
+  changes: $ReadOnlyArray<Change>,
+  unsyncedChanges: $ReadOnlyArray<Change>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   createItem: CreateItem,
-}
+  applyDiff: ApplyDiff,
+  createApplicableDiff: CreateApplicableDiff,
+|}
 
 type State = {
   inputValue: string,
@@ -194,25 +201,31 @@ export default class CreateItemComponent extends Component<Props, State> {
                 </div>
               }
               <AutosizeTextarea
-                type="text" className="KeyFocusComponent--defaultFocus"
+                type="text"
                 value={this.state.inputValue}
                 onChange={this.handleChange} onKeyDown={this.handleKeyDownTextarea}
                 innerRef={(input) => { this.input = input }}
               />
             </div>
-            <button type="button" className="CreateItemComponent__form__toggleMultiline" onClick={this.handleToggleMultiline}>
+            <button type="button" className="CreateItemComponent__form__toggleMultiline KeyFocusComponent--noFocus" onClick={this.handleToggleMultiline}>
               {isMultiline ? "▲" : "▼" }
             </button>
-            <IconButton className="CreateItemComponent__form__save" icon={add} alt="Add" />
+            <IconButton className="CreateItemComponent__form__save KeyFocusComponent--noFocus" icon={add} alt="Add" />
           </form>
-          <div className="KeyFocusComponent--ignore" style={{position:'relative'}}>
-            <CompletionsComponent
-              isCreatingItem={isCreatingItem} isMultiline={isMultiline}
-              focusItemsInCreation={this.state.formHasFocus} disableAllAnimations={this.state.changingQuickly}
+          <div style={{position:'relative'}}>
+            {isCreatingItem && <CompletionsComponent
+              focusItemsInCreation={this.state.formHasFocus}
               completions={this.props.completions} categories={this.props.categories}
-              itemsInCreation={itemsInCreation} recentlyDeleted={this.props.recentlyDeleted}
+              itemsInCreation={itemsInCreation}
               createItem={this.createItem} focusInput={this.focusInput}
-            />
+            />}
+            {!isCreatingItem && <ChangesComponent 
+              changes={this.props.changes} 
+              unsyncedChanges={this.props.unsyncedChanges}
+              categories={this.props.categories}
+              applyDiff={this.props.applyDiff}
+              createApplicableDiff={this.props.createApplicableDiff}
+            />}
           </div>
         </KeyFocusComponent>
 

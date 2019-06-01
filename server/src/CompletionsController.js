@@ -6,13 +6,13 @@ import { type RecentlyUsedArray } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 
 export default class CompletionsController {
-  handleGet = (req: ShoppingListRequest, res: express$Response) => {
+  handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     res.json(getSortedCompletions( req.list.recentlyUsed))
+    next()
   }
 }
 
 export function getSortedCompletions(recentlyUsed: RecentlyUsedArray) {
-  // $FlowFixMe
   const sortedRecentlyUsed = _.orderBy(recentlyUsed,
     [entry => frecency(entry)], ['desc']
   )

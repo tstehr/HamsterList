@@ -1,6 +1,5 @@
 // @flow
 import _ from 'lodash'
-// $FlowFixMe
 import React, { Component, Fragment } from 'react'
 import FlipMove from 'react-flip-move'
 import fuzzy from 'fuzzy'
@@ -8,24 +7,17 @@ import { type LocalItem, type CompletionItem, type CategoryDefinition, itemToStr
 import type { CreateItem } from './ShoppingListContainerComponent'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 
-type Props = {
-  isCreatingItem: boolean,
-  isMultiline: boolean,
+type Props = {|
   focusItemsInCreation: boolean,
-  disableAllAnimations: boolean,
   itemsInCreation: $ReadOnlyArray<LocalItem>,
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
-  recentlyDeleted: $ReadOnlyArray<LocalItem>,
   createItem: CreateItem,
   focusInput: () => void,
-}
+|}
 
 export default class CompletionsComponent extends Component<Props> {
-  getCompletionItems() {
-    if (!this.props.isCreatingItem) {
-      return [...this.props.recentlyDeleted].reverse().slice(0, 10)
-    }
+  getCompletionItems(): $ReadOnlyArray<LocalItem> {
     if (this.props.itemsInCreation.length === 0) {
       return []
     }
@@ -49,7 +41,6 @@ export default class CompletionsComponent extends Component<Props> {
 
   render() {
     const itemToKey = new Map()
-    // $FlowFixMe
     const itemsByRepr = _.groupBy(this.props.itemsInCreation, itemToString)
     for (const [repr, items] of Object.entries(itemsByRepr)) {
       for (const [iStr, item] of Object.entries(items)) {
@@ -64,13 +55,8 @@ export default class CompletionsComponent extends Component<Props> {
 
 
     return (
-      // <FlipMove typeName={null} duration="250" staggerDurationBy="10" staggerDelayBy="10"
-      //   enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
-      //   disableAllAnimations={this.props.disableAllAnimations}
-      //   maintainContainerHeight
-      // >
       <Fragment>
-        {this.props.isCreatingItem &&
+        {
           this.props.itemsInCreation.map(item =>
             <CreateItemButtonComponent key={itemToKey.get(item)}
               item={item} categories={this.props.categories}
@@ -88,7 +74,6 @@ export default class CompletionsComponent extends Component<Props> {
           )
         }
       </Fragment>
-      // </FlipMove>
     )
   }
 }

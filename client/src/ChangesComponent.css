@@ -1,0 +1,60 @@
+.ChangesComponent {
+    margin: .5rem;
+}
+.ChangesComponent__list {
+    list-style: none;
+}
+
+
+.DiffComponent__headerButton {
+    margin-top: .5rem;
+    font-size: 1em;
+    border: 0;
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+.DiffComponent--unsynced .DiffComponent__headerButton, .DiffComponent--unsynced .DiffComponent__headerButton:focus  {
+    color: grey;
+}
+.DiffComponent__headerButton:focus, .DiffComponent__headerButton:active {
+    color: black;
+}
+.DiffComponent__details {
+    padding-top: .2rem;
+    font-size: .9em;
+    list-style: none;
+    color: grey;
+    max-height: 0;
+    opacity: 0;
+    transition: 100ms ease-in-out;
+    transition-property: max-height, opacity;
+    pointer-events: none;
+}
+.DiffComponent__details li {
+    display: inline;
+}
+.DiffComponent__details li:not(:first-child)::before {
+    content: '\00a0|\00a0';
+}
+.DiffComponent--expanded .DiffComponent__details  {
+    max-height: 5em;
+    opacity: 1;
+    pointer-events: initial;
+}
+.DiffComponent__UndoLink {
+    position: relative;
+    padding: .2em;
+}
+.DiffComponent__UndoLink::before {
+    /* Increase interaction area for link */
+    position:absolute;
+    content:'';
+    top:-1em;
+    right:-2em;
+    left:-2em;
+    bottom:-.5em;
+}
+.DiffComponent__UndoLink--disabled {
+    color: grey;
+}

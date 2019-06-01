@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react'
+import _ from 'lodash'
 import { withRouter, Link, Route } from 'react-router-dom'
 import { type Item, type LocalItem, type CategoryDefinition, type UUID, itemToString, createLocalItemFromString } from 'shoppinglist-shared'
 import { type Up } from './HistoryTracker'
@@ -42,20 +43,15 @@ export default class EditItemComponent extends Component<Props, State> {
     }
   }
 
+  shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
+    return !_.isEqual(this.state, nextState) || !_.isEqual(this.props.item, nextProps.item)
+  }
+
   saveItem() {
     const itemFromString : LocalItem = createLocalItemFromString(this.state.inputValue, this.props.categories)
-    // $FlowFixMe
     const updatedItem: LocalItem = {
       ...itemFromString,
       category: itemFromString.category || this.props.item.category,
-    }
-    this.props.updateItem(this.props.item.id, updatedItem)
-  }
-
-  updateCategory = (category: ?UUID) => {
-    const updatedItem: LocalItem = {
-      ...this.props.item,
-      category: category
     }
     this.props.updateItem(this.props.item.id, updatedItem)
   }
@@ -121,12 +117,12 @@ export default class EditItemComponent extends Component<Props, State> {
       inputValue: itemToString(this.props.item)
     })
   }
-  
+
   render() {
     return (
         <li className="EditItemComponent">
           <Route render={({history, location, match}) =>
-            <button type="button" className="EditItemComponent__category"
+            <button type="button" className="EditItemComponent__category KeyFocusComponent--noFocus"
               onClick={() => history.push(`/${match.params['listid'] || ''}/${this.props.item.id}/category`)}
             >
               <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories} />
@@ -137,14 +133,14 @@ export default class EditItemComponent extends Component<Props, State> {
             this.state.isEditing
             ? <form onSubmit={this.handleSumbit} className="EditItemComponent__name">
                 <AutosizeTextarea
-                  type="text" className="KeyFocusComponent--defaultFocus"
+                  type="text"
                   value={this.state.inputValue}
                   onBlur={this.handleBlur} onChange={this.handleChange}
                   onKeyDown={this.handleInputKeyDown}
                   innerRef={(input) => { this.input = input }}
                 />
               </form>
-            : <div className="EditItemComponent__name KeyFocusComponent--defaultFocus" tabIndex="0"
+            : <div className="EditItemComponent__name" tabIndex="0"
                 onFocus={this.handleFocus} onBlur={this.handleBlur}
                 onKeyDown={this.handleDivKeyDown} onClick={this.handleDivClick}
                 ref={(itemDiv) => this.itemDiv = itemDiv}
@@ -152,17 +148,7 @@ export default class EditItemComponent extends Component<Props, State> {
                 <ItemComponent item={this.props.item} />
               </div>
           }
-          <IconButton onClick={(e) => this.props.deleteItem(this.props.item.id)} icon={wastebin} alt="Delete" />
-
-          <Route path={`/:listid/${this.props.item.id}/category`} render={({history, match}) =>
-            <ChooseCategoryComponent
-              categories={this.props.categories} categoryId={this.props.item.category}
-              updateCategory={(category) => {
-                this.updateCategory(category)
-                this.props.up('list')
-              }}
-            />
-          } />
+          <IconButton onClick={(e) => this.props.deleteItem(this.props.item.id)} icon={wastebin} alt="Delete" className="KeyFocusComponent--noFocus"/>
         </li>
     )
   }

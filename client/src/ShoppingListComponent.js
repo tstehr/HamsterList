@@ -2,22 +2,26 @@
 import React, { Component } from 'react'
 import { withRouter, Link, Route } from 'react-router-dom'
 import _ from 'lodash'
-import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, type Order, type UUID, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
-import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder, UpdateOrders } from './ShoppingListContainerComponent'
+import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, type Order, type Change, type UUID, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
+import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder, UpdateOrders, SetUsername, ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
 import { type Up } from './HistoryTracker'
 import TopBarComponent from './TopBarComponent'
 import CreateItemComponent from './CreateItemComponent'
 import ShoppingListItemsComponent from './ShoppingListItemsComponent'
 import EditOrdersComponent from './EditOrdersComponent'
+import ChangesComponent from './ChangesComponent' 
+import ChooseCategoryComponent from './ChooseCategoryComponent'
 import './ShoppingListComponent.css'
 
 type Props = {
   shoppingList: ShoppingList,
-  recentlyDeleted: $ReadOnlyArray<LocalItem>,
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   orders: $ReadOnlyArray<Order>,
+  changes: $ReadOnlyArray<Change>,
   selectedOrder: ?UUID,
+  username: ?string,  
+  unsyncedChanges: $ReadOnlyArray<Change>,
   connectionState: ConnectionState,
   syncing: boolean,
   lastSyncFailed: boolean,
@@ -28,6 +32,9 @@ type Props = {
   updateItem: UpdateItem,
   selectOrder: SelectOrder,
   updateOrders: UpdateOrders,
+  setUsername: SetUsername,
+  applyDiff: ApplyDiff,
+  createApplicableDiff: CreateApplicableDiff,
   manualSync: () => void,
   clearLocalStorage: () => void,
   up: Up,
@@ -35,7 +42,7 @@ type Props = {
 
 export default class ShoppingListComponent extends Component<Props> {
   clearLocalStorage = () => {
-    const performClear = window.confirm('This will delete any unsynced data and your recently deleted items. Continue?')
+    const performClear = window.confirm('This will delete any unsynced data. Continue?')
     if (performClear) {
       this.props.clearLocalStorage()
     }
@@ -51,6 +58,18 @@ export default class ShoppingListComponent extends Component<Props> {
 
   componentWillReceiveProps() {
     document.title = this.props.shoppingList.title
+  }
+
+  editUsername = (e: SyntheticEvent<HTMLInputElement>) => {
+    this.props.setUsername(e.currentTarget.value)
+  }
+
+  updateCategory = (item: Item, category: ?UUID) => {
+    const updatedItem: LocalItem = {
+      ...item,
+      category: category
+    }
+    this.props.updateItem(item.id, updatedItem)
   }
 
   convertToCookingAmounts = () =>{
@@ -107,26 +126,46 @@ export default class ShoppingListComponent extends Component<Props> {
           </div>
           <div className="ShoppingListComponent__section">
             <CreateItemComponent
-              recentlyDeleted={this.props.recentlyDeleted}
+              changes={this.props.changes} 
+              unsyncedChanges={this.props.unsyncedChanges}
               completions={this.props.completions}
               categories={this.props.categories}
-              createItem={this.props.createItem} />
+              createItem={this.props.createItem} 
+              applyDiff={this.props.applyDiff} 
+              createApplicableDiff={this.props.createApplicableDiff} />
           </div>
         </div>
-        <div className="ShoppingListComponent__footer">
+        <footer className="ShoppingListComponent__footer">
           <h2>Tools</h2>
-          <button type="button" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
-          <button type="button" onClick={this.mergeItems}>Merge</button>
+          <label>Username: <input type="text" placeholder="username" defaultValue={this.props.username} onBlur={this.editUsername}/></label>
+          <button type="button" className="PaddedButton" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
+          <button type="button" className="PaddedButton" onClick={this.mergeItems}>Merge</button>
           <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Sorting</Link>
           <h2>Debug</h2>
-          <button type="button" onClick={this.props.manualSync}>Force Sync</button>
-          <button type="button" onClick={this.clearLocalStorage}>Clear Local Storage</button>
+          <button type="button" className="PaddedButton" onClick={this.props.manualSync}>Force Sync</button>
+          <button type="button" className="PaddedButton" onClick={this.clearLocalStorage}>Clear Local Storage</button>
           <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
-        </div>
+        </footer>
 
         <Route path={`/:listid/orders`} render={({history, match}) =>
           <EditOrdersComponent listid={this.props.shoppingList.id} orders={this.props.orders} categories={this.props.categories}
           updateOrders={this.props.updateOrders} up={this.props.up}/>
+        } />
+        <Route path={`/:listid/:itemid/category`} render={({history, match}) => 
+          {
+            const item = this.props.shoppingList.items.find(i => i.id === match.params['itemid'])
+            if (item == null) {
+              history.replace(`/${match.params['listid'] || ''}`)
+              return null
+            }
+            return <ChooseCategoryComponent
+              categories={this.props.categories} categoryId={item.category}
+              updateCategory={(category) => {
+                this.updateCategory(item, category)
+                this.props.up('list')
+              }}
+            />
+          }
         } />
       </div>
     )

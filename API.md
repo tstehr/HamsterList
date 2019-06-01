@@ -16,6 +16,15 @@ Requests to non-existing resources will result in a *404 Not Found* status.
 
 Endpoint-specific errors are described below.
 
+## Username
+
+Clients should include a username to specify the name of the user that is performing the change. This name will be used TODO.
+
+The username is specified as a HTTP header `X-ShoppingList-Username`, where the value is [URL encoded].
+
+[URL encoded]: https://en.wikipedia.org/wiki/Percent-encoding#Current_standard
+
+
 ## Endpoints
 
 | Endpoint                 | Method | Body           | Return                        |
@@ -162,7 +171,7 @@ Instead of the object as specified above clients may also send the following obj
 
 When having the server parse the string representation you may prepend the `shortName` of a [CategoryDefinition] in parentheses to assign that category to the item, e.g. `(M) 1 litre Milk` to assign the category with `shortName = M`.
 
-If no category is present when parsing the string representation the server will try to assign a matching category from an internal list of recently used categories. 
+If no category is present when parsing the string representation the server will try to assign a matching category from an internal list of recently used categories.
 
 ### CompletionItem
 

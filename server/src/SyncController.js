@@ -2,11 +2,10 @@
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import {
-  type ShoppingList, type SyncRequest, type Item, type UUID,
+  type ShoppingList, type SyncRequest, type SyncedShoppingList, type Item, type UUID,
   createShoppingList, createSyncRequest, mergeShoppingLists, addMatchingCategory, createItemFromItemStringRepresentation
 } from 'shoppinglist-shared'
-import { type DB, updateInArray } from './DB'
-import { type ServerShoppingList, getBaseShoppingList, createServerShoppingList } from './ServerShoppingList'
+import { type ServerShoppingList, getBaseShoppingList, getSyncedShoppingList, createServerShoppingList } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 import { type ShoppingListChangeCallback } from './SocketController'
 import * as ShoppingListController from './ShoppingListController'
@@ -16,18 +15,15 @@ import TokenCreator from './TokenCreator'
 
 
 export default class SyncController {
-  db: DB
-  changeCallback: ShoppingListChangeCallback
   tokenCreator: TokenCreator
 
-  constructor(db: DB, changeCallback: ShoppingListChangeCallback, tokenCreator: TokenCreator) {
-    this.db = db
-    this.changeCallback = changeCallback
+  constructor(tokenCreator: TokenCreator) {
     this.tokenCreator = tokenCreator
   }
 
   handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
-    res.send(this.tokenCreator.setToken(getBaseShoppingList(req.list)))
+    res.send(this.tokenCreator.setToken(getSyncedShoppingList(req.list)))
+    next()
   }
 
   handlePost = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
@@ -71,9 +67,7 @@ export default class SyncController {
       return updateRecentlyUsed(ru, item)
     }, req.list.recentlyUsed)
 
-
-
-    const mergedServerShoppingList: ServerShoppingList = {
+    req.updatedList = {
       ...req.list,
       recentlyUsed: recentlyUsed,
       ...merged,
@@ -83,19 +77,18 @@ export default class SyncController {
       base, server, client, merged,
     })
 
+    next()
 
-    this.db.set({
-      ...this.db.get(),
-      lists: updateInArray(this.db.get().lists, mergedServerShoppingList)
-    })
-
-    this.db.write().then(() => {
-      this.changeCallback(mergedServerShoppingList)
-      res.send(this.tokenCreator.setToken(merged))
-    })
-    .catch(req.log.error)
+    if (req.updatedList != null) {
+      res.send(this.tokenCreator.setToken(getSyncedShoppingList(req.updatedList)))
+    } else {
+      res.status(500).send({error: 'req.updatedList was null'})
+    }
   }
+
 }
+
+
 
 function getUpdatedItems(oldList: ShoppingList, newList: ShoppingList): $ReadOnlyArray<Item> {
   const oldMap: {[UUID]: ?Item} = _.keyBy([...oldList.items], 'id')
