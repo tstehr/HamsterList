@@ -18,22 +18,6 @@ button {
   border: 1px solid black;
 }
 
-button.LinkButton {
-  all: unset;
-  display: inline;
-  text-align: left;
-  background: transparent;
-  border: none;
-  font-size: 1em;
-}
-a, .LinkButton {
-  color: blue;
-  text-decoration: underline;
-}
-a:focus, .LinkButton:focus {
-  color: red;
-}
-
 
 :not(select):focus {
   outline: none;
