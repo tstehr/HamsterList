@@ -132,14 +132,19 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
   componentDidUpdate() {
     if (!this.supressSave && this.state.loaded) {
-      console.info('Save')
-      this.db.get('lists').upsert(this.state).write()
+      console.info('LOCALSTORAGE', 'Scheduled save')
+      this.save()
     }
     this.supressSave = false
   }
+  
+  save = _.debounce(() => {
+    console.info('LOCALSTORAGE',  'Save')
+    this.db.get('lists').upsert(this.state).write()
+  }, 500)
 
   load(callback? : () => void) {
-    console.info('load')
+    console.info('LOCALSTORAGE', 'Load')
     this.supressSave = true
     this.setState(this.getStateFromLocalStorage(), callback)
   }
@@ -188,35 +193,35 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     this.socket = new WebSocket(base + `/api/${this.props.listid}/socket`);
     this.socket.onopen = () => {
       onopenTimoutId = setTimeout(() => {
-        console.log('socket open')
+        console.log('SOCKET', 'socket open')
         this.setState({ connectionState: "socket" })
       }, 100)
     }
     this.socket.onmessage = evt => {
-      console.log('Receiced change push!')
+      console.log('SOCKET', 'Receiced change push!')
       clearTimeout(this.changePushSyncTimeoutId)
       this.changePushSyncTimeoutId = setTimeout(() => {
         if (this.state.previousSync != null && evt.data !== this.state.previousSync.token) {
-          console.log('Tokens dont match, syncing!')
+          console.log('SOCKET', 'Tokens dont match, syncing!')
           this.sync()
         } else {
-          console.log('Token already up to date')
+          console.log('SOCKET', 'Token already up to date')
         }
       }, 300)
     }
     this.socket.onerror = () => {
-      console.log('error')
+      console.log('SOCKET', 'error')
       clearTimeout(onopenTimoutId)
     }
     this.socket.onclose = () => {
       clearTimeout(onopenTimoutId)
-      console.log('socket closed')
+      console.log('SOCKET', 'socket closed')
       if (window.navigator.onLine) {
-        console.log('socket closed, polling')
+        console.log('SOCKET', 'socket closed, polling')
         this.setState({ connectionState: "polling" })
         setTimeout(() => this.initiateSyncConnection(), 2000)
       } else {
-        console.log('socket closed, offline')
+        console.log('SOCKET', 'socket closed, offline')
         this.setState({ connectionState: "disconnected" })
         this.waitForOnline()
       }
@@ -224,7 +229,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   waitForOnline() {
-    console.log('checking online')
+    console.log('SYNC', 'checking online')
     if (window.navigator.onLine) {
       this.initiateSyncConnection()
     } else {
@@ -237,11 +242,11 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     window.clearTimeout(this.requestSyncTimeoutId)
 
     if (this.isInSyncMethod) {
-      console.log('Sync concurrent entry')
+      console.log('SYNC', 'Sync concurrent entry')
       return
     }
     this.isInSyncMethod = true
-    console.log('Syncing')
+    console.log('SYNC', 'Syncing')
     this.setState({
       syncing: true
     })
@@ -253,7 +258,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     let preSyncShoppingList
 
     if (initialSync) {
-      console.log('initial sync!')
+      console.log('SYNC', 'initial sync!')
       syncPromise = this.fetch(`/api/${this.props.listid}/sync`)
     } else {
       preSyncShoppingList = this.getShoppingList(this.state)
@@ -352,10 +357,10 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
         }
 
         this.isInSyncMethod = false
-        console.log('done syncing')
+        console.log('SYNC', 'done syncing')
 
         if (syncState.dirty) {
-          console.warn('dirty after sync, resyncing')
+          console.warn('SYNC', 'dirty after sync, resyncing')
           this.requestSync(0)
         }
 
@@ -372,7 +377,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       }
       this.setState(failedState)
       this.isInSyncMethod = false
-      console.log('done syncing, failed', e)
+      console.log('SYNC', 'done syncing, failed', e)
     }
   }
 
