@@ -76,9 +76,11 @@ export default class ShoppingListController {
       return
     }
 
-    req.updatedList = createServerShoppingList({ ...req.list, title: bodyList.title })
-
-    res.json(req.updatedList)
+    const updatedList = createServerShoppingList({ ...req.list, title: bodyList.title })
+    req.updatedList = updatedList
+    
+    res.json(getBaseShoppingList(updatedList))
+    next()
   }
 
   saveUpdatedList = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
