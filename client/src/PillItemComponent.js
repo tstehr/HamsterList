@@ -13,7 +13,7 @@ type Props = {
 
 const PillItemComponent: React$ComponentType<Props> = React.memo((props: Props) => (
   <div className="PillItemComponent">
-    <CategoryTextComponent categoryId={props.item.category} categories={props.categories}/> <ItemComponent item={props.item} />
+    <CategoryTextComponent categoryId={props.item.category} categories={props.categories}/> <ItemComponent item={props.item} className="PillItemComponent__item" />
   </div>
 ), _.isEqual)
 

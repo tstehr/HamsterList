@@ -23,11 +23,12 @@ const AmountComponent: React$ComponentType<AmountProps> = React.memo((props: Amo
 }, _.isEqual)
 
 type Props = {
-  item: BaseItem
+  item: BaseItem,
+  className?: string,
 }
 
 const ItemComponent: React$ComponentType<Props> = React.memo((props: Props) => (
-  <span>
+  <span className={props.className}>
     <AmountComponent amount={props.item.amount} />
     {" "} {props.item.name}
   </span>

@@ -1,10 +1,17 @@
 .PillItemComponent {
     display: inline-block;
     padding: .1em .6em;
+    height: 1.5em;
+    line-height: 1.4em;
     border-radius: .8em;
     background: var(--small-feature-color);
     color: var(--text-color);
 }
 .PillItemComponent .CategoryTextComponent {
     margin: -.1em 0 -.1em -.6em;
+    vertical-align: top;
+}
+.PillItemComponent__item {
+    height: 1em;
+    vertical-align: top;
 }
