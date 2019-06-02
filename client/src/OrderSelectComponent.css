@@ -1,5 +1,5 @@
 .OrderSelectComponent {
-  background: #f7f7f7;
+  background: var(--box-color);
   display: flex;
   padding: .5rem;
   height: 2.5rem;

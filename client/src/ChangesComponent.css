@@ -15,7 +15,7 @@
     text-align: left;
 }
 .DiffComponent--unsynced .DiffComponent__headerButton, .DiffComponent--unsynced .DiffComponent__headerButton:focus  {
-    color: grey;
+    color: var(--text-deemphasized-color);
 }
 .DiffComponent__headerButton:focus, .DiffComponent__headerButton:active {
     color: black;
@@ -24,7 +24,7 @@
     padding-top: .2rem;
     font-size: .9em;
     list-style: none;
-    color: grey;
+    color: var(--text-deemphasized-color);
     max-height: 0;
     opacity: 0;
     transition: 100ms ease-in-out;
@@ -56,5 +56,5 @@
     bottom:-.5em;
 }
 .DiffComponent__UndoLink--disabled {
-    color: grey;
+    color: var(--text-deemphasized-color);
 }

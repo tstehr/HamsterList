@@ -4,28 +4,49 @@
     box-sizing: border-box;
 }
 
+:root {
+  color-scheme: light dark;
+  supported-color-schemes: light dark;
+  --theme-color: hsl(122, 39%, 49%);
+  --text-color: black;
+  --text-deemphasized-color: hsl(0, 0%, 50%);
+  --background-color: white;
+  --small-feature-color: hsl(0, 0%, 92%);
+  --box-color: hsl(0, 0%, 97%);
+  --focus-color: blue;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --theme-color: hsl(122, 32%, 45%);
+    --text-color: white;
+    --background-color: black;
+    --small-feature-color: hsl(0, 0%, 15%);
+    --box-color: hsl(0, 0%, 10%);
+  }
+}
+
 body {
   font-family: "San Francisco", Helvetica, Arial, sans-serif;
+  color: var(--text-color);
+  background-color: var(--background-color)
 }
 
 button {
   cursor: pointer;
   -webkit-appearance: none;
-  background: white;
+  background: var(--background-color);
   border: none;
   font-family: inherit;
   font-size: .8rem;
-  border: 1px solid black;
+  border: 1px solid var(--text-color);
+  color: var(--text-color)
 }
 
 
 :not(select):focus {
   outline: none;
-  box-shadow: 0 0 3px blue, inset 0 0 3px blue;
-}
-
-body {
-  --theme-color: #4CAF50;
+  box-shadow: 0 0 3px var(--focus-color), inset 0 0 3px var(--focus-color);
 }
 
 button.PaddedButton {

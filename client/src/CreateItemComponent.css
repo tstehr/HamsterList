@@ -21,7 +21,7 @@
   transition-timing-function: ease-out;
 }
 .CreateItemComponent__form__inputWrapper:focus-within {
-  box-shadow: 0 0 5px blue, inset 0 0 5px blue;
+  box-shadow: 0 0 5px var(--focus-color), inset 0 0 5px var(--focus-color);
 }
 .CreateItemComponent__form--multiline .CreateItemComponent__form__inputWrapper {
   min-height: 10rem;
@@ -52,7 +52,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  color: #999;
+  color: var(--text-deemphasized-color);
   user-select: none;
 }
 .CreateItemComponent__form__toggleMultiline {
@@ -61,7 +61,7 @@
   font-size: 1.5rem;
   border: 0;
   background: transparent;
-  color: #999;
+  color: var(--text-deemphasized-color);
 }
 .CreateItemComponent__form__save {
   width: 3rem;

@@ -2,8 +2,8 @@
     display: inline-block;
     padding: .1em .6em;
     border-radius: .8em;
-    background: hsl(0, 0%, 90%);
-    color: black;
+    background: var(--small-feature-color);
+    color: var(--text-color);
 }
 .PillItemComponent .CategoryTextComponent {
     margin: -.1em 0 -.1em -.6em;

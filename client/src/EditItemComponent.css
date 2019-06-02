@@ -3,7 +3,7 @@
   justify-content: space-between;
   height: 3rem;
   align-items: stretch;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--small-feature-color);
   user-select: none;
 }
 
@@ -22,10 +22,7 @@
 }
 .EditItemComponent__name:focus-within {
   box-shadow: 0 0 3px blue, inset 0 0 3px blue;
-  background: white;
-}
-.EditItemComponent__name:focus {
-  background: transparent;
+  background: var(--background-color);
 }
 .EditItemComponent__name > * {
   flex: 1;
@@ -41,6 +38,9 @@
   background: transparent;
   resize: none;
 }
+.EditItemComponent__name > textarea {
+  background: transparent;
+}
 .EditItemComponent__name > textarea:focus {
   box-shadow: none;
 }
@@ -48,7 +48,7 @@
 @media (min-width: 30rem) {
   .EditItemComponent {
     border: 0;
-    background-color: hsl(0, 0%, 97%);
+    background-color: var(--box-color);
     margin-bottom: .5rem;
   }
 }

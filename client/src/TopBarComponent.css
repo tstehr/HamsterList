@@ -3,7 +3,7 @@
   z-index: 100;
   top: 0;
   border-bottom: 2px solid var(--theme-color);
-  background: white;
+  background: var(--background-color);
   width: 100%;
 }
 .TopBarComponent__content {
