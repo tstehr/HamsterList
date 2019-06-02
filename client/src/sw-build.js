@@ -24,7 +24,7 @@ const buildSW = async () => {
       'precache-manifest.*.js',
       'service-worker.js',
       'apple-touch-icon.png',
-      'mask-icon.svg',s
+      'mask-icon.svg',
     ]
   }).then(({count, size, warnings}) => {
     // Optionally, log any warnings and details.
