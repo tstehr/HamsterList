@@ -1,11 +1,10 @@
 // @flow
-// $FlowFixMe
-import React, { Fragment, Component } from 'react'
+import React, { Component } from 'react'
 import _ from 'lodash'
 import ReactDOM from 'react-dom'
 import { type RouterHistory, type ContextRouter, Route } from 'react-router-dom'
 import { SortableContainer, SortableElement, SortableHandle, arrayMove } from 'react-sortable-hoc'
-import { NavLink, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { type Order, type UUID, type CategoryDefinition, createRandomUUID, sortCategories } from 'shoppinglist-shared'
 import { type Up } from './HistoryTracker'
 import CategoryComponent from './CategoryComponent'
@@ -30,7 +29,7 @@ export default class EditOrdersComponent extends Component<Props> {
   }
 
   deleteOrder = (id: UUID) => {
-      const orders = this.props.orders.filter(order => order.id != id)
+      const orders = this.props.orders.filter(order => order.id !== id)
       this.props.updateOrders(orders)
       this.props.up(1)
     }
@@ -41,8 +40,10 @@ export default class EditOrdersComponent extends Component<Props> {
 
       let name = `New Order`
       let i = 1
-      while (this.props.orders.find(order => order.name === name) != null) {
-        name = `New Order ${i++}`
+      const orderPredicate = order => order.name === name
+      while (this.props.orders.find(orderPredicate) != null) {
+        name = `New Order ${i}`
+        i++
       }
 
       this.props.updateOrders([
@@ -64,7 +65,6 @@ export default class EditOrdersComponent extends Component<Props> {
 
   render() {
     const target = document.querySelector('#modal-root')
-    let order: ?Order = null
 
     if (target != null) {
       return ReactDOM.createPortal(
@@ -142,15 +142,15 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps) {
   const order: ?Order = _.find(props.orders, _.matchesProperty('id', props.orderid))
 
   return (
-    <Fragment>
+    <>
     {order != null
       ? <EditOrderComponent listid={props.listid} order={order} categories={props.categories} updateOrder={props.updateOrder} deleteOrder={props.deleteOrder} up={props.up}/>
-      : <Fragment>
+      : <>
           <p>Not found :(</p>
           <button type="button" className="Button Button--padded" onClick={() => props.up(1)}>Back</button>
-        </Fragment>
+        </>
     }
-    </Fragment>
+    </>
   )
 }
 

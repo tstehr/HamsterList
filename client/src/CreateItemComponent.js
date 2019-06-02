@@ -1,15 +1,12 @@
 // @flow
-// $FlowFixMe
 import React, { Component } from 'react'
-import _ from 'lodash'
 import AutosizeTextarea from 'react-autosize-textarea'
 import { 
   type LocalItem, type CompletionItem, type CategoryDefinition, type Change, 
-  createLocalItemFromString, itemToString, addMatchingCategory 
+  createLocalItemFromString, addMatchingCategory 
 } from 'shoppinglist-shared'
 import type { CreateItem, ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
 import CompletionsComponent from './CompletionsComponent'
-import CreateItemButtonComponent from './CreateItemButtonComponent'
 import KeyFocusComponent from './KeyFocusComponent'
 import IconButton from './IconButton'
 import ChangesComponent from './ChangesComponent'
@@ -131,7 +128,7 @@ export default class CreateItemComponent extends Component<Props, State> {
       e.preventDefault()
     }
 
-    if (e.key === 'ArrowUp' || e.key === 'ArrowDown' && this.isMultiline()) {
+    if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && this.isMultiline()) {
       e.stopPropagation()
     }
   }
@@ -182,8 +179,6 @@ export default class CreateItemComponent extends Component<Props, State> {
     const isCreatingItem = this.state.inputValue !== ""
     const isMultiline = this.isMultiline()
     const itemsInCreation = this.state.itemsInCreation
-
-    const t = _.filter()
 
     return (
       <div className={"CreateItemComponent" + (isCreatingItem ? " CreateItemComponent--creatingItem" : "")}

@@ -14,7 +14,7 @@ type Props = {
 export default class OrderSelectComponent extends Component<Props> {
   handleChange = (e: SyntheticEvent<HTMLSelectElement>) => {
     const val = e.currentTarget.value
-    if (val == "default") {
+    if (val === "default") {
       this.props.selectOrder(null)
     } else {
       this.props.selectOrder(createUUID(val))

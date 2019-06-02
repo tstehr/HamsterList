@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react'
+import React from 'react'
 import _ from 'lodash'
 import FlipMove from 'react-flip-move'
 import { type Item, type CategoryDefinition, type Order, type UUID, sortItems, completeCategoryOrder } from 'shoppinglist-shared'

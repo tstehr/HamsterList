@@ -1,7 +1,7 @@
 // @flow
 import _ from 'lodash'
 import React, { Component, Fragment } from 'react'
-import FlipMove from 'react-flip-move'
+// import FlipMove from 'react-flip-move'
 import fuzzy from 'fuzzy'
 import { type LocalItem, type CompletionItem, type CategoryDefinition, itemToString } from 'shoppinglist-shared'
 import type { CreateItem } from './ShoppingListContainerComponent'

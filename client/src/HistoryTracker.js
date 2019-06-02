@@ -1,7 +1,7 @@
 // @flow
 import _ from 'lodash'
-import React, { Component } from 'react'
-import { type RouterHistory, type Location, BrowserRouter, Switch, Route, withRouter } from 'react-router-dom'
+import { Component } from 'react'
+import { type RouterHistory, type Location, withRouter } from 'react-router-dom'
 
 
 export type Up = (levels: number | 'home' | 'list') => void
@@ -39,6 +39,8 @@ class UnboundHistoryTracker extends Component<Props> {
       case "REPLACE":
         this.navigationStack.splice(this.navigationStackIndex, 1, this.createNavigationStackEntry(location))
         break
+      default:
+        console.warn(`Unkonwn navigation action: ${action}`)
     }
   }
 
@@ -78,7 +80,7 @@ class UnboundHistoryTracker extends Component<Props> {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.history != this.props.history) {
+    if (prevProps.history !== this.props.history) {
         this.setupHistoryListener()
     }
   }

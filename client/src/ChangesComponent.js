@@ -1,5 +1,5 @@
 // @flow
-import React, { Component, type Element, useState, useRef, useMemo } from 'react'
+import React, { Component, useState, useMemo } from 'react'
 import _ from 'lodash'
 import FlipMove from 'react-flip-move'
 import distanceInWords from 'date-fns/distance_in_words'
@@ -8,7 +8,7 @@ import differenceInMinutes from 'date-fns/difference_in_minutes'
 import memoize from 'memoize-one'
 import format from 'date-fns/format'
 import classNames from 'classnames'
-import { type Item, type Change, type Diff, type CategoryDefinition, ADD_ITEM, UPDATE_ITEM, DELETE_ITEM, createReverseDiff } from 'shoppinglist-shared'
+import { type Change, type Diff, type CategoryDefinition, ADD_ITEM, UPDATE_ITEM, DELETE_ITEM, createReverseDiff } from 'shoppinglist-shared'
 import PillItemComponent from './PillItemComponent'
 import type { ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
 import './ChangesComponent.css'
@@ -36,7 +36,7 @@ export default function ChangesComponent(props: Props) {
   // this will in most cases be the equivalent to the unsynced change that was removed during sync
   const expandedChange = useMemo(() => {
     const originalExpandedChange = detailsExpandedDiff.change
-    if (originalExpandedChange != null && !allChanges.some(c => c.id == originalExpandedChange.id)) {
+    if (originalExpandedChange != null && !allChanges.some(c => c.id === originalExpandedChange.id)) {
       const now = new Date()
       const matchingChange = _.findLast(allChanges, c => differenceInMinutes(now, c.date) <= 5
         && _.isEqual(originalExpandedChange.diffs, c.diffs) && originalExpandedChange.username === c.username)
@@ -45,7 +45,7 @@ export default function ChangesComponent(props: Props) {
       }
     }
     return originalExpandedChange
-  }, [detailsExpandedDiff, props.changes]);
+  }, [detailsExpandedDiff, allChanges]);
 
   const allDiffs = _.flatMap(allChanges, (change, changeIndex) => 
     change.diffs.map((diff, diffIndex) => ({ 
@@ -68,7 +68,7 @@ export default function ChangesComponent(props: Props) {
     const newStart = Math.max(start - defaultDiffLength, 0)
     setStart(newStart)
     if (newStart - end > maxDiffLength) {
-      const newEnd = Math.min(newStart + maxDiffLength, allDiffs.length)
+      setEnd(Math.min(newStart + maxDiffLength, allDiffs.length))
     }
   }
 

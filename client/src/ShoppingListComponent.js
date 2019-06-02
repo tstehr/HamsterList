@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react'
-import { withRouter, Link, Route } from 'react-router-dom'
+import { Link, Route } from 'react-router-dom'
 import _ from 'lodash'
 import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, type Order, type Change, type UUID, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
 import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder, UpdateOrders, SetUsername, ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
@@ -9,7 +9,6 @@ import TopBarComponent from './TopBarComponent'
 import CreateItemComponent from './CreateItemComponent'
 import ShoppingListItemsComponent from './ShoppingListItemsComponent'
 import EditOrdersComponent from './EditOrdersComponent'
-import ChangesComponent from './ChangesComponent' 
 import ChooseCategoryComponent from './ChooseCategoryComponent'
 import './ShoppingListComponent.css'
 

@@ -8,7 +8,6 @@ import {
   createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, createRandomUUID,
   mergeShoppingLists, createOrder, createChange, 
   generateAddItem, generateDeleteItem, generateUpdateItem, applyDiff, createApplicableDiff, getOnlyNewChanges,
-  frecency,
 } from 'shoppinglist-shared'
 import { type Up } from './HistoryTracker'
 import { type RecentlyUsedList } from './ChooseListComponent'

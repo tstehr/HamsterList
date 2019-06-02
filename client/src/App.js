@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import { type ContextRouter, BrowserRouter, Switch, Route } from 'react-router-dom'
 import HistoryTracker, { type Up } from './HistoryTracker'
 import ChooseListComponent from './ChooseListComponent'
-import ShoppingListComponent from './ShoppingListContainerComponent'
 import ShoppingListContainerComponent from './ShoppingListContainerComponent'
 
 

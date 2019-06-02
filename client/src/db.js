@@ -1,5 +1,4 @@
 // @flow
-import _ from 'lodash'
 import low from 'lowdb'
 import LocalStorage from 'lowdb/adapters/LocalStorage'
 import lodashId from 'lodash-id'

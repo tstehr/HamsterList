@@ -48,8 +48,6 @@ const unknownCategory = createCategoryDefinition({
   "lightText": false
 })
 
-const variantSelector15 = String.fromCharCode(0xfe0e)
-
 const invalidCategory = createCategoryDefinition({
   "id": "00000000-0000-4000-b000-000000000000",
   "name": "Invalid Category",
