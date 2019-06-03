@@ -205,7 +205,7 @@ export default class CreateItemComponent extends Component<Props, State> {
             <button type="button" className="CreateItemComponent__form__toggleMultiline KeyFocusComponent--noFocus" onClick={this.handleToggleMultiline}>
               {isMultiline ? "▲" : "▼" }
             </button>
-            <IconButton className="CreateItemComponent__form__save KeyFocusComponent--noFocus" icon={add} alt="Add" />
+            <IconButton className="CreateItemComponent__form__save KeyFocusComponent--noFocus" icon="ADD" alt="Add new item" />
           </form>
           <div style={{position:'relative'}}>
             {isCreatingItem && <CompletionsComponent

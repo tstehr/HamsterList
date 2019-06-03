@@ -146,7 +146,7 @@ export default class EditItemComponent extends Component<Props, State> {
                 <ItemComponent item={this.props.item} />
               </div>
           }
-          <IconButton onClick={(e) => this.props.deleteItem(this.props.item.id)} icon={wastebin} alt="Delete" className="KeyFocusComponent--noFocus"/>
+          <IconButton onClick={(e) => this.props.deleteItem(this.props.item.id)} icon="DELETE" alt="Delete" className="KeyFocusComponent--noFocus"/>
         </li>
     )
   }

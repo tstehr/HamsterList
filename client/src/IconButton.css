@@ -4,6 +4,7 @@
   background: none;
   border: none;
 }
-.IconButton img {
+.IconButton svg {
   width: 70%;
+  fill: currentColor;
 }

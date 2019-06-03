@@ -63,11 +63,11 @@ button.PaddedButton {
   height: 3rem;
   border: solid var(--button-color);
   border-width: 2px 0;
-  background: white;
+  background: var(--background-color);
   margin-bottom: -2px;
   font-size: 1rem;
   text-decoration: none;
-  color: black;
+  color: var(--text-color);
 }
 .Button--padded {
   padding: 0 .5rem;
