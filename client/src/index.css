@@ -7,22 +7,30 @@
 :root {
   color-scheme: light dark;
   supported-color-schemes: light dark;
+
   --theme-color: hsl(122, 39%, 49%);
-  --text-color: black;
+  --text-color-hsl-value: 0, 0%, 0%;
   --text-deemphasized-color: hsl(0, 0%, 50%);
   --background-color: white;
   --small-feature-color: hsl(0, 0%, 92%);
   --box-color: hsl(0, 0%, 97%);
   --focus-color: blue;
+  --failure-color-hsl-value: 4, 90%, 58%;
+  --success-color-hsl-value: 122, 39%, 49%;
+  
+  --text-color: hsl(var(--text-color-hsl-value));
+  --failure-color: hsl(var(--failure-color-hsl-value));
+  --success-color: hsl(var(--success-color-hsl-value));
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --theme-color: hsl(122, 32%, 45%);
-    --text-color: white;
+    --text-color-hsl-value: 0, 100%, 100%;
     --background-color: black;
     --small-feature-color: hsl(0, 0%, 15%);
     --box-color: hsl(0, 0%, 10%);
+    --success-color-hsl-value: 122, 32%, 45%;
   }
 }
 

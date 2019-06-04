@@ -18,7 +18,7 @@
     color: var(--text-deemphasized-color);
 }
 .DiffComponent__headerButton:focus, .DiffComponent__headerButton:active {
-    color: black;
+    color: var(--text-color);
 }
 .DiffComponent__details {
     padding-top: .2rem;

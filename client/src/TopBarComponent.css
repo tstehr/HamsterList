@@ -48,13 +48,13 @@
   animation: 1s ease-in infinite blink;
 }
 .TopBarComponent__status--failure {
-  color: rgba(244, 67, 54, 1);
+  color: var(--failure-color);
 }
 .TopBarComponent__status--failure.TopBarComponent__status--syncing {
   animation: 1s ease-in infinite blinkRed;
 }
 .TopBarComponent__status--synced {
-  color: rgba(76, 175, 80, 1); /*#4CAF50*/
+  color: var(--success-color);
 }
 .TopBarComponent__status--synced.TopBarComponent__status--syncing {
   animation: 1s ease-in infinite blinkGreen;
@@ -77,47 +77,34 @@
 
 @keyframes blink {
   0% {
-    text-shadow: 0 0 0px rgba(0, 0, 0, .6);
+    text-shadow: 0 0 0px hsla(var(--text-color-hsl-value), .6);
   }
   90% {
-    text-shadow: 0 0 20px rgba(0, 0, 0, .4);
+    text-shadow: 0 0 20px hsla(var(--text-color-hsl-value), .4);
   }
   100% {
-    text-shadow: 0 0 20px rgba(0, 0, 0, .0);
-  }
-}
-@media (prefers-color-scheme: dark) {
-  @keyframes blink {
-    0% {
-      text-shadow: 0 0 0px rgba(255, 255, 255, .6);
-    }
-    90% {
-      text-shadow: 0 0 20px rgba(255, 255, 255, .4);
-    }
-    100% {
-      text-shadow: 0 0 20px rgba(255, 255, 255, .0);
-    }
+    text-shadow: 0 0 20px hsla(var(--text-color-hsl-value), .0);
   }
 }
 @keyframes blinkRed {
   0% {
-    text-shadow: 0 0 0px rgba(244, 67, 54, .6);
+    text-shadow: 0 0 0px hsla(var(--failure-color-hsl-value), .6);
   }
   90% {
-    text-shadow: 0 0 20px rgba(244, 67, 54, .4);
+    text-shadow: 0 0 20px hsla(var(--failure-color-hsl-value), .4);
   }
   100% {
-    text-shadow: 0 0 20px rgba(244, 67, 54, .0);
+    text-shadow: 0 0 20px hsla(var(--failure-color-hsl-value), .0);
   }
 }
 @keyframes blinkGreen {
   0% {
-    text-shadow: 0 0 0px rgba(76, 175, 80, .6);
+    text-shadow: 0 0 0px hsla(var(--success-color-hsl-value), .6);
   }
   90% {
-    text-shadow: 0 0 20px rgba(76, 175, 80, .4);
+    text-shadow: 0 0 20px hsla(var(--success-color-hsl-value), .4);
   }
   100% {
-    text-shadow: 0 0 20px rgba(76, 175, 80, .0);
+    text-shadow: 0 0 20px hsla(var(--success-color-hsl-value), .0);
   }
 }

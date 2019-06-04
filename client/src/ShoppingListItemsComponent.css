@@ -13,7 +13,7 @@
 @media (min-width: 30rem) {
   .ShoppingListItemsComponent__emptyList {
     padding: .5rem;
-    background-color: #f7f7f7;
+    background-color: var(--box-color);
   }
 }
 .ShoppingListItemsComponent__emptyList__addCallout--twoCol {
