@@ -79,6 +79,8 @@ log.level(nconf.get('logLevel'))
 const db = new DB(nconf.get('databaseFilePath'))
 const app = express()
 
+app.disable('x-powered-by')
+
 db.load()
   .then(() => {
     const router = express.Router()
