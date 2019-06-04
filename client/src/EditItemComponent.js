@@ -11,8 +11,6 @@ import IconButton from './IconButton'
 import AutosizeTextarea from 'react-autosize-textarea'
 import './EditItemComponent.css'
 
-import wastebin from './icons/waste-bin.svg'
-
 type Props = {
   item: Item,
   categories: $ReadOnlyArray<CategoryDefinition>,
