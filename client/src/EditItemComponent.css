@@ -40,6 +40,7 @@
 }
 .EditItemComponent__name > textarea {
   background: transparent;
+  color: var(--text-color);
 }
 .EditItemComponent__name > textarea:focus {
   box-shadow: none;

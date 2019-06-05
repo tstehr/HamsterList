@@ -37,6 +37,7 @@
   font-family: inherit;
   resize: none;
   width: 100%;
+  color: var(--text-color);
 }
 .CreateItemComponent__form__inputWrapper > textarea {
   position: relative;
