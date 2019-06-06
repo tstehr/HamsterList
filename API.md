@@ -27,20 +27,21 @@ The username is specified as a HTTP header `X-ShoppingList-Username`, where the 
 
 ## Endpoints
 
-| Endpoint                 | Method | Body           | Return                        |
-|--------------------------|--------|----------------|-------------------------------|
-| `/:listid`               | GET    | -              | [ShoppingList]                |
-| `/:listid`               | PUT    | [ShoppingList] | [ShoppingList]                |
-| `/:listid/items`         | GET    | -              | Array of [Item]               |
-| `/:listid/items`         | POST   | [Item]         | [Item]                        |
-| `/:listid/items/:itemid` | PUT    | [Item]         | [Item]                        |
-| `/:listid/items/:itemid` | DELETE | -              | -                             |
-| `/:listid/completions`   | GET    | -              | Array of [CompletionItem]     |
-| `/:listid/categories `   | GET    | -              | Array of [CategoryDefinition] |
-| `/:listid/changes`       | GET    | -              | Array of [Change]             |
-| `/:listid/categories `   | PUT    | Array of [CategoryDefinition] | Array of [CategoryDefinition] |
-| `/:listid/sync`          | GET    | -              | [SyncedShoppingList]          |
-| `/:listid/sync`          | POST   | [SyncRequest]  | [SyncedShoppingList]          |
+| Endpoint                               | Method | Body           | Return                        |
+|----------------------------------------|--------|----------------|-------------------------------|
+| `/:listid`                             | GET    | -              | [ShoppingList]                |
+| `/:listid`                             | PUT    | [ShoppingList] | [ShoppingList]                |
+| `/:listid/items`                       | GET    | -              | Array of [Item]               |
+| `/:listid/items`                       | POST   | [Item]         | [Item]                        |
+| `/:listid/items/:itemid`               | PUT    | [Item]         | [Item]                        |
+| `/:listid/items/:itemid`               | DELETE | -              | -                             |
+| `/:listid/completions`                 | GET    | -              | Array of [CompletionItem]     |
+| `/:listid/completions/:completionname` | DELETE | -              | -                             |
+| `/:listid/categories `                 | GET    | -              | Array of [CategoryDefinition] |
+| `/:listid/changes`                     | GET    | -              | Array of [Change]             |
+| `/:listid/categories `                 | PUT    | Array of [CategoryDefinition] | Array of [CategoryDefinition] |
+| `/:listid/sync`                        | GET    | -              | [SyncedShoppingList]          |
+| `/:listid/sync`                        | POST   | [SyncRequest]  | [SyncedShoppingList]          |
 
 ### GET  /:listid
 
@@ -79,6 +80,12 @@ On success, returns *204 No Content*
 ### GET    /:listid/completions
 
 Returns a list of frequently used items in descending order of use. The items contain `name` and optionally a `category`. This list is kept by the server and updated over time. Clients may use this list to implement completion when inserting new items.
+
+### DELETE /:listid/completions/:completionname
+
+Removes the completion with the given name.
+
+On success, returns *204 No Content*
 
 ### GET    /:listid/categories
 

@@ -120,7 +120,8 @@ export default class ItemController {
 
 export function updateRecentlyUsed(recentlyUsed: RecentlyUsedArray, item: Item): RecentlyUsedArray {
   const completionItem = createCompletionItem(_.pick(item, 'name', 'category'))
-  const entryIdx = _.findIndex(recentlyUsed, entry => entry.item.name.trim().toLowerCase() === completionItem.name.trim().toLowerCase())
+  const completionName = completionItem.name.trim().toLocaleLowerCase()
+  const entryIdx = _.findIndex(recentlyUsed, entry => entry.item.name.trim().toLowerCase() === completionName)
 
   const result = [...recentlyUsed]
 

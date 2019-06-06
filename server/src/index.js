@@ -142,6 +142,7 @@ db.load()
     router.delete('/:listid/items/:itemid', itemController.handleDelete)
 
     router.get('/:listid/completions', completionsController.handleGet)
+    router.delete('/:listid/completions/:completionname', completionsController.handleDelete)
 
     router.get('/:listid/categories', categoriesController.handleGet)
     router.put('/:listid/categories', categoriesController.handlePut)

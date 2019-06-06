@@ -7,7 +7,24 @@ import { type ShoppingListRequest } from './ShoppingListController'
 
 export default class CompletionsController {
   handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
-    res.json(getSortedCompletions( req.list.recentlyUsed))
+    res.json(getSortedCompletions(req.list.recentlyUsed))
+    next()
+  }
+
+  handleDelete = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+    const completionName = req.params.completionname
+    const entryIdx = _.findIndex(req.list.recentlyUsed, entry => entry.item.name === completionName)    
+    if (entryIdx !== -1) {
+      const newRecentlyUsed = [...req.list.recentlyUsed]
+      newRecentlyUsed.splice(entryIdx, 1)
+      req.updatedList = {
+        ...req.list,
+        recentlyUsed: newRecentlyUsed
+      }
+      res.status(204).send()
+    } else {      
+      res.status(404).json({error: `No completion with name "${completionName}" found.`})
+    }
     next()
   }
 }
