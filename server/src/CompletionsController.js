@@ -12,8 +12,8 @@ export default class CompletionsController {
   }
 
   handleDelete = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
-    const completionName = req.params.completionname
-    const entryIdx = _.findIndex(req.list.recentlyUsed, entry => entry.item.name === completionName)    
+    const completionName = req.params.completionname.trim().toLocaleLowerCase()
+    const entryIdx = _.findIndex(req.list.recentlyUsed, entry => entry.item.name.trim().toLowerCase() === completionName) 
     if (entryIdx !== -1) {
       const newRecentlyUsed = [...req.list.recentlyUsed]
       newRecentlyUsed.splice(entryIdx, 1)

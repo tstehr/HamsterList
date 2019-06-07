@@ -83,7 +83,7 @@ Returns a list of frequently used items in descending order of use. The items co
 
 ### DELETE /:listid/completions/:completionname
 
-Removes the completion with the given name.
+Removes the completion with the given name. `completionname` is case insensitive and leading and trailing whitespace is removed.
 
 On success, returns *204 No Content*
 
