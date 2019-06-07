@@ -5,12 +5,17 @@ import {
   type LocalItem, type CompletionItem, type CategoryDefinition, type Change, 
   createLocalItemFromString, addMatchingCategory 
 } from 'shoppinglist-shared'
-import type { CreateItem, ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
+import type { CreateItem, ApplyDiff, CreateApplicableDiff, DeleteCompletion } from './ShoppingListContainerComponent'
 import CompletionsComponent from './CompletionsComponent'
 import KeyFocusComponent from './KeyFocusComponent'
 import IconButton from './IconButton'
 import ChangesComponent from './ChangesComponent'
 import './CreateItemComponent.css'
+
+export type ItemInput = {
+  item: LocalItem, 
+  categoryAdded: boolean
+}
 
 type Props = {|
   completions: $ReadOnlyArray<CompletionItem>,
@@ -18,14 +23,16 @@ type Props = {|
   unsyncedChanges: $ReadOnlyArray<Change>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   createItem: CreateItem,
+  deleteCompletion: DeleteCompletion,
   applyDiff: ApplyDiff,
   createApplicableDiff: CreateApplicableDiff,
 |}
 
+
 type State = {
   inputValue: string,
-  itemsForInputLines: $ReadOnlyArray<LocalItem | null>,
-  itemsInCreation: $ReadOnlyArray<LocalItem>,
+  itemsForInputLines: $ReadOnlyArray<ItemInput | null>,
+  itemsInCreation: $ReadOnlyArray<ItemInput>,
   formHasFocus: boolean,
   forceMultiline: boolean,
   changingQuickly: boolean
@@ -52,17 +59,27 @@ export default class CreateItemComponent extends Component<Props, State> {
     this.lastChange = Date.now()
   }
 
-  getItemsForInputLines(inputValue: string): $ReadOnlyArray<LocalItem | null> {
+  getItemsForInputLines(inputValue: string): $ReadOnlyArray<ItemInput | null> {
     return inputValue
       .split("\n")
       .map(str => str.trim())
       .map(str => str === "" ? null : str)
       .map(str => str != null ? createLocalItemFromString(str, this.props.categories) : null)
-      .map(item => item != null ? addMatchingCategory(item, this.props.completions) : null)
+      .map(item => {
+        if (item == null) {
+          return null
+        }
+        const categoryAddedItem = addMatchingCategory(item, this.props.completions)
+
+        return {
+          item: categoryAddedItem,
+          categoryAdded: categoryAddedItem !== item
+        }
+      })
   }
 
   saveItems() {
-    this.state.itemsInCreation.map(this.props.createItem)
+    this.state.itemsInCreation.forEach(ii => this.props.createItem(ii.item))
     this.setState(this.createInputValueUpdate(""))
     if (this.input != null) {
       this.input.focus()
@@ -99,7 +116,7 @@ export default class CreateItemComponent extends Component<Props, State> {
   createInputValueUpdate(newInputValue: string) {
     const itemsForInputLines = this.getItemsForInputLines(newInputValue)
     // $FlowFixMe (see https://github.com/facebook/flow/issues/1414)
-    const itemsInCreation: $ReadOnlyArray<LocalItem> = itemsForInputLines.filter(itm => itm != null)
+    const itemsInCreation: $ReadOnlyArray<ItemInput> = itemsForInputLines.filter(ii => ii != null)
 
     return {
       inputValue: newInputValue,
@@ -148,7 +165,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     if (!this.isMultiline()) {
       this.setState(this.createInputValueUpdate(""))
     } else {
-      const lineIndex = this.state.itemsForInputLines.indexOf(item)
+      const lineIndex = this.state.itemsForInputLines.findIndex(ii => ii && ii.item === item)
       if (lineIndex !== -1) {
         const lines = this.state.inputValue.split("\n")
         lines.splice(lineIndex, 1)
@@ -211,7 +228,8 @@ export default class CreateItemComponent extends Component<Props, State> {
               focusItemsInCreation={this.state.formHasFocus}
               completions={this.props.completions} categories={this.props.categories}
               itemsInCreation={itemsInCreation}
-              createItem={this.createItem} focusInput={this.focusInput}
+              createItem={this.createItem} deleteCompletion={this.props.deleteCompletion}
+              focusInput={this.focusInput}
             />}
             {!isCreatingItem && <ChangesComponent 
               changes={this.props.changes} 

@@ -1,31 +1,36 @@
 // @flow
 import React, { Component } from 'react'
+import classNames from 'classnames'
 import { type LocalItem, type CategoryDefinition } from 'shoppinglist-shared'
-import type { CreateItem } from './ShoppingListContainerComponent'
+import type { CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
 import ItemComponent from './ItemComponent'
 import CategoryComponent from './CategoryComponent'
+import IconButton from './IconButton'
 import './CreateItemButtonComponent.css'
 
 type Props = {
   item: LocalItem,
   categories: $ReadOnlyArray<CategoryDefinition>,
   createItem: CreateItem,
+  deleteCompletion?: ?DeleteCompletion,
   focusInput: () => void,
   focused?: boolean,
   noArrowFocus?: boolean,
-  onFocus?: (SyntheticFocusEvent<>) => void,
-  onBlur?: (SyntheticFocusEvent<>) => void
 }
 
 type State = {
   enterPressed: boolean,
+  altPressed: boolean,
+  createButtonFocused: boolean,
 }
 
 export default class CreateItemButtonComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      enterPressed: false
+      enterPressed: false,
+      altPressed: false,
+      createButtonFocused: false,
     }
   }
 
@@ -37,7 +42,13 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
   }
 
   handleKeyDown = (e: SyntheticKeyboardEvent<>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (this.props.deleteCompletion) {
+        this.props.deleteCompletion(this.props.item.name)
+        e.preventDefault()
+        this.props.focusInput()
+      } 
+    } else if (e.key === 'Enter') {
       this.setState({
         enterPressed: true
       })
@@ -52,25 +63,39 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
     }
   }
 
+  handleFocus = (e: SyntheticFocusEvent<>) => {
+    this.setState({
+      createButtonFocused: true
+    })
+  }
+
+  handleBlur = (e: SyntheticFocusEvent<>) => {
+    this.setState({
+      createButtonFocused: false
+    })
+  }
+
   render() {
     const props = this.props
 
-    const classes = ["CreateItemButtonComponent"]
-    if (props.focused) {
-      classes.push("focused")
-    }
-    if (props.noArrowFocus) {
-      classes.push("KeyFocusComponent--noFocus")
-    }
-    const className = classes.join(" ")
+    const className = classNames("CreateItemButtonComponent", {
+      "focused": props.focused || this.state.createButtonFocused,
+    })
 
-    return <button className={className} onClick={this.handleClick}
-        onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onFocus={props.onFocus} onBlur={props.onBlur}
-      >
+    const buttonClassName = classNames("CreateItemButtonComponent__button", {
+      "KeyFocusComponent--noFocus": props.noArrowFocus,
+    })
+
+    return <div className={className}>
       <CategoryComponent categoryId={props.item.category} categories={props.categories}/>
-      <div className="CreateItemButtonComponent__name">
+      <button className={buttonClassName} onClick={this.handleClick} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onFocus={this.handleFocus} onBlur={this.handleBlur}>
         <ItemComponent item={props.item}/>
-      </div>
-    </button>
+      </button>
+      {this.props.deleteCompletion && 
+        <IconButton onClick={() => !!this.props.deleteCompletion ? this.props.deleteCompletion(this.props.item.name) : undefined
+        } 
+          icon="DELETE" alt="Delete completion" className="KeyFocusComponent--noFocus"/>
+      }
+    </div>
   }
 }

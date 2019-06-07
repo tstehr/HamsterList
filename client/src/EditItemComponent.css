@@ -21,7 +21,7 @@
   padding-left: .5rem;
 }
 .EditItemComponent__name:focus-within {
-  box-shadow: 0 0 3px blue, inset 0 0 3px blue;
+  box-shadow: 0 0 3px var(--focus-color), inset 0 0 3px  var(--focus-color);
   background: var(--background-color);
 }
 .EditItemComponent__name > * {

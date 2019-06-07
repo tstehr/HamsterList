@@ -26,6 +26,7 @@ export type UpdateOrders = (orders: $ReadOnlyArray<Order>) => void
 export type SetUsername = (username: ?string) => void
 export type ApplyDiff = (diff: Diff) => void
 export type CreateApplicableDiff = (diff: Diff) => ?Diff
+export type DeleteCompletion = (completionName: string) => void
 
 type Props = {
   listid: string,
@@ -436,6 +437,21 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     return createApplicableDiff(this.getShoppingList(this.state), diff)
   }
 
+  deleteCompletion = (completionName: string) => {
+    // TODO should be part of sync?
+    fetch(`/api/${this.props.listid}/completions/${encodeURIComponent(completionName)}`, { method: "DELETE" })
+      .then(res => {
+        if (!res.ok) {
+            throw Error(res.statusText);
+        }
+        console.log(res)
+        this.requestSync(0)
+      })
+      .catch(e => {
+        console.error(e)
+      })
+  }
+
   requestSync = (delay: number = 1000) => {
       window.clearTimeout(this.requestSyncTimeoutId)
       this.requestSyncTimeoutId = window.setTimeout(this.sync.bind(this), delay)
@@ -555,6 +571,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             setUsername={this.setUsername}
             applyDiff={this.applyDiff}
             createApplicableDiff={this.createApplicableDiff}
+            deleteCompletion={this.deleteCompletion}
             manualSync={this.initiateSyncConnection.bind(this)}
             clearLocalStorage={this.clearLocalStorage.bind(this)}
             up={this.props.up}

@@ -3,7 +3,10 @@ import React, { Component } from 'react'
 import { Link, Route } from 'react-router-dom'
 import _ from 'lodash'
 import { type ShoppingList, type CompletionItem, type Item, type LocalItem, type CategoryDefinition, type Order, type Change, type UUID, createCookingAmount, getSIUnit, addAmounts } from 'shoppinglist-shared'
-import type { ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder, UpdateOrders, SetUsername, ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
+import type { 
+  ConnectionState, UpdateListTitle, CreateItem, DeleteItem, UpdateItem, SelectOrder, UpdateOrders, 
+  SetUsername, ApplyDiff, CreateApplicableDiff, DeleteCompletion 
+} from './ShoppingListContainerComponent'
 import { type Up } from './HistoryTracker'
 import TopBarComponent from './TopBarComponent'
 import CreateItemComponent from './CreateItemComponent'
@@ -34,6 +37,7 @@ type Props = {
   setUsername: SetUsername,
   applyDiff: ApplyDiff,
   createApplicableDiff: CreateApplicableDiff,
+  deleteCompletion: DeleteCompletion,
   manualSync: () => void,
   clearLocalStorage: () => void,
   up: Up,
@@ -130,6 +134,7 @@ export default class ShoppingListComponent extends Component<Props> {
               completions={this.props.completions}
               categories={this.props.categories}
               createItem={this.props.createItem} 
+              deleteCompletion={this.props.deleteCompletion}
               applyDiff={this.props.applyDiff} 
               createApplicableDiff={this.props.createApplicableDiff} />
           </div>

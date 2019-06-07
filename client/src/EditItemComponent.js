@@ -103,6 +103,9 @@ export default class EditItemComponent extends Component<Props, State> {
         inputValue: itemToString(this.props.item)
       })
       e.preventDefault()
+    } else if (e.key === 'Delete' || e.key === 'Backspace') { 
+      this.props.deleteItem(this.props.item.id)
+      e.preventDefault()
     }
   }
 

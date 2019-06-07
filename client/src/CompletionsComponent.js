@@ -4,15 +4,17 @@ import React, { Component, Fragment } from 'react'
 // import FlipMove from 'react-flip-move'
 import fuzzy from 'fuzzy'
 import { type LocalItem, type CompletionItem, type CategoryDefinition, itemToString } from 'shoppinglist-shared'
-import type { CreateItem } from './ShoppingListContainerComponent'
+import type { CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
+import { type ItemInput } from './CreateItemComponent'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 
 type Props = {|
   focusItemsInCreation: boolean,
-  itemsInCreation: $ReadOnlyArray<LocalItem>,
+  itemsInCreation: $ReadOnlyArray<ItemInput>,
   completions: $ReadOnlyArray<CompletionItem>,
   categories: $ReadOnlyArray<CategoryDefinition>,
   createItem: CreateItem,
+  deleteCompletion: DeleteCompletion,
   focusInput: () => void,
 |}
 
@@ -22,10 +24,11 @@ export default class CompletionsComponent extends Component<Props> {
       return []
     }
 
-    const itemsInCreationNames = this.props.itemsInCreation.map(item => item.name.trim().toLowerCase())
+    const itemsInCreationNames = this.props.itemsInCreation.map(ii => ii.item.name.trim().toLowerCase())
 
     let results = []
-    for (const itemInCreation of this.props.itemsInCreation) {
+    for (const itemInput of this.props.itemsInCreation) {
+      const itemInCreation = itemInput.item
       const resultsForItem = fuzzy.filter(itemInCreation.name, this.props.completions, {extract: item => item.name})
       resultsForItem.forEach((el) => el.item = Object.assign({}, itemInCreation, el.original))
       results.splice(results.length, 0, ...resultsForItem)
@@ -40,8 +43,9 @@ export default class CompletionsComponent extends Component<Props> {
   }
 
   render() {
+    const itemsInCreation = this.props.itemsInCreation.map(ii => ii.item)
     const itemToKey = new Map()
-    const itemsByRepr = _.groupBy(this.props.itemsInCreation, itemToString)
+    const itemsByRepr = _.groupBy(itemsInCreation, itemToString)
     for (const [repr, items] of Object.entries(itemsByRepr)) {
       for (const [iStr, item] of Object.entries(items)) {
         const i: number = +iStr
@@ -57,11 +61,12 @@ export default class CompletionsComponent extends Component<Props> {
     return (
       <Fragment>
         {
-          this.props.itemsInCreation.map(item =>
-            <CreateItemButtonComponent key={itemToKey.get(item)}
-              item={item} categories={this.props.categories}
+          this.props.itemsInCreation.map(ii =>
+            <CreateItemButtonComponent key={itemToKey.get(ii.item)}
+              item={ii.item} categories={this.props.categories}
               createItem={this.props.createItem} focusInput={this.props.focusInput}
               noArrowFocus focused={this.props.focusItemsInCreation}
+              deleteCompletion={ii.categoryAdded ? this.props.deleteCompletion : null} 
             />
           )
         }
@@ -69,7 +74,7 @@ export default class CompletionsComponent extends Component<Props> {
           this.getCompletionItems().map(item =>
             <CreateItemButtonComponent key={itemToString(item)}
               item={item} categories={this.props.categories}
-              createItem={this.props.createItem} focusInput={this.props.focusInput}
+              createItem={this.props.createItem}  deleteCompletion={this.props.deleteCompletion} focusInput={this.props.focusInput}
             />
           )
         }
