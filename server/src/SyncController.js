@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import {
-  type ShoppingList, type SyncRequest, type SyncedShoppingList, type Item, type UUID,
+  type ShoppingList, type SyncRequest, type SyncResponse, type SyncedShoppingList, type Item, type UUID,
   createShoppingList, createSyncRequest, mergeShoppingLists, addMatchingCategory, createItemFromItemStringRepresentation
 } from 'shoppinglist-shared'
 import { type ServerShoppingList, getBaseShoppingList, getSyncedShoppingList, createServerShoppingList } from './ServerShoppingList'
@@ -11,6 +11,7 @@ import { type ShoppingListChangeCallback } from './SocketController'
 import * as ShoppingListController from './ShoppingListController'
 import { updateRecentlyUsed } from './ItemController'
 import { getSortedCompletions } from './CompletionsController'
+import { getChangesBetween } from './ChangesController'
 import TokenCreator from './TokenCreator'
 
 
@@ -22,7 +23,7 @@ export default class SyncController {
   }
 
   handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
-    res.send(this.tokenCreator.setToken(getSyncedShoppingList(req.list)))
+    res.send(this.buildResponse(req.list, req.query['includeInResponse']))
     next()
   }
 
@@ -80,12 +81,46 @@ export default class SyncController {
     next()
 
     if (req.updatedList != null) {
-      res.send(this.tokenCreator.setToken(getSyncedShoppingList(req.updatedList)))
+      res.send(this.buildResponse(req.updatedList, syncRequest.includeInResponse, syncRequest.previousSync.changeId))
     } else {
       res.status(500).send({error: 'req.updatedList was null'})
     }
   }
 
+  buildResponse(serverList: ServerShoppingList, includeInResponse: string | string[] | void, previousSyncChangeId: ?UUID): SyncedShoppingList | SyncResponse {
+    const list = this.tokenCreator.setToken(getSyncedShoppingList(serverList))
+
+    let includeTypes: string[]
+    if (typeof includeInResponse === 'string') {
+      includeTypes = [includeInResponse]
+    } else if (includeInResponse == null) {
+      includeTypes = []
+    } else {
+      includeTypes = includeInResponse
+    }
+    
+    if (includeTypes.length === 0) {
+      return list
+    }
+
+    const response: SyncResponse = {
+      list
+    }
+    if (includeTypes.indexOf('categories') !== -1) {
+      response.categories = serverList.categories
+    }
+    if (includeTypes.indexOf('orders') !== -1) {
+      response.orders = serverList.orders
+    }
+    if (includeTypes.indexOf('completions') !== -1) {
+      response.completions = getSortedCompletions(serverList.recentlyUsed)
+    }
+    if (includeTypes.indexOf('changes') !== -1) {
+      response.changes = getChangesBetween(serverList.changes, previousSyncChangeId, list.changeId)
+    }
+
+    return response
+  }
 }
 
 

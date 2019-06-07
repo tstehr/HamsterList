@@ -6,7 +6,7 @@ import {
   type SyncedShoppingList, type ShoppingList, type CompletionItem, type LocalItem, type Item, type CategoryDefinition,
   type Order, type Change, type Diff, type UUID,
   createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, createRandomUUID,
-  mergeShoppingLists, createOrder, createChange, 
+  mergeShoppingLists, createOrder, createChange, createSyncResponse,
   generateAddItem, generateDeleteItem, generateUpdateItem, applyDiff, createApplicableDiff, getOnlyNewChanges,
 } from 'shoppinglist-shared'
 import { type Up } from './HistoryTracker'
@@ -259,7 +259,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
     if (initialSync) {
       console.log('SYNC', 'initial sync!')
-      syncPromise = this.fetch(`/api/${this.props.listid}/sync`)
+      syncPromise = this.fetch(`/api/${this.props.listid}/sync?includeInResponse=changes&includeInResponse=categories&includeInResponse=completions`)
     } else {
       preSyncShoppingList = this.getShoppingList(this.state)
 
@@ -271,13 +271,11 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           method: "POST",
           body: JSON.stringify({
             previousSync: this.state.previousSync,
-            currentState: preSyncShoppingList
+            currentState: preSyncShoppingList,
+            includeInResponse: ['changes', 'categories', 'completions']
           })
         })
     }
-
-    const completionsPromise = this.fetch(`/api/${this.props.listid}/completions`)
-    const categoriesPromise =  this.fetch(`/api/${this.props.listid}/categories`)
 
     let ordersPromise
     if (initialSync || !this.state.ordersChanged) {
@@ -294,24 +292,13 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
 
     try {
-      // don't sort shopping list from server, we need it in server order for previousSync
-      const serverSyncedShoppingList = createSyncedShoppingList(await responseToJSON(await syncPromise), null)
-      const categories = (await responseToJSON(await categoriesPromise)).map(createCategoryDefinition)
-      const completions = (await responseToJSON(await completionsPromise)).map(createCompletionItem)
-      const orders =  (await responseToJSON(await ordersPromise)).map(createOrder)
+      const syncResponse = createSyncResponse(await responseToJSON(await syncPromise))
+      const orders = (await responseToJSON(await ordersPromise)).map(createOrder)
 
-      // get changes using new changeId
-      const currentChangeId = serverSyncedShoppingList.changeId
-      let changesPromise
-      if (this.state.changes.length > 0 && currentChangeId != null) {
-        const prevChangeId = _.last(this.state.changes).id
-        changesPromise = this.fetch(`/api/${this.props.listid}/changes?oldest=${prevChangeId}&newest=${currentChangeId}`)
-      } else if (currentChangeId != null) {
-        changesPromise = this.fetch(`/api/${this.props.listid}/changes?newest=${currentChangeId}`)
-      } else {
-        changesPromise = this.fetch(`/api/${this.props.listid}/changes`)
-      }
-      const newChanges = (await responseToJSON(await changesPromise)).map(createChange)
+      const serverSyncedShoppingList = syncResponse.list
+      const newChanges: $ReadOnlyArray<Change> = syncResponse.changes || []
+      const categories: $ReadOnlyArray<CategoryDefinition> = syncResponse.categories || []
+      const completions: $ReadOnlyArray<CompletionItem> = syncResponse.completions || []
 
       this.setState((prevState) => {
         const serverShoppingList: ShoppingList = _.omit(serverSyncedShoppingList, 'token', 'changeId')

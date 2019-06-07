@@ -2,10 +2,12 @@
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import { type UUID, createUUID } from '../util/uuid'
-import { type Item } from './Item'
+import { type Item, type CompletionItem, createCompletionItem } from './Item'
 import { type ShoppingList, createShoppingList } from './ShoppingList'
-import { type CategoryDefinition } from './CategoryDefinition'
-import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
+import { type CategoryDefinition, createCategoryDefinition } from './CategoryDefinition'
+import { type Order, createOrder } from './Order'
+import { type Change, createChange } from './Change'
+import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/validation'
 
 
 export type SyncedShoppingList = {
@@ -20,7 +22,16 @@ export type SyncedShoppingList = {
 export type SyncRequest = {
   +previousSync: SyncedShoppingList,
   +currentState: ShoppingList,
+  +includeInResponse?: string[],
   [any]: empty
+}
+
+export type SyncResponse = {
+  list: SyncedShoppingList,
+  completions?: $ReadOnlyArray<CompletionItem>,
+  categories?: $ReadOnlyArray<CategoryDefinition>, 
+  orders?: $ReadOnlyArray<Order>,
+  changes?: $ReadOnlyArray<Change>,
 }
 
 export function createSyncedShoppingList(syncedShoppingListSpec: any, categories: ?$ReadOnlyArray<CategoryDefinition>): SyncedShoppingList {
@@ -37,9 +48,10 @@ export function createSyncedShoppingList(syncedShoppingListSpec: any, categories
 }
 
 export function createSyncRequest(syncRequestSpec: any): SyncRequest {
-  checkKeys(syncRequestSpec, ['previousSync', 'currentState'])
+  checkKeys(syncRequestSpec, ['previousSync', 'currentState', 'includeInResponse'])
   checkAttributeType(syncRequestSpec, 'previousSync', 'object')
   checkAttributeType(syncRequestSpec, 'currentState', 'object')
+  checkAttributeType(syncRequestSpec, 'includeInResponse', 'array', true)
 
   const syncRequest = {}
   try {
@@ -52,6 +64,62 @@ export function createSyncRequest(syncRequestSpec: any): SyncRequest {
   } catch (e) {
     throw new TypeError(`Error in previousSync: ${e.message}`)
   }
+  if (syncRequestSpec.includeInResponse != null) {
+    syncRequest.includeInResponse = syncRequestSpec.includeInResponse
+  }
 
   return deepFreeze(syncRequest)
 }
+
+export function createSyncResponse(syncResponseSpec: any): SyncResponse {
+  checkKeys(syncResponseSpec, ['list', 'completions', 'categories', 'orders', 'changes'])
+  checkAttributeType(syncResponseSpec, 'list', 'object')
+  checkAttributeType(syncResponseSpec, 'completions', 'array', true)
+  checkAttributeType(syncResponseSpec, 'categories', 'array', true)
+  checkAttributeType(syncResponseSpec, 'orders', 'array', true)
+  checkAttributeType(syncResponseSpec, 'changes', 'array', true)
+
+  const syncResponse: SyncResponse = {}
+  try {
+    syncResponse.list = createSyncedShoppingList(syncResponseSpec.list, null)
+  } catch (e) {
+    throw new TypeError(`Error in list: ${e.message}`)
+  }
+
+
+  if (syncResponseSpec.completions != null) {
+    try {
+      syncResponse.completions = errorMap(syncResponseSpec.completions, createCompletionItem)
+    } catch (e) {
+      throw new TypeError(`Error in completions: ${e.message}`)
+    }
+  }
+
+  if (syncResponseSpec.categories != null) {
+    try {
+      syncResponse.categories = errorMap(syncResponseSpec.categories, createCategoryDefinition)
+    } catch (e) {
+      throw new TypeError(`Error in categories: ${e.message}`)
+    }
+  }
+  
+  if (syncResponseSpec.orders != null) {
+    try {
+      syncResponse.orders = errorMap(syncResponseSpec.orders, createOrder)
+    } catch (e) {
+      throw new TypeError(`Error in orders: ${e.message}`)
+    }
+  }
+
+
+  if (syncResponseSpec.changes != null) {
+    try {
+      syncResponse.changes = errorMap(syncResponseSpec.changes, createChange)
+    } catch (e) {
+      throw new TypeError(`Error in changes: ${e.message}`)
+    }
+  }
+
+  return deepFreeze(syncResponse)
+}
+
