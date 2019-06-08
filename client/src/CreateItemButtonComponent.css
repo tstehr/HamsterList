@@ -44,12 +44,16 @@
 
 .CreateItemButtonComponent .IconButton {
   width: 3rem;
-  display: none;
 }
-.CreateItemButtonComponent:hover .IconButton, 
-.CreateItemButtonComponent.focused .IconButton, 
-.CreateItemButtonComponent:focus-within .IconButton{
-  display: block;
+@media (hover: hover) {
+  .CreateItemButtonComponent .IconButton {
+    display: none;
+  }
+  .CreateItemButtonComponent:hover .IconButton, 
+  .CreateItemButtonComponent.focused .IconButton, 
+  .CreateItemButtonComponent:focus-within .IconButton{
+    display: block;
+  }
 }
 
 @media (min-width: 30rem) {
