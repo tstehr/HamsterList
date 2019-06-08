@@ -1,11 +1,10 @@
 .PillItemComponent {
-    display: inline-block;
-    padding: .1em .6em;
-    height: 1.5em;
-    line-height: 1.4em;
-    border-radius: .8em;
+    display: inline;
+    padding: .1em .6em; 
+    border-radius: 3em;
     background: var(--small-feature-color);
     color: var(--text-color);
+    box-decoration-break: clone;
 }
 .PillItemComponent .CategoryTextComponent {
     margin: -.1em 0 -.1em -.6em;

@@ -18,11 +18,9 @@
 }
 
 .CategoryTextComponent {
-  display: inline-block;
+  border-radius: 3em;
+  display: inline;
   padding: .1em .3em;
-  height: 1.5em;
-  line-height: 1.4em;
   min-width: 1.8em;
-  border-radius: .8em;
   text-align: center;
 }
