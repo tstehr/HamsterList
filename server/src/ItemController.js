@@ -4,7 +4,8 @@ import express from 'express'
 import {
   type Item, type LocalItem, type CompletionItem, type UUID,
   createItem, createLocalItem, createLocalItemFromString, createCompletionItem, createUUID, createRandomUUID,
-  addMatchingCategory, createLocalItemFromItemStringRepresentation, createItemFromItemStringRepresentation
+  addMatchingCategory, createLocalItemFromItemStringRepresentation, createItemFromItemStringRepresentation,
+  normalizeCompletionName
 } from 'shoppinglist-shared'
 import { updateInArray } from './DB'
 import { type ServerShoppingList, type RecentlyUsedArray } from './ServerShoppingList'
@@ -120,8 +121,12 @@ export default class ItemController {
 
 export function updateRecentlyUsed(recentlyUsed: RecentlyUsedArray, item: Item): RecentlyUsedArray {
   const completionItem = createCompletionItem(_.pick(item, 'name', 'category'))
-  const completionName = completionItem.name.trim().toLocaleLowerCase()
-  const entryIdx = _.findIndex(recentlyUsed, entry => entry.item.name.trim().toLowerCase() === completionName)
+  const completionName = normalizeCompletionName(completionItem.name)
+  if (completionName.length === 0) {
+    return recentlyUsed
+  }
+
+  const entryIdx = _.findIndex(recentlyUsed, entry => normalizeCompletionName(entry.item.name) === completionName)
 
   const result = [...recentlyUsed]
 

@@ -392,6 +392,28 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     this.db.get('recentlyUsedLists').upsert(listUsed).write()
   }
 
+  createCompletionsStateUpdate(state: State, updatedItem: Item): { completions: $ReadOnlyArray<CompletionItem>, deletedCompletions: $ReadOnlyArray<string> } {
+    const completionItem = createCompletionItem(_.pick(updatedItem, 'name', 'category'))
+    const completionName = normalizeCompletionName(completionItem.name)
+    if (completionName.length === 0) {
+      return {}
+    } 
+
+    const entryIdx = _.findIndex(state.completions, i => normalizeCompletionName(i.name) === completionName)
+
+    let completions = [...state.completions]
+    if (entryIdx === -1) {
+      completions.push(completionItem)
+    } else {
+      completions.splice(entryIdx, 1, completionItem)
+    }
+
+    return {
+      completions,
+      deletedCompletions: state.deletedCompletions.filter(name => normalizeCompletionName(name) !== completionName),
+    }
+  }
+
   applyDiff = (diff: Diff) => {
     this.markListAsUsed()
     
@@ -403,10 +425,18 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           date: new Date(),
           diffs: [diff],
         }
+
         const newList = applyDiff(this.getShoppingList(prevState), diff)
+
+        let completionStateUpdate = {}
+        if (diff.item != null) {
+          completionStateUpdate = this.createCompletionsStateUpdate(prevState, diff.item)
+        }
+
         return {
           ...newList,
           unsyncedChanges: [...prevState.unsyncedChanges, localChange],
+          ...completionStateUpdate,
           dirty: true,
         }
       } catch (e) {
