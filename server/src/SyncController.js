@@ -3,7 +3,8 @@ import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import {
   type ShoppingList, type SyncRequest, type SyncResponse, type SyncedShoppingList, type Item, type UUID,
-  createShoppingList, createSyncRequest, mergeShoppingLists, addMatchingCategory, createItemFromItemStringRepresentation
+  createShoppingList, createSyncRequest, mergeShoppingLists, addMatchingCategory, createItemFromItemStringRepresentation,
+  normalizeCompletionName
 } from 'shoppinglist-shared'
 import { type ServerShoppingList, getBaseShoppingList, getSyncedShoppingList, createServerShoppingList } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
@@ -64,12 +65,20 @@ export default class SyncController {
     const client = syncRequest.currentState
     const merged = mergeShoppingLists(base, client, server, req.list.categories)
 
-    const recentlyUsed = getUpdatedItems(server, merged).reduce((ru, item) => {
+    let recentlyUsed = getUpdatedItems(server, merged).reduce((ru, item) => {
       return updateRecentlyUsed(ru, item)
     }, req.list.recentlyUsed)
 
+    if (syncRequest.deleteCompletions != null) {
+      const normalizedNames = syncRequest.deleteCompletions.map(name => normalizeCompletionName(name))
+      req.log.info({normalizedNames})
+      recentlyUsed = recentlyUsed.filter(entry => normalizedNames.indexOf(normalizeCompletionName(entry.item.name)) === -1)
+    }
+
     req.updatedList = {
       ...req.list,
+      categories: syncRequest.categories || req.list.categories,
+      orders: syncRequest.orders || req.list.orders,
       recentlyUsed: recentlyUsed,
       ...merged,
     }

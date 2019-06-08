@@ -206,7 +206,7 @@ export function addMatchingCategory<T: LocalItem>(item: T, completions: $ReadOnl
 
   const matchingCompletion = completions
     .find((completionItem) =>
-      completionItem.name.toLowerCase() === item.name.toLowerCase()
+      normalizeCompletionName(completionItem.name) === normalizeCompletionName(item.name)
         && (item.category === undefined || item.category === completionItem.category)
     )
   if (matchingCompletion != null) {
@@ -215,6 +215,10 @@ export function addMatchingCategory<T: LocalItem>(item: T, completions: $ReadOnl
   }
 
   return item
+}
+
+export function normalizeCompletionName(name: string): string {
+  return name.trim().toLowerCase()
 }
 
 // export function updateLocalItem(localItem: Item, localItemSpec: Object): Item {

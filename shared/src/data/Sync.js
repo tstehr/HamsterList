@@ -23,6 +23,9 @@ export type SyncRequest = {
   +previousSync: SyncedShoppingList,
   +currentState: ShoppingList,
   +includeInResponse?: string[],
+  +categories?: $ReadOnlyArray<CategoryDefinition>,
+  +orders?: $ReadOnlyArray<Order>,
+  +deleteCompletions?: $ReadOnlyArray<string>,
   [any]: empty
 }
 
@@ -48,24 +51,59 @@ export function createSyncedShoppingList(syncedShoppingListSpec: any, categories
 }
 
 export function createSyncRequest(syncRequestSpec: any): SyncRequest {
-  checkKeys(syncRequestSpec, ['previousSync', 'currentState', 'includeInResponse'])
+  checkKeys(syncRequestSpec, ['previousSync', 'currentState', 'includeInResponse', 'categories', 'orders', 'deleteCompletions'])
   checkAttributeType(syncRequestSpec, 'previousSync', 'object')
   checkAttributeType(syncRequestSpec, 'currentState', 'object')
   checkAttributeType(syncRequestSpec, 'includeInResponse', 'array', true)
+  checkAttributeType(syncRequestSpec, 'categories', 'array', true)
+  checkAttributeType(syncRequestSpec, 'orders', 'array', true)
+  checkAttributeType(syncRequestSpec, 'deleteCompletions', 'array', true)
 
   const syncRequest = {}
+  
   try {
     syncRequest.previousSync = createSyncedShoppingList(syncRequestSpec.previousSync, null)
   } catch (e) {
     throw new TypeError(`Error in previousSync: ${e.message}`)
   }
+
   try {
     syncRequest.currentState = createShoppingList(syncRequestSpec.currentState, null)
   } catch (e) {
-    throw new TypeError(`Error in previousSync: ${e.message}`)
+    throw new TypeError(`Error in currentState: ${e.message}`)
   }
+
   if (syncRequestSpec.includeInResponse != null) {
     syncRequest.includeInResponse = syncRequestSpec.includeInResponse
+  }
+
+  if (syncRequestSpec.categories != null) {
+    try {
+      syncRequest.categories = errorMap(syncRequestSpec.categories, createCategoryDefinition)
+    } catch (e) {
+      throw new TypeError(`Error in categories: ${e.message}`)
+    }
+  }
+
+  if (syncRequestSpec.orders != null) {
+    try {
+      syncRequest.orders = errorMap(syncRequestSpec.orders, createOrder)
+    } catch (e) {
+      throw new TypeError(`Error in orders: ${e.message}`)
+    }
+  }
+
+  if (syncRequestSpec.deleteCompletions != null) {
+    try {
+      syncRequest.deleteCompletions = errorMap(syncRequestSpec.deleteCompletions, c => {
+        if (typeof c !== 'string') {
+          throw TypeError('Completion name must be string!');
+        }
+        return c
+      })
+    } catch (e) {
+      throw new TypeError(`Error in deleteCompletions: ${e.message}`)
+    }
   }
 
   return deepFreeze(syncRequest)

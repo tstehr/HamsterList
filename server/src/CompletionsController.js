@@ -1,7 +1,7 @@
 // @flow
 import _ from 'lodash'
 import express from 'express'
-import { frecency } from 'shoppinglist-shared'
+import { frecency, normalizeCompletionName } from 'shoppinglist-shared'
 import { type RecentlyUsedArray } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 
@@ -12,8 +12,8 @@ export default class CompletionsController {
   }
 
   handleDelete = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
-    const completionName = req.params.completionname.trim().toLocaleLowerCase()
-    const entryIdx = _.findIndex(req.list.recentlyUsed, entry => entry.item.name.trim().toLowerCase() === completionName) 
+    const completionName = normalizeCompletionName(req.params.completionname)
+    const entryIdx = _.findIndex(req.list.recentlyUsed, entry => normalizeCompletionName(entry.item.name) === completionName) 
     if (entryIdx !== -1) {
       const newRecentlyUsed = [...req.list.recentlyUsed]
       newRecentlyUsed.splice(entryIdx, 1)
