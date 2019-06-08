@@ -26,7 +26,7 @@ export default class CategoriesController {
       return
     }
 
-    req.updatedList = createServerShoppingList({ ...req.list, categories: categories })
+    req.updatedList = { ...req.list, categories: categories }
 
     res.json(categories)
     next()
