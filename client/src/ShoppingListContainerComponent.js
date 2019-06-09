@@ -254,6 +254,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     })
 
     const preSyncUnsyncedChangesLength = this.state.unsyncedChanges.length
+    const preSyncDeletedCompletions = this.state.deletedCompletions
 
     const initialSync = !this.state.loaded
     let syncPromise
@@ -308,6 +309,10 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           dirty = false
         }
 
+        // retain completion deletions performed during sync
+        const unsyncedDeletedCompletions = prevState.deletedCompletions.filter(name => preSyncDeletedCompletions.indexOf(normalizeCompletionName(name)) === -1)
+        dirty = dirty || unsyncedDeletedCompletions.length > 0
+
         // add newly fetched changes to local changes
         let changes
         if (newChanges.length === 0) {
@@ -322,13 +327,14 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           changes = newChanges
         }
 
+
         const syncState: $Shape<State> = {
-          completions,
+          completions: completions.filter(completionItem => unsyncedDeletedCompletions.indexOf(normalizeCompletionName(completionItem.name)) === -1),
           categories,
           orders,
           changes,
           dirty,
-          deletedCompletions: [],
+          deletedCompletions: unsyncedDeletedCompletions,
           unsyncedChanges: prevState.unsyncedChanges.slice(preSyncUnsyncedChangesLength),
           syncing: false,
           loaded: true,
@@ -337,6 +343,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           previousSync: serverSyncedShoppingList,
           ...newShoppingList,
         }
+
+        console.log('SYNC', 'deletedCompletions', syncState.deletedCompletions)
 
         this.isInSyncMethod = false
         console.log('SYNC', 'done syncing')
@@ -453,7 +461,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     const normalizedCompletionName = normalizeCompletionName(completionName)
     this.setState((prevState) => ({
       deletedCompletions: [...prevState.deletedCompletions, normalizedCompletionName],
-      completions: prevState.completions.filter(completion => normalizeCompletionName(completion.name) !== normalizedCompletionName)
+      completions: prevState.completions.filter(completion => normalizeCompletionName(completion.name) !== normalizedCompletionName),
+      dirty: true,
     }), this.requestSync)
   }
 
