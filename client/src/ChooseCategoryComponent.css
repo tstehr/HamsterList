@@ -26,14 +26,14 @@
 }
 @media (min-width: 40rem) and (min-height: 40rem) {
   .ChooseCategoryComponent {
-    background: rgba(0, 0, 0, .5);
+    background: hsla(var(--text-color-hsl-value), .5);
   }
   .ChooseCategoryComponent__window {
     columns: 13rem;
     column-gap: 1rem;
     max-height: 100%;
     padding: 1.5rem 2rem;
-    background: white;
+    background: var(--background-color);
     margin: 3rem;
   }
   .ChooseCategoryComponent button {
@@ -46,7 +46,7 @@
   }
   .ChooseCategoryComponent button.ChooseCategoryComponent__cancel {
     border: 0;
-    background: #f7f7f7;
-    color: black;
+    background: var(--small-feature-color);
+    color: var(--text-color);
   }
 }
