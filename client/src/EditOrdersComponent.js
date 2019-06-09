@@ -236,16 +236,16 @@ const SortableCategories = SortableContainer(({ categories }) => {
   return (
     <div>
       {categories.map((category, index) => (
-        <SortableCatgory key={`item-${index}`} index={index} category={category} />
+        <SortableCategory key={`item-${index}`} index={index} category={category} />
       ))}
     </div>
   )
 })
 
-const SortableCatgory = SortableElement(({ category }) =>
-  <div className="SortableCatgory Button">
+const SortableCategory = SortableElement(({ category }) =>
+  <div className="SortableCategory Button">
     <CategoryComponent category={category} />
-    <span className="SortableCatgory__name">{category.name}</span>
+    <span className="SortableCategory__name">{category.name}</span>
     <DragHandle />
   </div>
 )
