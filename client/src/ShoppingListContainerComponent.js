@@ -141,8 +141,9 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
   
   save = _.debounce(() => {
+    const state = _.cloneDeep(this.state)
     console.info('LOCALSTORAGE',  'Save')
-    this.db.get('lists').upsert(this.state).write()
+    this.db.get('lists').upsert(state).write()
   }, 500)
 
   load(callback? : () => void) {
