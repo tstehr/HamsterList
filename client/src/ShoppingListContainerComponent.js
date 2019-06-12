@@ -283,7 +283,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       })
     } else {
       console.log('SYNC', 'initial sync!')
-      syncPromise = this.fetch(`/api/${this.props.listid}/sync?includeInResponse=changes&includeInResponse=categories&includeInResponse=completions`)
+      syncPromise = this.fetch(`/api/${this.props.listid}/sync?includeInResponse=changes&includeInResponse=categories&includeInResponse=completions&includeInResponse=orders`)
     
     }
     try {
