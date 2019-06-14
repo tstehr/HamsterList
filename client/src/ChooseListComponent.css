@@ -9,6 +9,7 @@
   width: 100%;
   max-width: 30rem;
   padding: .5rem;
+  padding-top: env(safe-area-inset-top);
 }
 
 .ChooseListComponent__content h1 {

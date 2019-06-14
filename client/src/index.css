@@ -8,29 +8,36 @@
   color-scheme: light dark;
   supported-color-schemes: light dark;
 
+
+  /* COLORS */
   --theme-color: hsl(122, 39%, 49%);
   --text-color-hsl-value: 0, 0%, 0%;
   --text-deemphasized-color: hsl(0, 0%, 50%);
-  --background-color: white;
+  --text-on-theme-color-hsl-value: 0, 100%, 100%;
+  --background-color-hsl-value: 0, 100%, 100%;
   --small-feature-color: hsl(0, 0%, 92%);
   --box-color: hsl(0, 0%, 97%);
   --focus-color: blue;
   --failure-color-hsl-value: 4, 90%, 58%;
-  --success-color-hsl-value: 122, 39%, 49%;
   
   --text-color: hsl(var(--text-color-hsl-value));
+  --text-on-theme-color: hsl(var(--text-on-theme-color-hsl-value));
+  --background-color: hsl(var(--background-color-hsl-value));
   --failure-color: hsl(var(--failure-color-hsl-value));
-  --success-color: hsl(var(--success-color-hsl-value));
+
+
+  /* WIDTHS */
+  --single-col-max-width: 30rem;
+  --two-col-max-width: 80rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --theme-color: hsl(122, 32%, 45%);
     --text-color-hsl-value: 0, 100%, 100%;
-    --background-color: black;
+    --background-color-hsl-value: 0, 0%, 0%;
     --small-feature-color: hsl(0, 0%, 15%);
     --box-color: hsl(0, 0%, 10%);
-    --success-color-hsl-value: 122, 32%, 45%;
   }
 }
 
@@ -84,7 +91,7 @@ button.PaddedButton {
   .Button {
     border: 0;
     margin-bottom: .5rem;
-    color: white;
+    color: var(--text-on-theme-color);
     background: var(--button-bg-color);
   }
 }

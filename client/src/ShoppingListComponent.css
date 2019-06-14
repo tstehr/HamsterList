@@ -1,12 +1,13 @@
 .ShoppingListComponent__body {
-  margin-top: 3rem;
+  margin: 3rem auto 0;
+  margin-top: calc(3rem + env(safe-area-inset-top));
 }
 .ShoppingListComponent__section {
-  max-width: 30rem;
+  max-width: var(--single-col-max-width);
   margin: 0 auto;
 }
 .ShoppingListComponent__footer {
-  max-width: 30rem;
+  max-width: var(--single-col-max-width);
   margin: 2rem auto;
 }
 @media (min-width: 30rem) {
@@ -19,9 +20,11 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    max-width: var(--two-col-max-width);
   }
   .ShoppingListComponent__section {
     flex: 1;
+    max-width: none;
   }
   .ShoppingListComponent__section {
     margin: 0;
@@ -29,10 +32,16 @@
   }
   .ShoppingListComponent__section:first-child {
     padding-left: 1rem;
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+  .ShoppingListComponent__section:last-child {
+    padding-right: 1rem;
+    padding-right: max(1rem, env(safe-area-inset-right));
   }
   .ShoppingListComponent__footer {
-    max-width: 60rem;
+    max-width: var(--two-col-max-width);
     padding: 0 1rem;
+    padding: 0 max(1rem, env(safe-area-inset-right)) 0 max(1rem, env(safe-area-inset-left))
   }
 }
 
@@ -45,8 +54,14 @@
   }
   .ShoppingListComponent__section:first-child {
     padding-left: 2rem;
+    padding-left: max(2rem, env(safe-area-inset-left));
+  }
+  .ShoppingListComponent__section:last-child {
+    padding-right: 2rem;
+    padding-right: max(2rem, env(safe-area-inset-right));
   }
   .ShoppingListComponent__footer {
     padding: 0 2rem;
+    padding: 0 max(2rem, env(safe-area-inset-right)) 0 max(2rem, env(safe-area-inset-left))
   }
 }

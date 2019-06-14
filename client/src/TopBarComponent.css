@@ -2,12 +2,21 @@
   position: fixed;
   z-index: 100;
   top: 0;
-  border-bottom: 2px solid var(--theme-color);
-  background: var(--background-color);
+  background: var(--theme-color);
   width: 100%;
+  padding-top: env(safe-area-inset-top);
+  color: var(--text-on-theme-color);
+}
+@media (prefers-color-scheme: dark) {
+  @supports (backdrop-filter: blur(10px)) {
+    .TopBarComponent {
+      background: hsla(122, 39%, 49%, .7);
+      backdrop-filter: blur(10px);
+    }
+  }
 }
 .TopBarComponent__content {
-  max-width: 30rem;
+  max-width: var(--single-col-max-width);
   height: 3rem;
   margin: 0 auto;
   display: flex;
@@ -16,13 +25,15 @@
 }
 @media (min-width: 40rem) {
   .TopBarComponent__content {
-    max-width: 60rem;
-    padding: 0 1rem;
+    max-width: var(--two-col-max-width);
+    --top-bar-side-padding: 1rem;
+    padding: 0 var(--top-bar-side-padding);
+    padding: 0 max(var(--top-bar-side-padding), env(safe-area-inset-right)) 0 max(var(--top-bar-side-padding), env(safe-area-inset-left))
   }
 }
 @media (min-width: 50rem) {
   .TopBarComponent__content {
-    padding: 0 2rem;
+    --top-bar-side-padding: 2rem;
   }
 }
 .TopBarComponent__back {
@@ -30,6 +41,8 @@
   flex-shrink: 0;
   border: 0;
   font-size: 1.5rem;
+  background: none;
+  color: var(--text-on-theme-color);
 }
 .TopBarComponent__status {
   width: 3.5rem;
@@ -43,6 +56,9 @@
   font-family: inherit;
   letter-spacing: -.65rem;
   transition: all 200ms ease-in-out;
+  background: none;
+  overflow: visible;
+  color: var(--text-on-theme-color);
 }
 .TopBarComponent__status--syncing {
   animation: 1s ease-in infinite blink;
@@ -52,12 +68,6 @@
 }
 .TopBarComponent__status--failure.TopBarComponent__status--syncing {
   animation: 1s ease-in infinite blinkRed;
-}
-.TopBarComponent__status--synced {
-  color: var(--success-color);
-}
-.TopBarComponent__status--synced.TopBarComponent__status--syncing {
-  animation: 1s ease-in infinite blinkGreen;
 }
 
 .TopBarComponent__content > h1,
@@ -77,13 +87,13 @@
 
 @keyframes blink {
   0% {
-    text-shadow: 0 0 0px hsla(var(--text-color-hsl-value), .6);
+    text-shadow: 0 0 0px hsla(var(--text-on-theme-color-hsl-value), .6);
   }
   90% {
-    text-shadow: 0 0 20px hsla(var(--text-color-hsl-value), .4);
+    text-shadow: 0 0 20px hsla(var(--text-on-theme-color-hsl-value), .4);
   }
   100% {
-    text-shadow: 0 0 20px hsla(var(--text-color-hsl-value), .0);
+    text-shadow: 0 0 20px hsla(var(--text-on-theme-color-hsl-value), .0);
   }
 }
 @keyframes blinkRed {
@@ -95,16 +105,5 @@
   }
   100% {
     text-shadow: 0 0 20px hsla(var(--failure-color-hsl-value), .0);
-  }
-}
-@keyframes blinkGreen {
-  0% {
-    text-shadow: 0 0 0px hsla(var(--success-color-hsl-value), .6);
-  }
-  90% {
-    text-shadow: 0 0 20px hsla(var(--success-color-hsl-value), .4);
-  }
-  100% {
-    text-shadow: 0 0 20px hsla(var(--success-color-hsl-value), .0);
   }
 }
