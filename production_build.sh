@@ -8,16 +8,24 @@ fi
 
 ./install.sh | sed "s/^/[install] /"
 
+# build shared first, then server and client in parallel
 cd shared
 yarn build | sed "s/^/[build] [shared] /"
 
-cd ../server
-yarn build | sed "s/^/[build] [server] /"
-
+# build client
 cd ../client
-yarn build | sed "s/^/[build] [client] /"
+yarn build | sed "s/^/[build] [client] /" &
+client_pid=$!
 
+# build server
+cd ../server
+yarn build | sed "s/^/[build] [server] /" &
+server_pid=$!
+
+wait $server_pid
+wait $client_pid
+
+# copy new static files after build
 cd ../
-
 rm -rf server/static
 mv client/build server/static
