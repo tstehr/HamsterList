@@ -10,7 +10,7 @@
 @media (prefers-color-scheme: dark) {
   @supports (backdrop-filter: blur(10px)) {
     .TopBarComponent {
-      background: hsla(122, 39%, 49%, .7);
+      background: hsla(var(--theme-color-hsl-value), .7);
       backdrop-filter: blur(10px);
     }
   }
@@ -24,7 +24,7 @@
   align-items: stretch;
 }
 @media (min-width: 40rem) {
-  .TopBarComponent__content {
+  .TopBarComponent--responsive .TopBarComponent__content {
     max-width: var(--two-col-max-width);
     --top-bar-side-padding: 1rem;
     padding: 0 var(--top-bar-side-padding);
@@ -32,7 +32,7 @@
   }
 }
 @media (min-width: 50rem) {
-  .TopBarComponent__content {
+  .TopBarComponent--responsive .TopBarComponent__content {
     --top-bar-side-padding: 2rem;
   }
 }
@@ -44,7 +44,28 @@
   background: none;
   color: var(--text-on-theme-color);
 }
-.TopBarComponent__status {
+
+
+.EditTitleComponent {
+  font-weight: bold;
+  font-size: 2rem;
+  font-family: inherit;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-align:center;
+  line-height: 3rem;
+  background: transparent;
+  appearance: none;
+  border: 0;
+  color: var(--text-on-theme-color);
+}
+
+
+.SyncStatusComponent {
   width: 3.5rem;
   flex-shrink: 0;
   display: flex;
@@ -60,30 +81,16 @@
   overflow: visible;
   color: var(--text-on-theme-color);
 }
-.TopBarComponent__status--syncing {
+.SyncStatusComponent--syncing {
   animation: 1s ease-in infinite blink;
 }
-.TopBarComponent__status--failure {
+.SyncStatusComponent--failure {
   color: var(--failure-color);
 }
-.TopBarComponent__status--failure.TopBarComponent__status--syncing {
+.SyncStatusComponent--failure.SyncStatusComponent--syncing {
   animation: 1s ease-in infinite blinkRed;
 }
 
-.TopBarComponent__content > h1,
-.TopBarComponent__content > input {
-  font-weight: bold;
-  font-size: 2rem;
-  font-family: inherit;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  flex-shrink: 1;
-  flex-grow: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-align:center;
-  line-height: 3rem;
-}
 
 @keyframes blink {
   0% {

@@ -8,7 +8,7 @@ import type {
   SetUsername, ApplyDiff, CreateApplicableDiff, DeleteCompletion 
 } from './ShoppingListContainerComponent'
 import { type Up } from './HistoryTracker'
-import TopBarComponent from './TopBarComponent'
+import TopBarComponent, { EditTitleComponent, SyncStatusComponent } from './TopBarComponent'
 import CreateItemComponent from './CreateItemComponent'
 import ShoppingListItemsComponent from './ShoppingListItemsComponent'
 import EditOrdersComponent from './EditOrdersComponent'
@@ -113,13 +113,17 @@ export default class ShoppingListComponent extends Component<Props> {
   render() {
     return (
       <div className="ShoppingListComponent">
-        <TopBarComponent
-          title={this.props.shoppingList.title} connectionState={this.props.connectionState}
-          syncing={this.props.syncing} lastSyncFailed={this.props.lastSyncFailed}
-          manualSync={this.props.manualSync} updateListTitle={this.props.updateListTitle}
-          dirty={this.props.dirty} up={this.props.up}
-        />
-        <div  className="ShoppingListComponent__body">
+        <TopBarComponent up={this.props.up}>
+          <EditTitleComponent title={this.props.shoppingList.title} updateListTitle={this.props.updateListTitle}/>
+          <SyncStatusComponent 
+            connectionState={this.props.connectionState} 
+            syncing={this.props.syncing} 
+            lastSyncFailed={this.props.lastSyncFailed}
+            dirty={this.props.dirty}
+            manualSync={this.props.manualSync}
+          />
+        </TopBarComponent>
+        <div className="ShoppingListComponent__body">
           <div className="ShoppingListComponent__section">
             <ShoppingListItemsComponent items={this.props.shoppingList.items} categories={this.props.categories}
               orders={this.props.orders} selectedOrder={this.props.selectedOrder}

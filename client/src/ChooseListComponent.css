@@ -7,15 +7,18 @@
 
 .ChooseListComponent__content {
   width: 100%;
-  max-width: 30rem;
+  max-width: var(--single-col-max-width);
   padding: .5rem;
-  padding-top: env(safe-area-inset-top);
+  margin-top: 3rem;
+  margin-top: calc(3rem + env(safe-area-inset-top));
 }
 
-.ChooseListComponent__content h1 {
+.ChooseListComponent__title {
   font-weight: bold;
   font-size: 2rem;
-  margin-bottom: 2rem;
+  text-align: center;
+  line-height: 3rem;
+  flex: 1;
 }
 
 .ChooseListComponent__content section {
@@ -58,7 +61,7 @@
 
 .ChooseListComponent__footer {
   font-size: .6rem;
-  color: grey;
+  color: var(--text-deemphasized-color);
 }
 .ChooseListComponent__footer a, .ChooseListComponent__footer a:link, .ChooseListComponent__footer a:visited {
   color: inherit;

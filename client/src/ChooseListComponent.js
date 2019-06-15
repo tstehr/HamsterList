@@ -1,10 +1,11 @@
 // @flow
 import React, { Component } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 import FlipMove from 'react-flip-move'
 import { createRandomUUID } from 'shoppinglist-shared'
 import { createDB, getRecentlyUsedLists } from './db'
-import { responseToJSON } from './utils';
+import { responseToJSON } from './utils'
+import TopBarComponent from './TopBarComponent'
 import './ChooseListComponent.css'
 
 export type RecentlyUsedList = {
@@ -81,8 +82,10 @@ export default class ChooseListComponent extends Component<void, State> {
         { this.state.listid &&
           <Redirect to={this.state.listid} push />
         }
+        <TopBarComponent responsive={false}>
+          <h1 className="ChooseListComponent__title">ShoppingList</h1>
+        </TopBarComponent>
         <div className="ChooseListComponent__content">
-          <h1>Shopping List</h1>
 
           <section><button type="button" className="ChooseListComponent__randomButton" onClick={this.createRandomList.bind(this)}>Create new List</button></section>
 
@@ -104,9 +107,9 @@ export default class ChooseListComponent extends Component<void, State> {
               >
               {
                 this.state.recentlyUsedLists.map(rul =>
-                  <a className="ChooseListComponent__recentlyUsedLink" key={rul.id} href={"/"+rul.id}>{
+                  <Link className="ChooseListComponent__recentlyUsedLink" key={rul.id} to={"/"+rul.id}>{
                     rul.title
-                  }</a>
+                  }</Link>
                 )
               }
               </FlipMove>
