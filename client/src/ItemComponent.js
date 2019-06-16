@@ -2,7 +2,9 @@
 import _ from 'lodash'
 import mathjs from 'mathjs'
 import React from 'react'
+import classNames from 'classnames'
 import { type Amount, type BaseItem } from 'shoppinglist-shared'
+import './ItemComponent.css'
 
 type AmountProps = {
   amount: ?Amount
@@ -28,7 +30,7 @@ type Props = {
 }
 
 const ItemComponent: React$ComponentType<Props> = React.memo((props: Props) => (
-  <span className={props.className}>
+  <span className={classNames("ItemComponent", props.className)}>
     <AmountComponent amount={props.item.amount} />
     {" "} {props.item.name}
   </span>
