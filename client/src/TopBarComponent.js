@@ -21,7 +21,7 @@ export default function TopBarComponent(props: Props) {
 
   return <header className={className}>
     <div className="TopBarComponent__content">
-      {props.up && <button type="button" className="TopBarComponent__back" onClick={() => props.up('home')}>
+      {props.up && <button type="button" className="TopBarComponent__back" onClick={() => props.up('home')} aria-label="Back to all lists">
         {`◀${variantSelector15}`}
       </button>}
       {props.children}

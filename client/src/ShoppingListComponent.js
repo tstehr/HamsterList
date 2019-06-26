@@ -124,14 +124,14 @@ export default class ShoppingListComponent extends Component<Props> {
           />
         </TopBarComponent>
         <div className="ShoppingListComponent__body">
-          <div className="ShoppingListComponent__section">
+          <section className="ShoppingListComponent__section" role="main">
             <ShoppingListItemsComponent items={this.props.shoppingList.items} categories={this.props.categories}
               orders={this.props.orders} selectedOrder={this.props.selectedOrder}
               updateItem={this.props.updateItem} deleteItem={this.props.deleteItem}
               selectOrder={this.props.selectOrder} up={this.props.up}
             />
-          </div>
-          <div className="ShoppingListComponent__section">
+          </section>
+          <section className="ShoppingListComponent__section">
             <CreateItemComponent
               changes={this.props.changes} 
               unsyncedChanges={this.props.unsyncedChanges}
@@ -141,18 +141,22 @@ export default class ShoppingListComponent extends Component<Props> {
               deleteCompletion={this.props.deleteCompletion}
               applyDiff={this.props.applyDiff} 
               createApplicableDiff={this.props.createApplicableDiff} />
-          </div>
+          </section>
         </div>
         <footer className="ShoppingListComponent__footer">
-          <h2>Tools</h2>
-          <label>Username: <input type="text" placeholder="username" defaultValue={this.props.username} onBlur={this.editUsername}/></label>
-          <button type="button" className="PaddedButton" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
-          <button type="button" className="PaddedButton" onClick={this.mergeItems}>Merge</button>
-          <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Sorting</Link>
-          <h2>Debug</h2>
-          <button type="button" className="PaddedButton" onClick={this.props.manualSync}>Force Sync</button>
-          <button type="button" className="PaddedButton" onClick={this.clearLocalStorage}>Clear Local Storage</button>
-          <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
+          <section>
+            <h2>Tools</h2>
+            <label>Username: <input type="text" placeholder="username" defaultValue={this.props.username} onBlur={this.editUsername}/></label>
+            <button type="button" className="PaddedButton" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
+            <button type="button" className="PaddedButton" onClick={this.mergeItems}>Merge</button>
+            <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Sorting</Link>
+          </section>
+          <section>
+            <h2>Debug</h2>
+            <button type="button" className="PaddedButton" onClick={this.props.manualSync}>Force Sync</button>
+            <button type="button" className="PaddedButton" onClick={this.clearLocalStorage}>Clear Local Storage</button>
+            <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
+          </section>
         </footer>
 
         <Route path={`/:listid/orders`} render={({history, match}) =>
