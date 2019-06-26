@@ -110,6 +110,16 @@ export default class ShoppingListComponent extends Component<Props> {
     }
   }
 
+  shareList = () => {
+    window.navigator.share({
+        title: this.props.shoppingList.title,
+        text: 'A shared shopping list.',
+        url: window.location.href
+    })
+    .then( _ => console.log('Yay, you shared it :)'))
+    .catch( error => console.log('Oh noh! You couldn\'t share it! :\'(\n', error))
+  }
+
   render() {
     return (
       <div className="ShoppingListComponent">
@@ -146,10 +156,17 @@ export default class ShoppingListComponent extends Component<Props> {
         <footer className="ShoppingListComponent__footer">
           <section>
             <h2>Tools</h2>
-            <label>Username: <input type="text" placeholder="username" defaultValue={this.props.username} onBlur={this.editUsername}/></label>
-            <button type="button" className="PaddedButton" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
-            <button type="button" className="PaddedButton" onClick={this.mergeItems}>Merge</button>
-            <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Sorting</Link>
+            <p>
+              <button type="button" className="PaddedButton" onClick={this.shareList}>Share</button>
+            </p>
+            <p>
+              <label>Username: <input type="text" placeholder="username" defaultValue={this.props.username} onBlur={this.editUsername}/></label>
+            </p>
+            <p>
+              <button type="button" className="PaddedButton" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
+              <button type="button" className="PaddedButton" onClick={this.mergeItems}>Merge</button>
+              <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Sorting</Link>
+            </p>
           </section>
           <section>
             <h2>Debug</h2>

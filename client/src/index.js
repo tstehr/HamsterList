@@ -5,6 +5,7 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import smoothscroll from 'smoothscroll-polyfill';
+import shareapipolyfill from 'share-api-polyfill';
 
 // kick off the polyfill!
 smoothscroll.polyfill();

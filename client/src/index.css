@@ -96,3 +96,8 @@ button.PaddedButton {
     background: var(--button-bg-color);
   }
 }
+
+
+#shareAPIPolyfill-container button {
+  color: black;
+}

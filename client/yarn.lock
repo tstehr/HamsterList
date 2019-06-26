@@ -8743,6 +8743,11 @@ shallow-clone@^1.0.0:
     kind-of "^5.0.0"
     mixin-object "^2.0.1"
 
+share-api-polyfill@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/share-api-polyfill/-/share-api-polyfill-1.0.7.tgz#6b6ffec4512953cb63d4583985b0e036b2ea41c5"
+  integrity sha512-4Fc1EgJyzS7Xpz/PKbu5UAAsTfjdA+2NArSVJA6r4s69O0geuUe93GNa+2cVK2HKRrUqjpH93ZwsUb4nYmPNpQ==
+
 shebang-command@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/shebang-command/-/shebang-command-1.2.0.tgz#44aac65b695b03398968c39f363fee5deafdf1ea"
