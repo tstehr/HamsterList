@@ -40,8 +40,8 @@ The username is specified as a HTTP header `X-ShoppingList-Username`, where the 
 | `/:listid/categories `                 | GET    | -              | Array of [CategoryDefinition] |
 | `/:listid/changes`                     | GET    | -              | Array of [Change]             |
 | `/:listid/categories `                 | PUT    | Array of [CategoryDefinition] | Array of [CategoryDefinition] |
-| `/:listid/sync`                        | GET    | -              | [SyncedShoppingList]          |
-| `/:listid/sync`                        | POST   | [SyncRequest]  | [SyncedShoppingList]          |
+| `/:listid/sync`                        | GET    | -              | [SyncedShoppingList] or [SyncResponse] |
+| `/:listid/sync`                        | POST   | [SyncRequest]  | [SyncedShoppingList] or [SyncResponse] |
 
 ### GET  /:listid
 
@@ -113,6 +113,8 @@ By default, all changes are returned. To restrict the changes returned, GET para
 
 Used for sync with offline-capable clients to get an initial state from which to sync.
 
+Clients can request the inclusion of additional data when syncing to save additional requests by specifying the GET parameter `includeInResponse` with on of the types defined in [SyncRequest]. Note that you may specify the [parameter multiple times](https://nodejs.org/api/querystring.html#querystring_querystring_parse_str_sep_eq_options).
+
 ### POST   /:listid/sync
 
 Used for sync with offline-capable clients. This is __not__ a REST endpoint!
@@ -136,9 +138,11 @@ Note: A touch indicates a server operation on the [ShoppingList], e.g. a PUT on 
 [CompletionItem]: #completionitem
 [Amount]: #amount
 [CategoryDefinition]: #categorydefinition
+[Order]: #order
 [Change]: #change
 [Diff]: #diff
 [SyncRequest]: #syncrequest
+[SyncResponse]: #syncresponse
 [SyncedShoppingList]: #syncedshoppinglist
 [Error]: #error
 
@@ -269,12 +273,18 @@ Note that new diff types may be introduced in the future. Clients should ignore 
 
 ### SyncRequest
 
-This object is sent by a client to the server when initiating sync.
+This object is sent by a client to the server when initiating sync. 
 
-| Field        | Type           | Description |
-|--------------|----------------|-------------|
-| previousSync | [SyncedShoppingList] | The object returned by the server on the previous sync request done by the client |
-| currentState | [ShoppingList] | The current data as held by the client |
+Clients can request the inclusion of additional data when syncing to save additional requests. The following additional types can be requested: `categories`, `orders`, `completions`, `changes`.
+
+| Field             | Type                          | Description                                                                       |
+|-------------------|-------------------------------|-----------------------------------------------------------------------------------|
+| previousSync      | [SyncedShoppingList]          | The object returned by the server on the previous sync request done by the client |
+| currentState      | [ShoppingList]                | The current data as held by the client                                            |
+| includeInResponse | Array of string               | Additonal data to include in request                                              |
+| categories        | Array of [CategoryDefinition] | *Optional.* The categories as set by the client. Should only be sent if categories were changed by user |
+| orders            | Array of [Order]              | *Optional.* The orders as set by the client. Should only be sent if orders were changed by user |
+| deleteCompletions | Array of string               | *Optional.* Names of completions deleted by client. Names are case insensitive and leading and trailing whitespace is removed |
 
 ### SyncedShoppingList
 
@@ -287,6 +297,20 @@ This object is returned by the server after a finished sync. It is very similar 
 | token    | String          | A token for synchronization                           |
 | changeId | String, UUID-v4 | Id of the latest change included in the shopping list |
 | items    | Array of [Item] | Items of the list                                     |
+
+### SyncResponse
+
+This object is returned by the server adter a finished sync if additional data needs to be included. 
+
+| Field       | Type                          | Description                                           |
+|-------------|-------------------------------|-------------------------------------------------------|
+| list        | [SyncedShoppingList]          | The merged shopping list after sync                   |
+| completions | Array of [CompletionItem]     | Completions of the list                               |
+| categories  | Array of [CategoryDefinition] | Categories of the list                                |
+| orders      | Array of [Order]              | Orders of the list                                    |
+| changes     | Array of [Change]             | List of changes<sup>[SCH](#SCH)</sup>                 |
+
+<a name="SCH">SCH</a>: Oldest change is limited by the `changeId` included in `previousSync` of the [SyncRequest], newest by the `changeId` of the `list` in [SyncResponse]. 
 
 ### Error
 
