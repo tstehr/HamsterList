@@ -113,7 +113,7 @@ export default class ShoppingListComponent extends Component<Props> {
   shareList = () => {
     window.navigator.share({
         title: this.props.shoppingList.title,
-        text: 'A shared shopping list.',
+        text: 'A shared shopping list',
         url: window.location.href
     })
     .then( _ => console.log('Yay, you shared it :)'))
