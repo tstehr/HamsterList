@@ -7,6 +7,7 @@ const buildSW = async () => {
   return workboxBuild.generateSW({
     swDest: 'build/service-worker-custom.js', // this will be created in the build step
     clientsClaim: true,
+    skipWaiting: true,
     importWorkboxFrom: 'local',
     navigateFallback: /*publicUrl + */ '/index.html',
     navigateFallbackBlacklist: [
