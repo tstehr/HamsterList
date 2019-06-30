@@ -113,7 +113,7 @@ By default, all changes are returned. To restrict the changes returned, GET para
 
 Used for sync with offline-capable clients to get an initial state from which to sync.
 
-Clients can request the inclusion of additional data when syncing to save additional requests by specifying the GET parameter `includeInResponse` with on of the types defined in [SyncRequest]. Note that you may specify the [parameter multiple times](https://nodejs.org/api/querystring.html#querystring_querystring_parse_str_sep_eq_options).
+Clients can request the inclusion of additional data when syncing to save additional requests by specifying the GET parameter `includeInResponse` with one of the types defined in [SyncRequest]. Note that you may include the [parameter multiple times](https://nodejs.org/api/querystring.html#querystring_querystring_parse_str_sep_eq_options) to request multiple datasets.
 
 ### POST   /:listid/sync
 
@@ -300,7 +300,7 @@ This object is returned by the server after a finished sync. It is very similar 
 
 ### SyncResponse
 
-This object is returned by the server adter a finished sync if additional data needs to be included. 
+This object is returned by the server after a finished sync if additional data needs to be included. 
 
 | Field       | Type                          | Description                                           |
 |-------------|-------------------------------|-------------------------------------------------------|
