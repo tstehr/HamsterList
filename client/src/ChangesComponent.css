@@ -23,6 +23,7 @@
 }
 .DiffComponent__details {
     padding-top: .2rem;
+    overflow: hidden;
     font-size: .9em;
     line-height: 1.3em;
     list-style: none;
