@@ -170,9 +170,12 @@ export default class ShoppingListComponent extends Component<Props> {
           </section>
           <section>
             <h2>Debug</h2>
-            <button type="button" className="PaddedButton" onClick={this.props.manualSync}>Force Sync</button>
-            <button type="button" className="PaddedButton" onClick={this.clearLocalStorage}>Clear Local Storage</button>
-            <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
+            <p>
+              <button type="button" className="PaddedButton" onClick={this.props.manualSync}>Force Sync</button>
+              <button type="button" className="PaddedButton" onClick={this.clearLocalStorage}>Clear Local Storage</button>
+            </p>
+            <p><a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a></p>
+            <p>Version: {process.env.REACT_APP_GIT_SHA || 'No version information found!'}</p>
           </section>
         </footer>
 
