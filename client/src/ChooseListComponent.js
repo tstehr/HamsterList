@@ -117,7 +117,8 @@ export default class ChooseListComponent extends Component<void, State> {
           }
 
           <section className="ChooseListComponent__footer">
-            Icons made by <a href="https://www.flaticon.com/authors/egor-rumyantsev" title="Egor Rumyantsev">Egor Rumyantsev</a>, <a href="https://www.flaticon.com/authors/hanan" title="Hanan">Hanan</a> and <a href="https://www.flaticon.com/authors/gregor-cresnar" title="Gregor Cresnar">Gregor Cresnar</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+            <p>Icons made by <a href="https://www.flaticon.com/authors/egor-rumyantsev" title="Egor Rumyantsev">Egor Rumyantsev</a>, <a href="https://www.flaticon.com/authors/hanan" title="Hanan">Hanan</a> and <a href="https://www.flaticon.com/authors/gregor-cresnar" title="Gregor Cresnar">Gregor Cresnar</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></p>
+            <p>Version: {process.env.REACT_APP_GIT_SHA || 'No version information found!'}</p>
           </section>
         </div>
       </div>
