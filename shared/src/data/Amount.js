@@ -209,31 +209,3 @@ export function mapReplace(str: string, replacements: {[string]: string}) {
 
   return str.replace(RegExp(regexpStr, 'g'), match => replacements[match])
 }
-
-export function replaceFirstOccurences(
-  str: string, 
-  searchValue: RegExp, 
-  replaceValue: string | (substring: string, ...args: Array<any>) => string, 
-  maxReplacements: number
-): string {
-  const globalSearchValue = searchValue.flags.indexOf('g') === -1 
-    ? RegExp(searchValue, searchValue.flags + 'g') 
-    : searchValue
-  const replaceValueIsFunction = typeof replaceValue === 'function'
-
-  let n = 0
-  return str.replace(globalSearchValue, match => {
-    if (n < maxReplacements) {
-      n++
-      if (replaceValueIsFunction) {
-        // $FlowFixMe
-        return replaceValue(match)
-      } else {
-        // $FlowFixMe
-        return replaceValue
-      }
-    } else {
-      return match
-    }
-  })
-}

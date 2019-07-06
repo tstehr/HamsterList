@@ -9,7 +9,6 @@ import {
     mergeAmounts,
     getSIUnit,
     addAmounts,
-    replaceFirstOccurences,
     mapReplace
 } from './Amount'
 
@@ -374,19 +373,5 @@ describe('mapReplace', () => {
         '(5)': '^5$',
       })
     ).toEqual('& \\ [-] ^5$')
-  })
-})
-
-describe('replaceFirstOccurences', () => {
-  it('Replaces first occurence', () => {
-    expect(replaceFirstOccurences('aaa', /A/i, 'b', 1)).toEqual('baa')
-  })
-
-  it('Replaces multiple occurence', () => {
-    expect(replaceFirstOccurences('aaa', /a/, 'b', 2)).toEqual('bba')
-  })
-
-  it('Replaces multiple occurence with function', () => {
-    expect(replaceFirstOccurences('abcabc', /a|b/, match => match === 'a' ? 'x' : 'y', 3)).toEqual('xycxbc')
   })
 })
