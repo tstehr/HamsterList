@@ -3,6 +3,8 @@ import _ from 'lodash'
 import mathjs from 'mathjs'
 import deepFreeze from 'deep-freeze'
 import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
+import escapeStringRegexp from 'escape-string-regexp'
+import powerSet from 'power-set-x'
 
 export opaque type Unit : string = string
 export opaque type AmountValue : number = number
@@ -56,21 +58,54 @@ export function createAmount(amountSpec: any): Amount {
   return deepFreeze(amount)
 }
 
+const unicodeVulgarFractions = {
+  "½": "1/2",
+  "⅓": "1/3",
+  "⅔": "2/3",
+  "¼": "1/4",
+  "¾": "3/4",
+  "⅕": "1/5",
+  "⅖": "2/5",
+  "⅗": "3/5",
+  "⅘": "4/5",
+  "⅙": "1/6",
+  "⅚": "5/6",
+  "⅐": "1/7",
+  "⅛": "1/8",
+  "⅜": "3/8",
+  "⅝": "5/8",
+  "⅞": "7/8",
+  "⅑": "1/9",
+  "⅒": "1/10",
+}
+
+const amountStringTransformations = [
+  // retry with comma as decimal seperator and semicolon as argument seperator
+  amountString => amountString.replace(/,|;/g, match => match == ',' ? '.': ','),
+
+  // retry with replaced unicode vulgar fractions
+  amountString => mapReplace(amountString, unicodeVulgarFractions)
+]
+const amountStringTransformationCombinations = powerSet(amountStringTransformations)
+
 export function createAmountFromString(amountString: string): Amount {
-  let evalResult: MathjsValue = null
-  try {
-     evalResult = mathjs.eval(amountString)
-  } catch (e) {
-    // retry with comma as decimal seperator and semicolon as argument seperator
-    const modAmountString = amountString.replace(/,|;/g, match => match == ',' ? '.': ',')
+  // We store the error that occured during the first try and throw that in the end as it would 
+  // be confusing to receive the error for a transformed version.
+  let initialError: ?Error = null
+
+  for (const transformationCombination of amountStringTransformationCombinations) {
+    const modAmountString: string = transformationCombination.reduce((memo, transformation) => transformation(memo), amountString)
     try {
-      evalResult = mathjs.eval(modAmountString)
-    } catch (e2) {
-      // Throw original for consistency
-      throw e
+      let evalResult = mathjs.eval(modAmountString)
+      return mathjsValueToAmount(evalResult)
+    } catch (e) {
+      if (!initialError) {
+        initialError = e
+      }
     }
   }
-  return mathjsValueToAmount(evalResult)
+
+  throw initialError
 }
 
 export function createCookingAmount(amount: Amount): Amount {
@@ -167,4 +202,38 @@ function mathjsUnitToCookingMathjsUnit(mathjsUnit: mathjs.type.Unit): mathjs.typ
   // make mathjs choose a suitable prefix automagically
   const prefixed = mathjs.unit(cooking.toString())
   return prefixed
+}
+
+export function mapReplace(str: string, replacements: {[string]: string}) {
+  const regexpStr = Object.keys(replacements).map(r => escapeStringRegexp(r)).join('|')
+
+  return str.replace(RegExp(regexpStr, 'g'), match => replacements[match])
+}
+
+export function replaceFirstOccurences(
+  str: string, 
+  searchValue: RegExp, 
+  replaceValue: string | (substring: string, ...args: Array<any>) => string, 
+  maxReplacements: number
+): string {
+  const globalSearchValue = searchValue.flags.indexOf('g') === -1 
+    ? RegExp(searchValue, searchValue.flags + 'g') 
+    : searchValue
+  const replaceValueIsFunction = typeof replaceValue === 'function'
+
+  let n = 0
+  return str.replace(globalSearchValue, match => {
+    if (n < maxReplacements) {
+      n++
+      if (replaceValueIsFunction) {
+        // $FlowFixMe
+        return replaceValue(match)
+      } else {
+        // $FlowFixMe
+        return replaceValue
+      }
+    } else {
+      return match
+    }
+  })
 }
