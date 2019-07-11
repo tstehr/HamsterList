@@ -24,7 +24,7 @@
     "fs-extra": "^6.0.1",
     "json-stable-stringify": "^1.0.1",
     "json5": "^1.0.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.14",
     "nconf": "^0.10.0",
     "shoppinglist-shared": "link:../shared",
     "ws": "^5.2.2"
