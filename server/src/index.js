@@ -37,10 +37,20 @@ var log = bunyan.createLogger({
 const db = new DB(config.get('databaseFilePath'))
 const app = express()
 
+const connectSrc = ["'self'"]
+const websocketHost = config.get('websocketHost') || config.get('host')
+if (config.get('https')) {
+  connectSrc.push(`https://${websocketHost}`, `wss://${websocketHost}`)
+}
+if (config.get('http')) {
+  connectSrc.push(`http://${websocketHost}`, `ws://${websocketHost}`)
+}
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
+      connectSrc
     }
   }
 }))

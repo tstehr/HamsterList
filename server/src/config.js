@@ -40,13 +40,12 @@ export function getConfig() {
   
   // load config file
   config.file('user', config.get('configFile'))
-  // we require secret now, so it doesn't count when added in the default file
-  config.required(['secret'])
   
   // populate rest of settings with default values
   config.file('default', path.resolve('data/config-default.json'))
   
   // sanity check config
+  config.required(['secret', 'host'])
   if (config.get('https')) {
     config.required(['keyFile', 'certFile', 'httpsPort'])
   }
@@ -56,8 +55,6 @@ export function getConfig() {
   if (!config.get('http') && !config.get('https')) {
     throw new Error('Either http or https must be enabled!')
   }
-  
+
   return config
 }
-
-console.log(getConfig().get('logLevel'))
