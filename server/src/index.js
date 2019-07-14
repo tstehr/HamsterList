@@ -9,6 +9,7 @@ import WebSocket from 'ws'
 import nconf from 'nconf'
 import camelCase from 'camel-case'
 import bunyan, { Logger } from 'bunyan'
+import helmet from 'helmet'
 import {
   type ShoppingList, type Item, type LocalItem, type Change, type UUID,
   createLocalItemFromString, createLocalItem, createItem, createShoppingList, createRandomUUID, createUUID, diffShoppingLists
@@ -79,7 +80,13 @@ log.level(nconf.get('logLevel'))
 const db = new DB(nconf.get('databaseFilePath'))
 const app = express()
 
-app.disable('x-powered-by')
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+    }
+  }
+}))
 
 db.load()
   .then(() => {
