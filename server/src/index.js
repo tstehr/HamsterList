@@ -6,14 +6,13 @@ import https from 'https'
 import express from 'express'
 import bodyParser from 'body-parser'
 import WebSocket from 'ws'
-import nconf from 'nconf'
-import camelCase from 'camel-case'
 import bunyan, { Logger } from 'bunyan'
 import helmet from 'helmet'
 import {
   type ShoppingList, type Item, type LocalItem, type Change, type UUID,
   createLocalItemFromString, createLocalItem, createItem, createShoppingList, createRandomUUID, createUUID, diffShoppingLists
 } from 'shoppinglist-shared'
+import { getConfig } from './config'
 import { DB, updateInArray } from './DB'
 import ShoppingListController, { type ShoppingListRequest } from './ShoppingListController'
 import ItemController from './ItemController'
@@ -27,57 +26,15 @@ import TokenCreator from './TokenCreator'
 
 export type UserRequest = { id: UUID, username: ?string, log: Logger } & express$Request
 
+const config = getConfig()
+
 var log = bunyan.createLogger({
     name: 'shoppinglist',
-    serializers: bunyan.stdSerializers
+    serializers: bunyan.stdSerializers,
+    level: config.get('logLevel'),
 });
 
-
-nconf.env({
-    lowerCase: true,
-    transform: (obj) => {
-      const camelCased = camelCase(obj.key)
-      if (camelCased.length > 0) {
-        obj.key = camelCased
-      }
-      return obj
-    },
-    parseValues: true
-  })
-
-nconf.argv({parseValues: true})
-
-nconf.defaults({
-  configFile: path.resolve('config.json')
-})
-
-if(!fs.existsSync(nconf.get('configFile'))) {
-  log.info("First run, creating config file with random secret")
-  fs.outputJSONSync(nconf.get('configFile'), {
-    secret: TokenCreator.createRandomSecret()
-  }, { spaces: 2 })
-}
-
-nconf.file('user', nconf.get('configFile'))
-nconf.required(['secret'])
-
-nconf.file('default', path.resolve('data/config-default.json'))
-
-if (nconf.get('https')) {
-  nconf.required(['keyFile', 'certFile', 'httpsPort'])
-}
-if (nconf.get('http')) {
-  nconf.required(['port'])
-}
-if (!nconf.get('http') && !nconf.get('https')) {
-  log.fatal('Either http or https must be enabled!')
-  process.exit(1)
-}
-
-log.level(nconf.get('logLevel'))
-
-
-const db = new DB(nconf.get('databaseFilePath'))
+const db = new DB(config.get('databaseFilePath'))
 const app = express()
 
 app.use(helmet({
@@ -93,11 +50,11 @@ db.load()
     const router = express.Router()
     router.use(bodyParser.json({strict: false}))
 
-    const tokenCreator = new TokenCreator(nconf.get('secret'))
+    const tokenCreator = new TokenCreator(config.get('secret'))
 
     const socketController = new SocketController(tokenCreator, log)
 
-    const shoppingListController = new ShoppingListController(db, nconf.get('defaultCategories'), tokenCreator,
+    const shoppingListController = new ShoppingListController(db, config.get('defaultCategories'), tokenCreator,
       socketController.notifiyChanged)
     const itemController = new ItemController()
     const syncController = new SyncController(tokenCreator)
@@ -167,18 +124,18 @@ db.load()
 
     app.use('/api', router)
 
-    if (nconf.get('nodeEnv') === 'production') {
+    if (config.get('nodeEnv') === 'production') {
       app.use(express.static('static'))
       app.use((req: express$Request, res: express$Response) => res.sendFile(path.resolve('static/index.html')))
     }
 
 
-    if (nconf.get('https')) {
+    if (config.get('https')) {
       let options
       try {
         options = {
-          key: fs.readFileSync(nconf.get('keyFile')),
-          cert: fs.readFileSync(nconf.get('certFile'))
+          key: fs.readFileSync(config.get('keyFile')),
+          cert: fs.readFileSync(config.get('certFile'))
         }
       } catch (e) {
         log.fatal(`File "${e.path}" couldn't be found`)
@@ -190,16 +147,16 @@ db.load()
 
       socketController.initializeFor(server)
 
-      var port = nconf.get('httpsPort')
+      var port = config.get('httpsPort')
       server.listen(port)
       log.info(`HTTPS server listening on port ${port} `)
     }
 
-    if (nconf.get('http')) {
+    if (config.get('http')) {
       const server = http.createServer(app)
       socketController.initializeFor(server)
 
-      var port = nconf.get('port')
+      var port = config.get('port')
       server.listen(port)
       log.info(`HTTP server listening on port ${port} `)
     }

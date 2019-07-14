@@ -1,0 +1,63 @@
+// @flow
+import path from 'path'
+import fs from 'fs-extra'
+import nconf from 'nconf'
+import camelCase from 'camel-case'
+import TokenCreator from './TokenCreator'
+
+export function getConfig() {
+  const config = new nconf.Provider()
+  // sources are defined in order of priority
+  
+  // command line arg
+  config.argv({parseValues: true})
+
+  // env variable
+  config.env({
+    lowerCase: true,
+    transform: (obj) => {
+      const camelCased = camelCase(obj.key)
+      if (camelCased.length > 0) {
+        obj.key = camelCased
+      }
+      return obj
+    },
+    parseValues: true
+  })
+  
+  // set a default value for the config file path (if not given on command line or env), so we can load it
+  config.defaults({
+    configFile: path.resolve('config.json')
+  })
+  
+  // create config file if it doesn't exist
+  if(!fs.existsSync(config.get('configFile'))) {
+    console.info("First run, creating config file with random secret")
+    fs.outputJSONSync(config.get('configFile'), {
+      secret: TokenCreator.createRandomSecret()
+    }, { spaces: 2 })
+  }
+  
+  // load config file
+  config.file('user', config.get('configFile'))
+  // we require secret now, so it doesn't count when added in the default file
+  config.required(['secret'])
+  
+  // populate rest of settings with default values
+  config.file('default', path.resolve('data/config-default.json'))
+  
+  // sanity check config
+  if (config.get('https')) {
+    config.required(['keyFile', 'certFile', 'httpsPort'])
+  }
+  if (config.get('http')) {
+    config.required(['port'])
+  }
+  if (!config.get('http') && !config.get('https')) {
+    throw new Error('Either http or https must be enabled!')
+  }
+  
+  return config
+}
+
+console.log(getConfig().get('logLevel'))
