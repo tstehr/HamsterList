@@ -4,7 +4,6 @@ import mathjs from 'mathjs'
 import deepFreeze from 'deep-freeze'
 import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
 import escapeStringRegexp from 'escape-string-regexp'
-import powerSet from 'power-set-x'
 
 export opaque type Unit : string = string
 export opaque type AmountValue : number = number
@@ -208,4 +207,14 @@ export function mapReplace(str: string, replacements: {[string]: string}) {
   const regexpStr = Object.keys(replacements).map(r => escapeStringRegexp(r)).join('|')
 
   return str.replace(RegExp(regexpStr, 'g'), match => replacements[match])
+}
+
+export function powerSet<T>(list: Array<T>): Array<Array<T>> {
+  const resultLength = 2 ** list.length
+  const result = []
+  for (let i = 0; i < resultLength; i++) {
+    // bit pattern of index determines which elements are included
+    result.push(list.filter((el, elIndex) => i & (1 << elIndex)))
+  }
+  return result
 }

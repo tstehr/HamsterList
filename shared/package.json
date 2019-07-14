@@ -24,7 +24,6 @@
     "is-uuid": "^1.0.2",
     "lodash": "^4.17.14",
     "mathjs": "^5.0.2",
-    "power-set-x": "^1.5.0",
     "uuid": "^3.1.0"
   },
   "devDependencies": {

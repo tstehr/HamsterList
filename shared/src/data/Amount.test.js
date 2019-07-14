@@ -9,7 +9,8 @@ import {
     mergeAmounts,
     getSIUnit,
     addAmounts,
-    mapReplace
+    mapReplace,
+    powerSet
 } from './Amount'
 
 describe(`createAmountValue`, () => {
@@ -373,5 +374,20 @@ describe('mapReplace', () => {
         '(5)': '^5$',
       })
     ).toEqual('& \\ [-] ^5$')
+  })
+})
+
+describe('powerSet', () => {
+  it('Computes a power set', () => {
+    const result = powerSet([1, 2, 3])
+    expect(result).toHaveLength(8)
+    expect(result).toContainEqual([])
+    expect(result).toContainEqual([1])
+    expect(result).toContainEqual([2])
+    expect(result).toContainEqual([3])
+    expect(result).toContainEqual([1, 3])
+    expect(result).toContainEqual([1, 2])
+    expect(result).toContainEqual([1, 2, 3])
+    
   })
 })
