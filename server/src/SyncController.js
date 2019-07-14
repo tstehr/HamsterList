@@ -71,7 +71,6 @@ export default class SyncController {
 
     if (syncRequest.deleteCompletions != null) {
       const normalizedNames = syncRequest.deleteCompletions.map(name => normalizeCompletionName(name))
-      req.log.info({normalizedNames})
       recentlyUsed = recentlyUsed.filter(entry => normalizedNames.indexOf(normalizeCompletionName(entry.item.name)) === -1)
     }
 
