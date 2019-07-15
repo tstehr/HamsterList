@@ -7,7 +7,7 @@
   z-index: 999;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
-  background-color: white;
+  background-color: var(--background-color);
   padding-bottom: 3rem;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) 3rem env(safe-area-inset-left);
 }
@@ -29,11 +29,11 @@
 @media (min-width: 40rem) and (min-height: 40rem) {
   .ChooseCategoryComponent {
     background: hsla(var(--text-color-hsl-value), .5);
+    padding: 0;
   }
   .ChooseCategoryComponent__window {
-    columns: 13rem;
+    columns: 10em;
     column-gap: 1rem;
-    max-height: 100%;
     padding: 1.5rem 2rem;
     background: var(--background-color);
     margin: 3rem;
@@ -50,5 +50,10 @@
     border: 0;
     background: var(--small-feature-color);
     color: var(--text-color);
+  }
+}
+@media (min-width: 60rem) and (min-height: 40rem) {
+  .ChooseCategoryComponent__window {
+    columns: 13rem;
   }
 }
