@@ -1,39 +1,45 @@
 // @flow
 import TokenCreator from './TokenCreator'
+import { createUUID } from 'shoppinglist-shared'
 import jest from 'jest'
 
 const tokenCreator = new TokenCreator("123")
+const changeId = createUUID("a58df112-085f-4742-873d-8f8e31af7826")
 
 
-it('', () => {
+it('creates token', () => {
   const list = tokenCreator.setToken({
     id: "ads",
     title: "hi",
     token: "",
+    changeId,
     items: []
   })
   expect(list).toEqual({
     id: "ads",
     title: "hi",
-    token: "d5b05fda6e91b98b2916c01310fff4afcb05f7f4147fb969edbab9db1027933f",
+    token: "22a67e2d2d0a223882c2c04b0fd55e61afa903f455800d3bf1ef51e87d9d6b25",
+    changeId,
     items: []
   })
 })
 
-it('', () => {
+it('returns true for correct token', () => {
   expect(tokenCreator.validateToken({
     id: "ads",
     title: "hi",
-    token: "d5b05fda6e91b98b2916c01310fff4afcb05f7f4147fb969edbab9db1027933f",
+    token: "22a67e2d2d0a223882c2c04b0fd55e61afa903f455800d3bf1ef51e87d9d6b25",
+    changeId,
     items: []
   })).toBe(true)
 })
 
-it('', () => {
+it('returns false for incorrect token', () => {
   expect(tokenCreator.validateToken({
     id: "ads",
     title: "hihi",
-    token: "d5b05fda6e91b98b2916c01310fff4afcb05f7f4147fb969edbab9db1027933f",
+    token: "22a67e2d2d0a223882c2c04b0fd55e61afa903f455800d3bf1ef51e87d9d6b25",
+    changeId,
     items: []
   })).toBe(false)
 })

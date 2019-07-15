@@ -21,7 +21,7 @@ export default function TopBarComponent(props: Props) {
 
   return <header className={className}>
     <div className="TopBarComponent__content">
-      {props.up && <button type="button" className="TopBarComponent__back" onClick={() => props.up('home')} aria-label="Back to all lists">
+      {props.up && <button type="button" className="TopBarComponent__back" onClick={() => props.up && props.up('home')} aria-label="Back to all lists">
         {`◀${variantSelector15}`}
       </button>}
       {props.children}
@@ -37,7 +37,7 @@ type EditTitleProps = {
 
 export function EditTitleComponent(props: EditTitleProps) {
   const [hasFocus, setHasFocus] = useState()
-  const [inputValue, setInputValue] = useState()
+  const [inputValue, setInputValue] = useState(props.title)
   const inputEl = useRef(null)
 
   useEffect(() => {
@@ -88,7 +88,7 @@ const stateMapping: {[ConnectionState]: string} = {
 
 export function SyncStatusComponent(props: SyncStatusProps) {
   const [fakeSyncing, setFakeSyncing] = useState(false)
-  const [fakeSyncingTimeoutId, setFakeSyncingTimeoutId] = useState(0)
+  const [fakeSyncingTimeoutId, setFakeSyncingTimeoutId] = useState<?TimeoutID>(undefined)
 
   useEffect(() => {
     if (props.syncing) {

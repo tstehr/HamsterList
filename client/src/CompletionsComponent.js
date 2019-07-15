@@ -46,7 +46,9 @@ export default class CompletionsComponent extends Component<Props> {
     const itemsInCreation = this.props.itemsInCreation.map(ii => ii.item)
     const itemToKey = new Map()
     const itemsByRepr = _.groupBy(itemsInCreation, itemToString)
-    for (const [repr, items] of Object.entries(itemsByRepr)) {
+    // $FlowFixMe
+    const entries: Array<[string, LocalItem[]]> = Object.entries(itemsByRepr)
+    for (const [repr, items] of entries) {
       for (const [iStr, item] of Object.entries(items)) {
         const i: number = +iStr
         if (i === 0) {

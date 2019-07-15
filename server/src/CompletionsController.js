@@ -1,8 +1,8 @@
 // @flow
-import _ from 'lodash'
+import _, { type Iteratee } from 'lodash'
 import express from 'express'
-import { frecency, normalizeCompletionName } from 'shoppinglist-shared'
-import { type RecentlyUsedArray } from './ServerShoppingList'
+import { type CompletionItem, frecency, normalizeCompletionName } from 'shoppinglist-shared'
+import { type RecentlyUsedArray, type RecentlyUsed } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 
 export default class CompletionsController {
@@ -30,8 +30,8 @@ export default class CompletionsController {
 }
 
 export function getSortedCompletions(recentlyUsed: RecentlyUsedArray) {
-  const sortedRecentlyUsed = _.orderBy(recentlyUsed,
-    [entry => frecency(entry)], ['desc']
+  const sortedRecentlyUsed = _.orderBy<RecentlyUsed>(recentlyUsed,
+    [(entry: RecentlyUsed) => frecency(entry)], ['desc']
   )
-  return sortedRecentlyUsed.map(entry => entry.item)
+  return sortedRecentlyUsed.map<CompletionItem>(entry => entry.item)
 }

@@ -6,7 +6,6 @@ import { createServerShoppingList } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 import { type ShoppingListChangeCallback } from './SocketController'
 
-
 export default class CategoriesController {
   handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     res.json(req.list.categories)
@@ -18,9 +17,10 @@ export default class CategoriesController {
         res.status(400).json({error: 'Must be array of categories!'})
         return
     }
-    let categories
+    let categorySpecs: $ReadOnlyArray<mixed> = req.body
+    let categories: $ReadOnlyArray<CategoryDefinition>
     try {
-      categories = errorMap(req.body, createCategoryDefinition)
+      categories = errorMap<mixed, CategoryDefinition>(categorySpecs, createCategoryDefinition)
     } catch (e) {
       res.status(400).json({error: e.message})
       return

@@ -24,7 +24,7 @@ export function checkAttributeType(object: Object, key: string, type: AttributeT
   }
 }
 
-export function errorMap<I, O>(array: I[], transformer: (I) => O): O[] {
+export function errorMap<I, O>(array: $ReadOnlyArray<I>, transformer: (I) => O): $ReadOnlyArray<O> {
   return array.map((el, i) => {
     try {
       return transformer(el)

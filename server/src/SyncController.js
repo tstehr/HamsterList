@@ -32,11 +32,10 @@ export default class SyncController {
     let syncRequest: SyncRequest
     try {
       // Convert stringRepresentation items to full items
-      // $FlowFixMe
       if (req.body && req.body.currentState && Array.isArray(req.body.currentState.items)) {
         // $FlowFixMe
         req.body.currentState.items = req.body.currentState.items.map(itemSpec => {
-          if (itemSpec.stringRepresentation == null) {
+          if (itemSpec != null && typeof itemSpec === "object" && itemSpec.stringRepresentation == null) {
             return itemSpec
           }
           let item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
