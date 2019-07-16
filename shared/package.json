@@ -23,7 +23,7 @@
     "flow-bin": "^0.102.0",
     "flow-copy-source": "^2.0.1",
     "flow-typed": "^2.5.2",
-    "jest": "^23.4.0"
+    "jest": "^24.8.0"
   },
   "dependencies": {
     "color-string": "^1.5.2",
