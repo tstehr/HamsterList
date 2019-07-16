@@ -1,18 +1,19 @@
 {
   "name": "shoppinglist-server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "license": "MIT",
   "scripts": {
-    "production": "NODE_ENV=production node build/index.js | npx bunyan",
-    "start": "npx nodemon --watch src --watch ../shared/build --exec npx babel-node src/index.js | npx bunyan",
-    "build": "npm run build:clean && npm run build:babel",
+    "production": "NODE_ENV=production node build/index.js | bunyan",
+    "start": "nodemon --watch src --watch ../shared/build --exec babel-node src/index.js | bunyan",
+    "build": "yarn run build:clean && yarn run build:babel",
     "build:clean": "rm -rf ./build",
-    "build:babel": "npx babel src --out-dir build --source-maps",
-    "test": "npx jest --roots src",
-    "flow": "npx flow"
+    "build:babel": "babel src --out-dir build --source-maps",
+    "test": "jest src",
+    "flow": "flow"
   },
   "dependencies": {
+    "@babel/runtime": "^7.5.4",
     "body-parser": "^1.18.3",
     "bunyan": "^1.8.12",
     "camel-case": "^3.0.0",
@@ -34,6 +35,7 @@
     "@babel/core": "^7.5.4",
     "@babel/node": "^7.5.0",
     "@babel/plugin-proposal-class-properties": "^7.5.0",
+    "@babel/plugin-transform-runtime": "^7.5.0",
     "@babel/preset-env": "^7.5.4",
     "@babel/preset-flow": "^7.0.0",
     "flow-bin": "^0.102.0",
