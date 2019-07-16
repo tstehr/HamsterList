@@ -1,10 +1,9 @@
 // @flow
 import _ from 'lodash'
-import { type Iteratee } from 'lodash'
 import deepFreeze from 'deep-freeze'
 import { type Item, createItem, mergeItems, mergeItemsTwoWay } from './Item'
 import { type CategoryDefinition } from './CategoryDefinition'
-import { type CategoryOrder, sortItems } from './Order'
+import { sortItems } from './Order'
 import { type UUID } from '../util/uuid'
 import { checkKeys, checkAttributeType, errorMap } from '../util/validation'
 
@@ -29,7 +28,10 @@ export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnly
 
   let items = errorMap(shoppingListSpec.items, createItem)
 
-  let duplicatedIds = _.chain(items).groupBy('id').entries().filter(([id, items]) => items.length > 1).map(([id, items]) => id).value()
+  let duplicatedIds = _.chain(items).groupBy('id').entries()
+    .filter(([, items]) => items.length > 1)
+    .map(([id, ]) => id)
+    .value()
   if (duplicatedIds.length > 0) {
     throw new TypeError(`ShoppingList "${shoppingListSpec.title}" has duplicated ids: ${duplicatedIds.join(', ')}`)
   }

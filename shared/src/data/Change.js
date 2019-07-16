@@ -6,7 +6,7 @@ import differenceInDays from 'date-fns/difference_in_days'
 import { type UUID, createUUID } from '../util/uuid'
 import { type Item, createItem } from './Item'
 import { type BaseShoppingList, type ShoppingList } from './ShoppingList'
-import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/validation'
+import { checkKeys, checkAttributeType, errorMap } from '../util/validation'
 
 
 export type Change = {|
@@ -209,7 +209,7 @@ export function applyDiff(shoppingList: ShoppingList, diff: Diff): ShoppingList 
 
 export function isDiffApplicable(shoppingList: ShoppingList, diff: Diff): boolean {
   try {
-    const newList = applyDiff(shoppingList, diff)
+    applyDiff(shoppingList, diff)
     return true
   } catch (e) {
     return false

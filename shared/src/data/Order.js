@@ -1,7 +1,6 @@
 // @flow
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { type Iteratee } from 'lodash'
 import { type Item } from './Item'
 import { type CategoryDefinition } from './CategoryDefinition'
 import { type UUID, createUUID } from '../util/uuid'

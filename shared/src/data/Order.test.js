@@ -1,12 +1,11 @@
 // @flow
-
+/* eslint-env jest */
 import { createOrder, sortItems } from './Order'
 import { type Item, createItem } from './Item';
-import { createUUID } from '../util/uuid';
 
 describe('createOrder', () => {
   it('Creates an order from a valid spec', () => {
-    const order = createOrder({
+    createOrder({
       id: '579562a4-8be6-464c-9011-e87042b6241b',
       name: 'real',
       categoryOrder: [

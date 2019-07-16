@@ -7,7 +7,7 @@ export type DBContents = {|
   +lists: $ReadOnlyArray<ServerShoppingList>
 |}
 
-export class DB {
+export class DB {
   path: string
   contents: ?DBContents
 

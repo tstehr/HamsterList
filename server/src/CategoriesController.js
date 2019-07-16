@@ -1,10 +1,6 @@
 // @flow
-import _ from 'lodash'
-import express from 'express'
 import { type CategoryDefinition, createCategoryDefinition, errorMap } from 'shoppinglist-shared'
-import { createServerShoppingList } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
-import { type ShoppingListChangeCallback } from './SocketController'
 
 export default class CategoriesController {
   handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {

@@ -1,10 +1,7 @@
 // @flow
-import express from 'express'
-import _ from 'lodash'
-import { Logger } from 'bunyan'
 import {
-  type ShoppingList, type CategoryDefinition, type Change, type UUID,
-  createShoppingList, createRandomUUID, diffShoppingLists, getOnlyNewChanges,
+  type CategoryDefinition, type Change,
+  createShoppingList, diffShoppingLists, getOnlyNewChanges,
 } from 'shoppinglist-shared'
 import { type DB, updateInArray } from './DB'
 import { type ServerShoppingList, createServerShoppingList, getBaseShoppingList } from './ServerShoppingList'

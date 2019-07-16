@@ -1,17 +1,17 @@
 // @flow
+/* eslint-env jest */
 import {
-  type Amount, type AmountValue, type Unit,
   createAmount, createAmountFromString, createCookingAmount, createAmountValue, createUnit, mergeAmounts, getSIUnit, addAmounts
 } from './Amount'
 
 describe(`createAmountValue`, () => {
-  it(`Creates AmountValue from posisive number`, () => {
-    const val : AmountValue = createAmountValue(5)
+  it(`Creates AmountValue from positive number`, () => {
+    createAmountValue(5)
   })
 
   it(`Doesn't create AmountValue from negative number`, () => {
     expect(() => {
-      const val : AmountValue = createAmountValue(-5)
+      createAmountValue(-5)
     }).toThrow('AmountValue can only be positive')
   })
 })
@@ -19,12 +19,12 @@ describe(`createAmountValue`, () => {
 
 describe(`createUnit`, () => {
   it(`Creates Unit from string "kg"`, () => {
-    const unit : Unit = createUnit('kg')
+    createUnit('kg')
   })
 
   it(`Doesn't create Unit from random string`, () => {
     expect(() => {
-      const unit : Unit = createUnit('asdasd')
+      createUnit('asdasd')
     }).toThrow('Unit "asdasd" not found')
   })
 })
@@ -32,14 +32,14 @@ describe(`createUnit`, () => {
 
 describe("createAmount", () => {
   it("Creates Amount from object", () => {
-    const amount : Amount = createAmount({
+    createAmount({
       value: 5,
       unit: null,
     })
   })
 
   it("Creates Amount from object with unit", () => {
-    const amount : Amount = createAmount({
+    createAmount({
       value: 5,
       unit: 'kg',
     })
@@ -47,13 +47,13 @@ describe("createAmount", () => {
 
   it("Doesn't create Amount from a non-object", () => {
     expect(() => {
-      const amount : Amount = createAmount(5)
+      createAmount(5)
     }).toThrow('Given value must be an object')
   })
 
   it("Doesn't create Amount with unexpected keys", () => {
     expect(() => {
-      const amount : Amount = createAmount({
+      createAmount({
         value: 5,
         unit: 'kg',
         x: 'y',
@@ -64,7 +64,7 @@ describe("createAmount", () => {
 
   it("Doesn't create Amount with no value", () => {
     expect(() => {
-      const amount : Amount = createAmount({
+      createAmount({
         unit: 'kg',
       })
     }).toThrow('Given object must have an attribute "value"')
@@ -72,7 +72,7 @@ describe("createAmount", () => {
 
   it("Doesn't create Amount with wrong value type", () => {
     expect(() => {
-      const amount : Amount = createAmount({
+      createAmount({
         value: false,
         unit: 'kg',
       })
@@ -81,7 +81,7 @@ describe("createAmount", () => {
 
   it("Doesn't create Amount with wrong unit type", () => {
     expect(() => {
-      const amount : Amount = createAmount({
+      createAmount({
         value: 1,
         unit: 42,
       })
@@ -92,10 +92,18 @@ describe("createAmount", () => {
 describe('createAmountFromString', () => {
   it("Creates Amount", () => {
     const amount = createAmountFromString('5+5')
+    expect(amount).toEqual({
+      value: 10,
+      unit: undefined
+    })
   })
 
   it("Creates Amount with unit", () => {
     const amount = createAmountFromString('(17 - 3) m/s^2')
+    expect(amount).toEqual({
+      value: 14,
+      unit: "m / s^2"
+    })
   })
 
   it("Creates Amount with function call using comma as argument sepeator" , () => {
@@ -256,19 +264,16 @@ describe('mergeAmounts', () => {
 describe('getSIUnit', () => {
   it('Gets a SI uni from imperial', () => {
     const amount = createAmountFromString('5 floz')
-    const derived = createCookingAmount(amount)
     expect(getSIUnit(amount)).toEqual('m^3')
   })
 
   it('Gets a SI unit from liters', () => {
     const amount = createAmountFromString('20 ml')
-    const derived = createCookingAmount(amount)
     expect(getSIUnit(amount)).toEqual('m^3')
   })
 
   it('Returns null for amounts without unit', () => {
     const amount = createAmountFromString('20')
-    const derived = createCookingAmount(amount)
     expect(getSIUnit(amount)).toEqual(null)
   })
 })

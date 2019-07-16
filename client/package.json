@@ -31,7 +31,8 @@
     "build-sw": "node ./src/sw-build.js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "flow": "flow"
+    "flow": "flow",
+    "lint": "eslint src"
   },
   "browserslist": {
     "production": [

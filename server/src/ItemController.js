@@ -1,16 +1,14 @@
 // @flow
 import _ from 'lodash'
-import express from 'express'
 import {
-  type Item, type LocalItem, type CompletionItem, type UUID,
-  createItem, createLocalItem, createLocalItemFromString, createCompletionItem, createUUID, createRandomUUID,
+  type Item, type LocalItem, type UUID,
+  createItem, createLocalItem, createCompletionItem, createUUID, createRandomUUID,
   addMatchingCategory, createLocalItemFromItemStringRepresentation, createItemFromItemStringRepresentation,
   normalizeCompletionName
 } from 'shoppinglist-shared'
 import { updateInArray } from './DB'
-import { type ServerShoppingList, type RecentlyUsedArray } from './ServerShoppingList'
+import { type RecentlyUsedArray } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
-import { type ShoppingListChangeCallback } from './SocketController'
 import { getSortedCompletions } from './CompletionsController'
 
 
@@ -102,20 +100,22 @@ export default class ItemController {
     }
 
     res.status(status).json(item)
+    next()
   }
 
-
-  handleDelete = (req: ItemIdRequest, res: express$Response) => {
+  handleDelete = (req: ItemIdRequest, res: express$Response, next: express$NextFunction) => {
     const item = req.list.items.find((item) => item.id === req.itemid)
-    if (item != null) {
-      req.updatedList = {
-        ...req.list,
-        items: req.list.items.filter((item) => item.id !== req.itemid),
-      }
-      res.status(204).send()
-    } else {
+    if (item == null) {
       res.status(404).json({error: `Item with id "${req.itemid}" not found!`})
+      return
     }
+
+    req.updatedList = {
+      ...req.list,
+      items: req.list.items.filter((item) => item.id !== req.itemid),
+    }
+    res.status(204).send()
+    next()
   }
 }
 

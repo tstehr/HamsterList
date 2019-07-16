@@ -40,7 +40,7 @@ export function errorMap<I, O>(array: $ReadOnlyArray<I>, transformer: (I) => O):
 }
 
 export function nullSafe<T, R>(func: (T) => R): (?T) => ?R {
-  return function(p : ?T) {
+  return function(p: ?T) {
     if (p === null) {
       return null
     }

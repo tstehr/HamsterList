@@ -1,8 +1,9 @@
 // @flow
+/* eslint-env jest */
 
-import { type Item, type LocalItem, createItem, createLocalItem, createLocalItemFromString, mergeItems } from './Item'
-import { type CategoryDefinition, createCategoryDefinition } from './CategoryDefinition'
-import { type UUID, createUUID } from '../util/uuid'
+import { createItem, createLocalItemFromString, mergeItems } from './Item'
+import { createCategoryDefinition } from './CategoryDefinition'
+import { createUUID } from '../util/uuid'
 
 const id = createUUID("a58df112-085f-4742-873d-8f8e31af7826")
 

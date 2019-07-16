@@ -60,7 +60,7 @@ export function createLocalItem(localItemSpec: any): LocalItem {
 
 export function createLocalItemFromString(stringRepresentation: string, categories: $ReadOnlyArray<CategoryDefinition>): LocalItem {
   let category: ?UUID = undefined
-  const categoryResult = stringRepresentation.match(/^\s*\(([^\)]+)\)(.*)$/u)
+  const categoryResult = stringRepresentation.match(/^\s*\(([^)]+)\)(.*)$/u)
   if (categoryResult != null) {
     const shortName = categoryResult[1]
     if (shortName === "?") {
@@ -87,7 +87,7 @@ export function createLocalItemFromString(stringRepresentation: string, categori
         category: category,
       })
     } catch (e) {
-      if (!e instanceof SyntaxError) {
+      if (!(e instanceof SyntaxError)) {
         throw e
       }
     }

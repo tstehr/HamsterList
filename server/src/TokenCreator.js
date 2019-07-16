@@ -1,10 +1,7 @@
 // @flow
-import fs from 'fs'
-import path from 'path'
 import crypto from 'crypto'
-import _ from 'lodash'
 import stringify from 'json-stable-stringify'
-import { type BaseShoppingList, type SyncedShoppingList, type CategoryDefinition, createShoppingList, createSyncedShoppingList } from 'shoppinglist-shared'
+import { type SyncedShoppingList } from 'shoppinglist-shared'
 
 export default class TokenCreator {
   secret: string

@@ -1,4 +1,6 @@
-import { type UUID, createUUID, createRandomUUID } from './uuid'
+// @flow
+/* eslint-env jest */
+import { createUUID } from './uuid'
 
 describe('createUUID', () => {
   it('Creates a valid uuid', () => {

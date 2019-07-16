@@ -7,7 +7,6 @@ import { Logger } from 'bunyan'
 import { createRandomUUID } from 'shoppinglist-shared'
 import TokenCreator from './TokenCreator'
 import { type ServerShoppingList, getSyncedShoppingList } from './ServerShoppingList'
-import { type ShoppingListRequest } from './ShoppingListController'
 
 export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 
@@ -21,7 +20,7 @@ export default class SocketController {
     this.log = log
     this.registeredWebSockets = {}
 
-    const interval = setInterval(() => {
+    setInterval(() => {
       const sockets = _.chain(this.registeredWebSockets).values().flatten().value()
 
       this.log.trace(sockets.map((ws) => ws.log.fields), 'All connected' )
@@ -45,7 +44,7 @@ export default class SocketController {
     })
 
     wss.on('connection', (ws, req: Request) => {
-      const match = req.url.match(/\/api\/([^\/]+)\/socket/)
+      const match = req.url.match(/\/api\/([^/]+)\/socket/)
       if (match == null) {
         ws.close()
         return

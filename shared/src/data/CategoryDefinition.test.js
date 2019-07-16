@@ -1,12 +1,13 @@
 // @flow
-import { type CategoryDefinition, createCategoryDefinition } from './CategoryDefinition'
-import { type UUID, createUUID } from '../util/uuid'
+/* eslint-env jest */
+import { createCategoryDefinition } from './CategoryDefinition'
+import { createUUID } from '../util/uuid'
 
 const id = createUUID("a58df112-085f-4742-873d-8f8e31af7826")
 
 describe(`createCategoryDefinition`, () => {
   it(`Creates Category`, () => {
-    const val : CategoryDefinition = createCategoryDefinition({
+    createCategoryDefinition({
       id: id,
       name: 'Milchprodukte',
       shortName: 'M',
@@ -17,7 +18,7 @@ describe(`createCategoryDefinition`, () => {
 
   it(`Doesn't create category for unknown color`, () => {
     expect(() => {
-      const val : CategoryDefinition = createCategoryDefinition({
+      createCategoryDefinition({
         id: id,
         name: 'Milchprodukte',
         shortName: 'M',

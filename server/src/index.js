@@ -5,16 +5,14 @@ import http from 'http'
 import https from 'https'
 import express from 'express'
 import bodyParser from 'body-parser'
-import WebSocket from 'ws'
 import bunyan, { Logger } from 'bunyan'
 import helmet from 'helmet'
 import {
-  type ShoppingList, type Item, type LocalItem, type Change, type UUID,
-  createLocalItemFromString, createLocalItem, createItem, createShoppingList, createRandomUUID, createUUID, diffShoppingLists
+  type UUID, createRandomUUID
 } from 'shoppinglist-shared'
 import { getConfig } from './config'
-import { DB, updateInArray } from './DB'
-import ShoppingListController, { type ShoppingListRequest } from './ShoppingListController'
+import { DB } from './DB'
+import ShoppingListController from './ShoppingListController'
 import ItemController from './ItemController'
 import SocketController from './SocketController'
 import SyncController from './SyncController'
@@ -157,7 +155,7 @@ db.load()
 
       socketController.initializeFor(server)
 
-      var port = config.get('httpsPort')
+      const port = config.get('httpsPort')
       server.listen(port)
       log.info(`HTTPS server listening on port ${port} `)
     }
@@ -166,7 +164,7 @@ db.load()
       const server = http.createServer(app)
       socketController.initializeFor(server)
 
-      var port = config.get('port')
+      const port = config.get('port')
       server.listen(port)
       log.info(`HTTP server listening on port ${port} `)
     }

@@ -3,13 +3,11 @@ import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import {
   type ShoppingList, type SyncRequest, type SyncResponse, type SyncedShoppingList, type Item, type UUID,
-  createShoppingList, createSyncRequest, mergeShoppingLists, addMatchingCategory, createItemFromItemStringRepresentation,
+  createSyncRequest, mergeShoppingLists, addMatchingCategory, createItemFromItemStringRepresentation,
   normalizeCompletionName
 } from 'shoppinglist-shared'
-import { type ServerShoppingList, getBaseShoppingList, getSyncedShoppingList, createServerShoppingList } from './ServerShoppingList'
+import { type ServerShoppingList, getBaseShoppingList, getSyncedShoppingList } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
-import { type ShoppingListChangeCallback } from './SocketController'
-import * as ShoppingListController from './ShoppingListController'
 import { updateRecentlyUsed } from './ItemController'
 import { getSortedCompletions } from './CompletionsController'
 import { getChangesBetween } from './ChangesController'

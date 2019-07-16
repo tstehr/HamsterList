@@ -1,10 +1,6 @@
 // @flow
-import _ from 'lodash'
-import express from 'express'
-import { type Order, createOrder, errorMap } from 'shoppinglist-shared'
-import { createServerShoppingList } from './ServerShoppingList'
+import { createOrder, errorMap } from 'shoppinglist-shared'
 import { type ShoppingListRequest } from './ShoppingListController'
-import { type ShoppingListChangeCallback } from './SocketController'
 
 
 export default class OrdersController {

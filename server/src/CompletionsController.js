@@ -1,6 +1,5 @@
 // @flow
-import _, { type Iteratee } from 'lodash'
-import express from 'express'
+import _ from 'lodash'
 import { type CompletionItem, frecency, normalizeCompletionName } from 'shoppinglist-shared'
 import { type RecentlyUsedArray, type RecentlyUsed } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'

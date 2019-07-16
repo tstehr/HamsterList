@@ -1,14 +1,12 @@
 // @flow
-import _ from 'lodash'
+/* eslint-env jest */
 import { createShoppingList } from './ShoppingList'
 import { createItem } from './Item'
-import { type UUID, createUUID } from '../util/uuid'
+import { createUUID } from '../util/uuid'
 import {
   type DeleteItem, ADD_ITEM, DELETE_ITEM,
   diffShoppingLists, createDiff, generateAddItem, generateUpdateItem, generateDeleteItem, applyDiff
 } from './Change'
-
-const id = createUUID("a58df112-085f-4742-873d-8f8e31af7826")
 
 const shoppingList = createShoppingList({
   "id": "Unterwegs",
@@ -37,7 +35,7 @@ const shoppingList = createShoppingList({
 
 describe('createDiff', () => {
   it('Creates an UpdateItem', () => {
-    const diff : diff = createDiff({
+    createDiff({
       'type': ADD_ITEM,
       'item': {
         "name": "loser Pfefferminztee",

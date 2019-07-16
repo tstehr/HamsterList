@@ -1,7 +1,6 @@
 // @flow
 import _ from 'lodash'
-import express from 'express'
-import { type Change, type UUID, createUUID, nullSafe } from 'shoppinglist-shared'  
+import { type Change, type UUID, createUUID } from 'shoppinglist-shared'  
 import { type ShoppingListRequest } from './ShoppingListController'
 
 export default class ChangesController {
