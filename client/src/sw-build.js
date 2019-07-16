@@ -19,7 +19,7 @@ const buildSW = async () => {
     ],
     globDirectory: 'build',
     globPatterns: [
-      '**\/*.{js,css,html,png,svg}',
+      '**/*.{js,css,html,png,svg}',
     ],
     globIgnores: [
       'precache-manifest.*.js',

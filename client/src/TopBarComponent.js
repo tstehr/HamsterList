@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import { Component, useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
 import { type Up } from './HistoryTracker'
 import { type ConnectionState, type UpdateListTitle } from './ShoppingListContainerComponent'
@@ -99,7 +99,7 @@ export function SyncStatusComponent(props: SyncStatusProps) {
       }, 2000)
       setFakeSyncingTimeoutId(timeoutId)
     }
-  }, [props.syncing])
+  }, [props.syncing, fakeSyncingTimeoutId])
 
   const showSyncing = props.syncing || fakeSyncing
   const showFailure = props.lastSyncFailed || props.connectionState === 'disconnected'

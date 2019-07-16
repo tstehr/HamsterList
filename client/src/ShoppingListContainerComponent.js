@@ -5,8 +5,8 @@ import React, { Component } from 'react'
 import {
   type SyncedShoppingList, type SyncRequest, type ShoppingList, type CompletionItem, type LocalItem, type Item, type CategoryDefinition,
   type Order, type Change, type Diff, type UUID,
-  createShoppingList, createSyncedShoppingList, createCompletionItem, createCategoryDefinition, createRandomUUID,
-  mergeShoppingLists, createOrder, createChange, createSyncResponse, normalizeCompletionName,
+  createShoppingList, createCompletionItem, createRandomUUID,
+  mergeShoppingLists, createChange, createSyncResponse, normalizeCompletionName,
   generateAddItem, generateDeleteItem, generateUpdateItem, applyDiff, createApplicableDiff, getOnlyNewChanges,
 } from 'shoppinglist-shared'
 import { type Up } from './HistoryTracker'
