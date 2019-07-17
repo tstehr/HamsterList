@@ -168,7 +168,7 @@ export function mergeItems(base: Item, client: Item, server: Item): Item {
     newItem.category = client.category
   } else {
     newItem.category = server.category
-   }
+  }
 
   newItem.amount = mergeAmounts(base.amount, client.amount, server.amount)
 
@@ -218,11 +218,3 @@ export function addMatchingCategory<T: LocalItem>(item: T, completions: $ReadOnl
 export function normalizeCompletionName(name: string): string {
   return name.trim().toLowerCase()
 }
-
-// export function updateLocalItem(localItem: Item, localItemSpec: Object): Item {
-//   return createLocalItem(_.merge({}, ((localItem : any): Object), localItemSpec))
-// }
-//
-// export function updateItem(item: Item, itemSpec: Object): Item {
-//   return createItem(_.merge({}, ((item : any): Object), itemSpec))
-// }

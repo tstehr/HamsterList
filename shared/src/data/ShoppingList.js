@@ -48,12 +48,6 @@ export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnly
   return deepFreeze(shoppingList)
 }
 
-export function sortShoppingList(shoppingList: ShoppingList, categoryOrder: $ReadOnlyArray<?UUID>) {
-  return {
-    ...shoppingList,
-    items: sortItems(shoppingList.items, categoryOrder)
-  }
-}
 
 export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, server: ShoppingList, categories: ?$ReadOnlyArray<CategoryDefinition>): ShoppingList {
   const newList = {}
@@ -83,7 +77,7 @@ export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, ser
         newList.items.push(mergeItemsTwoWay(client, server))
       } else if (client != null) {
         newList.items.push(client)
-      } else if (server != null) {
+      } else { // client == null && server != null
         newList.items.push(server)
       }
     } else {

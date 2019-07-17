@@ -4,9 +4,20 @@ import { createShoppingList } from './ShoppingList'
 import { createItem } from './Item'
 import { createUUID } from '../util/uuid'
 import {
-  type DeleteItem, ADD_ITEM, UPDATE_ITEM, DELETE_ITEM,
-  createChange, diffShoppingLists, createDiff, generateAddItem, generateUpdateItem, generateDeleteItem, applyDiff, isDiffApplicable
-} from './Change'
+    type DeleteItem,
+    ADD_ITEM,
+    UPDATE_ITEM,
+    DELETE_ITEM,
+    createChange,
+    diffShoppingLists,
+    createDiff,
+    generateAddItem,
+    generateUpdateItem,
+    generateDeleteItem,
+    applyDiff,
+    isDiffApplicable,
+    createReverseDiff
+} from './Change';
 
 const shoppingList = createShoppingList({
   "id": "Unterwegs",
@@ -276,5 +287,76 @@ describe('isDiffApplicable', () => {
     })
     const diff = generateAddItem(item)
     expect(isDiffApplicable(shoppingList, diff)).toBe(false)
+  })
+})
+
+describe('createReverseDiff', () => {
+  const oldItem = {
+    "name": "loser Pfefferminztee",
+    "category": "1508d447-3e0d-4b50-bcae-ae4a9c85a3ea",
+    "id": "cbda3946-f136-4c94-8280-4931100576b4",
+    "amount": null
+  }
+
+  const item = {
+    "name": "loser Pfefferminztee",
+    "category": "1508d447-3e0d-4b50-bcae-ae4a9c85a3ea",
+    "id": "cbda3946-f136-4c94-8280-4931100576b4",
+    "amount": {
+      "value": 5
+    }
+  }
+
+  it('Creates reverse diff for AddItem', () => {
+    const diff = createDiff({
+      'type': ADD_ITEM,
+      'item': item
+    })
+
+    expect(createReverseDiff(diff)).toEqual(
+      createDiff({
+        'type': DELETE_ITEM,
+        'oldItem': item
+      })
+    )
+  })
+
+  it('Creates reverse diff for UpdateItem', () => {
+    const diff = createDiff({
+      'type': UPDATE_ITEM,
+      'oldItem': oldItem,
+      'item': item,
+    })
+
+    expect(createReverseDiff(diff)).toEqual(
+      createDiff({
+        'type': UPDATE_ITEM,
+        'oldItem': item,
+        'item': oldItem,
+      })
+    )
+  })
+
+  it('Creates reverse diff for DeleteItem', () => {
+    const diff = createDiff({
+      'type': DELETE_ITEM,
+      'oldItem': oldItem,
+    })
+
+    expect(createReverseDiff(diff)).toEqual(
+      createDiff({
+        'type': ADD_ITEM,
+        'item': oldItem,
+      })
+    )
+  })
+
+  it('Throws for unknown diff types', () => {
+    expect(() => {
+      // $FlowFixMe Expected type error, to test runtime type exception
+      createReverseDiff({
+        'type': 'Yer mom!'
+      })
+    }).toThrow(`Diff to be reversed is not of type 'Diff'`)
   })
 })

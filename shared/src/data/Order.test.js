@@ -1,9 +1,9 @@
 // @flow
 /* eslint-env jest */
-import { createOrder, sortItems } from './Order'
+import { createOrder, sortItems, completeCategoryOrder } from './Order';
 import { type Item, createItem } from './Item'
 import { type CategoryDefinition, createCategoryDefinition } from './CategoryDefinition';
-import { sortCategories } from '../../build/data/Order';
+import { sortCategories } from './Order'
 
 describe('createOrder', () => {
   it('Creates an order from a valid spec', () => {
@@ -89,7 +89,7 @@ describe('sortCategories', () => {
       "shortName": "W",
       "color": "black",
       "lightText": true
-    })
+    }),
   ]
 
   const order = createOrder({
@@ -104,5 +104,46 @@ describe('sortCategories', () => {
   it('Sorts categories', () => {
     const sortedCategories = sortCategories(categories, order.categoryOrder)
     expect(sortedCategories).toEqual([categories[1], categories[0]])
+  })
+})
+
+
+describe('completeCategories', () => {
+  const categories: CategoryDefinition[] = [
+    createCategoryDefinition({
+      "id": "0714a4ab-b653-4266-841f-2fa12291fef8",
+      "name": "Meh",
+      "shortName": "M",
+      "color": "grey",
+      "lightText": true
+    }),
+    createCategoryDefinition({
+      "id": "6301d82f-0e69-4d57-9473-ab7633089b2c",
+      "name": "Nicht witzig",
+      "shortName": "NW",
+      "color": "white",
+      "lightText": false
+    }),
+    createCategoryDefinition({
+      "id": "8178a592-7783-4755-9202-8e463ab23234",
+      "name": "Witzig",
+      "shortName": "W",
+      "color": "black",
+      "lightText": true
+    }),
+  ]
+
+  const order = createOrder({
+    id: '579562a4-8be6-464c-9011-e87042b6241b',
+    name: 'real',
+    categoryOrder: [
+      "8178a592-7783-4755-9202-8e463ab23234",
+      "6301d82f-0e69-4d57-9473-ab7633089b2c"
+    ]
+  })
+
+  it('Adds missing categories', () => {
+    const completedCategoryOrder = completeCategoryOrder(order.categoryOrder, categories)
+    expect(completedCategoryOrder).toEqual(["8178a592-7783-4755-9202-8e463ab23234", "6301d82f-0e69-4d57-9473-ab7633089b2c", "0714a4ab-b653-4266-841f-2fa12291fef8"])
   })
 })

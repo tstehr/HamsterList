@@ -4,18 +4,33 @@ import { createUUID } from '../util/uuid'
 import { createShoppingList, mergeShoppingLists } from './ShoppingList'
 import { createLocalItemFromString } from './Item'
 
-it('Creates a simple object', () => {
-  createShoppingList({
-    id: 'mylist',
-    title: "Aquarium",
-    items: []
-  }, [])
+
+const id = createUUID("a58df112-085f-4742-873d-8f8e31af7826")
+
+describe('createShoppingList', () => {
+  it('Creates a simple object', () => {
+    createShoppingList({
+      id: 'mylist',
+      title: "Aquarium",
+      items: []
+    }, [])
+  })
+
+  it('Doesn\'t create an object when duplicate ids are present', () => {
+    expect(() => {
+      createShoppingList({
+        id: 'mylist',
+        title: "Aquarium",
+        items: [
+          { id, name: "Schinken" },
+          { id, name: "Ei" },
+        ]
+      }, [])
+    }).toThrow(`ShoppingList "Aquarium" has duplicated ids: ${id}`)
+  })
 })
 
-
 describe('mergeShoppingLists', () => {
-
-  const id = createUUID("a58df112-085f-4742-873d-8f8e31af7826")
 
   it('Prefers changed title client', () => {
     const base = {
@@ -313,30 +328,4 @@ describe('mergeShoppingLists', () => {
       ]
     })
   })
-
-  // it('Prefers client item', () => {
-  //   const base = {
-  //     id: 'mylist',
-  //     title: "Title",
-  //     items: [
-  //
-  //     ]
-  //   }
-  //   const client = {
-  //     id: 'mylist',
-  //     title: "Title",
-  //     items: []
-  //   }
-  //   const server = {
-  //     id: 'mylist',
-  //     title: "Title",
-  //     items: []
-  //   }
-  //   const result = mergeShoppingLists(base, client, server, [])
-  //   expect(result).toEqual({
-  //     id: 'mylist',
-  //     title: "Title",
-  //     items: []
-  //   })
-  // })
 })

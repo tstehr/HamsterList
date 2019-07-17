@@ -1,6 +1,14 @@
 // @flow
 /* eslint-env jest */
-import { createUUID } from './uuid'
+import { createUUID, createRandomUUID } from './uuid'
+
+describe('createsRandomUUID', () => {
+  it('Creates a uuid randomly', () => {
+    const uuid = createRandomUUID()
+    expect(typeof uuid).toBe('string')
+    createUUID(uuid)
+  })
+})
 
 describe('createUUID', () => {
   it('Creates a valid uuid', () => {
