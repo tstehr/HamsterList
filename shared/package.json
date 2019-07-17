@@ -39,5 +39,10 @@
     "flow-copy-source": "^2.0.1",
     "flow-typed": "^2.5.2",
     "jest": "^24.8.0"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": ["src/**/*.js"]
   }
 }

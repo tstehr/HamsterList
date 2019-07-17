@@ -87,9 +87,7 @@ export function createLocalItemFromString(stringRepresentation: string, categori
         category: category,
       })
     } catch (e) {
-      if (!(e instanceof SyntaxError)) {
-        throw e
-      }
+      // ignore and try again
     }
   }
 

@@ -10,7 +10,7 @@ import { checkKeys, checkAttributeType, errorMap } from '../util/validation'
 
 
 export type Change = {|
-  +username: ?string,
+  +username: ?string,  
   +id: UUID,
   +date: Date,
   +diffs: $ReadOnlyArray<Diff>
@@ -116,11 +116,11 @@ export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShopping
     try {
       if (oldItem != null && newItem != null) {
         diffs.push(generateUpdateItem(oldShoppingList, newItem))
-      } else if (oldItem != null) {
-        diffs.push(generateDeleteItem(oldShoppingList, id))
       } else if (newItem != null) {
         diffs.push(generateAddItem(newItem))
-      }
+      } else { //  oldItem != null && newItem == null
+        diffs.push(generateDeleteItem(oldShoppingList, id))
+      } 
     } catch(e) {
       // TypeError means that the diff couldn't be created, which means it isn't needed. We can safely ignore those.
       if (!(e instanceof TypeError)) {

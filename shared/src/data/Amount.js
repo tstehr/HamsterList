@@ -61,16 +61,12 @@ export function createAmountFromString(amountString: string): Amount {
   try {
      evalResult = mathjs.eval(amountString)
   } catch (e) {
-    if (e instanceof SyntaxError) {
-      // retry with comma as decimal seperator and semicolon as argument seperator
-      const modAmountString = amountString.replace(/,|;/g, match => match == ',' ? '.': ',')
-      try {
-        evalResult = mathjs.eval(modAmountString)
-      } catch (e2) {
-        // Throw original for consistency
-        throw e
-      }
-    } else {
+    // retry with comma as decimal seperator and semicolon as argument seperator
+    const modAmountString = amountString.replace(/,|;/g, match => match == ',' ? '.': ',')
+    try {
+      evalResult = mathjs.eval(modAmountString)
+    } catch (e2) {
+      // Throw original for consistency
       throw e
     }
   }

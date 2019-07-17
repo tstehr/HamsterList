@@ -4,8 +4,8 @@ import { createShoppingList } from './ShoppingList'
 import { createItem } from './Item'
 import { createUUID } from '../util/uuid'
 import {
-  type DeleteItem, ADD_ITEM, DELETE_ITEM,
-  diffShoppingLists, createDiff, generateAddItem, generateUpdateItem, generateDeleteItem, applyDiff
+  type DeleteItem, ADD_ITEM, UPDATE_ITEM, DELETE_ITEM,
+  createChange, diffShoppingLists, createDiff, generateAddItem, generateUpdateItem, generateDeleteItem, applyDiff, isDiffApplicable
 } from './Change'
 
 const shoppingList = createShoppingList({
@@ -33,8 +33,30 @@ const shoppingList = createShoppingList({
   ]
 }, [])
 
+describe('createChange', () => {
+  it('Creates a change', () => {
+    createChange({
+      "id": "f4b0c5f5-9355-4833-a1f2-50a4b82e24b7",
+      "username": "me",
+      "date": "1970-01-01T00:00:00Z",
+      "diffs": []
+    })
+  })
+
+  it('Doesn\'t create change for invalid date', () => {
+    expect(() => {
+      createChange({
+        "id": "f4b0c5f5-9355-4833-a1f2-50a4b82e24b7",
+        "username": "me",
+        "date": "Yesterday",
+        "diffs": []
+      })
+    }).toThrow('Expected attribute "date" to be formatted as an ISO 8061 date')
+  })
+})
+
 describe('createDiff', () => {
-  it('Creates an UpdateItem', () => {
+  it('Creates an AddItem', () => {
     createDiff({
       'type': ADD_ITEM,
       'item': {
@@ -44,6 +66,50 @@ describe('createDiff', () => {
         "amount": null
       }
     })
+  })
+
+  it('Creates an UpdateItem', () => {
+    createDiff({
+      'type': UPDATE_ITEM,
+      'oldItem': {
+        "name": "Dosen Kichererbsen",
+        "category": "bef7bffc-6f54-450a-804e-799d1da5b976",
+        "amount": {
+          "value": 2
+        },
+        "id": "c14ef9de-3075-445e-9225-6a50e0c0adca"
+      },
+      'item': {
+        "name": "Dose Kichererbsen",
+        "category": "bef7bffc-6f54-450a-804e-799d1da5b976",
+        "amount": {
+          "value": 1
+        },
+        "id": "c14ef9de-3075-445e-9225-6a50e0c0adca"
+      },
+    })
+  })
+
+  it('Creates a DeleteItem', () => {
+    createDiff({
+      'type': DELETE_ITEM,
+      'oldItem': {
+        "name": "Dosen Kichererbsen",
+        "category": "bef7bffc-6f54-450a-804e-799d1da5b976",
+        "amount": {
+          "value": 2
+        },
+        "id": "c14ef9de-3075-445e-9225-6a50e0c0adca"
+      },
+    })
+  })
+
+  it('Throws for unknown diff types', () => {
+    expect(() => {
+      createDiff({
+        'type': 'Yer mom!'
+      })
+    }).toThrow(`Unknown diff type Yer mom!`)
   })
 })
 
@@ -134,9 +200,33 @@ describe('applyDiff', () => {
       applyDiff(shoppingList, deleteItemDiff)
     }).toThrow(`Can't apply diff, old item not found in list`)
   })
+
+  it('Throws for unknown diff types', () => {
+    const notDiff = {
+      type: "q2323334"
+    }
+
+    expect(() => {
+      // $FlowFixMe Expected type error, to test runtime type exception
+      applyDiff(shoppingList, notDiff)
+    }).toThrow(`Diff to be applied is not an element of type 'Diff'`)
+  })
 })
 
 describe('generateUpdateItem', () => {
+  it('Doesn\'t create an update if the item didn\'t exist before', () => {
+    const item =  createItem({
+        "name": "loser Pfefferminztee",
+        "category": "1508d447-3e0d-4b50-bcae-ae4a9c85a3ea",
+        "id": "cbda3946-f136-4c94-8280-4931100576b4",
+        "amount": null
+      })
+
+    expect(() => {
+      generateUpdateItem(shoppingList, item)
+    }).toThrow(`Can't create update for item with id ${item.id}, it doesn't exist in list.`)
+  })
+
   it('Doesn\'t create an update if nothing was changed', () => {
     const item =  createItem({
       "name": "Dosen Kichererbsen",
@@ -163,5 +253,28 @@ describe('generateUpdateItem', () => {
     expect(() => {
       generateUpdateItem(shoppingList, item)
     }).toThrow(`Can't create update for item with id ${item.id}, it is unchanged in the list.`)
+  })
+})
+
+describe('isDiffApplicable', () => {
+  it('Returns true for applicable diff', () => {
+    const item = createItem({
+        "name": "loser Pfefferminztee",
+        "category": "1508d447-3e0d-4b50-bcae-ae4a9c85a3ea",
+        "id": "cbda3946-f136-4c94-8280-4931100576b4",
+        "amount": null
+    })
+    const diff = generateAddItem(item)
+    expect(isDiffApplicable(shoppingList, diff)).toBe(true)
+  })
+
+  it('Returns false for non-applicable diff', () => {
+    const item = createItem({
+      "name": "Kaffeebohnen",
+      "category": "1508d447-3e0d-4b50-bcae-ae4a9c85a3ea",
+      "id": "69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd"
+    })
+    const diff = generateAddItem(item)
+    expect(isDiffApplicable(shoppingList, diff)).toBe(false)
   })
 })
