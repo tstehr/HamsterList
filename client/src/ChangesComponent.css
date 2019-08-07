@@ -49,15 +49,6 @@
     position: relative;
     padding: .2em;
 }
-.DiffComponent__UndoLink::before {
-    /* Increase interaction area for link */
-    position:absolute;
-    content:'';
-    top:-1em;
-    right:-2em;
-    left:-2em;
-    bottom:-.5em;
-}
 .DiffComponent__UndoLink--disabled {
     color: var(--text-deemphasized-color);
 }
