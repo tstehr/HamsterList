@@ -1,7 +1,16 @@
 // @flow
 /* eslint-env jest */
 import {
-  createAmount, createAmountFromString, createCookingAmount, createAmountValue, createUnit, mergeAmounts, getSIUnit, addAmounts
+    createAmount,
+    createAmountFromString,
+    createCookingAmount,
+    createAmountValue,
+    createUnit,
+    mergeAmounts,
+    getSIUnit,
+    addAmounts,
+    mapReplace,
+    powerSet
 } from './Amount'
 
 describe(`createAmountValue`, () => {
@@ -135,6 +144,70 @@ describe('createAmountFromString', () => {
     expect(amount).toEqual({
       value: 5.5,
       unit: undefined
+    })
+  })
+
+  it("Creates Amount with unicode vulgar fraction" , () => {
+    const amount = createAmountFromString('¾')
+    expect(amount).toEqual({
+      value: 0.75,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount from calculation with fraction" , () => {
+    const amount = createAmountFromString('¾ * ⅖')
+    expect(amount).toEqual({
+      value: 0.3,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount from calculation with fraction and value with dot as decimal seperator" , () => {
+    const amount = createAmountFromString('½ * 0.5')
+    expect(amount).toEqual({
+      value: 0.25,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount from calculation with fraction and value with comma as decimal seperator" , () => {
+    const amount = createAmountFromString('½ * 0,5')
+    expect(amount).toEqual({
+      value: 0.25,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount from mixed fraction" , () => {
+    const amount = createAmountFromString('1 1/2')
+    expect(amount).toEqual({
+      value: 1.5,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount from mixed fraction with unicode vulgar fraction" , () => {
+    const amount = createAmountFromString('1 ¾')
+    expect(amount).toEqual({
+      value: 1.75,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount from calculation with mixed fraction" , () => {
+    const amount = createAmountFromString('-1 * -1 1/4')
+    expect(amount).toEqual({
+      value: 1.25,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount from calculation with mixed fraction, units and function calls" , () => {
+    const amount = createAmountFromString('1 ¼ m * pow(6 N, 2)')
+    expect(amount).toEqual({
+      value: 45,
+      unit: 'm N^2'
     })
   })
 
@@ -303,5 +376,49 @@ describe('addAmounts', () => {
     expect(() => {
       addAmounts(a1, a2)
     }).toThrow('Units do not match')
+  })
+})
+
+describe('mapReplace', () => {
+  it('Replaces mapped chars', () => {
+    expect(mapReplace('a b c b', {'a': 'x', 'b': 'y'})).toEqual('x y c y')
+  })
+
+  it('Replaces mapped strings', () => {
+    expect(
+      mapReplace('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', {
+        'Lorem': 'Dolorem', 
+        'elit': 'velit',
+        'adipisci': 'adipiscing',
+        'incididunt': 'incidunt',
+        'magna': 'magnam',
+        'aliqua': 'aliquam',
+      })
+    ).toEqual('Dolorem ipsum dolor sit amet, consectetur adipiscingng velit, sed do eiusmod tempor incidunt ut labore et dolore magnam aliquam.')
+  })
+
+  it('Replaces with regexp special chars', () => {
+    expect(
+      mapReplace('| \\ [+] (5)', {
+        '+': '-', 
+        '|': '&',
+        '(5)': '^5$',
+      })
+    ).toEqual('& \\ [-] ^5$')
+  })
+})
+
+describe('powerSet', () => {
+  it('Computes a power set', () => {
+    const result = powerSet([1, 2, 3])
+    expect(result).toHaveLength(8)
+    expect(result).toContainEqual([])
+    expect(result).toContainEqual([1])
+    expect(result).toContainEqual([2])
+    expect(result).toContainEqual([3])
+    expect(result).toContainEqual([1, 3])
+    expect(result).toContainEqual([1, 2])
+    expect(result).toContainEqual([1, 2, 3])
+    
   })
 })
