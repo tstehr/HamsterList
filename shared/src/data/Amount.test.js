@@ -179,6 +179,37 @@ describe('createAmountFromString', () => {
     })
   })
 
+  it("Creates Amount from mixed fraction" , () => {
+    const amount = createAmountFromString('1 1/2')
+    expect(amount).toEqual({
+      value: 1.5,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount from mixed fraction with unicode vulgar fraction" , () => {
+    const amount = createAmountFromString('1 ¾')
+    expect(amount).toEqual({
+      value: 1.75,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount from calculation with mixed fraction" , () => {
+    const amount = createAmountFromString('-1 * -1 1/4')
+    expect(amount).toEqual({
+      value: 1.25,
+      unit: undefined
+    })
+  })
+
+  it("Creates Amount from calculation with mixed fraction, units and function calls" , () => {
+    const amount = createAmountFromString('1 ¼ m * pow(6 N, 2)')
+    expect(amount).toEqual({
+      value: 45,
+      unit: 'm N^2'
+    })
+  })
 
   it('Handles "1/0" correctly', () => {
     expect(() => {

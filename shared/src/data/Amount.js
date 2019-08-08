@@ -58,32 +58,20 @@ export function createAmount(amountSpec: any): Amount {
 }
 
 const unicodeVulgarFractions = {
-  "½": "1/2",
-  "⅓": "1/3",
-  "⅔": "2/3",
-  "¼": "1/4",
-  "¾": "3/4",
-  "⅕": "1/5",
-  "⅖": "2/5",
-  "⅗": "3/5",
-  "⅘": "4/5",
-  "⅙": "1/6",
-  "⅚": "5/6",
-  "⅐": "1/7",
-  "⅛": "1/8",
-  "⅜": "3/8",
-  "⅝": "5/8",
-  "⅞": "7/8",
-  "⅑": "1/9",
-  "⅒": "1/10",
+  "½": "1/2", "⅓": "1/3", "⅔": "2/3", "¼": "1/4", "¾": "3/4", "⅕": "1/5", "⅖": "2/5", "⅗": "3/5", "⅘": "4/5", "⅙": "1/6", 
+  "⅚": "5/6", "⅐": "1/7", "⅛": "1/8", "⅜": "3/8", "⅝": "5/8", "⅞": "7/8", "⅑": "1/9", "⅒": "1/10",
 }
 
 const amountStringTransformations = [
-  // retry with comma as decimal seperator and semicolon as argument seperator
+  // comma as decimal seperator and semicolon as argument seperator
   amountString => amountString.replace(/,|;/g, match => match == ',' ? '.': ','),
 
-  // retry with replaced unicode vulgar fractions
-  amountString => mapReplace(amountString, unicodeVulgarFractions)
+  // replace unicode vulgar fractions
+  amountString => mapReplace(amountString, unicodeVulgarFractions),
+
+  // replace possible mixed fractions with implicit addition
+  // see https://github.com/josdejong/mathjs/issues/731
+  amountString => amountString.replace(/(\d+)\s+(\d+)\/(\d+)/, '($1 + $2/$3)')
 ]
 const amountStringTransformationCombinations = powerSet(amountStringTransformations)
 
