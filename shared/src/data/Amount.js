@@ -39,9 +39,6 @@ export function createAmountValue(valueSpec: number): AmountValue {
   if (!Number.isFinite(valueSpec)) {
     throw new TypeError('AmountValue must be finite')
   }
-  if (valueSpec <= 0) {
-    throw new TypeError('AmountValue can only be positive')
-  }
   return valueSpec
 }
 

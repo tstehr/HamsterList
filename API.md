@@ -215,10 +215,10 @@ This object represents an item for purposes of completions. This is essentially 
 
 This object represents an amount of an item.
 
-| Field | Type                   | Description                                                             |
-|-------|------------------------|-------------------------------------------------------------------------|
-| value | Float, positive number | The value of the amount                                                 |
-| unit  | String                 | *Optional.* Unit of amount. String must represent a unit of measurement |
+| Field | Type   | Description                                                             |
+|-------|--------|-------------------------------------------------------------------------|
+| value | Float  | The value of the amount                                                 |
+| unit  | String | *Optional.* Unit of amount. String must represent a unit of measurement |
 
 
 ### CategoryDefinition

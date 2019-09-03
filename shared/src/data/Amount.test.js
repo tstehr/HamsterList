@@ -18,10 +18,8 @@ describe(`createAmountValue`, () => {
     createAmountValue(5)
   })
 
-  it(`Doesn't create AmountValue from negative number`, () => {
-    expect(() => {
-      createAmountValue(-5)
-    }).toThrow('AmountValue can only be positive')
+  it(`Creates AmountValue from negative number`, () => {
+    createAmountValue(-5)
   })
 })
 
