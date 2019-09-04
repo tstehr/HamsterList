@@ -105,8 +105,17 @@ export default class ShoppingListComponent extends Component<Props> {
           amount: group.map(item => item.amount).reduce(addAmounts)
         }
         this.props.updateItem(newItem.id, newItem)
-        group.slice(1).forEach(item => this.props.deleteItem(item.id, false))
+        group.slice(1).forEach(item => this.props.deleteItem(item.id))
       }
+    }
+  }
+
+  clearList = () => {
+    if (!window.confirm('Delete all items?')) {
+      return
+    }
+    for (const item of this.props.shoppingList.items) {
+      this.props.deleteItem(item.id)
     }
   }
 
@@ -165,6 +174,7 @@ export default class ShoppingListComponent extends Component<Props> {
             <p>
               <button type="button" className="PaddedButton" onClick={this.convertToCookingAmounts}>Convert to metric units</button>
               <button type="button" className="PaddedButton" onClick={this.mergeItems}>Merge</button>
+              <button type="button" className="PaddedButton" onClick={this.clearList}>Clear List</button>
               <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Sorting</Link>
             </p>
           </section>

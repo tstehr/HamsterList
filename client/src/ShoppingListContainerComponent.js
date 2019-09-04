@@ -19,7 +19,7 @@ export type ConnectionState = "disconnected" | "polling" | "socket"
 
 export type UpdateListTitle = (newTitle: string) => void
 export type CreateItem = (item: LocalItem) => void
-export type DeleteItem = (id: UUID, addToRecentlyDeleted?: boolean) => void
+export type DeleteItem = (id: UUID) => void
 export type UpdateItem = (id: UUID, localItem: LocalItem) => void
 export type SelectOrder = (id: ?UUID) => void
 export type UpdateOrders = (orders: $ReadOnlyArray<Order>) => void
