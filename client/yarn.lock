@@ -6628,9 +6628,9 @@ mississippi@^3.0.0:
     through2 "^2.0.0"
 
 mixin-deep@^1.2.0:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/mixin-deep/-/mixin-deep-1.3.1.tgz#a49e7268dce1a0d9698e45326c5626df3543d0fe"
-  integrity sha512-8ZItLHeEgaqEvd5lYBXfm4EZSFCX29Jb9K+lAHhDKzReKBQKj3R+7NOF6tjqYi9t4oI8VUfaWITJQm86wnXGNQ==
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/mixin-deep/-/mixin-deep-1.3.2.tgz#1120b43dc359a785dce65b55b82e257ccf479566"
+  integrity sha512-WRoDn//mXBiJ1H40rqa3vH0toePwSsGb45iInWlTySa+Uu4k3tYUSxa2v1KqAiLtvlrSzaExqS1gtk96A9zvEA==
   dependencies:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
@@ -9180,8 +9180,17 @@ shellwords@^0.1.1:
   integrity sha512-vFwSUfQvqybiICwZY5+DAWIPLKsWO31Q91JSKl3UYv+K5c2QRPzn0qzec6QPu1Qc9eHYItiP3NdJqNVqetYAww==
 
 "shoppinglist-shared@link:../shared":
-  version "0.0.0"
-  uid ""
+  version "1.0.0"
+  dependencies:
+    "@babel/runtime" "^7.5.4"
+    color-string "^1.5.2"
+    date-fns "^1.30.1"
+    deep-freeze "^0.0.1"
+    escape-string-regexp "^2.0.0"
+    is-uuid "^1.0.2"
+    lodash "^4.17.14"
+    mathjs "^5.0.2"
+    uuid "^3.1.0"
 
 signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"
