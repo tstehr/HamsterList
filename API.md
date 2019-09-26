@@ -27,21 +27,23 @@ The username is specified as a HTTP header `X-ShoppingList-Username`, where the 
 
 ## Endpoints
 
-| Endpoint                               | Method | Body           | Return                        |
-|----------------------------------------|--------|----------------|-------------------------------|
-| `/:listid`                             | GET    | -              | [ShoppingList]                |
-| `/:listid`                             | PUT    | [ShoppingList] | [ShoppingList]                |
-| `/:listid/items`                       | GET    | -              | Array of [Item]               |
-| `/:listid/items`                       | POST   | [Item]         | [Item]                        |
-| `/:listid/items/:itemid`               | PUT    | [Item]         | [Item]                        |
-| `/:listid/items/:itemid`               | DELETE | -              | -                             |
-| `/:listid/completions`                 | GET    | -              | Array of [CompletionItem]     |
-| `/:listid/completions/:completionname` | DELETE | -              | -                             |
-| `/:listid/categories `                 | GET    | -              | Array of [CategoryDefinition] |
-| `/:listid/changes`                     | GET    | -              | Array of [Change]             |
+| Endpoint                               | Method | Body             | Return                                 |
+|----------------------------------------|--------|------------------|----------------------------------------|
+| `/:listid`                             | GET    | -                | [ShoppingList]                         |
+| `/:listid`                             | PUT    | [ShoppingList]   | [ShoppingList]                         |
+| `/:listid/items`                       | GET    | -                | Array of [Item]                        |
+| `/:listid/items`                       | POST   | [Item]           | [Item]                                 |
+| `/:listid/items/:itemid`               | PUT    | [Item]           | [Item]                                 |
+| `/:listid/items/:itemid`               | DELETE | -                | -                                      |
+| `/:listid/completions`                 | GET    | -                | Array of [CompletionItem]              |
+| `/:listid/completions/:completionname` | DELETE | -                | -                                      |
+| `/:listid/categories `                 | GET    | -                | Array of [CategoryDefinition]          |
 | `/:listid/categories `                 | PUT    | Array of [CategoryDefinition] | Array of [CategoryDefinition] |
-| `/:listid/sync`                        | GET    | -              | [SyncedShoppingList] or [SyncResponse] |
-| `/:listid/sync`                        | POST   | [SyncRequest]  | [SyncedShoppingList] or [SyncResponse] |
+| `/:listid/orders`                      | GET    | -                | Array of [Order]                       |
+| `/:listid/orders `                     | PUT    | Array of [Order] | Array of [Order]                       |
+| `/:listid/changes`                     | GET    | -                | Array of [Change]                      |
+| `/:listid/sync`                        | GET    | -                | [SyncedShoppingList] or [SyncResponse] |
+| `/:listid/sync`                        | POST   | [SyncRequest]    | [SyncedShoppingList] or [SyncResponse] |
 
 ### GET  /:listid
 
@@ -94,6 +96,14 @@ Gets the categories for the shopping list.
 ### PUT    /:listid/categories
 
 Updates the categories for the shopping list.
+
+### GET    /:listid/orders
+
+Gets the orders for the shopping list.
+
+### PUT    /:listid/orders
+
+Updates the orders for the shopping list.
 
 ### GET    /:listid/changes
 
@@ -236,6 +246,18 @@ This object represents a category of items.
 <a name="COL">COL</a>: The color should be a valid color value according to sections 4.1 -- 4.3 of the [CSS Color Module Level 3] specification.
 
 [CSS Color Module Level 3]: https://www.w3.org/TR/2017/CR-css-color-3-20171205/
+
+### Order
+
+This object represents the ordering of categories, for example to allow a list to be sorted according to store layout.
+
+| Field         | Type                     | Description                                        |
+|---------------|--------------------------|----------------------------------------------------|
+| id            | String, UUID-v4          | Unique identifier of the order                     |
+| name          | String                   | Description of the order                           |
+| categoryOrder | Array of String, UUID-v4 | IDs of the list's categories, sorted according to the required orders<sup>[ORD](#ORD)</sup> |
+
+<a name="ORD">ORD</a>:  Clients should ignore categories that are not in the categories for the list.
 
 ### Change
 
