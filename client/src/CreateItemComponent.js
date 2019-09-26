@@ -59,6 +59,12 @@ export default class CreateItemComponent extends Component<Props, State> {
     this.lastChange = Date.now()
   }
 
+  componentDidMount() {
+    if (this.input) {
+      this.input.focus()
+    }
+  }
+
   getItemsForInputLines(inputValue: string): $ReadOnlyArray<ItemInput | null> {
     return inputValue
       .split("\n")

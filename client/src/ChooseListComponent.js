@@ -22,6 +22,7 @@ type State = {
 
 export default class ChooseListComponent extends Component<void, State> {
   db: Object
+  inputListid: { current: null | HTMLInputElement }
 
   constructor() {
     super()
@@ -32,9 +33,14 @@ export default class ChooseListComponent extends Component<void, State> {
       listid: null,
       recentlyUsedLists: getRecentlyUsedLists(this.db),
     }
+
+    this.inputListid = React.createRef()
   }
 
   componentDidMount() {
+    if (this.inputListid.current) {
+      this.inputListid.current.focus()
+    }
     window.addEventListener('storage', this.handleStorage)
   }
 
@@ -92,7 +98,7 @@ export default class ChooseListComponent extends Component<void, State> {
           <section>
             Or create/open list with name
             <form className="ChooseListComponent__openForm" onSubmit={this.onSubmit}>
-              <input type="text" name="listid" />
+              <input type="text" name="listid" ref={this.inputListid}/>
               <button>Go</button>
             </form>
           </section>
