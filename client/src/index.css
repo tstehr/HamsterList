@@ -43,7 +43,10 @@
 }
 
 body {
-  font-family: "San Francisco", Helvetica, Arial, sans-serif;
+  /* https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/  */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
   color: var(--text-color);
   background-color: var(--background-color)
 }
