@@ -15,6 +15,12 @@
     }
   }
 }
+@media print {
+  .TopBarComponent {
+    position: static;
+    margin-bottom: -3rem;
+  }
+}
 .TopBarComponent__content {
   max-width: var(--single-col-max-width);
   height: 3rem;

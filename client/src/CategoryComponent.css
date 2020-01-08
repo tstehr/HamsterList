@@ -24,3 +24,17 @@
   min-width: 1.8em;
   text-align: center;
 }
+
+.CategoryListItemComponent {
+  display: none;
+  margin-bottom: .5rem;
+  padding: .5rem;
+  font-weight: bold;
+  break-after: avoid;
+}
+
+@media print {
+  .CategoryListItemComponent {
+    display: block;
+  }
+}

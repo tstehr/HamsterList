@@ -40,6 +40,18 @@ const CategoryTextComponent: React$ComponentType<Props> = React.memo((props: Pro
   return <span className="CategoryTextComponent" title={category.name} style={style}>{initials}</span>
 }, _.isEqual)
 
+const CategoryListItemComponent: React$ComponentType<Props> = React.memo((props: Props) => {
+  let category = getCategory(props)
+
+  const initials = category.shortName
+  const style = {
+    backgroundColor: category.color,
+    color:category.lightText ? '#fff' : '#000'
+  }
+
+  return <li className="CategoryListItemComponent" style={style}>{category.name}</li>
+}, _.isEqual)
+
 const unknownCategory = createCategoryDefinition({
   "id": "ffffffff-ffff-4fff-bfff-ffffffffffff",
   "name": "Unknown Category",
@@ -73,4 +85,4 @@ function getCategory(props: Props): CategoryDefinition {
 }
 
 export default CategoryComponent
-export { CategoryTextComponent }
+export { CategoryTextComponent, CategoryListItemComponent }

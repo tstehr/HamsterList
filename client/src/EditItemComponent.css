@@ -59,7 +59,12 @@
 }
 
 @media print {
-  .EditItemComponent__delete {
+  .EditItemComponent {
+    border: none;
+    background: none;
+    height: auto;
+  }
+  .EditItemComponent__category, .EditItemComponent__delete {
     display: none;
   }
 }
