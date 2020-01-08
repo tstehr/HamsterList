@@ -44,6 +44,11 @@
   background: none;
   color: var(--text-on-theme-color);
 }
+@media print {
+  .TopBarComponent__back  {
+    display: none;
+  }
+}
 
 
 .EditTitleComponent {
@@ -80,6 +85,11 @@
   background: none;
   overflow: visible;
   color: var(--text-on-theme-color);
+}
+@media print {
+  .SyncStatusComponent {
+    display: none;
+  }
 }
 .SyncStatusComponent--syncing {
   animation: 1s ease-in infinite blink;

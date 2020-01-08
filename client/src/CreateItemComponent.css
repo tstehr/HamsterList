@@ -2,6 +2,11 @@
   min-height: 3rem;
   transition: min-height 200ms ease-in-out;
 }
+@media print {
+  .CreateItemComponent {
+    display: none;
+  }
+}
 .CreateItemComponent--creatingItem {
   min-height: calc(12 * 3rem);
 }

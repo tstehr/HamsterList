@@ -21,3 +21,8 @@
     scroll-snap-coordinate: 0 -4rem;
   }
 }
+@media print {
+  .OrderSelectComponent {
+    display: none;
+  }
+}

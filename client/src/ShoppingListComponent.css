@@ -65,3 +65,12 @@
     padding: 0 max(2rem, env(safe-area-inset-right)) 0 max(2rem, env(safe-area-inset-left))
   }
 }
+
+@media print {
+  .ShoppingListComponent__body {
+    display: block;
+  }
+  .ShoppingListComponent__footer {
+    display: none;
+  }
+}
