@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import React, { Component }  from 'react'
 import _ from 'lodash'
 import { type CategoryDefinition, type UUID, createCategoryDefinition } from 'shoppinglist-shared'
 import './CategoryComponent.css'
@@ -40,17 +40,21 @@ const CategoryTextComponent: React$ComponentType<Props> = React.memo((props: Pro
   return <span className="CategoryTextComponent" title={category.name} style={style}>{initials}</span>
 }, _.isEqual)
 
-const CategoryListItemComponent: React$ComponentType<Props> = React.memo((props: Props) => {
-  let category = getCategory(props)
+// needs to be a class to be usable in FlipMove
+class CategoryListItemComponent extends Component<Props> {
+  render() {
+    let category = getCategory(this.props)
 
-  const initials = category.shortName
-  const style = {
-    backgroundColor: category.color,
-    color:category.lightText ? '#fff' : '#000'
+    const style = {
+      backgroundColor: category.color,
+      color:category.lightText ? '#fff' : '#000'
+    }
+
+    return <li className="CategoryListItemComponent" style={style}>{category.name}</li>
   }
+}
 
-  return <li className="CategoryListItemComponent" style={style}>{category.name}</li>
-}, _.isEqual)
+
 
 const unknownCategory = createCategoryDefinition({
   "id": "ffffffff-ffff-4fff-bfff-ffffffffffff",
