@@ -143,7 +143,11 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   save = _.debounce(() => {
     const state = _.cloneDeep(this.state)
     console.info('LOCALSTORAGE',  'Save')
-    this.db.get('lists').upsert(state).write()
+    try {
+      this.db.get('lists').upsert(state).write()
+    } catch (e) {
+      console.info('LOCALSTORAGE',  'Save failed (probably due to quota)', e)
+    }
   }, 500)
 
   load(callback? : () => void) {
