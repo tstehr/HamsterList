@@ -42,6 +42,12 @@
   }
 }
 
+@media print {
+  :root {
+    font-size: 12px;
+  }
+}
+
 body {
   /* https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/  */
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",

@@ -63,6 +63,8 @@
     border: none;
     background: none;
     height: auto;
+    break-inside: avoid;
+    margin-bottom: .1rem;
   }
   .EditItemComponent__category, .EditItemComponent__delete {
     display: none;

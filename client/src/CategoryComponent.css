@@ -31,10 +31,13 @@
   padding: .5rem;
   font-weight: bold;
   break-after: avoid;
+  break-inside: avoid;
 }
 
 @media print {
   .CategoryListItemComponent {
     display: block;
+    margin-top: 1rem;
+    margin-bottom: .1rem;
   }
 }
