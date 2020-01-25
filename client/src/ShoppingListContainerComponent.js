@@ -402,7 +402,11 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     if (this.state.loaded) {
       listUsed.title = this.state.title
     }
-    this.db.get('recentlyUsedLists').upsert(listUsed).write()
+    try {
+      this.db.get('recentlyUsedLists').upsert(listUsed).write()
+    } catch (e) {
+      console.info('MarkListAsUsed',  'Save failed (probably due to quota)', e)
+    }
   }
 
   createCompletionsStateUpdate(state: State, updatedItem: Item): { completions: $ReadOnlyArray<CompletionItem>, deletedCompletions: $ReadOnlyArray<string> } {
