@@ -56,7 +56,7 @@ app.use(helmet({
 db.load()
   .then(() => {
     const router = express.Router()
-    router.use(bodyParser.json({strict: false}))
+    router.use(bodyParser.json({strict: false, limit: '2mb'}))
 
     const tokenCreator = new TokenCreator(config.get('secret'))
 
