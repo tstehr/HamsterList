@@ -56,6 +56,18 @@ export default function ChangesComponent(props: Props) {
   allDiffs.reverse()
 
 
+  const undoAll = (diffs: $ReadOnlyArray<Diff>) => {
+    for (const diff of diffs) {
+      try {
+        const reverseDiff = createReverseDiff(diff)
+        props.applyDiff(reverseDiff)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }
+
+
   const loadOlder = () => {
     const newEnd = Math.min(end + defaultDiffLength, allDiffs.length)
     setEnd(newEnd)
@@ -78,6 +90,7 @@ export default function ChangesComponent(props: Props) {
     setEnd(defaultDiffLength)
   }
 
+
   const diffs = allDiffs.slice(start, end)
   
   return (
@@ -92,7 +105,7 @@ export default function ChangesComponent(props: Props) {
     >
     {/* <ul className="ChangesComponent__list"> */}
       {
-        diffs.map(({change, changeIndex, unsynced, diff, diffIndex}) => {
+        diffs.map(({change, changeIndex, unsynced, diff, diffIndex}, absoluteDiffIndex) => {
           const detailsExpanded = expandedChange != null && expandedChange.id === change.id && detailsExpandedDiff.diffIndex === diffIndex
           return <DiffComponent key={`${change.id}_${diffIndex}`} 
             change={change} diff={diff} categories={props.categories} 
@@ -100,7 +113,9 @@ export default function ChangesComponent(props: Props) {
             applyDiff={props.applyDiff} 
             createApplicableDiff={props.createApplicableDiff}
             detailsExpanded={detailsExpanded}
+            isNewest={absoluteDiffIndex === 0}
             onHeaderClick={() => setDetailsExpandedDiff({ change: detailsExpanded ? null : change, diffIndex })}
+            undoNewer={ () => undoAll(diffs.slice(0, absoluteDiffIndex).map(({diff}) => diff)) }
           />
         })
       }
@@ -122,8 +137,10 @@ type DiffProps = {
   categories: $ReadOnlyArray<CategoryDefinition>,
   unsynced: boolean,
   detailsExpanded: boolean,
+  isNewest: boolean,
   applyDiff: ApplyDiff,
   createApplicableDiff: CreateApplicableDiff,
+  undoNewer: () => void,
   onHeaderClick: () => void,
 }
 
@@ -163,6 +180,14 @@ export class DiffComponent extends Component<DiffProps> {
       }
     }
 
+    const undoNewer = (e) => {
+      e.preventDefault()
+      if (!window.confirm('Undo all newer changes?')) {
+        return
+      }
+      this.props.undoNewer()
+    }
+
     return <li className={elClasses}>
       <header>
         <button type="button" onClick={this.props.onHeaderClick} className="DiffComponent__headerButton">
@@ -187,6 +212,13 @@ export class DiffComponent extends Component<DiffProps> {
               </>
               : "Can't undo"
             } 
+          </a>
+        </li>
+        <li>
+          {/* Use a link even if undo isn't possible so focus isn't lost after undo */}
+          <a href="#" onClick={undoNewer} tabIndex={this.props.detailsExpanded ? 0 : -1} role="button" 
+            className={classNames('DiffComponent__UndoLink', { 'DiffComponent__UndoLink--disabled': this.props.isNewest })}>
+            Undo all newer changes
           </a>
         </li>
       </ul>
