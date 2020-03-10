@@ -47,13 +47,14 @@ export default function ShoppingListItemsComponent(props: Props) {
   const order = _.find(props.orders, _.matchesProperty('id', props.selectedOrder))
   const completedCategoryOrder = completeCategoryOrder(order ?  order.categoryOrder : [], props.categories)
   const itemOrCategoryList = createItemOrCategoryList(completedCategoryOrder, props.items)
+  const delay = Math.min(10, 100 / props.items.length)
 
   return (<KeyFocusComponent
     direction="vertical" rootTagName="ul" className=" ShoppingListItemsComponent"
     style={{minHeight: `${Math.max(3*props.items.length + 6, 11)}rem`}}
   >
     <FlipMove
-      typeName={null} duration="250" staggerDurationBy="10" staggerDelayBy="10"
+      typeName={null} duration="250" staggerDurationBy={delay} staggerDelayBy={delay}
       enterAnimation="accordionVertical" leaveAnimation="accordionVertical"
     >
       {!!props.items.length && !!props.orders.length &&
