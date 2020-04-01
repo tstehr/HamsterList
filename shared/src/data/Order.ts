@@ -1,32 +1,39 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { Item } from './Item'
+import { createUUID, UUID } from '../util/uuid'
+import { checkAttributeType, checkKeys, errorMap, nullSafe } from '../util/validation'
 import { CategoryDefinition } from './CategoryDefinition'
-import { createUUID } from '../util/uuid'
-import { UUID } from '../util/uuid'
-import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/validation'
+import { Item } from './Item'
+
 export type CategoryOrder = ReadonlyArray<UUID | undefined | null>
-export type Order = {
+
+export interface Order {
   readonly id: UUID
   readonly name: string
   readonly categoryOrder: CategoryOrder
 }
+
 export function createOrder(orderSpec: any): Order {
   checkKeys(orderSpec, ['id', 'name', 'categoryOrder'])
   checkAttributeType(orderSpec, 'id', 'string')
   checkAttributeType(orderSpec, 'name', 'string')
   checkAttributeType(orderSpec, 'categoryOrder', 'array')
-  const order = {}
-  order.id = createUUID(orderSpec.id)
-  order.name = orderSpec.name.trim()
-  order.categoryOrder = errorMap(orderSpec.categoryOrder, nullSafe(createUUID))
+
+  const order = {
+    id: createUUID(orderSpec.id),
+    name: orderSpec.name.trim(),
+    categoryOrder: errorMap(orderSpec.categoryOrder, nullSafe(createUUID)),
+  }
+
   return deepFreeze(order)
 }
+
 export function sortItems(items: ReadonlyArray<Item>, categoryOrder: CategoryOrder): ReadonlyArray<Item> {
   const categoryIteratee = (item: Item) => convertSmallerZeroToInf(categoryOrder.indexOf(undefinedToNull(item.category))) // sortBy doesn't mutate, but isn't annotated correctly...
 
   return _.sortBy((items as any) as Item[], [categoryIteratee, getNameLowerCase, 'id'])
 }
+
 export function sortCategories(
   categories: ReadonlyArray<CategoryDefinition>,
   categoryOrder: CategoryOrder
@@ -35,6 +42,7 @@ export function sortCategories(
 
   return _.sortBy((categories as any) as CategoryDefinition[], categoryIteratee)
 }
+
 export function completeCategoryOrder(
   categoryOrder: CategoryOrder,
   categories: ReadonlyArray<CategoryDefinition>

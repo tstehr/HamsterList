@@ -1,7 +1,9 @@
 import _ from 'lodash'
+
 type AttributeType = 'object' | 'boolean' | 'number' | 'string' | 'array'
+
 export function checkKeys(object: unknown, expectedKeys: string[]) {
-  if (object === null || typeof object !== 'object') {
+  if (!_.isObject(object)) {
     throw new TypeError('Given value must be an object')
   }
 
@@ -13,6 +15,7 @@ export function checkKeys(object: unknown, expectedKeys: string[]) {
     throw new TypeError(`Given object contained unexpected keys: ${unexpectedKeys.toString()}`)
   }
 }
+
 export function checkAttributeType(object: any, key: string, type: AttributeType, optional: boolean = false) {
   if (!optional && object[key] == null) {
     throw new TypeError(`Given object must have an attribute "${key}"`)
@@ -24,6 +27,7 @@ export function checkAttributeType(object: any, key: string, type: AttributeType
     throw new TypeError(`Expected attribute "${key}" to be of type "${type}" but is of type "${actualType}" instead`)
   }
 }
+
 export function errorMap<I, O>(array: ReadonlyArray<I>, transformer: (a: I) => O): ReadonlyArray<O> {
   return array.map((el, i) => {
     try {
@@ -39,7 +43,8 @@ export function errorMap<I, O>(array: ReadonlyArray<I>, transformer: (a: I) => O
     }
   })
 }
-export function nullSafe<T, R>(func: (a: T) => R): (a?: T | null) => R | undefined | null {
+
+export function nullSafe<T, R>(func: (a: T) => R): (a: T | undefined | null) => R | undefined | null {
   return function (p: T | undefined | null) {
     if (p === null) {
       return null
@@ -52,13 +57,16 @@ export function nullSafe<T, R>(func: (a: T) => R): (a?: T | null) => R | undefin
     return func(p)
   }
 }
+
 const IDENTIFICATION_FIELDS = Object.freeze(['name', 'title', 'id'])
 
 function getIdentification(o: unknown): string | undefined | null {
-  if (o && typeof o === 'object') {
+  if (_.isObject(o)) {
+    const indexableO = o as { [key: string]: any }
     for (let identificationField of IDENTIFICATION_FIELDS) {
-      if (typeof o[identificationField] === 'string') {
-        return `${identificationField}="${o[identificationField]}"`
+      const value = indexableO[identificationField]
+      if (typeof value === 'string') {
+        return `${identificationField}="${value}"`
       }
     }
   }

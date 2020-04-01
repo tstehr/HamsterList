@@ -7,6 +7,7 @@ beforeAll(() => {
 afterAll(() => {
   MockDate.reset()
 })
+
 it('Calculates a frecency', () => {
   expect(
     frecency({
@@ -15,6 +16,7 @@ it('Calculates a frecency', () => {
     })
   ).toEqual(1)
 })
+
 it('Calculates a frecency with longer timespan', () => {
   expect(
     frecency({

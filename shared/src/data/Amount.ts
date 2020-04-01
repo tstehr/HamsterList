@@ -1,15 +1,18 @@
 import _ from 'lodash'
-import mathjs from 'mathjs'
+import * as mathjs from 'mathjs'
 import deepFreeze from 'deep-freeze'
 import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
 import escapeStringRegexp from 'escape-string-regexp'
+
 export type Unit = string
+// TODO implement opaque type: https://codemix.com/opaque-types-in-javascript/
 export type AmountValue = number
-export type Amount = {
+
+export interface Amount {
   readonly value: AmountValue
   readonly unit: Unit | undefined | null
-  [x: any]: never
 }
+
 mathjs.createUnit('tbsp', {
   definition: '1 tablespoon',
   aliases: ['EL'],
@@ -18,12 +21,14 @@ mathjs.createUnit('tsp', {
   definition: '1 teaspoon',
   aliases: ['TL'],
 })
+
 export function createUnit(unitSpec: string): Unit {
   const unit = unitSpec.trim() // check if mathjs considers it a valid unit (will throw if not)
 
   mathjs.unit(unit)
   return unit
 }
+
 export function createAmountValue(valueSpec: number): AmountValue {
   if (Number.isNaN(valueSpec)) {
     throw new TypeError('AmountValue may not be NaN')
@@ -35,15 +40,20 @@ export function createAmountValue(valueSpec: number): AmountValue {
 
   return valueSpec
 }
+
 export function createAmount(amountSpec: any): Amount {
   checkKeys(amountSpec, ['value', 'unit'])
   checkAttributeType(amountSpec, 'value', 'number')
   checkAttributeType(amountSpec, 'unit', 'string', true)
-  const amount = {}
-  amount.value = createAmountValue(amountSpec.value)
-  amount.unit = nullSafe(createUnit)(amountSpec.unit)
+
+  const amount: Amount = {
+    value: createAmountValue(amountSpec.value),
+    unit: nullSafe(createUnit)(amountSpec.unit),
+  }
+
   return deepFreeze(amount)
 }
+
 const unicodeVulgarFractions = {
   '½': '1/2',
   '⅓': '1/3',
@@ -64,14 +74,20 @@ const unicodeVulgarFractions = {
   '⅑': '1/9',
   '⅒': '1/10',
 }
+
 const amountStringTransformations = [
   // comma as decimal seperator and semicolon as argument seperator
-  (amountString) => amountString.replace(/,|;/g, (match) => (match == ',' ? '.' : ',')), // replace unicode vulgar fractions
-  (amountString) => mapReplace(amountString, unicodeVulgarFractions), // replace possible mixed fractions with implicit addition
+  (amountString: string) => amountString.replace(/,|;/g, (match) => (match == ',' ? '.' : ',')),
+
+  // replace unicode vulgar fractions
+  (amountString: string) => mapReplace(amountString, unicodeVulgarFractions),
+
+  // replace possible mixed fractions with implicit addition
   // see https://github.com/josdejong/mathjs/issues/731
-  (amountString) => amountString.replace(/(\d+)\s+(\d+)\/(\d+)/, '($1 + $2/$3)'),
+  (amountString: string) => amountString.replace(/(\d+)\s+(\d+)\/(\d+)/, '($1 + $2/$3)'),
 ]
 const amountStringTransformationCombinations = powerSet(amountStringTransformations)
+
 export function createAmountFromString(amountString: string): Amount {
   // We store the error that occured during the first try and throw that in the end as it would
   // be confusing to receive the error for a transformed version.
@@ -81,7 +97,7 @@ export function createAmountFromString(amountString: string): Amount {
     const modAmountString: string = transformationCombination.reduce((memo, transformation) => transformation(memo), amountString)
 
     try {
-      let evalResult = mathjs.eval(modAmountString)
+      let evalResult = mathjs.evaluate(modAmountString)
       return mathjsValueToAmount(evalResult)
     } catch (e) {
       if (!initialError) {
@@ -92,15 +108,17 @@ export function createAmountFromString(amountString: string): Amount {
 
   throw initialError
 }
+
 export function createCookingAmount(amount: Amount): Amount {
   const mathjsAmount = amountToMathjsValue(amount)
 
-  if (!(mathjsAmount instanceof mathjs.type.Unit)) {
+  if (!isMathjsUnit(mathjsAmount)) {
     return amount
   }
 
   return mathjsValueToAmount(mathjsUnitToCookingMathjsUnit(mathjsAmount))
 }
+
 export function mergeAmounts(base?: Amount | null, client?: Amount | null, server?: Amount | null): Amount | undefined | null {
   if (_.isEqual(base, client)) {
     return server
@@ -112,6 +130,7 @@ export function mergeAmounts(base?: Amount | null, client?: Amount | null, serve
 
   return mergeAmountsTwoWay(client, server)
 }
+
 export function mergeAmountsTwoWay(client?: Amount | null, server?: Amount | null): Amount | undefined | null {
   let mathjsClient = amountToMathjsValue(client)
   let mathjsServer = amountToMathjsValue(server)
@@ -129,43 +148,51 @@ export function mergeAmountsTwoWay(client?: Amount | null, server?: Amount | nul
 export function getSIUnit(amount: Amount) {
   const mathjsValue = amountToMathjsValue(amount)
 
-  if (mathjsValue instanceof mathjs.type.Unit) {
-    return mathjsValue.toSI().toJSON().unit
+  if (isMathjsUnit(mathjsValue)) {
+    return mathjsValue.toSI().formatUnits()
   } else {
     return null
   }
 }
+
 export function addAmounts(a1?: Amount | null, a2?: Amount | null) {
   const mv1 = amountToMathjsValue(a1)
   const mv2 = amountToMathjsValue(a2)
   const mres = mathjs.add(mv1, mv2)
-  const normalizedResult = mres instanceof mathjs.type.Unit ? mathjsUnitToCookingMathjsUnit(mres) : mres
+  const normalizedResult = isMathjsUnit(mres) ? mathjsUnitToCookingMathjsUnit(mres) : mres
   return mathjsValueToAmount(normalizedResult)
 }
-type MathjsValue = mathjs.type.Unit | mathjs.type.BigNumber | mathjs.type.Fraction | number
 
-function toNumber(mathjsValue: MathjsValue): number {
-  if (
-    mathjsValue instanceof mathjs.type.Unit ||
-    mathjsValue instanceof mathjs.type.BigNumber ||
-    mathjsValue instanceof mathjs.type.Fraction
-  ) {
-    return mathjsValue.toNumber()
-  } else if (typeof mathjsValue === 'number') {
-    return mathjsValue
+type MathjsValue = mathjs.MathType
+
+function mathjsValueToAmount(mathjsValue: MathjsValue): Amount {
+  if (isMathjsUnit(mathjsValue)) {
+    let unit = mathjsValue.formatUnits()
+    return {
+      value: mathjsValue.toJSON().value,
+      unit,
+    }
+  }
+
+  if (isMathjsFraction(mathjsValue)) {
+    return mathjsValueToAmount(mathjs.number(mathjsValue))
+  }
+
+  let value: number
+  if (typeof mathjsValue === 'number') {
+    value = mathjsValue
+  } else if (isMathjsBigNumber(mathjsValue)) {
+    value = mathjsValue.toNumber()
   } else {
-    throw new TypeError('Argument is not a mathjs value')
+    throw new TypeError('Argument is not a mathjs value that can be converted to Amount')
+  }
+  return {
+    value: createAmountValue(value),
+    unit: undefined,
   }
 }
 
-function mathjsValueToAmount(mathjsValue: MathjsValue): Amount {
-  return createAmount({
-    value: toNumber(mathjsValue),
-    unit: mathjsValue instanceof mathjs.type.Unit ? mathjsValue.toJSON().unit : undefined,
-  })
-}
-
-function amountToMathjsValue(amount?: Amount | null): MathjsValue {
+function amountToMathjsValue(amount: Amount | undefined | null): MathjsValue {
   if (amount == null) {
     return 1
   }
@@ -177,7 +204,7 @@ function amountToMathjsValue(amount?: Amount | null): MathjsValue {
   return amount.value
 }
 
-function mathjsUnitToCookingMathjsUnit(mathjsUnit: mathjs.type.Unit): mathjs.type.Unit {
+function mathjsUnitToCookingMathjsUnit(mathjsUnit: mathjs.Unit): mathjs.Unit {
   let cooking
 
   if (mathjsUnit.equalBase(mathjs.unit('l'))) {
@@ -186,8 +213,9 @@ function mathjsUnitToCookingMathjsUnit(mathjsUnit: mathjs.type.Unit): mathjs.typ
     cooking = mathjs.unit(mathjsUnit.to('kg').toString())
   } else {
     cooking = mathjsUnit
-  } // make mathjs choose a suitable prefix automagically
+  }
 
+  // make mathjs choose a suitable prefix automagically
   const prefixed = mathjs.unit(cooking.toString())
   return prefixed
 }
@@ -203,6 +231,7 @@ export function mapReplace(
     .join('|')
   return str.replace(RegExp(regexpStr, 'g'), (match) => replacements[match])
 }
+
 export function powerSet<T>(list: Array<T>): Array<Array<T>> {
   const resultLength = 2 ** list.length
   const result = []
@@ -213,4 +242,16 @@ export function powerSet<T>(list: Array<T>): Array<Array<T>> {
   }
 
   return result
+}
+
+function isMathjsUnit(value: any): value is mathjs.Unit {
+  return mathjs.typeOf(value) === 'Unit'
+}
+
+function isMathjsBigNumber(value: any): value is mathjs.BigNumber {
+  return mathjs.typeOf(value) === 'BigNumber'
+}
+
+function isMathjsFraction(value: any): value is mathjs.Fraction {
+  return mathjs.typeOf(value) === 'Fraction'
 }

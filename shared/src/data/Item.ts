@@ -1,49 +1,61 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import mathjs from 'mathjs'
-import { createUUID } from '../util/uuid'
-import { UUID } from '../util/uuid'
-import { checkKeys, checkAttributeType, nullSafe } from '../util/validation'
-import { createAmount, createAmountFromString, mergeAmounts, mergeAmountsTwoWay } from './Amount'
-import { Amount } from './Amount'
+import * as mathjs from 'mathjs'
+import { createUUID, UUID } from '../util/uuid'
+import { checkAttributeType, checkKeys, nullSafe } from '../util/validation'
+import { Amount, createAmount, createAmountFromString, mergeAmounts, mergeAmountsTwoWay } from './Amount'
 import { CategoryDefinition } from './CategoryDefinition'
-export type CompletionItem = {
+import cli from 'jest'
+
+export interface CompletionItem {
   readonly name: string
   readonly category: UUID | undefined | null
 }
-export type BaseItem = {
+
+export interface BaseItem {
   readonly name: string
-  readonly amount: Amount | undefined | null
-  readonly category: UUID | undefined | null
+  readonly amount?: Amount | undefined | null
+  readonly category?: UUID | undefined | null
 }
-export type LocalItem = {
+
+export interface LocalItem {
   readonly name: string
-  readonly amount: Amount | undefined | null
-  readonly category: UUID | undefined | null
+  readonly amount?: Amount | undefined | null
+  readonly category?: UUID | undefined | null
 }
-export type Item = {
+
+export interface Item {
   readonly id: UUID
   readonly name: string
-  readonly amount: Amount | undefined | null
-  readonly category: UUID | undefined | null
+  readonly amount?: Amount | undefined | null
+  readonly category?: UUID | undefined | null
 }
+
 export function createCompletionItem(completionItemSpec: any): CompletionItem {
   checkKeys(completionItemSpec, ['name', 'category'])
   checkAttributeType(completionItemSpec, 'name', 'string')
   checkAttributeType(completionItemSpec, 'category', 'string', true)
-  const item = {}
-  item.name = completionItemSpec.name.trim()
-  item.category = nullSafe(createUUID)(completionItemSpec.category)
+
+  const item = {
+    name: completionItemSpec.name.trim(),
+    category: nullSafe(createUUID)(completionItemSpec.category),
+  }
+
   return deepFreeze(item)
 }
+
 export function createLocalItem(localItemSpec: any): LocalItem {
-  const localItem = createCompletionItem(_.omit(localItemSpec, ['amount']))
+  const completionItem = createCompletionItem(_.omit(localItemSpec, ['amount']))
   checkAttributeType(localItemSpec, 'amount', 'object', true)
-  const item = {}
-  Object.assign(item, localItem)
-  item.amount = nullSafe(createAmount)(localItemSpec.amount)
-  return deepFreeze(item)
+
+  const localItem = {
+    ...completionItem,
+    amount: nullSafe(createAmount)(localItemSpec.amount),
+  }
+
+  return deepFreeze(localItem)
 }
+
 export function createLocalItemFromString(
   stringRepresentation: string,
   categories: ReadonlyArray<CategoryDefinition>
@@ -89,6 +101,7 @@ export function createLocalItemFromString(
     category: category,
   })
 }
+
 export function createLocalItemFromItemStringRepresentation(
   itemStringRepresentation: any,
   categories: ReadonlyArray<CategoryDefinition>
@@ -97,24 +110,32 @@ export function createLocalItemFromItemStringRepresentation(
   checkAttributeType(itemStringRepresentation, 'stringRepresentation', 'string')
   return createLocalItemFromString(itemStringRepresentation.stringRepresentation, categories)
 }
+
 export function createItem(itemSpec: any): Item {
   const localItem = createLocalItem(_.omit(itemSpec, ['id']))
   checkAttributeType(itemSpec, 'id', 'string')
-  const item = {}
-  Object.assign(item, localItem)
-  item.id = createUUID(itemSpec.id)
+
+  const item = {
+    ...localItem,
+    id: createUUID(itemSpec.id),
+  }
+
   return deepFreeze(item)
 }
+
 export function createItemFromItemStringRepresentation(
   itemStringRepresentation: any,
   categories: ReadonlyArray<CategoryDefinition>
 ): Item {
   const localItem = createLocalItemFromItemStringRepresentation(_.omit(itemStringRepresentation, ['id']), categories)
-  const item = {}
-  Object.assign(item, localItem)
-  item.id = createUUID(itemStringRepresentation.id)
+  const item = {
+    ...localItem,
+    id: createUUID(itemStringRepresentation.id),
+  }
+
   return deepFreeze(item)
 }
+
 export function itemToString(item: BaseItem): string {
   const name = item.name != null ? item.name.trim() : ''
   const amount = item.amount
@@ -131,49 +152,57 @@ export function itemToString(item: BaseItem): string {
     return name
   }
 }
+
 export function mergeItems(base: Item, client: Item, server: Item): Item {
-  const newItem = {}
-  newItem.id = base.id
   /**
-   * Assumption: Item dosn't change identity, that is no changes that make new completely unrelated to old. In that case, changes to name
+   * Assumption: Item doesn't change identity, that is no changes that make new completely unrelated to old. In that case, changes to name
    * add information. We assume that length correlates with amount of information, therefore prefer the longer title
    */
-
+  let name: string
   if (base.name != client.name && base.name != server.name) {
     if (client.name.length < server.name.length) {
-      newItem.name = server.name
+      name = server.name
     } else {
-      newItem.name = client.name
+      name = client.name
     }
   } else if (base.name != client.name) {
-    newItem.name = client.name
+    name = client.name
   } else {
-    newItem.name = server.name
-  } // Client change wins if it exists
+    name = server.name
+  }
 
+  // Client change wins if it exists
+  let category: UUID | null | undefined
   if (base.category != client.category) {
-    newItem.category = client.category
+    category = client.category
   } else {
-    newItem.category = server.category
+    category = server.category
   }
 
-  newItem.amount = mergeAmounts(base.amount, client.amount, server.amount)
-  return createItem(newItem)
+  return {
+    id: base.id,
+    name,
+    category,
+    amount: mergeAmounts(base.amount, client.amount, server.amount),
+  }
 }
+
 export function mergeItemsTwoWay(client: Item, server: Item): Item {
-  const newItem = {}
-  newItem.id = client.id
-
+  let name: string
   if (client.name.length < server.name.length) {
-    newItem.name = server.name
+    name = server.name
   } else {
-    newItem.name = client.name
+    name = client.name
   }
 
-  newItem.category = client.category
-  newItem.amount = mergeAmountsTwoWay(client.amount, server.amount)
-  return createItem(newItem)
+  return {
+    id: client.id,
+    name,
+    category: client.category,
+    amount: mergeAmountsTwoWay(client.amount, server.amount),
+  }
 }
+
 export function addMatchingCategory<T extends LocalItem>(item: T, completions: ReadonlyArray<CompletionItem>): T {
   const exactMatchingCompletion = completions.find(
     (completionItem) =>
@@ -181,7 +210,6 @@ export function addMatchingCategory<T extends LocalItem>(item: T, completions: R
   )
 
   if (exactMatchingCompletion != null) {
-    // $FlowFixMe
     return Object.assign(
       {},
       item,
@@ -196,7 +224,6 @@ export function addMatchingCategory<T extends LocalItem>(item: T, completions: R
   )
 
   if (matchingCompletion != null) {
-    // $FlowFixMe
     return Object.assign(
       {},
       item,
@@ -206,6 +233,7 @@ export function addMatchingCategory<T extends LocalItem>(item: T, completions: R
 
   return item
 }
+
 export function normalizeCompletionName(name: string): string {
   return name.trim().toLowerCase()
 }

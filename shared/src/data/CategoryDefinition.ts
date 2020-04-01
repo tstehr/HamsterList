@@ -3,6 +3,7 @@ import colorString from 'color-string'
 import { createUUID } from '../util/uuid'
 import { UUID } from '../util/uuid'
 import { checkKeys, checkAttributeType } from '../util/validation'
+
 export type Color = string
 export type CategoryDefinition = {
   readonly id: UUID
@@ -11,6 +12,7 @@ export type CategoryDefinition = {
   readonly color: Color
   readonly lightText: boolean
 }
+
 export function createColor(colorSpec: string): Color {
   const color = colorString.get(colorSpec)
 
@@ -20,6 +22,7 @@ export function createColor(colorSpec: string): Color {
 
   return colorSpec
 }
+
 export function createCategoryDefinition(categoryDefinitionSpec: any): CategoryDefinition {
   checkKeys(categoryDefinitionSpec, ['id', 'name', 'shortName', 'color', 'lightText'])
   checkAttributeType(categoryDefinitionSpec, 'id', 'string')
@@ -27,11 +30,14 @@ export function createCategoryDefinition(categoryDefinitionSpec: any): CategoryD
   checkAttributeType(categoryDefinitionSpec, 'shortName', 'string')
   checkAttributeType(categoryDefinitionSpec, 'color', 'string')
   checkAttributeType(categoryDefinitionSpec, 'lightText', 'boolean')
-  const categoryDefinition = {}
-  categoryDefinition.id = createUUID(categoryDefinitionSpec.id)
-  categoryDefinition.name = categoryDefinitionSpec.name.trim()
-  categoryDefinition.shortName = categoryDefinitionSpec.shortName.trim()
-  categoryDefinition.color = createColor(categoryDefinitionSpec.color)
-  categoryDefinition.lightText = !!categoryDefinitionSpec.lightText
+
+  const categoryDefinition = {
+    id: createUUID(categoryDefinitionSpec.id),
+    name: categoryDefinitionSpec.name.trim(),
+    shortName: categoryDefinitionSpec.shortName.trim(),
+    color: createColor(categoryDefinitionSpec.color),
+    lightText: !!categoryDefinitionSpec.lightText,
+  }
+
   return deepFreeze(categoryDefinition)
 }

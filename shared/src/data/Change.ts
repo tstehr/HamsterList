@@ -1,35 +1,39 @@
-import _ from 'lodash'
-import deepFreeze from 'deep-freeze'
 import differenceInDays from 'date-fns/difference_in_days'
-import { createUUID } from '../util/uuid'
-import { UUID } from '../util/uuid'
-import { createItem } from './Item'
-import { Item } from './Item'
+import deepFreeze from 'deep-freeze'
+import _ from 'lodash'
+import { createUUID, UUID } from '../util/uuid'
+import { checkAttributeType, checkKeys, errorMap } from '../util/validation'
+import { createItem, Item } from './Item'
 import { BaseShoppingList, ShoppingList } from './ShoppingList'
-import { checkKeys, checkAttributeType, errorMap } from '../util/validation'
-export type Change = {
+
+export interface Change {
   readonly username: string | undefined | null
   readonly id: UUID
   readonly date: Date
   readonly diffs: ReadonlyArray<Diff>
 }
+
 export const ADD_ITEM: 'ADD_ITEM' = 'ADD_ITEM'
-export type AddItem = {
+export interface AddItem {
   readonly type: typeof ADD_ITEM
   readonly item: Item
 }
+
 export const UPDATE_ITEM: 'UPDATE_ITEM' = 'UPDATE_ITEM'
-export type UpdateItem = {
+export interface UpdateItem {
   readonly type: typeof UPDATE_ITEM
   readonly oldItem: Item
   readonly item: Item
 }
+
 export const DELETE_ITEM: 'DELETE_ITEM' = 'DELETE_ITEM'
-export type DeleteItem = {
+export interface DeleteItem {
   readonly type: typeof DELETE_ITEM
   readonly oldItem: Item
 }
+
 export type Diff = AddItem | UpdateItem | DeleteItem
+
 export function createChange(changeSpec: any): Change {
   checkKeys(changeSpec, ['username', 'id', 'date', 'diffs'])
   checkAttributeType(changeSpec, 'username', 'string', true)
@@ -48,8 +52,11 @@ export function createChange(changeSpec: any): Change {
     date: date,
     diffs: errorMap(changeSpec.diffs, createDiff),
   }
+
+  // @ts-ignore TODO deep-freeze makes a readonly date
   return deepFreeze(change)
 }
+
 export function createDiff(diffSpec: any): Diff {
   checkAttributeType(diffSpec, 'type', 'string')
   let diff: Diff
@@ -80,15 +87,20 @@ export function createDiff(diffSpec: any): Diff {
 
   return diff
 }
+
 export function getOnlyNewChanges(changes: ReadonlyArray<Change>): ReadonlyArray<Change> {
-  const now = new Date() // index of first change that is newer than 14 days
+  const now = new Date()
 
-  const dateIndex = _.findIndex(changes, (c) => differenceInDays(now, c.date) < 14) // index of first change that is more than 200
+  // index of first change that is newer than 14 days
+  const dateIndex = _.findIndex(changes, (c) => differenceInDays(now, c.date) < 14)
 
-  const lengthIndex = Math.max(0, changes.length - 200) // slice away the oldest changes
+  // index of first change that is more than 200
+  const lengthIndex = Math.max(0, changes.length - 200)
 
+  // slice away the oldest changes
   return changes.slice(Math.min(dateIndex, lengthIndex), changes.length)
 }
+
 export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShoppingList: BaseShoppingList): ReadonlyArray<Diff> {
   const diffs = []
 
@@ -98,7 +110,7 @@ export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShopping
 
   const allIds = _.union(_.keys(oldMap), _.keys(newMap))
 
-  for (const id: UUID of allIds) {
+  for (const id of allIds) {
     const oldItem = oldMap[id]
     const newItem = newMap[id]
 
@@ -121,12 +133,14 @@ export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShopping
 
   return diffs
 }
+
 export function generateAddItem(newItem: Item): AddItem {
   return {
     type: ADD_ITEM,
     item: newItem,
   }
 }
+
 export function generateUpdateItem(shoppingList: ShoppingList, newItem: Item): UpdateItem {
   const oldItem = shoppingList.items.find((item) => item.id === newItem.id)
 
@@ -144,6 +158,7 @@ export function generateUpdateItem(shoppingList: ShoppingList, newItem: Item): U
     oldItem: oldItem,
   }
 }
+
 export function generateDeleteItem(shoppingList: ShoppingList, itemid: UUID): DeleteItem {
   const oldItem = shoppingList.items.find((item) => item.id === itemid)
 
@@ -156,6 +171,7 @@ export function generateDeleteItem(shoppingList: ShoppingList, itemid: UUID): De
     oldItem: oldItem,
   }
 }
+
 export function applyDiff(shoppingList: ShoppingList, diff: Diff): ShoppingList {
   if (diff.type === ADD_ITEM) {
     const item = diff.item
@@ -187,6 +203,7 @@ export function applyDiff(shoppingList: ShoppingList, diff: Diff): ShoppingList 
   diff as never
   throw TypeError(`Diff to be applied is not an element of type 'Diff'`)
 }
+
 export function isDiffApplicable(shoppingList: ShoppingList, diff: Diff): boolean {
   try {
     applyDiff(shoppingList, diff)
@@ -195,6 +212,7 @@ export function isDiffApplicable(shoppingList: ShoppingList, diff: Diff): boolea
     return false
   }
 }
+
 export function createReverseDiff(diff: Diff): Diff {
   if (diff.type === ADD_ITEM) {
     return {
@@ -221,6 +239,7 @@ export function createReverseDiff(diff: Diff): Diff {
   diff as never
   throw TypeError(`Diff to be reversed is not of type 'Diff'`)
 }
+
 export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): Diff | undefined | null {
   if (isDiffApplicable(shoppingList, diff)) {
     return diff

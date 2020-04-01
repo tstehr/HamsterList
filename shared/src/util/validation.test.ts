@@ -1,5 +1,6 @@
 /* eslint-env jest */
 import { errorMap } from './validation'
+
 describe('errorMap', () => {
   it('Shows error with element index', () => {
     expect(() => {
@@ -12,6 +13,7 @@ describe('errorMap', () => {
       })
     }).toThrow('Error in element 3: Ich nehm die Nummer 3')
   })
+
   it('Shows error with element index and string if element is string', () => {
     expect(() => {
       errorMap(['zero', 'one', 'two', 'three', 'four'], (el) => {
@@ -23,6 +25,7 @@ describe('errorMap', () => {
       })
     }).toThrow('Error in element 3 ("three"): Ich nehm die Nummer 3')
   })
+
   it('Shows error with element index and idenfification if element is object with field id', () => {
     expect(() => {
       errorMap(

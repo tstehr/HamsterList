@@ -7,6 +7,7 @@
     "build": "yarn run build:clean && yarn run build:babel",
     "build:clean": "rm -rf ./build",
     "build:babel": "babel src --out-dir build --source-maps --extensions '.ts'",
+    
     "watch": "yarn run build:clean && yarn run watch:babel",
     "watch:babel": "yarn run build:babel --watch",
     "test": "jest src",
@@ -20,7 +21,7 @@
     "escape-string-regexp": "^2.0.0",
     "is-uuid": "^1.0.2",
     "lodash": "^4.17.14",
-    "mathjs": "^5.0.2",
+    "mathjs": "^6.6.2",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
@@ -31,6 +32,13 @@
     "@babel/plugin-transform-typescript": "^7.9.4",
     "@babel/preset-env": "^7.5.4",
     "@babel/preset-typescript": "^7.9.0",
+    "@types/color-string": "^1.5.0",
+    "@types/deep-freeze": "^0.1.2",
+    "@types/is-uuid": "^1.0.0",
+    "@types/jest": "^25.1.4",
+    "@types/lodash": "^4.14.149",
+    "@types/mathjs": "^6.0.4",
+    "@types/uuid": "^3.4.8",
     "babel-eslint": "^10.0.2",
     "eslint": "^6.0.1",
     "jest": "^24.8.0",

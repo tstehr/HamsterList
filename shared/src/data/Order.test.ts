@@ -5,6 +5,7 @@ import { Item } from './Item'
 import { createCategoryDefinition } from './CategoryDefinition'
 import { CategoryDefinition } from './CategoryDefinition'
 import { sortCategories } from './Order'
+
 describe('createOrder', () => {
   it('Creates an order from a valid spec', () => {
     createOrder({
@@ -13,6 +14,7 @@ describe('createOrder', () => {
       categoryOrder: ['8178a592-7783-4755-9202-8e463ab23234', '6301d82f-0e69-4d57-9473-ab7633089b2c'],
     })
   })
+
   it(`Doesn't create an order with additional keys`, () => {
     expect(() => {
       createOrder({
@@ -24,6 +26,7 @@ describe('createOrder', () => {
     }).toThrow('Given object contained unexpected keys: a')
   })
 })
+
 describe('sortItems', () => {
   const items: Item[] = [
     createItem({
@@ -51,6 +54,7 @@ describe('sortItems', () => {
     name: 'real',
     categoryOrder: ['8178a592-7783-4755-9202-8e463ab23234', '6301d82f-0e69-4d57-9473-ab7633089b2c'],
   })
+
   it('Sorts items', () => {
     const sortedItems = sortItems(items, order.categoryOrder)
     expect(sortedItems).toHaveLength(4)
@@ -60,6 +64,7 @@ describe('sortItems', () => {
     expect(sortedItems[3].name).toEqual('Unbekanntes Zeug')
   })
 })
+
 describe('sortCategories', () => {
   const categories: CategoryDefinition[] = [
     createCategoryDefinition({
@@ -82,11 +87,13 @@ describe('sortCategories', () => {
     name: 'real',
     categoryOrder: ['8178a592-7783-4755-9202-8e463ab23234', '6301d82f-0e69-4d57-9473-ab7633089b2c'],
   })
+
   it('Sorts categories', () => {
     const sortedCategories = sortCategories(categories, order.categoryOrder)
     expect(sortedCategories).toEqual([categories[1], categories[0]])
   })
 })
+
 describe('completeCategories', () => {
   const categories: CategoryDefinition[] = [
     createCategoryDefinition({
@@ -116,6 +123,7 @@ describe('completeCategories', () => {
     name: 'real',
     categoryOrder: ['8178a592-7783-4755-9202-8e463ab23234', '6301d82f-0e69-4d57-9473-ab7633089b2c'],
   })
+
   it('Adds missing categories', () => {
     const completedCategoryOrder = completeCategoryOrder(order.categoryOrder, categories)
     expect(completedCategoryOrder).toEqual([
