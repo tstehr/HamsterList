@@ -1,4 +1,3 @@
-
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
@@ -11,7 +10,5 @@ import shareapipolyfill from 'share-api-polyfill' // eslint-disable-line no-unus
 // kick off the polyfill!
 smoothscroll.polyfill()
 
-ReactDOM.render((
-  <App/>
-), document.getElementById('root'))
+ReactDOM.render(<App />, document.getElementById('root'))
 registerServiceWorker()

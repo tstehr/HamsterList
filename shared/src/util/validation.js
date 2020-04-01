@@ -20,7 +20,7 @@ export function checkAttributeType(object: Object, key: string, type: AttributeT
   }
   const actualType = getAttributeType(object[key])
   if (actualType !== type && !(optional && object[key] == null)) {
-      throw new TypeError(`Expected attribute "${key}" to be of type "${type}" but is of type "${actualType}" instead`)
+    throw new TypeError(`Expected attribute "${key}" to be of type "${type}" but is of type "${actualType}" instead`)
   }
 }
 
@@ -40,7 +40,7 @@ export function errorMap<I, O>(array: $ReadOnlyArray<I>, transformer: (I) => O):
 }
 
 export function nullSafe<T, R>(func: (T) => R): (?T) => ?R {
-  return function(p: ?T) {
+  return function (p: ?T) {
     if (p === null) {
       return null
     }
@@ -56,7 +56,7 @@ const IDENTIFICATION_FIELDS = Object.freeze(['name', 'title', 'id'])
 function getIdentification(o: mixed): ?string {
   if (o && typeof o === 'object') {
     for (let identificationField of IDENTIFICATION_FIELDS) {
-      if (typeof o[identificationField]  === 'string') {
+      if (typeof o[identificationField] === 'string') {
         return `${identificationField}="${o[identificationField]}"`
       }
     }

@@ -47,10 +47,10 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
         this.props.deleteCompletion(this.props.item.name)
         e.preventDefault()
         this.props.focusInput()
-      } 
+      }
     } else if (e.key === 'Enter') {
       this.setState({
-        enterPressed: true
+        enterPressed: true,
       })
     }
   }
@@ -58,44 +58,56 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
   handleKeyUp = (e: SyntheticKeyboardEvent<>) => {
     if (e.key === 'Enter') {
       this.setState({
-        enterPressed: false
+        enterPressed: false,
       })
     }
   }
 
   handleFocus = (e: SyntheticFocusEvent<>) => {
     this.setState({
-      createButtonFocused: true
+      createButtonFocused: true,
     })
   }
 
   handleBlur = (e: SyntheticFocusEvent<>) => {
     this.setState({
-      createButtonFocused: false
+      createButtonFocused: false,
     })
   }
 
   render() {
     const props = this.props
 
-    const className = classNames("CreateItemButtonComponent", {
-      "focused": props.focused || this.state.createButtonFocused,
+    const className = classNames('CreateItemButtonComponent', {
+      focused: props.focused || this.state.createButtonFocused,
     })
 
-    const buttonClassName = classNames("CreateItemButtonComponent__button", {
-      "KeyFocusComponent--noFocus": props.noArrowFocus,
+    const buttonClassName = classNames('CreateItemButtonComponent__button', {
+      'KeyFocusComponent--noFocus': props.noArrowFocus,
     })
 
-    return <div className={className}>
-      <CategoryComponent categoryId={props.item.category} categories={props.categories}/>
-      <button className={buttonClassName} onClick={this.handleClick} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onFocus={this.handleFocus} onBlur={this.handleBlur}>
-        <ItemComponent item={props.item}/>
-      </button>
-      {this.props.deleteCompletion && 
-        <IconButton onClick={() => !!this.props.deleteCompletion ? this.props.deleteCompletion(this.props.item.name) : undefined
-        } 
-          icon="DELETE" alt="Delete completion" className="KeyFocusComponent--noFocus"/>
-      }
-    </div>
+    return (
+      <div className={className}>
+        <CategoryComponent categoryId={props.item.category} categories={props.categories} />
+        <button
+          className={buttonClassName}
+          onClick={this.handleClick}
+          onKeyDown={this.handleKeyDown}
+          onKeyUp={this.handleKeyUp}
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
+        >
+          <ItemComponent item={props.item} />
+        </button>
+        {this.props.deleteCompletion && (
+          <IconButton
+            onClick={() => (!!this.props.deleteCompletion ? this.props.deleteCompletion(this.props.item.name) : undefined)}
+            icon="DELETE"
+            alt="Delete completion"
+            className="KeyFocusComponent--noFocus"
+          />
+        )}
+      </div>
+    )
   }
 }

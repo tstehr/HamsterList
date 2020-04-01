@@ -11,14 +11,14 @@
 .CreateItemButtonComponent.focused {
   padding-left: 2rem;
   z-index: 1;
- }
+}
 .CreateItemButtonComponent::before {
   content: '➔ ';
   font-size: 1.3rem;
   position: absolute;
   height: 3rem;
   line-height: 3rem;
-  left: .5rem;
+  left: 0.5rem;
   top: 0;
   opacity: 0;
   transition: opacity 100ms 0ms;
@@ -30,7 +30,7 @@
 
 .CreateItemButtonComponent__button {
   flex: 1;
-  padding-left: .5rem;
+  padding-left: 0.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   border: 0;
@@ -49,9 +49,9 @@
   .CreateItemButtonComponent .IconButton {
     display: none;
   }
-  .CreateItemButtonComponent:hover .IconButton, 
-  .CreateItemButtonComponent.focused .IconButton, 
-  .CreateItemButtonComponent:focus-within .IconButton{
+  .CreateItemButtonComponent:hover .IconButton,
+  .CreateItemButtonComponent.focused .IconButton,
+  .CreateItemButtonComponent:focus-within .IconButton {
     display: block;
   }
 }
@@ -61,6 +61,6 @@
     border: 0;
     background-color: var(--theme-color);
     color: #fff;
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
   }
 }

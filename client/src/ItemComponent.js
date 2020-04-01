@@ -7,7 +7,7 @@ import { type Amount, type BaseItem } from 'shoppinglist-shared'
 import './ItemComponent.css'
 
 type AmountProps = {
-  amount: ?Amount
+  amount: ?Amount,
 }
 
 const AmountComponent: React$ComponentType<AmountProps> = React.memo((props: AmountProps) => {
@@ -15,8 +15,7 @@ const AmountComponent: React$ComponentType<AmountProps> = React.memo((props: Amo
   if (amount != null) {
     return (
       <span>
-        {mathjs.round(amount.value, 2)} {" "}
-        {amount.unit != null && <em>{amount.unit}</em>}
+        {mathjs.round(amount.value, 2)} {amount.unit != null && <em>{amount.unit}</em>}
       </span>
     )
   } else {
@@ -29,12 +28,14 @@ type Props = {
   className?: string,
 }
 
-const ItemComponent: React$ComponentType<Props> = React.memo((props: Props) => (
-  <span className={classNames("ItemComponent", props.className)}>
-    <AmountComponent amount={props.item.amount} />
-    {" "} {props.item.name}
-  </span>
-), _.isEqual)
+const ItemComponent: React$ComponentType<Props> = React.memo(
+  (props: Props) => (
+    <span className={classNames('ItemComponent', props.className)}>
+      <AmountComponent amount={props.item.amount} /> {props.item.name}
+    </span>
+  ),
+  _.isEqual
+)
 
 export default ItemComponent
 export { AmountComponent }

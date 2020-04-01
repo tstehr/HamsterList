@@ -1,18 +1,25 @@
 // @flow
 import _ from 'lodash'
 import {
-  type Item, type LocalItem, type UUID,
-  createItem, createLocalItem, createCompletionItem, createUUID, createRandomUUID,
-  addMatchingCategory, createLocalItemFromItemStringRepresentation, createItemFromItemStringRepresentation,
-  normalizeCompletionName
+  type Item,
+  type LocalItem,
+  type UUID,
+  createItem,
+  createLocalItem,
+  createCompletionItem,
+  createUUID,
+  createRandomUUID,
+  addMatchingCategory,
+  createLocalItemFromItemStringRepresentation,
+  createItemFromItemStringRepresentation,
+  normalizeCompletionName,
 } from 'shoppinglist-shared'
 import { updateInArray } from './DB'
 import { type RecentlyUsedArray } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
 import { getSortedCompletions } from './CompletionsController'
 
-
-export type ItemIdRequest = {itemid: UUID} & ShoppingListRequest
+export type ItemIdRequest = { itemid: UUID } & ShoppingListRequest
 
 export default class ItemController {
   handleParamItemid = (req: ItemIdRequest, res: express$Response, next: express$NextFunction) => {
@@ -20,18 +27,18 @@ export default class ItemController {
       req.itemid = createUUID(req.params.itemid)
       next()
     } catch (e) {
-      res.status(400).json({error: e.message})
+      res.status(400).json({ error: e.message })
       return
     }
   }
 
   handleGet = (req: ItemIdRequest, res: express$Response, next: express$NextFunction) => {
     const item = req.list.items.find((item) => item.id === req.itemid)
-    if (item!= null) {
+    if (item != null) {
       res.json(createItem(item))
       next()
     } else {
-      res.status(404).json({error: `Item with id "${req.itemid}" not found!`})
+      res.status(404).json({ error: `Item with id "${req.itemid}" not found!` })
     }
   }
 
@@ -46,16 +53,16 @@ export default class ItemController {
         localItem = createLocalItem(req.body)
       }
     } catch (e) {
-      res.status(400).json({error: e.message})
+      res.status(400).json({ error: e.message })
       return
     }
 
-    const item: Item = {...localItem, id: createRandomUUID()}
+    const item: Item = { ...localItem, id: createRandomUUID() }
 
     req.updatedList = {
       ...req.list,
       items: [...req.list.items, item],
-      recentlyUsed: updateRecentlyUsed(req.list.recentlyUsed, item)
+      recentlyUsed: updateRecentlyUsed(req.list.recentlyUsed, item),
     }
 
     res.location(`${req.baseUrl}/${req.listid}/items/${item.id}`).status(201).json(item)
@@ -73,12 +80,12 @@ export default class ItemController {
         item = createItem(req.body)
       }
     } catch (e) {
-      res.status(400).json({error: e.message})
+      res.status(400).json({ error: e.message })
       return
     }
 
     if (item.id !== req.itemid) {
-      res.status(400).json({error: 'Item ids don\'t match'})
+      res.status(400).json({ error: "Item ids don't match" })
       return
     }
 
@@ -88,14 +95,14 @@ export default class ItemController {
       req.updatedList = {
         ...req.list,
         items: [...req.list.items, item],
-        recentlyUsed: updateRecentlyUsed(req.list.recentlyUsed, item)
+        recentlyUsed: updateRecentlyUsed(req.list.recentlyUsed, item),
       }
     } else {
       status = 200
       req.updatedList = {
         ...req.list,
         items: updateInArray(req.list.items, item),
-        recentlyUsed: updateRecentlyUsed(req.list.recentlyUsed, item)
+        recentlyUsed: updateRecentlyUsed(req.list.recentlyUsed, item),
       }
     }
 
@@ -106,7 +113,7 @@ export default class ItemController {
   handleDelete = (req: ItemIdRequest, res: express$Response, next: express$NextFunction) => {
     const item = req.list.items.find((item) => item.id === req.itemid)
     if (item == null) {
-      res.status(404).json({error: `Item with id "${req.itemid}" not found!`})
+      res.status(404).json({ error: `Item with id "${req.itemid}" not found!` })
       return
     }
 
@@ -126,7 +133,7 @@ export function updateRecentlyUsed(recentlyUsed: RecentlyUsedArray, item: Item):
     return recentlyUsed
   }
 
-  const entryIdx = _.findIndex(recentlyUsed, entry => normalizeCompletionName(entry.item.name) === completionName)
+  const entryIdx = _.findIndex(recentlyUsed, (entry) => normalizeCompletionName(entry.item.name) === completionName)
 
   const result = [...recentlyUsed]
 
@@ -134,14 +141,14 @@ export function updateRecentlyUsed(recentlyUsed: RecentlyUsedArray, item: Item):
     result.push({
       lastUsedTimestamp: Date.now(),
       uses: 1,
-      item: completionItem
+      item: completionItem,
     })
   } else {
     const entry = recentlyUsed[entryIdx]
     result.splice(entryIdx, 1, {
       lastUsedTimestamp: Date.now(),
       uses: entry.uses + 1,
-      item: completionItem
+      item: completionItem,
     })
   }
 

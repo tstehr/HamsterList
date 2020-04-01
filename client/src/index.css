@@ -1,13 +1,12 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 :root {
   color-scheme: light dark;
   supported-color-schemes: light dark;
-
 
   /* COLORS */
   --theme-color-hsl-value: 122, 39%, 49%;
@@ -20,12 +19,11 @@
   --box-color: hsl(0, 0%, 97%);
   --focus-color: blue;
   --failure-color-hsl-value: 4, 90%, 58%;
-  
+
   --text-color: hsl(var(--text-color-hsl-value));
   --text-on-theme-color: hsl(var(--text-on-theme-color-hsl-value));
   --background-color: hsl(var(--background-color-hsl-value));
   --failure-color: hsl(var(--failure-color-hsl-value));
-
 
   /* WIDTHS */
   --single-col-max-width: 30rem;
@@ -50,11 +48,10 @@
 
 body {
   /* https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/  */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
-    "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
   color: var(--text-color);
-  background-color: var(--background-color)
+  background-color: var(--background-color);
 }
 
 button {
@@ -63,11 +60,10 @@ button {
   background: var(--background-color);
   border: none;
   font-family: inherit;
-  font-size: .8rem;
+  font-size: 0.8rem;
   border: 1px solid var(--text-color);
-  color: var(--text-color)
+  color: var(--text-color);
 }
-
 
 :not(select):focus {
   outline: none;
@@ -75,8 +71,8 @@ button {
 }
 
 button.PaddedButton {
-  margin: .2rem;
-  padding: .2rem;
+  margin: 0.2rem;
+  padding: 0.2rem;
 }
 
 .Button {
@@ -95,17 +91,16 @@ button.PaddedButton {
   color: var(--text-color);
 }
 .Button--padded {
-  padding: 0 .5rem;
+  padding: 0 0.5rem;
 }
 @media (min-width: 40rem) and (min-height: 40rem) {
   .Button {
     border: 0;
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
     color: var(--text-on-theme-color);
     background: var(--button-bg-color);
   }
 }
-
 
 #shareAPIPolyfill-container button {
   color: black;
@@ -135,12 +130,13 @@ button.PaddedButton {
   top: auto;
   max-width: 400px;
   height: auto;
-  transition-property: transform,opacity;
+  transition-property: transform, opacity;
   transition-timing-function: linear;
   transition-duration: 250ms;
   transition-delay: 150ms;
   transform: translateY(100%);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", arial, sans-serif, "Microsoft JhengHei";
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', arial, sans-serif, 'Microsoft JhengHei';
 }
 #shareAPIPolyfill-backdrop.visible,
 #shareAPIPolyfill-container.visible {
@@ -151,32 +147,32 @@ button.PaddedButton {
   transform: translateY(0);
 }
 #shareAPIPolyfill-container .shareAPIPolyfill-header {
-  background: #EEE;
+  background: #eee;
 }
 #shareAPIPolyfill-container .shareAPIPolyfill-header .shareAPIPolyfill-icons-container {
   display: flex;
 }
 #shareAPIPolyfill-container .shareAPIPolyfill-header-title {
-  background-color: #E0E0E0;
+  background-color: #e0e0e0;
   padding: 10px 18px;
   color: #424242;
   font-weight: 600;
 }
 #shareAPIPolyfill-container .shareAPIPolyfill-body {
-  border-top: solid 1px #EEE;
+  border-top: solid 1px #eee;
 }
 #shareAPIPolyfill-container .shareAPIPolyfill-footer {
- width: 100%;
- display: block;
- border: none;
- transition: opacity ease-in 250ms;
- border-top: solid 1px #EEE;
- background-color: #EEE;
- text-align: center;
- padding: 10px;
- font-size:13px;
- cursor: pointer;
- opacity: .5;
+  width: 100%;
+  display: block;
+  border: none;
+  transition: opacity ease-in 250ms;
+  border-top: solid 1px #eee;
+  background-color: #eee;
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  opacity: 0.5;
 }
 #shareAPIPolyfill-container .shareAPIPolyfill-footer:hover {
   opacity: 1;
@@ -186,32 +182,32 @@ button.PaddedButton {
   flex-wrap: wrap;
 }
 #shareAPIPolyfill-container .tool-icon {
- border: none;
- display: inline-block;
- width: 25%;
- box-sizing: border-box;
- font-weight: 400;
- font-size: 12px;
- -webkit-font-smoothing: antialiased;
- -moz-osx-font-smoothing: grayscale;
- text-align: center;
- cursor: pointer;
- background-color: transparent;
- padding: 20px 0;
+  border: none;
+  display: inline-block;
+  width: 25%;
+  box-sizing: border-box;
+  font-weight: 400;
+  font-size: 12px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  cursor: pointer;
+  background-color: transparent;
+  padding: 20px 0;
 }
 #shareAPIPolyfill-container .tool-icon:hover {
-  box-shadow: inset 0 0 20px rgba(0,0,0, .125);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.125);
 }
 #shareAPIPolyfill-container .the-icon-title {
- padding-top: 10px;
- display: block;
+  padding-top: 10px;
+  display: block;
 }
 .shareAPIPolyfill-header-title .the-icon {
-	display: inline-block;
-	height: 20px;
-	width: 20px;
-	padding-right: 5px;
-	vertical-align: '-2px';
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  padding-right: 5px;
+  vertical-align: '-2px';
 }
 .shareAPIPolyfill-icons-container.title .tool-icon .the-icon,
 .shareAPIPolyfill-icons-container.body .tool-icon .the-icon {

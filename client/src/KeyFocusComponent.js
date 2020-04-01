@@ -9,9 +9,8 @@ type Props = {
   rootTagName: string,
   className?: string,
   children?: Node,
-  direction: Direction
+  direction: Direction,
 }
-
 
 export default class KeyFocusComponent extends Component<Props> {
   root: ?HTMLElement
@@ -21,15 +20,15 @@ export default class KeyFocusComponent extends Component<Props> {
   constructor(props: Props) {
     super(props)
 
-    switch(props.direction) {
+    switch (props.direction) {
       case 'horizontal':
         this.back = 'ArrowLeft'
         this.forward = 'ArrowRight'
-        break;
+        break
       case 'vertical':
         this.back = 'ArrowUp'
         this.forward = 'ArrowDown'
-        break;
+        break
       default:
         throw new Error('Unknown direction')
     }
@@ -53,15 +52,15 @@ export default class KeyFocusComponent extends Component<Props> {
         const index = focusable.indexOf(focused)
 
         if (e.key === this.back) {
-            newIndex = index - 1
+          newIndex = index - 1
         } else if (e.key === this.forward) {
-            newIndex = index + 1
+          newIndex = index + 1
         }
       } else {
         const index = all.indexOf(focused)
         let search
         if (e.key === this.back) {
-            search = all.slice(0, index).reverse()
+          search = all.slice(0, index).reverse()
         } else if (e.key === this.forward) {
           search = all.slice(index)
         }
@@ -96,11 +95,13 @@ export default class KeyFocusComponent extends Component<Props> {
 
   render() {
     const Component = this.props.rootTagName
-    const className = this.props.className != null ? this.props.className + " KeyFocusComponent" : "KeyFocusComponent"
+    const className = this.props.className != null ? this.props.className + ' KeyFocusComponent' : 'KeyFocusComponent'
     const passthroughProps = _.omit(this.props, ['rootTagName', 'className', 'children', 'direction'])
 
-    return <Component onKeyDown={this.handleKeyDown} ref={(root) => this.root = root} className={className} {...passthroughProps}>
-      {this.props.children}
-    </Component>
+    return (
+      <Component onKeyDown={this.handleKeyDown} ref={(root) => (this.root = root)} className={className} {...passthroughProps}>
+        {this.props.children}
+      </Component>
+    )
   }
 }

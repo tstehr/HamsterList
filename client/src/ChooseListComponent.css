@@ -8,7 +8,7 @@
 .ChooseListComponent__content {
   width: 100%;
   max-width: var(--single-col-max-width);
-  padding: .5rem;
+  padding: 0.5rem;
   margin-top: 3rem;
   margin-top: calc(3rem + env(safe-area-inset-top));
 }
@@ -28,7 +28,8 @@
 .ChooseListComponent__recentlyUsed {
   list-style: none;
 }
-.ChooseListComponent__randomButton, .ChooseListComponent__recentlyUsedLink {
+.ChooseListComponent__randomButton,
+.ChooseListComponent__recentlyUsedLink {
   display: block;
   border: 0;
   background-color: var(--theme-color);
@@ -40,7 +41,7 @@
   width: 100%;
 }
 .ChooseListComponent__recentlyUsedLink {
-  margin: .5rem 0;
+  margin: 0.5rem 0;
 }
 
 .ChooseListComponent__openForm {
@@ -51,7 +52,7 @@
 .ChooseListComponent__openForm > input {
   flex: 1;
   border: 0;
-  padding: .5rem;
+  padding: 0.5rem;
   font-size: 1rem;
   font-family: inherit;
 }
@@ -60,9 +61,11 @@
 }
 
 .ChooseListComponent__footer {
-  font-size: .6rem;
+  font-size: 0.6rem;
   color: var(--text-deemphasized-color);
 }
-.ChooseListComponent__footer a, .ChooseListComponent__footer a:link, .ChooseListComponent__footer a:visited {
+.ChooseListComponent__footer a,
+.ChooseListComponent__footer a:link,
+.ChooseListComponent__footer a:visited {
   color: inherit;
 }

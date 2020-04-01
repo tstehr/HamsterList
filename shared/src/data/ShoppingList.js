@@ -10,14 +10,14 @@ import { checkKeys, checkAttributeType, errorMap } from '../util/validation'
 export type BaseShoppingList = {
   +id: string,
   +title: string,
-  +items: $ReadOnlyArray<Item>
+  +items: $ReadOnlyArray<Item>,
 }
 
 export type ShoppingList = {
   +id: string,
   +title: string,
   +items: $ReadOnlyArray<Item>,
-  [any]: empty
+  [any]: empty,
 }
 
 export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnlyArray<CategoryDefinition>): ShoppingList {
@@ -28,16 +28,21 @@ export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnly
 
   let items = errorMap(shoppingListSpec.items, createItem)
 
-  let duplicatedIds = _.chain(items).groupBy('id').entries()
+  let duplicatedIds = _.chain(items)
+    .groupBy('id')
+    .entries()
     .filter(([, items]) => items.length > 1)
-    .map(([id, ]) => id)
+    .map(([id]) => id)
     .value()
   if (duplicatedIds.length > 0) {
     throw new TypeError(`ShoppingList "${shoppingListSpec.title}" has duplicated ids: ${duplicatedIds.join(', ')}`)
   }
 
   if (categories != null) {
-    items = sortItems(items, categories.map((cat) => cat.id))
+    items = sortItems(
+      items,
+      categories.map((cat) => cat.id)
+    )
   }
 
   const shoppingList = {}
@@ -48,8 +53,12 @@ export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnly
   return deepFreeze(shoppingList)
 }
 
-
-export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, server: ShoppingList, categories: ?$ReadOnlyArray<CategoryDefinition>): ShoppingList {
+export function mergeShoppingLists(
+  base: ShoppingList,
+  client: ShoppingList,
+  server: ShoppingList,
+  categories: ?$ReadOnlyArray<CategoryDefinition>
+): ShoppingList {
   const newList = {}
   newList.id = base.id
 
@@ -61,9 +70,9 @@ export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, ser
 
   newList.items = []
 
-  const baseMap: {[UUID]: ?Item} = _.keyBy([...base.items], 'id')
-  const clientMap: {[UUID]: ?Item} = _.keyBy([...client.items], 'id')
-  const serverMap: {[UUID]: ?Item} = _.keyBy([...server.items], 'id')
+  const baseMap: { [UUID]: ?Item } = _.keyBy([...base.items], 'id')
+  const clientMap: { [UUID]: ?Item } = _.keyBy([...client.items], 'id')
+  const serverMap: { [UUID]: ?Item } = _.keyBy([...server.items], 'id')
 
   const allIds = _.union(_.keys(baseMap), _.keys(clientMap), _.keys(serverMap))
 
@@ -77,7 +86,8 @@ export function mergeShoppingLists(base: ShoppingList, client: ShoppingList, ser
         newList.items.push(mergeItemsTwoWay(client, server))
       } else if (client != null) {
         newList.items.push(client)
-      } else { // client == null && server != null
+      } else {
+        // client == null && server != null
         newList.items.push(server)
       }
     } else {

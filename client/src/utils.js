@@ -3,8 +3,8 @@
 export async function responseToJSON(res: Response) {
   const json = await res.json()
   if (!res.ok) {
-      const errorMessage = json && json.error
-      throw new HTTPErrorStatusError(errorMessage, res.status)
+    const errorMessage = json && json.error
+    throw new HTTPErrorStatusError(errorMessage, res.status)
   }
   return json
 }

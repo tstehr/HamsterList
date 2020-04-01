@@ -11,7 +11,7 @@ export type CategoryOrder = $ReadOnlyArray<?UUID>
 export type Order = {
   +id: UUID,
   +name: string,
-  +categoryOrder: CategoryOrder
+  +categoryOrder: CategoryOrder,
 }
 
 export function createOrder(orderSpec: any): Order {
@@ -28,21 +28,26 @@ export function createOrder(orderSpec: any): Order {
   return deepFreeze(order)
 }
 
-
 export function sortItems(items: $ReadOnlyArray<Item>, categoryOrder: CategoryOrder): $ReadOnlyArray<Item> {
   const categoryIteratee = (item: Item) => convertSmallerZeroToInf(categoryOrder.indexOf(undefinedToNull(item.category)))
   // sortBy doesn't mutate, but isn't annotated correctly...
   return _.sortBy(((items: any): Item[]), [categoryIteratee, getNameLowerCase, 'id'])
 }
 
-export function sortCategories(categories: $ReadOnlyArray<CategoryDefinition>, categoryOrder: CategoryOrder): $ReadOnlyArray<CategoryDefinition> {
+export function sortCategories(
+  categories: $ReadOnlyArray<CategoryDefinition>,
+  categoryOrder: CategoryOrder
+): $ReadOnlyArray<CategoryDefinition> {
   const categoryIteratee = (cat: CategoryDefinition) => convertSmallerZeroToInf(categoryOrder.indexOf(cat.id))
   // sortBy doesn't mutate, but isn't annotated correctly...
   return _.sortBy(((categories: any): CategoryDefinition[]), categoryIteratee)
 }
 
-export function completeCategoryOrder(categoryOrder: CategoryOrder, categories: $ReadOnlyArray<CategoryDefinition>): CategoryOrder {
-  return sortCategories(categories, categoryOrder).map(cat => cat.id)
+export function completeCategoryOrder(
+  categoryOrder: CategoryOrder,
+  categories: $ReadOnlyArray<CategoryDefinition>
+): CategoryOrder {
+  return sortCategories(categories, categoryOrder).map((cat) => cat.id)
 }
 
 function undefinedToNull<T>(input: ?T): ?T {
@@ -52,11 +57,10 @@ function undefinedToNull<T>(input: ?T): ?T {
   return input
 }
 
-
 function convertSmallerZeroToInf(index: number) {
   return index < 0 ? Infinity : index
 }
 
-function getNameLowerCase(named: {name: string}) {
+function getNameLowerCase(named: { name: string }) {
   return named.name.toLowerCase()
 }

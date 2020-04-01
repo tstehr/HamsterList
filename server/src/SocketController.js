@@ -13,7 +13,7 @@ export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 export default class SocketController {
   tokenCreator: TokenCreator
   log: Logger
-  registeredWebSockets: {[string]: WebSocket[]}
+  registeredWebSockets: { [string]: WebSocket[] }
 
   constructor(tokenCreator: TokenCreator, log: Logger) {
     this.tokenCreator = tokenCreator
@@ -23,7 +23,10 @@ export default class SocketController {
     setInterval(() => {
       const sockets = _.chain(this.registeredWebSockets).values().flatten().value()
 
-      this.log.trace(sockets.map((ws) => ws.log.fields), 'All connected' )
+      this.log.trace(
+        sockets.map((ws) => ws.log.fields),
+        'All connected'
+      )
 
       sockets.forEach((ws) => {
         if (ws.isAlive === false) {
@@ -35,12 +38,12 @@ export default class SocketController {
         ws.isAlive = false
         ws.ping('', false, true)
       })
-    }, 30000);
+    }, 30000)
   }
 
   initializeFor(server: http.Server | https.Server) {
     const wss = new WebSocket.Server({
-      server: server
+      server: server,
     })
 
     wss.on('connection', (ws, req: Request) => {
@@ -56,8 +59,8 @@ export default class SocketController {
   }
 
   handleWs = (ws: WebSocket, req: Request, listid: string) => {
-    ws.log = this.log.child({id: createRandomUUID(), operation: '/socket', listid: listid})
-    ws.log.info({req: req})
+    ws.log = this.log.child({ id: createRandomUUID(), operation: '/socket', listid: listid })
+    ws.log.info({ req: req })
 
     if (this.registeredWebSockets[listid] == null) {
       this.registeredWebSockets[listid] = []
@@ -78,7 +81,7 @@ export default class SocketController {
     })
 
     ws.on('pong', () => {
-      ws.isAlive = true;
+      ws.isAlive = true
       ws.log.trace(`Pong`)
     })
 

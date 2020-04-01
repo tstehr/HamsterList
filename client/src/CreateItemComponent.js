@@ -1,9 +1,13 @@
 // @flow
 import React, { Component } from 'react'
 import AutosizeTextarea from 'react-autosize-textarea'
-import { 
-  type LocalItem, type CompletionItem, type CategoryDefinition, type Change, 
-  createLocalItemFromString, addMatchingCategory 
+import {
+  type LocalItem,
+  type CompletionItem,
+  type CategoryDefinition,
+  type Change,
+  createLocalItemFromString,
+  addMatchingCategory,
 } from 'shoppinglist-shared'
 import type { CreateItem, ApplyDiff, CreateApplicableDiff, DeleteCompletion } from './ShoppingListContainerComponent'
 import CompletionsComponent from './CompletionsComponent'
@@ -13,8 +17,8 @@ import ChangesComponent from './ChangesComponent'
 import './CreateItemComponent.css'
 
 export type ItemInput = {
-  item: LocalItem, 
-  categoryAdded: boolean
+  item: LocalItem,
+  categoryAdded: boolean,
 }
 
 type Props = {|
@@ -28,14 +32,13 @@ type Props = {|
   createApplicableDiff: CreateApplicableDiff,
 |}
 
-
 type State = {
   inputValue: string,
   itemsForInputLines: $ReadOnlyArray<ItemInput | null>,
   itemsInCreation: $ReadOnlyArray<ItemInput>,
   formHasFocus: boolean,
   forceMultiline: boolean,
-  changingQuickly: boolean
+  changingQuickly: boolean,
 }
 
 export default class CreateItemComponent extends Component<Props, State> {
@@ -45,16 +48,15 @@ export default class CreateItemComponent extends Component<Props, State> {
   lastChange: number
   changingQuicklyTimeoutId: TimeoutID
 
-
   constructor(props: Props) {
     super(props)
     this.state = {
-      inputValue: "",
+      inputValue: '',
       itemsForInputLines: [],
       itemsInCreation: [],
       formHasFocus: false,
       forceMultiline: false,
-      changingQuickly: false
+      changingQuickly: false,
     }
     this.lastChange = Date.now()
   }
@@ -67,11 +69,11 @@ export default class CreateItemComponent extends Component<Props, State> {
 
   getItemsForInputLines(inputValue: string): $ReadOnlyArray<ItemInput | null> {
     return inputValue
-      .split("\n")
-      .map(str => str.trim())
-      .map(str => str === "" ? null : str)
-      .map(str => str != null ? createLocalItemFromString(str, this.props.categories) : null)
-      .map(item => {
+      .split('\n')
+      .map((str) => str.trim())
+      .map((str) => (str === '' ? null : str))
+      .map((str) => (str != null ? createLocalItemFromString(str, this.props.categories) : null))
+      .map((item) => {
         if (item == null) {
           return null
         }
@@ -79,14 +81,14 @@ export default class CreateItemComponent extends Component<Props, State> {
 
         return {
           item: categoryAddedItem,
-          categoryAdded: categoryAddedItem !== item
+          categoryAdded: categoryAddedItem !== item,
         }
       })
   }
 
   saveItems() {
-    this.state.itemsInCreation.forEach(ii => this.props.createItem(ii.item))
-    this.setState(this.createInputValueUpdate(""))
+    this.state.itemsInCreation.forEach((ii) => this.props.createItem(ii.item))
+    this.setState(this.createInputValueUpdate(''))
     if (this.input != null) {
       this.input.focus()
     }
@@ -94,22 +96,22 @@ export default class CreateItemComponent extends Component<Props, State> {
 
   handleFocus = (e: SyntheticFocusEvent<>) => {
     clearTimeout(this.focusTimeoutId)
-    this.setState({formHasFocus: true})
+    this.setState({ formHasFocus: true })
   }
 
   handleBlur = (e: SyntheticFocusEvent<>) => {
     this.focusTimeoutId = setTimeout(() => {
-      this.setState({formHasFocus: false})
+      this.setState({ formHasFocus: false })
     }, 0)
   }
 
   handleChange = (e: SyntheticInputEvent<>) => {
-    const changingQuickly = (Date.now() - this.lastChange) < 250
+    const changingQuickly = Date.now() - this.lastChange < 250
     this.lastChange = Date.now()
     clearTimeout(this.changingQuicklyTimeoutId)
     if (changingQuickly) {
       this.changingQuicklyTimeoutId = setTimeout(() => {
-        this.setState({changingQuickly: false})
+        this.setState({ changingQuickly: false })
       }, 250)
     }
 
@@ -122,7 +124,7 @@ export default class CreateItemComponent extends Component<Props, State> {
   createInputValueUpdate(newInputValue: string) {
     const itemsForInputLines = this.getItemsForInputLines(newInputValue)
     // $FlowFixMe (see https://github.com/facebook/flow/issues/1414)
-    const itemsInCreation: $ReadOnlyArray<ItemInput> = itemsForInputLines.filter(ii => ii != null)
+    const itemsInCreation: $ReadOnlyArray<ItemInput> = itemsForInputLines.filter((ii) => ii != null)
 
     return {
       inputValue: newInputValue,
@@ -138,7 +140,7 @@ export default class CreateItemComponent extends Component<Props, State> {
 
   handleKeyDown = (e: SyntheticKeyboardEvent<>) => {
     if (e.key === 'Escape') {
-      this.setState({inputValue: ""})
+      this.setState({ inputValue: '' })
       e.preventDefault()
     }
   }
@@ -156,26 +158,26 @@ export default class CreateItemComponent extends Component<Props, State> {
 
   handleToggleMultiline = (e: SyntheticEvent<>) => {
     if (this.isMultiline() && this.hasMulipleLines()) {
-      const confirmation = window.confirm("This will delete the current input, continue?")
+      const confirmation = window.confirm('This will delete the current input, continue?')
       if (!confirmation) {
         return
       }
     }
     this.setState({
       forceMultiline: !this.isMultiline(),
-      inputValue: this.isMultiline() ? this.state.inputValue.split("\n")[0] : this.state.inputValue
+      inputValue: this.isMultiline() ? this.state.inputValue.split('\n')[0] : this.state.inputValue,
     })
   }
 
   createItem = (item: LocalItem) => {
     if (!this.isMultiline()) {
-      this.setState(this.createInputValueUpdate(""))
+      this.setState(this.createInputValueUpdate(''))
     } else {
-      const lineIndex = this.state.itemsForInputLines.findIndex(ii => ii && ii.item === item)
+      const lineIndex = this.state.itemsForInputLines.findIndex((ii) => ii && ii.item === item)
       if (lineIndex !== -1) {
-        const lines = this.state.inputValue.split("\n")
+        const lines = this.state.inputValue.split('\n')
         lines.splice(lineIndex, 1)
-        const newInputValue = lines.join("\n")
+        const newInputValue = lines.join('\n')
         this.setState(this.createInputValueUpdate(newInputValue))
       }
     }
@@ -189,7 +191,7 @@ export default class CreateItemComponent extends Component<Props, State> {
   }
 
   hasMulipleLines() {
-    return this.state.inputValue.indexOf("\n") !== -1
+    return this.state.inputValue.indexOf('\n') !== -1
   }
 
   isMultiline() {
@@ -197,56 +199,85 @@ export default class CreateItemComponent extends Component<Props, State> {
   }
 
   render() {
-    const isCreatingItem = this.state.inputValue !== ""
+    const isCreatingItem = this.state.inputValue !== ''
     const isMultiline = this.isMultiline()
     const itemsInCreation = this.state.itemsInCreation
 
     return (
-      <div className={"CreateItemComponent" + (isCreatingItem ? " CreateItemComponent--creatingItem" : "")}
-        onKeyDown={this.handleKeyDown} ref={(root) => { this.root = root }}
+      <div
+        className={'CreateItemComponent' + (isCreatingItem ? ' CreateItemComponent--creatingItem' : '')}
+        onKeyDown={this.handleKeyDown}
+        ref={(root) => {
+          this.root = root
+        }}
       >
         <KeyFocusComponent direction="vertical" rootTagName="div">
           <form
-            className={"CreateItemComponent__form" + (isMultiline ? " CreateItemComponent__form--multiline" : "")}
-            onSubmit={this.handleSubmit} onFocus={this.handleFocus} onBlur={this.handleBlur}
+            className={'CreateItemComponent__form' + (isMultiline ? ' CreateItemComponent__form--multiline' : '')}
+            onSubmit={this.handleSubmit}
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}
           >
             <div className="CreateItemComponent__form__inputWrapper" onClick={() => this.input && this.input.focus()}>
-              {!isCreatingItem &&
+              {!isCreatingItem && (
                 <div className="CreateItemComponent__form__inputWrapper__placeholder">
-                  {isMultiline ? <span>New Item 1<br />New Item 2<br />…</span> : "New Item"}
+                  {isMultiline ? (
+                    <span>
+                      New Item 1<br />
+                      New Item 2<br />…
+                    </span>
+                  ) : (
+                    'New Item'
+                  )}
                 </div>
-              }
+              )}
               <AutosizeTextarea
                 type="text"
                 value={this.state.inputValue}
-                onChange={this.handleChange} onKeyDown={this.handleKeyDownTextarea}
-                innerRef={(input) => { this.input = input }}
+                onChange={this.handleChange}
+                onKeyDown={this.handleKeyDownTextarea}
+                innerRef={(input) => {
+                  this.input = input
+                }}
               />
             </div>
-            <button type="button" className="CreateItemComponent__form__toggleMultiline KeyFocusComponent--noFocus" onClick={this.handleToggleMultiline}>
-              {isMultiline ? "▲" : "▼" }
+            <button
+              type="button"
+              className="CreateItemComponent__form__toggleMultiline KeyFocusComponent--noFocus"
+              onClick={this.handleToggleMultiline}
+            >
+              {isMultiline ? '▲' : '▼'}
             </button>
-            <IconButton className="CreateItemComponent__form__save KeyFocusComponent--noFocus" icon="ADD" alt="Add new item
-            " />
+            <IconButton
+              className="CreateItemComponent__form__save KeyFocusComponent--noFocus"
+              icon="ADD"
+              alt="Add new item
+            "
+            />
           </form>
-          <div style={{position:'relative'}}>
-            {isCreatingItem && <CompletionsComponent
-              focusItemsInCreation={this.state.formHasFocus}
-              completions={this.props.completions} categories={this.props.categories}
-              itemsInCreation={itemsInCreation}
-              createItem={this.createItem} deleteCompletion={this.props.deleteCompletion}
-              focusInput={this.focusInput}
-            />}
-            {!isCreatingItem && <ChangesComponent 
-              changes={this.props.changes} 
-              unsyncedChanges={this.props.unsyncedChanges}
-              categories={this.props.categories}
-              applyDiff={this.props.applyDiff}
-              createApplicableDiff={this.props.createApplicableDiff}
-            />}
+          <div style={{ position: 'relative' }}>
+            {isCreatingItem && (
+              <CompletionsComponent
+                focusItemsInCreation={this.state.formHasFocus}
+                completions={this.props.completions}
+                categories={this.props.categories}
+                itemsInCreation={itemsInCreation}
+                createItem={this.createItem}
+                deleteCompletion={this.props.deleteCompletion}
+                focusInput={this.focusInput}
+              />
+            )}
+            {!isCreatingItem && (
+              <ChangesComponent
+                changes={this.props.changes}
+                unsyncedChanges={this.props.unsyncedChanges}
+                categories={this.props.categories}
+                applyDiff={this.props.applyDiff}
+                createApplicableDiff={this.props.createApplicableDiff}
+              />
+            )}
           </div>
         </KeyFocusComponent>
-
       </div>
     )
   }

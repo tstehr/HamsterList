@@ -3,7 +3,7 @@
 import { createCategoryDefinition } from './CategoryDefinition'
 import { createUUID } from '../util/uuid'
 
-const id = createUUID("a58df112-085f-4742-873d-8f8e31af7826")
+const id = createUUID('a58df112-085f-4742-873d-8f8e31af7826')
 
 describe(`createCategoryDefinition`, () => {
   it(`Creates Category`, () => {
@@ -12,7 +12,7 @@ describe(`createCategoryDefinition`, () => {
       name: 'Milchprodukte',
       shortName: 'M',
       color: 'yellow',
-      lightText: false
+      lightText: false,
     })
   })
 
@@ -23,7 +23,7 @@ describe(`createCategoryDefinition`, () => {
         name: 'Milchprodukte',
         shortName: 'M',
         color: 'blau',
-        lightText: false
+        lightText: false,
       })
     }).toThrow('The given color "blau" is not a valid color value')
   })

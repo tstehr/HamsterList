@@ -8,12 +8,11 @@ import { type Item, createItem } from './Item'
 import { type BaseShoppingList, type ShoppingList } from './ShoppingList'
 import { checkKeys, checkAttributeType, errorMap } from '../util/validation'
 
-
 export type Change = {|
-  +username: ?string,  
+  +username: ?string,
   +id: UUID,
   +date: Date,
-  +diffs: $ReadOnlyArray<Diff>
+  +diffs: $ReadOnlyArray<Diff>,
 |}
 
 export const ADD_ITEM: 'ADD_ITEM' = 'ADD_ITEM'
@@ -72,18 +71,18 @@ export function createDiff(diffSpec: any): Diff {
       item: createItem(diffSpec.item),
     }
   } else if (type === UPDATE_ITEM) {
-      checkKeys(diffSpec, ['type', 'oldItem', 'item'])
-      diff = {
-        type: UPDATE_ITEM,
-        oldItem: createItem(diffSpec.oldItem),
-        item: createItem(diffSpec.item),
-      }
+    checkKeys(diffSpec, ['type', 'oldItem', 'item'])
+    diff = {
+      type: UPDATE_ITEM,
+      oldItem: createItem(diffSpec.oldItem),
+      item: createItem(diffSpec.item),
+    }
   } else if (type === DELETE_ITEM) {
-      checkKeys(diffSpec, ['type', 'oldItem'])
-      diff = {
-        type: DELETE_ITEM,
-        oldItem: createItem(diffSpec.oldItem)
-      }
+    checkKeys(diffSpec, ['type', 'oldItem'])
+    diff = {
+      type: DELETE_ITEM,
+      oldItem: createItem(diffSpec.oldItem),
+    }
   } else {
     throw new TypeError(`Unknown diff type ${type}`)
   }
@@ -104,8 +103,8 @@ export function getOnlyNewChanges(changes: $ReadOnlyArray<Change>): $ReadOnlyArr
 export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShoppingList: BaseShoppingList): $ReadOnlyArray<Diff> {
   const diffs = []
 
-  const oldMap: {[UUID]: ?Item} = _.keyBy([...oldShoppingList.items], 'id')
-  const newMap: {[UUID]: ?Item} = _.keyBy([...newShoppingList.items], 'id')
+  const oldMap: { [UUID]: ?Item } = _.keyBy([...oldShoppingList.items], 'id')
+  const newMap: { [UUID]: ?Item } = _.keyBy([...newShoppingList.items], 'id')
 
   const allIds = _.union(_.keys(oldMap), _.keys(newMap))
 
@@ -118,16 +117,16 @@ export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShopping
         diffs.push(generateUpdateItem(oldShoppingList, newItem))
       } else if (newItem != null) {
         diffs.push(generateAddItem(newItem))
-      } else { //  oldItem != null && newItem == null
+      } else {
+        //  oldItem != null && newItem == null
         diffs.push(generateDeleteItem(oldShoppingList, id))
-      } 
-    } catch(e) {
+      }
+    } catch (e) {
       // TypeError means that the diff couldn't be created, which means it isn't needed. We can safely ignore those.
       if (!(e instanceof TypeError)) {
         throw e
       }
     }
-
   }
 
   return diffs
@@ -203,7 +202,7 @@ export function applyDiff(shoppingList: ShoppingList, diff: Diff): ShoppingList 
     }
   }
 
-  (diff: empty)
+  ;(diff: empty)
   throw TypeError(`Diff to be applied is not an element of type 'Diff'`)
 }
 
@@ -216,7 +215,6 @@ export function isDiffApplicable(shoppingList: ShoppingList, diff: Diff): boolea
   }
 }
 
-
 export function createReverseDiff(diff: Diff): Diff {
   if (diff.type === ADD_ITEM) {
     return {
@@ -226,11 +224,11 @@ export function createReverseDiff(diff: Diff): Diff {
   }
 
   if (diff.type === UPDATE_ITEM) {
-      return {
-        type: UPDATE_ITEM,
-        oldItem: diff.item,
-        item: diff.oldItem,
-      }
+    return {
+      type: UPDATE_ITEM,
+      oldItem: diff.item,
+      item: diff.oldItem,
+    }
   }
 
   if (diff.type === DELETE_ITEM) {
@@ -240,10 +238,9 @@ export function createReverseDiff(diff: Diff): Diff {
     }
   }
 
-  (diff: empty)
+  ;(diff: empty)
   throw TypeError(`Diff to be reversed is not of type 'Diff'`)
 }
-
 
 export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): ?Diff {
   if (isDiffApplicable(shoppingList, diff)) {
@@ -252,7 +249,7 @@ export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): ?D
 
   if (diff.type === ADD_ITEM) {
     const item = diff.item
-    const oldItemInList = shoppingList.items.find(i => i.id === item.id)
+    const oldItemInList = shoppingList.items.find((i) => i.id === item.id)
     if (_.isEqual(oldItemInList, item)) {
       return null
     } else {
@@ -262,7 +259,7 @@ export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): ?D
 
   if (diff.type === UPDATE_ITEM) {
     const oldItem = diff.oldItem
-    const oldItemInList = shoppingList.items.find(i => i.id === oldItem.id)
+    const oldItemInList = shoppingList.items.find((i) => i.id === oldItem.id)
     if (oldItemInList != null) {
       if (_.isEqual(oldItemInList, diff.item)) {
         return null
@@ -276,7 +273,7 @@ export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): ?D
 
   if (diff.type === DELETE_ITEM) {
     const oldItem = diff.oldItem
-    const oldItemInList = shoppingList.items.find(i => i.id === oldItem.id)
+    const oldItemInList = shoppingList.items.find((i) => i.id === oldItem.id)
     if (oldItemInList != null) {
       return {
         type: DELETE_ITEM,
@@ -287,14 +284,14 @@ export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): ?D
     }
   }
 
-  (diff: empty)
+  ;(diff: empty)
   throw TypeError(`Diff to be converted to applicable diff is not an element of type 'Diff'`)
 }
 
 function _findOldItemIndex(shoppingList: ShoppingList, oldItem: Item) {
   const index = _.findIndex(shoppingList.items, (item) => _.isEqual(item, oldItem))
   if (index === -1) {
-      throw Error(`Can't apply diff, old item not found in list`)
+    throw Error(`Can't apply diff, old item not found in list`)
   }
   return index
 }

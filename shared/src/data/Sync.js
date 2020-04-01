@@ -9,14 +9,13 @@ import { type Order, createOrder } from './Order'
 import { type Change, createChange } from './Change'
 import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/validation'
 
-
 export type SyncedShoppingList = {
   +id: string,
   +title: string,
   +token: string,
   +changeId: ?UUID,
   +items: $ReadOnlyArray<Item>,
-  [any]: empty
+  [any]: empty,
 }
 
 export type SyncRequest = {
@@ -26,18 +25,21 @@ export type SyncRequest = {
   +categories?: $ReadOnlyArray<CategoryDefinition>,
   +orders?: $ReadOnlyArray<Order>,
   +deleteCompletions?: $ReadOnlyArray<string>,
-  [any]: empty
+  [any]: empty,
 }
 
 export type SyncResponse = {
   list: SyncedShoppingList,
   completions?: $ReadOnlyArray<CompletionItem>,
-  categories?: $ReadOnlyArray<CategoryDefinition>, 
+  categories?: $ReadOnlyArray<CategoryDefinition>,
   orders?: $ReadOnlyArray<Order>,
   changes?: $ReadOnlyArray<Change>,
 }
 
-export function createSyncedShoppingList(syncedShoppingListSpec: any, categories: ?$ReadOnlyArray<CategoryDefinition>): SyncedShoppingList {
+export function createSyncedShoppingList(
+  syncedShoppingListSpec: any,
+  categories: ?$ReadOnlyArray<CategoryDefinition>
+): SyncedShoppingList {
   const shoppingList = createShoppingList(_.omit(syncedShoppingListSpec, ['token', 'changeId']), categories)
   checkAttributeType(syncedShoppingListSpec, 'token', 'string')
   checkAttributeType(syncedShoppingListSpec, 'changeId', 'string', true)
@@ -60,7 +62,7 @@ export function createSyncRequest(syncRequestSpec: any): SyncRequest {
   checkAttributeType(syncRequestSpec, 'deleteCompletions', 'array', true)
 
   const syncRequest = {}
-  
+
   try {
     syncRequest.previousSync = createSyncedShoppingList(syncRequestSpec.previousSync, null)
   } catch (e) {
@@ -95,9 +97,9 @@ export function createSyncRequest(syncRequestSpec: any): SyncRequest {
 
   if (syncRequestSpec.deleteCompletions != null) {
     try {
-      syncRequest.deleteCompletions = errorMap(syncRequestSpec.deleteCompletions, c => {
+      syncRequest.deleteCompletions = errorMap(syncRequestSpec.deleteCompletions, (c) => {
         if (typeof c !== 'string') {
-          throw TypeError('Completion name must be string!');
+          throw TypeError('Completion name must be string!')
         }
         return c
       })
@@ -124,7 +126,6 @@ export function createSyncResponse(syncResponseSpec: any): SyncResponse {
     throw new TypeError(`Error in list: ${e.message}`)
   }
 
-
   if (syncResponseSpec.completions != null) {
     try {
       syncResponse.completions = errorMap(syncResponseSpec.completions, createCompletionItem)
@@ -140,7 +141,7 @@ export function createSyncResponse(syncResponseSpec: any): SyncResponse {
       throw new TypeError(`Error in categories: ${e.message}`)
     }
   }
-  
+
   if (syncResponseSpec.orders != null) {
     try {
       syncResponse.orders = errorMap(syncResponseSpec.orders, createOrder)
@@ -148,7 +149,6 @@ export function createSyncResponse(syncResponseSpec: any): SyncResponse {
       throw new TypeError(`Error in orders: ${e.message}`)
     }
   }
-
 
   if (syncResponseSpec.changes != null) {
     try {
@@ -160,4 +160,3 @@ export function createSyncResponse(syncResponseSpec: any): SyncResponse {
 
   return deepFreeze(syncResponse)
 }
-

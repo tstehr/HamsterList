@@ -1,16 +1,16 @@
 // @flow
 /* eslint-env jest */
 import {
-    createAmount,
-    createAmountFromString,
-    createCookingAmount,
-    createAmountValue,
-    createUnit,
-    mergeAmounts,
-    getSIUnit,
-    addAmounts,
-    mapReplace,
-    powerSet
+  createAmount,
+  createAmountFromString,
+  createCookingAmount,
+  createAmountValue,
+  createUnit,
+  mergeAmounts,
+  getSIUnit,
+  addAmounts,
+  mapReplace,
+  powerSet,
 } from './Amount'
 
 describe(`createAmountValue`, () => {
@@ -22,7 +22,6 @@ describe(`createAmountValue`, () => {
     createAmountValue(-5)
   })
 })
-
 
 describe(`createUnit`, () => {
   it(`Creates Unit from string "kg"`, () => {
@@ -36,16 +35,15 @@ describe(`createUnit`, () => {
   })
 })
 
-
-describe("createAmount", () => {
-  it("Creates Amount from object", () => {
+describe('createAmount', () => {
+  it('Creates Amount from object', () => {
     createAmount({
       value: 5,
       unit: null,
     })
   })
 
-  it("Creates Amount from object with unit", () => {
+  it('Creates Amount from object with unit', () => {
     createAmount({
       value: 5,
       unit: 'kg',
@@ -64,7 +62,7 @@ describe("createAmount", () => {
         value: 5,
         unit: 'kg',
         x: 'y',
-        y:'z'
+        y: 'z',
       })
     }).toThrow('Given object contained unexpected keys: x,y')
   })
@@ -97,115 +95,115 @@ describe("createAmount", () => {
 })
 
 describe('createAmountFromString', () => {
-  it("Creates Amount", () => {
+  it('Creates Amount', () => {
     const amount = createAmountFromString('5+5')
     expect(amount).toEqual({
       value: 10,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount with unit", () => {
+  it('Creates Amount with unit', () => {
     const amount = createAmountFromString('(17 - 3) m/s^2')
     expect(amount).toEqual({
       value: 14,
-      unit: "m / s^2"
+      unit: 'm / s^2',
     })
   })
 
-  it("Creates Amount with function call using comma as argument sepeator" , () => {
+  it('Creates Amount with function call using comma as argument sepeator', () => {
     const amount = createAmountFromString('add(5,5)')
     expect(amount).toEqual({
       value: 10,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount with function call using semicolon as argument sepeator" , () => {
+  it('Creates Amount with function call using semicolon as argument sepeator', () => {
     const amount = createAmountFromString('add(1;2)')
     expect(amount).toEqual({
       value: 3,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount with dot as decimal seperator" , () => {
+  it('Creates Amount with dot as decimal seperator', () => {
     const amount = createAmountFromString('5.5')
     expect(amount).toEqual({
       value: 5.5,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount with comma as decimal seperator" , () => {
+  it('Creates Amount with comma as decimal seperator', () => {
     const amount = createAmountFromString('5,5')
     expect(amount).toEqual({
       value: 5.5,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount with unicode vulgar fraction" , () => {
+  it('Creates Amount with unicode vulgar fraction', () => {
     const amount = createAmountFromString('¾')
     expect(amount).toEqual({
       value: 0.75,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount from calculation with fraction" , () => {
+  it('Creates Amount from calculation with fraction', () => {
     const amount = createAmountFromString('¾ * ⅖')
     expect(amount).toEqual({
       value: 0.3,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount from calculation with fraction and value with dot as decimal seperator" , () => {
+  it('Creates Amount from calculation with fraction and value with dot as decimal seperator', () => {
     const amount = createAmountFromString('½ * 0.5')
     expect(amount).toEqual({
       value: 0.25,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount from calculation with fraction and value with comma as decimal seperator" , () => {
+  it('Creates Amount from calculation with fraction and value with comma as decimal seperator', () => {
     const amount = createAmountFromString('½ * 0,5')
     expect(amount).toEqual({
       value: 0.25,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount from mixed fraction" , () => {
+  it('Creates Amount from mixed fraction', () => {
     const amount = createAmountFromString('1 1/2')
     expect(amount).toEqual({
       value: 1.5,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount from mixed fraction with unicode vulgar fraction" , () => {
+  it('Creates Amount from mixed fraction with unicode vulgar fraction', () => {
     const amount = createAmountFromString('1 ¾')
     expect(amount).toEqual({
       value: 1.75,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount from calculation with mixed fraction" , () => {
+  it('Creates Amount from calculation with mixed fraction', () => {
     const amount = createAmountFromString('-1 * -1 1/4')
     expect(amount).toEqual({
       value: 1.25,
-      unit: undefined
+      unit: undefined,
     })
   })
 
-  it("Creates Amount from calculation with mixed fraction, units and function calls" , () => {
+  it('Creates Amount from calculation with mixed fraction, units and function calls', () => {
     const amount = createAmountFromString('1 ¼ m * pow(6 N, 2)')
     expect(amount).toEqual({
       value: 45,
-      unit: 'm N^2'
+      unit: 'm N^2',
     })
   })
 
@@ -234,7 +232,7 @@ describe('createCookingAmount', () => {
     const derived = createCookingAmount(amount)
     expect(derived).toEqual({
       value: 0.14786765,
-      unit: 'l'
+      unit: 'l',
     })
   })
 
@@ -243,7 +241,7 @@ describe('createCookingAmount', () => {
     const derived = createCookingAmount(amount)
     expect(derived).toEqual({
       value: 0.28349523125000003,
-      unit: 'kg'
+      unit: 'kg',
     })
   })
 
@@ -261,74 +259,74 @@ describe('createCookingAmount', () => {
     const derived = createCookingAmount(amount)
     expect(derived).toEqual({
       value: 10,
-      unit: 'kg / m^2'
+      unit: 'kg / m^2',
     })
   })
 })
 
 describe('mergeAmounts', () => {
   it('Prefers changed client', () => {
-      const base = createAmountFromString("10 kg")
-      const client = createAmountFromString("10 kg")
-      const server = createAmountFromString("14 kg")
-      const merged = mergeAmounts(base, client, server)
-      expect(merged).toEqual(server)
+    const base = createAmountFromString('10 kg')
+    const client = createAmountFromString('10 kg')
+    const server = createAmountFromString('14 kg')
+    const merged = mergeAmounts(base, client, server)
+    expect(merged).toEqual(server)
   })
 
   it('Prefers changed server', () => {
-      const base = createAmountFromString("10 kg")
-      const client = undefined
-      const server = createAmountFromString("10 kg")
-      const merged = mergeAmounts(base, client, server)
-      expect(merged).toEqual(client)
+    const base = createAmountFromString('10 kg')
+    const client = undefined
+    const server = createAmountFromString('10 kg')
+    const merged = mergeAmounts(base, client, server)
+    expect(merged).toEqual(client)
   })
 
   it('Respects both delete', () => {
-      const base = createAmountFromString("10 kg")
-      const client = undefined
-      const server = undefined
-      const merged = mergeAmounts(base, client, server)
-      expect(merged).toEqual(client)
+    const base = createAmountFromString('10 kg')
+    const client = undefined
+    const server = undefined
+    const merged = mergeAmounts(base, client, server)
+    expect(merged).toEqual(client)
   })
 
   it('Perfers larger', () => {
-      const base = createAmountFromString("10")
-      const client = createAmountFromString("15")
-      const server = createAmountFromString("20")
-      const merged = mergeAmounts(base, client, server)
-      expect(merged).toEqual(server)
+    const base = createAmountFromString('10')
+    const client = createAmountFromString('15')
+    const server = createAmountFromString('20')
+    const merged = mergeAmounts(base, client, server)
+    expect(merged).toEqual(server)
   })
 
   it('Perfers larger with client undefined', () => {
-      const base = createAmountFromString(".5")
-      const client = undefined
-      const server = createAmountFromString(".6")
-      const merged = mergeAmounts(base, client, server)
-      expect(merged).toEqual(client)
+    const base = createAmountFromString('.5')
+    const client = undefined
+    const server = createAmountFromString('.6')
+    const merged = mergeAmounts(base, client, server)
+    expect(merged).toEqual(client)
   })
 
   it('Perfers larger with server undefined', () => {
-      const base = createAmountFromString("8")
-      const client = createAmountFromString("7")
-      const server = undefined
-      const merged = mergeAmounts(base, client, server)
-      expect(merged).toEqual(client)
+    const base = createAmountFromString('8')
+    const client = createAmountFromString('7')
+    const server = undefined
+    const merged = mergeAmounts(base, client, server)
+    expect(merged).toEqual(client)
   })
 
   it('Perfers larger', () => {
-      const base = createAmountFromString("10 kg")
-      const client = createAmountFromString("15000 g")
-      const server = createAmountFromString("14 kg")
-      const merged = mergeAmounts(base, client, server)
-      expect(merged).toEqual(client)
+    const base = createAmountFromString('10 kg')
+    const client = createAmountFromString('15000 g')
+    const server = createAmountFromString('14 kg')
+    const merged = mergeAmounts(base, client, server)
+    expect(merged).toEqual(client)
   })
 
   it('Defaults to client', () => {
-      const base = createAmountFromString("10 kg")
-      const client = createAmountFromString("15000 l")
-      const server = createAmountFromString("14 kg")
-      const merged = mergeAmounts(base, client, server)
-      expect(merged).toEqual(client)
+    const base = createAmountFromString('10 kg')
+    const client = createAmountFromString('15000 l')
+    const server = createAmountFromString('14 kg')
+    const merged = mergeAmounts(base, client, server)
+    expect(merged).toEqual(client)
   })
 })
 
@@ -351,25 +349,25 @@ describe('getSIUnit', () => {
 
 describe('addAmounts', () => {
   it('Adds two volumes', () => {
-    const a1 = createAmountFromString("5 l")
-    const a2 = createAmountFromString("500 ml")
+    const a1 = createAmountFromString('5 l')
+    const a2 = createAmountFromString('500 ml')
     expect(addAmounts(a1, a2)).toEqual({
       value: 5.5,
-      unit: 'l'
+      unit: 'l',
     })
   })
 
   it('Adds two volumes with different units', () => {
-    const a1 = createAmountFromString("50 ml")
-    const a2 = createAmountFromString("3 EL")
+    const a1 = createAmountFromString('50 ml')
+    const a2 = createAmountFromString('3 EL')
     const result = addAmounts(a1, a2)
-    expect(result.unit).toEqual("ml")
+    expect(result.unit).toEqual('ml')
     expect(result.value).toBeCloseTo(95)
   })
 
-  it('Doesn\'t add two volumes with incompatible units', () => {
-    const a1 = createAmountFromString("50 ml")
-    const a2 = createAmountFromString("30 g")
+  it("Doesn't add two volumes with incompatible units", () => {
+    const a1 = createAmountFromString('50 ml')
+    const a2 = createAmountFromString('30 g')
 
     expect(() => {
       addAmounts(a1, a2)
@@ -379,26 +377,31 @@ describe('addAmounts', () => {
 
 describe('mapReplace', () => {
   it('Replaces mapped chars', () => {
-    expect(mapReplace('a b c b', {'a': 'x', 'b': 'y'})).toEqual('x y c y')
+    expect(mapReplace('a b c b', { a: 'x', b: 'y' })).toEqual('x y c y')
   })
 
   it('Replaces mapped strings', () => {
     expect(
-      mapReplace('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', {
-        'Lorem': 'Dolorem', 
-        'elit': 'velit',
-        'adipisci': 'adipiscing',
-        'incididunt': 'incidunt',
-        'magna': 'magnam',
-        'aliqua': 'aliquam',
-      })
-    ).toEqual('Dolorem ipsum dolor sit amet, consectetur adipiscingng velit, sed do eiusmod tempor incidunt ut labore et dolore magnam aliquam.')
+      mapReplace(
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        {
+          Lorem: 'Dolorem',
+          elit: 'velit',
+          adipisci: 'adipiscing',
+          incididunt: 'incidunt',
+          magna: 'magnam',
+          aliqua: 'aliquam',
+        }
+      )
+    ).toEqual(
+      'Dolorem ipsum dolor sit amet, consectetur adipiscingng velit, sed do eiusmod tempor incidunt ut labore et dolore magnam aliquam.'
+    )
   })
 
   it('Replaces with regexp special chars', () => {
     expect(
       mapReplace('| \\ [+] (5)', {
-        '+': '-', 
+        '+': '-',
         '|': '&',
         '(5)': '^5$',
       })
@@ -417,6 +420,5 @@ describe('powerSet', () => {
     expect(result).toContainEqual([1, 3])
     expect(result).toContainEqual([1, 2])
     expect(result).toContainEqual([1, 2, 3])
-    
   })
 })

@@ -1,20 +1,20 @@
 .OrderSelectComponent {
   background: var(--box-color);
   display: flex;
-  padding: .5rem;
+  padding: 0.5rem;
   height: 2.5rem;
   align-items: center;
 }
 .OrderSelectComponent__text {
-  padding-right: .5rem;
+  padding-right: 0.5rem;
 }
 .OrderSelectComponent__select {
   flex: 1;
 }
 @media (min-width: 30rem) {
   .OrderSelectComponent {
-    margin-bottom: .5rem;
-    padding: .75rem;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
     height: 3rem;
     background: var(--theme-color);
     color: #fff;

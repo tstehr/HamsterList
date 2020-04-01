@@ -4,7 +4,7 @@ import deepFreeze from 'deep-freeze'
 import { type ServerShoppingList, createServerShoppingList } from './ServerShoppingList'
 
 export type DBContents = {|
-  +lists: $ReadOnlyArray<ServerShoppingList>
+  +lists: $ReadOnlyArray<ServerShoppingList>,
 |}
 
 export class DB {
@@ -28,7 +28,7 @@ export class DB {
     }
 
     this.contents = deepFreeze({
-      lists: json.lists.map(createServerShoppingList)
+      lists: json.lists.map(createServerShoppingList),
     })
 
     return this.contents
@@ -50,8 +50,11 @@ export class DB {
   }
 }
 
-
-export function updateInArray<T, U: {+id: T}>(arr: $ReadOnlyArray<U>, toUpdate: U, insertIfNotFound: boolean=false): Array<U> {
+export function updateInArray<T, U: { +id: T }>(
+  arr: $ReadOnlyArray<U>,
+  toUpdate: U,
+  insertIfNotFound: boolean = false
+): Array<U> {
   const index = arr.findIndex((arrEl) => arrEl.id == toUpdate.id)
   if (index === -1) {
     if (!insertIfNotFound) {

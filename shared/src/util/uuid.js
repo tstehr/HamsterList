@@ -10,7 +10,7 @@ export function createRandomUUID(): UUID {
 
 export function createUUID(uuidStr: string): UUID {
   if (!isUUID.v4(uuidStr)) {
-    throw new TypeError(`"${uuidStr}" is not a validUUID`);
+    throw new TypeError(`"${uuidStr}" is not a validUUID`)
   }
   return uuidStr
 }

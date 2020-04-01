@@ -4,19 +4,19 @@ import colorString from 'color-string'
 import { type UUID, createUUID } from '../util/uuid'
 import { checkKeys, checkAttributeType } from '../util/validation'
 
-export opaque type Color : string = string
+export opaque type Color: string = string
 
 export type CategoryDefinition = {
   +id: UUID,
   +name: string,
   +shortName: string,
   +color: Color,
-  +lightText: boolean
+  +lightText: boolean,
 }
 
 export function createColor(colorSpec: string): Color {
   const color = colorString.get(colorSpec)
-  if(!color) {
+  if (!color) {
     throw new Error(`The given color "${colorSpec}" is not a valid color value`)
   }
   return colorSpec

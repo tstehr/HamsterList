@@ -2,9 +2,17 @@
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import {
-  type ShoppingList, type SyncRequest, type SyncResponse, type SyncedShoppingList, type Item, type UUID,
-  createSyncRequest, mergeShoppingLists, addMatchingCategory, createItemFromItemStringRepresentation,
-  normalizeCompletionName
+  type ShoppingList,
+  type SyncRequest,
+  type SyncResponse,
+  type SyncedShoppingList,
+  type Item,
+  type UUID,
+  createSyncRequest,
+  mergeShoppingLists,
+  addMatchingCategory,
+  createItemFromItemStringRepresentation,
+  normalizeCompletionName,
 } from 'shoppinglist-shared'
 import { type ServerShoppingList, getBaseShoppingList, getSyncedShoppingList } from './ServerShoppingList'
 import { type ShoppingListRequest } from './ShoppingListController'
@@ -12,7 +20,6 @@ import { updateRecentlyUsed } from './ItemController'
 import { getSortedCompletions } from './CompletionsController'
 import { getChangesBetween } from './ChangesController'
 import TokenCreator from './TokenCreator'
-
 
 export default class SyncController {
   tokenCreator: TokenCreator
@@ -32,8 +39,8 @@ export default class SyncController {
       // Convert stringRepresentation items to full items
       if (req.body && req.body.currentState && Array.isArray(req.body.currentState.items)) {
         // $FlowFixMe
-        req.body.currentState.items = req.body.currentState.items.map(itemSpec => {
-          if (itemSpec != null && typeof itemSpec === "object" && itemSpec.stringRepresentation == null) {
+        req.body.currentState.items = req.body.currentState.items.map((itemSpec) => {
+          if (itemSpec != null && typeof itemSpec === 'object' && itemSpec.stringRepresentation == null) {
             return itemSpec
           }
           let item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
@@ -43,22 +50,22 @@ export default class SyncController {
 
       syncRequest = createSyncRequest(req.body)
     } catch (e) {
-      res.status(400).json({error: e.message})
+      res.status(400).json({ error: e.message })
       return
     }
 
     if (syncRequest.previousSync.id != syncRequest.currentState.id || syncRequest.currentState.id != req.listid) {
-      res.status(400).json({error: 'List ids don\'t match'})
+      res.status(400).json({ error: "List ids don't match" })
       return
     }
 
     if (!this.tokenCreator.validateToken(syncRequest.previousSync)) {
-      res.status(400).json({error: 'previousSync is no valid SyncedList'})
+      res.status(400).json({ error: 'previousSync is no valid SyncedList' })
       return
     }
 
     const server = getBaseShoppingList(req.list)
-    const base =_.omit(syncRequest.previousSync, 'token')
+    const base = _.omit(syncRequest.previousSync, 'token')
     const client = syncRequest.currentState
     const merged = mergeShoppingLists(base, client, server, req.list.categories)
 
@@ -67,8 +74,8 @@ export default class SyncController {
     }, req.list.recentlyUsed)
 
     if (syncRequest.deleteCompletions != null) {
-      const normalizedNames = syncRequest.deleteCompletions.map(name => normalizeCompletionName(name))
-      recentlyUsed = recentlyUsed.filter(entry => normalizedNames.indexOf(normalizeCompletionName(entry.item.name)) === -1)
+      const normalizedNames = syncRequest.deleteCompletions.map((name) => normalizeCompletionName(name))
+      recentlyUsed = recentlyUsed.filter((entry) => normalizedNames.indexOf(normalizeCompletionName(entry.item.name)) === -1)
     }
 
     req.updatedList = {
@@ -80,7 +87,10 @@ export default class SyncController {
     }
 
     req.log.debug({
-      base, server, client, merged,
+      base,
+      server,
+      client,
+      merged,
     })
 
     next()
@@ -88,11 +98,15 @@ export default class SyncController {
     if (req.updatedList != null) {
       res.send(this.buildResponse(req.updatedList, syncRequest.includeInResponse, syncRequest.previousSync.changeId))
     } else {
-      res.status(500).send({error: 'req.updatedList was null'})
+      res.status(500).send({ error: 'req.updatedList was null' })
     }
   }
 
-  buildResponse(serverList: ServerShoppingList, includeInResponse: string | string[] | void, previousSyncChangeId: ?UUID): SyncedShoppingList | SyncResponse {
+  buildResponse(
+    serverList: ServerShoppingList,
+    includeInResponse: string | string[] | void,
+    previousSyncChangeId: ?UUID
+  ): SyncedShoppingList | SyncResponse {
     const list = this.tokenCreator.setToken(getSyncedShoppingList(serverList))
 
     let includeTypes: string[]
@@ -103,13 +117,13 @@ export default class SyncController {
     } else {
       includeTypes = includeInResponse
     }
-    
+
     if (includeTypes.length === 0) {
       return list
     }
 
     const response: SyncResponse = {
-      list
+      list,
     }
     if (includeTypes.indexOf('categories') !== -1) {
       response.categories = serverList.categories
@@ -128,11 +142,9 @@ export default class SyncController {
   }
 }
 
-
-
 function getUpdatedItems(oldList: ShoppingList, newList: ShoppingList): $ReadOnlyArray<Item> {
-  const oldMap: {[UUID]: ?Item} = _.keyBy([...oldList.items], 'id')
-  const newMap: {[UUID]: ?Item} = _.keyBy([...newList.items], 'id')
+  const oldMap: { [UUID]: ?Item } = _.keyBy([...oldList.items], 'id')
+  const newMap: { [UUID]: ?Item } = _.keyBy([...newList.items], 'id')
 
   const ids = _.uniq([..._.keys(oldMap), ..._.keys(newMap)])
 

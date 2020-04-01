@@ -7,7 +7,7 @@ export default class TokenCreator {
   secret: string
 
   static createRandomSecret() {
-    return crypto.randomBytes(1024).toString("base64")
+    return crypto.randomBytes(1024).toString('base64')
   }
 
   constructor(secret: string) {
@@ -15,7 +15,7 @@ export default class TokenCreator {
   }
 
   setToken(list: SyncedShoppingList): SyncedShoppingList {
-    return {...list, token: this.createToken(list)}
+    return { ...list, token: this.createToken(list) }
   }
 
   validateToken(list: SyncedShoppingList): boolean {
@@ -23,7 +23,7 @@ export default class TokenCreator {
   }
 
   createToken(list: SyncedShoppingList): string {
-    const secretList: SyncedShoppingList = {...list, token: this.secret}
+    const secretList: SyncedShoppingList = { ...list, token: this.secret }
     const secretListJSON = stringify(secretList)
     return crypto.createHash('sha256').update(secretListJSON).digest('hex')
   }

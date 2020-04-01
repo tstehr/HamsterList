@@ -2,11 +2,23 @@
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import {
-  type Item, type ShoppingList, type SyncedShoppingList, type CompletionItem, type CategoryDefinition, type Order, type Change,
-  createShoppingList, checkKeys, checkAttributeType, createCompletionItem, createCategoryDefinition, createOrder, createChange
+  type Item,
+  type ShoppingList,
+  type SyncedShoppingList,
+  type CompletionItem,
+  type CategoryDefinition,
+  type Order,
+  type Change,
+  createShoppingList,
+  checkKeys,
+  checkAttributeType,
+  createCompletionItem,
+  createCategoryDefinition,
+  createOrder,
+  createChange,
 } from 'shoppinglist-shared'
 
-export type RecentlyUsed = {lastUsedTimestamp: number, uses: number, item: CompletionItem}
+export type RecentlyUsed = { lastUsedTimestamp: number, uses: number, item: CompletionItem }
 export type RecentlyUsedArray = $ReadOnlyArray<RecentlyUsed>
 
 export type ServerShoppingList = {
@@ -25,19 +37,22 @@ export function createServerShoppingList(serverShoppingListSpec: any): ServerSho
   checkAttributeType(serverShoppingListSpec, 'orders', 'array')
   checkAttributeType(serverShoppingListSpec, 'changes', 'array')
 
-  const recentlyUsed = serverShoppingListSpec.recentlyUsed.map(used => {
+  const recentlyUsed = serverShoppingListSpec.recentlyUsed.map((used) => {
     checkKeys(used, ['lastUsedTimestamp', 'uses', 'item'])
     checkAttributeType(used, 'lastUsedTimestamp', 'number')
     checkAttributeType(used, 'uses', 'number')
     checkAttributeType(used, 'item', 'object')
 
-    return {...used, item: createCompletionItem(used.item)}
+    return { ...used, item: createCompletionItem(used.item) }
   })
   const categories = serverShoppingListSpec.categories.map(createCategoryDefinition)
   const orders = serverShoppingListSpec.orders.map(createOrder)
   const changes = serverShoppingListSpec.changes.map(createChange)
 
-  const shoppingList = createShoppingList(_.omit(serverShoppingListSpec, ['recentlyUsed', 'categories', 'orders', 'changes']), categories)
+  const shoppingList = createShoppingList(
+    _.omit(serverShoppingListSpec, ['recentlyUsed', 'categories', 'orders', 'changes']),
+    categories
+  )
 
   const serverShoppingList = {}
   Object.assign(serverShoppingList, shoppingList)
@@ -57,7 +72,7 @@ export function getSyncedShoppingList(serverShoppingList: ServerShoppingList): S
   const changeId = serverShoppingList.changes.length === 0 ? null : _.last(serverShoppingList.changes).id
   return {
     ...getBaseShoppingList(serverShoppingList),
-    token: "",
-    changeId
+    token: '',
+    changeId,
   }
 }

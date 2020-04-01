@@ -1,4 +1,3 @@
-
 .ShoppingListItemsComponent {
   transition: min-height 200ms ease-in-out;
 }
@@ -8,11 +7,11 @@
   padding: 2rem 0 0;
 }
 .ShoppingListItemsComponent__emptyList p {
-  margin-bottom: .2rem;
+  margin-bottom: 0.2rem;
 }
 @media (min-width: 30rem) {
   .ShoppingListItemsComponent__emptyList {
-    padding: .5rem;
+    padding: 0.5rem;
     background-color: var(--box-color);
   }
 }

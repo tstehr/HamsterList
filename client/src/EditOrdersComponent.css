@@ -20,7 +20,7 @@
 }
 @media (min-width: 40rem) and (min-height: 40rem) {
   .EditOrdersComponent {
-    background: hsla(var(--text-color-hsl-value), .5);
+    background: hsla(var(--text-color-hsl-value), 0.5);
   }
   .EditOrdersComponent__window {
     padding: 1.5rem;
@@ -41,7 +41,8 @@
     width: 16rem;
     margin-right: 1rem;
   }
-  .EditOrdersComponent__orders__back, .EditOrderComponent__back {
+  .EditOrdersComponent__orders__back,
+  .EditOrderComponent__back {
     display: none;
   }
   .EditOrdersComponent__order {
@@ -53,7 +54,7 @@
 .EditOrdersComponent__orders__new {
   --button-bg-color: var(--small-feature-color);
   color: var(--text-color);
-  position:relative;
+  position: relative;
   z-index: 998;
 }
 
@@ -63,30 +64,31 @@
   border: 0;
   height: 3rem;
   line-height: 3rem;
-  padding: .5rem;
-  margin-bottom: .5rem;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
   font-size: 2rem;
   font-weight: bold;
 }
 .EditOrderComponent__delete {
-  --button-bg-color: #F44336;
-  position:relative;
+  --button-bg-color: #f44336;
+  position: relative;
   z-index: 998;
 }
 
-
-.SortableOrder, .SortableCategory {
+.SortableOrder,
+.SortableCategory {
   z-index: 1000;
 }
 .SortableOrder {
-  padding-left: .5rem;
+  padding-left: 0.5rem;
 }
-.SortableOrder__name, .SortableCategory__name {
+.SortableOrder__name,
+.SortableCategory__name {
   flex: 1;
 }
 
-
-.SortableOrder__dragging, .SortableCategory__dragging {
+.SortableOrder__dragging,
+.SortableCategory__dragging {
   box-shadow: 0 0 10px var(--text-color);
 }
 

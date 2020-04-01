@@ -10,15 +10,15 @@ export default class CategoriesController {
 
   handlePut = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     if (!Array.isArray(req.body)) {
-        res.status(400).json({error: 'Must be array of categories!'})
-        return
+      res.status(400).json({ error: 'Must be array of categories!' })
+      return
     }
     let categorySpecs: $ReadOnlyArray<mixed> = req.body
     let categories: $ReadOnlyArray<CategoryDefinition>
     try {
       categories = errorMap<mixed, CategoryDefinition>(categorySpecs, createCategoryDefinition)
     } catch (e) {
-      res.status(400).json({error: e.message})
+      res.status(400).json({ error: e.message })
       return
     }
 

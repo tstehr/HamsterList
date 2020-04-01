@@ -1,6 +1,6 @@
 // @flow
 import _ from 'lodash'
-import { type Change, type UUID, createUUID } from 'shoppinglist-shared'  
+import { type Change, type UUID, createUUID } from 'shoppinglist-shared'
 import { type ShoppingListRequest } from './ShoppingListController'
 
 export default class ChangesController {
@@ -8,7 +8,7 @@ export default class ChangesController {
     try {
       res.json(getChangesBetween(req.list.changes, this.getUUID(req.query['oldest']), this.getUUID(req.query['newest'])))
     } catch (e) {
-      res.status(400).json({error: e.message})
+      res.status(400).json({ error: e.message })
     }
     next()
   }
@@ -27,7 +27,7 @@ export default class ChangesController {
 export function getChangesBetween(changes: $ReadOnlyArray<Change>, oldest: ?UUID, newest: ?UUID): $ReadOnlyArray<Change> {
   const oldestIndex = _.findIndex(changes, (c) => c.id === oldest)
   const startIndex = oldestIndex === -1 ? 0 : oldestIndex
-  const newestIndex =  _.findIndex(changes, (c) => c.id === newest)
+  const newestIndex = _.findIndex(changes, (c) => c.id === newest)
   const endIndex = newestIndex === -1 ? changes.length : newestIndex + 1
 
   return changes.slice(startIndex, endIndex)

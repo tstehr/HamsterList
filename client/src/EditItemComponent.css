@@ -18,10 +18,10 @@
   flex: 1;
   display: flex;
   align-items: center;
-  padding-left: .5rem;
+  padding-left: 0.5rem;
 }
 .EditItemComponent__name:focus-within {
-  box-shadow: 0 0 3px var(--focus-color), inset 0 0 3px  var(--focus-color);
+  box-shadow: 0 0 3px var(--focus-color), inset 0 0 3px var(--focus-color);
   background: var(--background-color);
 }
 .EditItemComponent__name > * {
@@ -50,7 +50,7 @@
   .EditItemComponent {
     border: 0;
     background-color: var(--box-color);
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
   }
 }
 
@@ -64,9 +64,10 @@
     background: none;
     height: auto;
     break-inside: avoid;
-    margin-bottom: .1rem;
+    margin-bottom: 0.1rem;
   }
-  .EditItemComponent__category, .EditItemComponent__delete {
+  .EditItemComponent__category,
+  .EditItemComponent__delete {
     display: none;
   }
 }

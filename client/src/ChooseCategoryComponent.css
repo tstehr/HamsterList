@@ -24,11 +24,11 @@
 }
 .ChooseCategoryComponent button.ChooseCategoryComponent__cancel {
   border-width: 2px 0;
-  padding: .0 .5rem;
+  padding: 0 0.5rem;
 }
 @media (min-width: 40rem) and (min-height: 40rem) {
   .ChooseCategoryComponent {
-    background: hsla(var(--text-color-hsl-value), .5);
+    background: hsla(var(--text-color-hsl-value), 0.5);
     padding: 0;
   }
   .ChooseCategoryComponent__window {
@@ -43,8 +43,8 @@
     border: 0;
     background: var(--theme-color);
     color: #fff;
-    margin: .5rem 0;
-    padding-right: .5rem;
+    margin: 0.5rem 0;
+    padding-right: 0.5rem;
   }
   .ChooseCategoryComponent button.ChooseCategoryComponent__cancel {
     border: 0;

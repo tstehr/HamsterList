@@ -3,17 +3,16 @@ import _ from 'lodash'
 import { Component } from 'react'
 import { type RouterHistory, type Location, withRouter } from 'react-router-dom'
 
-
 export type Up = (levels: number | 'home' | 'list') => void
 
 type Props = {
   render: (up: Up) => React$Node,
-  history: RouterHistory
+  history: RouterHistory,
 }
 
 type NavigationStackEntry = {
   path: string,
-  key: ?string
+  key: ?string,
 }
 
 class UnboundHistoryTracker extends Component<Props> {
@@ -22,21 +21,21 @@ class UnboundHistoryTracker extends Component<Props> {
   navigationStackIndex: number
 
   historyListener = (location: Location, action) => {
-    switch(action) {
-      case "PUSH":
+    switch (action) {
+      case 'PUSH':
         this.navigationStackIndex++
         this.navigationStack.splice(this.navigationStackIndex, Infinity, this.createNavigationStackEntry(location))
         break
-      case "POP":
+      case 'POP':
         const stackEntry = this.createNavigationStackEntry(location)
         const keyIndex = _.findIndex(this.navigationStack, (entry) => _.isEqual(entry, stackEntry))
         if (keyIndex === -1) {
-          this.navigationStack.splice(this.navigationStackIndex-2, Infinity, stackEntry)
+          this.navigationStack.splice(this.navigationStackIndex - 2, Infinity, stackEntry)
         } else {
           this.navigationStackIndex = keyIndex
         }
         break
-      case "REPLACE":
+      case 'REPLACE':
         this.navigationStack.splice(this.navigationStackIndex, 1, this.createNavigationStackEntry(location))
         break
       default:
@@ -57,7 +56,7 @@ class UnboundHistoryTracker extends Component<Props> {
     }
   }
 
-  escapeListener = e => {
+  escapeListener = (e) => {
     if (e.code === 'Escape' && !e.defaultPrevented) {
       this.up('list')
     }
@@ -81,7 +80,7 @@ class UnboundHistoryTracker extends Component<Props> {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.history !== this.props.history) {
-        this.setupHistoryListener()
+      this.setupHistoryListener()
     }
   }
 
@@ -95,7 +94,7 @@ class UnboundHistoryTracker extends Component<Props> {
   createNavigationStackEntry(location: Location): NavigationStackEntry {
     return Object.freeze({
       path: `${this.removeTrailingSlash(location.pathname)}`,
-      key: location.key
+      key: location.key,
     })
   }
 

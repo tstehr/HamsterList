@@ -36,7 +36,7 @@
 .CreateItemComponent__form__inputWrapper__placeholder {
   display: block;
   border: 0;
-  padding: calc(1rem - 2px) .5rem;
+  padding: calc(1rem - 2px) 0.5rem;
   font-size: 1rem;
   line-height: 1rem;
   font-family: inherit;
@@ -81,6 +81,6 @@
   }
   .CreateItemComponent__form {
     border-width: 2px;
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
   }
 }

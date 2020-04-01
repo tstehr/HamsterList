@@ -41,7 +41,7 @@
   .ShoppingListComponent__footer {
     max-width: var(--two-col-max-width);
     padding: 0 1rem;
-    padding: 0 max(1rem, env(safe-area-inset-right)) 0 max(1rem, env(safe-area-inset-left))
+    padding: 0 max(1rem, env(safe-area-inset-right)) 0 max(1rem, env(safe-area-inset-left));
   }
 }
 
@@ -62,7 +62,7 @@
   }
   .ShoppingListComponent__footer {
     padding: 0 2rem;
-    padding: 0 max(2rem, env(safe-area-inset-right)) 0 max(2rem, env(safe-area-inset-left))
+    padding: 0 max(2rem, env(safe-area-inset-right)) 0 max(2rem, env(safe-area-inset-left));
   }
 }
 

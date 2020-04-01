@@ -7,9 +7,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import bunyan, { Logger } from 'bunyan'
 import helmet from 'helmet'
-import {
-  type UUID, createRandomUUID
-} from 'shoppinglist-shared'
+import { type UUID, createRandomUUID } from 'shoppinglist-shared'
 import { getConfig } from './config'
 import { DB } from './DB'
 import ShoppingListController from './ShoppingListController'
@@ -27,10 +25,10 @@ export type UserRequest = { id: UUID, username: ?string, log: Logger } & express
 const config = getConfig()
 
 var log = bunyan.createLogger({
-    name: 'shoppinglist',
-    serializers: bunyan.stdSerializers,
-    level: config.get('logLevel'),
-});
+  name: 'shoppinglist',
+  serializers: bunyan.stdSerializers,
+  level: config.get('logLevel'),
+})
 
 const db = new DB(config.get('databaseFilePath'))
 const app = express()
@@ -44,26 +42,32 @@ if (config.get('http')) {
   connectSrc.push(`http://${websocketHost}`, `ws://${websocketHost}`)
 }
 
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      connectSrc
-    }
-  }
-}))
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        connectSrc,
+      },
+    },
+  })
+)
 
 db.load()
   .then(() => {
     const router = express.Router()
-    router.use(bodyParser.json({strict: false, limit: '2mb'}))
+    router.use(bodyParser.json({ strict: false, limit: '2mb' }))
 
     const tokenCreator = new TokenCreator(config.get('secret'))
 
     const socketController = new SocketController(tokenCreator, log)
 
-    const shoppingListController = new ShoppingListController(db, config.get('defaultCategories'), tokenCreator,
-      socketController.notifiyChanged)
+    const shoppingListController = new ShoppingListController(
+      db,
+      config.get('defaultCategories'),
+      tokenCreator,
+      socketController.notifiyChanged
+    )
     const itemController = new ItemController()
     const syncController = new SyncController(tokenCreator)
     const categoriesController = new CategoriesController()
@@ -81,11 +85,11 @@ db.load()
       if (encodedUsername !== undefined) {
         try {
           req.username = decodeURIComponent(encodedUsername).trim()
-          if (req.username === "") {
+          if (req.username === '') {
             req.username = null
           }
         } catch (e) {
-          res.status(400).json({error: "Header field X-ShoppingList-Username is malformed."})
+          res.status(400).json({ error: 'Header field X-ShoppingList-Username is malformed.' })
           return
         }
       } else {
@@ -94,14 +98,14 @@ db.load()
 
       req.log = log.child({ id: req.id, username: req.username })
 
-      req.log.info({req: req})
+      req.log.info({ req: req })
 
       next()
 
       if (!res.headersSent) {
-        res.status(404).json({error: "This route doesn't exist."})
+        res.status(404).json({ error: "This route doesn't exist." })
       }
-      req.log.info({res: res})
+      req.log.info({ res: res })
     })
 
     router.get('/:listid', shoppingListController.handleGet)
@@ -129,7 +133,6 @@ db.load()
 
     router.use('*', shoppingListController.saveUpdatedList)
 
-
     app.use('/api', router)
 
     if (config.get('nodeEnv') === 'production') {
@@ -137,13 +140,12 @@ db.load()
       app.use((req: express$Request, res: express$Response) => res.sendFile(path.resolve('static/index.html')))
     }
 
-
     if (config.get('https')) {
       let options
       try {
         options = {
           key: fs.readFileSync(config.get('keyFile')),
-          cert: fs.readFileSync(config.get('certFile'))
+          cert: fs.readFileSync(config.get('certFile')),
         }
       } catch (e) {
         log.fatal(`File "${e.path}" couldn't be found`)
@@ -169,6 +171,6 @@ db.load()
       log.info(`HTTP server listening on port ${port} `)
     }
   })
-  .catch(e => {
+  .catch((e) => {
     log.fatal(e)
   })

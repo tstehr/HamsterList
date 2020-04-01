@@ -1,54 +1,55 @@
 .ChangesComponent {
-    margin: .5rem;
+  margin: 0.5rem;
 }
 .ChangesComponent__list {
-    list-style: none;
+  list-style: none;
 }
-
 
 .DiffComponent__headerButton {
-    margin-top: .3rem;
-    line-height: 1.5em;
-    font-size: 1em;
-    border: 0;
-    display: block;
-    width: 100%;
-    text-align: left;
+  margin-top: 0.3rem;
+  line-height: 1.5em;
+  font-size: 1em;
+  border: 0;
+  display: block;
+  width: 100%;
+  text-align: left;
 }
-.DiffComponent--unsynced .DiffComponent__headerButton, .DiffComponent--unsynced .DiffComponent__headerButton:focus  {
-    color: var(--text-deemphasized-color);
+.DiffComponent--unsynced .DiffComponent__headerButton,
+.DiffComponent--unsynced .DiffComponent__headerButton:focus {
+  color: var(--text-deemphasized-color);
 }
-.DiffComponent__headerButton:focus, .DiffComponent__headerButton:active {
-    color: var(--text-color);
+.DiffComponent__headerButton:focus,
+.DiffComponent__headerButton:active {
+  color: var(--text-color);
 }
 .DiffComponent__details {
-    padding-top: .2rem;
-    overflow: hidden;
-    font-size: .9em;
-    line-height: 1.3em;
-    list-style: none;
-    color: var(--text-deemphasized-color);
-    max-height: 0;
-    opacity: 0;
-    transition: 100ms ease-in-out;
-    transition-property: max-height, opacity;
-    pointer-events: none;
+  padding-top: 0.2rem;
+  overflow: hidden;
+  font-size: 0.9em;
+  line-height: 1.3em;
+  list-style: none;
+  color: var(--text-deemphasized-color);
+  max-height: 0;
+  opacity: 0;
+  transition: 100ms ease-in-out;
+  transition-property: max-height, opacity;
+  pointer-events: none;
 }
 .DiffComponent__details li {
-    display: inline;
+  display: inline;
 }
 .DiffComponent__details li:not(:first-child)::before {
-    content: '\00a0|\00a0';
+  content: '\00a0|\00a0';
 }
-.DiffComponent--expanded .DiffComponent__details  {
-    max-height: 5em;
-    opacity: 1;
-    pointer-events: initial;
+.DiffComponent--expanded .DiffComponent__details {
+  max-height: 5em;
+  opacity: 1;
+  pointer-events: initial;
 }
 .DiffComponent__UndoLink {
-    position: relative;
-    padding: .2em;
+  position: relative;
+  padding: 0.2em;
 }
 .DiffComponent__UndoLink--disabled {
-    color: var(--text-deemphasized-color);
+  color: var(--text-deemphasized-color);
 }

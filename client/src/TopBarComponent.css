@@ -10,7 +10,7 @@
 @media (prefers-color-scheme: dark) {
   @supports (backdrop-filter: blur(10px)) {
     .TopBarComponent {
-      background: hsla(var(--theme-color-hsl-value), .7);
+      background: hsla(var(--theme-color-hsl-value), 0.7);
       backdrop-filter: blur(10px);
     }
   }
@@ -34,7 +34,8 @@
     max-width: var(--two-col-max-width);
     --top-bar-side-padding: 1rem;
     padding: 0 var(--top-bar-side-padding);
-    padding: 0 max(var(--top-bar-side-padding), env(safe-area-inset-right)) 0 max(var(--top-bar-side-padding), env(safe-area-inset-left))
+    padding: 0 max(var(--top-bar-side-padding), env(safe-area-inset-right)) 0
+      max(var(--top-bar-side-padding), env(safe-area-inset-left));
   }
 }
 @media (min-width: 50rem) {
@@ -51,11 +52,10 @@
   color: var(--text-on-theme-color);
 }
 @media print {
-  .TopBarComponent__back  {
+  .TopBarComponent__back {
     display: none;
   }
 }
-
 
 .EditTitleComponent {
   font-weight: bold;
@@ -67,7 +67,7 @@
   flex-grow: 1;
   min-width: 0;
   overflow: hidden;
-  text-align:center;
+  text-align: center;
   line-height: 3rem;
   background: transparent;
   appearance: none;
@@ -75,18 +75,17 @@
   color: var(--text-on-theme-color);
 }
 
-
 .SyncStatusComponent {
   width: 3.5rem;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-right: .7rem;
+  padding-right: 0.7rem;
   border: 0;
   font-size: 2rem;
   font-family: inherit;
-  letter-spacing: -.65rem;
+  letter-spacing: -0.65rem;
   transition: all 200ms ease-in-out;
   background: none;
   overflow: visible;
@@ -107,26 +106,25 @@
   animation: 1s ease-in infinite blinkRed;
 }
 
-
 @keyframes blink {
   0% {
-    text-shadow: 0 0 0px hsla(var(--text-on-theme-color-hsl-value), .6);
+    text-shadow: 0 0 0px hsla(var(--text-on-theme-color-hsl-value), 0.6);
   }
   90% {
-    text-shadow: 0 0 20px hsla(var(--text-on-theme-color-hsl-value), .4);
+    text-shadow: 0 0 20px hsla(var(--text-on-theme-color-hsl-value), 0.4);
   }
   100% {
-    text-shadow: 0 0 20px hsla(var(--text-on-theme-color-hsl-value), .0);
+    text-shadow: 0 0 20px hsla(var(--text-on-theme-color-hsl-value), 0);
   }
 }
 @keyframes blinkRed {
   0% {
-    text-shadow: 0 0 0px hsla(var(--failure-color-hsl-value), .6);
+    text-shadow: 0 0 0px hsla(var(--failure-color-hsl-value), 0.6);
   }
   90% {
-    text-shadow: 0 0 20px hsla(var(--failure-color-hsl-value), .4);
+    text-shadow: 0 0 20px hsla(var(--failure-color-hsl-value), 0.4);
   }
   100% {
-    text-shadow: 0 0 20px hsla(var(--failure-color-hsl-value), .0);
+    text-shadow: 0 0 20px hsla(var(--failure-color-hsl-value), 0);
   }
 }

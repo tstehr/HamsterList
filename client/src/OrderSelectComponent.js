@@ -14,7 +14,7 @@ type Props = {
 export default class OrderSelectComponent extends Component<Props> {
   handleChange = (e: SyntheticEvent<HTMLSelectElement>) => {
     const val = e.currentTarget.value
-    if (val === "default") {
+    if (val === 'default') {
       this.props.selectOrder(null)
     } else {
       this.props.selectOrder(createUUID(val))
@@ -27,11 +27,20 @@ export default class OrderSelectComponent extends Component<Props> {
     return (
       <label className="OrderSelectComponent">
         <span className="OrderSelectComponent__text">Sorting:</span>
-        <select className="OrderSelectComponent__select KeyFocusComponent--noFocus" value={order != null ? order.id : "default"} onChange={this.handleChange}>
-          <option value="default" key="default">Default</option>)
-          {
-            this.props.orders.map((order) => <option value={order.id} key={order.id}>{order.name}</option>)
-          }
+        <select
+          className="OrderSelectComponent__select KeyFocusComponent--noFocus"
+          value={order != null ? order.id : 'default'}
+          onChange={this.handleChange}
+        >
+          <option value="default" key="default">
+            Default
+          </option>
+          )
+          {this.props.orders.map((order) => (
+            <option value={order.id} key={order.id}>
+              {order.name}
+            </option>
+          ))}
         </select>
       </label>
     )

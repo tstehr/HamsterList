@@ -10,13 +10,14 @@ export function createDB() {
   db._.mixin(lodashId)
   db.defaults({
     lists: [],
-    recentlyUsedLists: []
+    recentlyUsedLists: [],
   }).write()
   return db
 }
 
 export function getRecentlyUsedLists(db: Object) {
-  return db.get('recentlyUsedLists')
-    .orderBy([entry => frecency(entry)], ['desc'])
+  return db
+    .get('recentlyUsedLists')
+    .orderBy([(entry) => frecency(entry)], ['desc'])
     .value()
 }

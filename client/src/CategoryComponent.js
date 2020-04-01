@@ -1,5 +1,5 @@
 // @flow
-import React, { Component }  from 'react'
+import React, { Component } from 'react'
 import _ from 'lodash'
 import { type CategoryDefinition, type UUID, createCategoryDefinition } from 'shoppinglist-shared'
 import './CategoryComponent.css'
@@ -7,9 +7,8 @@ import './CategoryComponent.css'
 type Props = {
   category?: CategoryDefinition,
   categories?: $ReadOnlyArray<CategoryDefinition>,
-  categoryId?: ?UUID
+  categoryId?: ?UUID,
 }
-
 
 const CategoryComponent: React$ComponentType<Props> = React.memo((props: Props) => {
   let category = getCategory(props)
@@ -17,12 +16,16 @@ const CategoryComponent: React$ComponentType<Props> = React.memo((props: Props) 
   const initials = category.shortName
   const style = {
     backgroundColor: category.color,
-    color:category.lightText ? '#fff' : '#000'
+    color: category.lightText ? '#fff' : '#000',
   }
 
-  return <div className="CategoryComponent" title={category.name}>
-    <div className="CategoryComponent__circle" style={style}><span>{initials}</span></div>
-  </div>
+  return (
+    <div className="CategoryComponent" title={category.name}>
+      <div className="CategoryComponent__circle" style={style}>
+        <span>{initials}</span>
+      </div>
+    </div>
+  )
 }, _.isEqual)
 
 const CategoryTextComponent: React$ComponentType<Props> = React.memo((props: Props) => {
@@ -34,10 +37,14 @@ const CategoryTextComponent: React$ComponentType<Props> = React.memo((props: Pro
   const initials = category.shortName
   const style = {
     backgroundColor: category.color,
-    color:category.lightText ? '#fff' : '#000'
+    color: category.lightText ? '#fff' : '#000',
   }
 
-  return <span className="CategoryTextComponent" title={category.name} style={style}>{initials}</span>
+  return (
+    <span className="CategoryTextComponent" title={category.name} style={style}>
+      {initials}
+    </span>
+  )
 }, _.isEqual)
 
 // needs to be a class to be usable in FlipMove
@@ -47,29 +54,31 @@ class CategoryListItemComponent extends Component<Props> {
 
     const style = {
       backgroundColor: category.color,
-      color:category.lightText ? '#fff' : '#000'
+      color: category.lightText ? '#fff' : '#000',
     }
 
-    return <li className="CategoryListItemComponent" style={style}>{category.name}</li>
+    return (
+      <li className="CategoryListItemComponent" style={style}>
+        {category.name}
+      </li>
+    )
   }
 }
 
-
-
 const unknownCategory = createCategoryDefinition({
-  "id": "ffffffff-ffff-4fff-bfff-ffffffffffff",
-  "name": "Unknown Category",
-  "shortName": "?",
-  "color": "hsl(0, 0%, 80%)",
-  "lightText": false
+  id: 'ffffffff-ffff-4fff-bfff-ffffffffffff',
+  name: 'Unknown Category',
+  shortName: '?',
+  color: 'hsl(0, 0%, 80%)',
+  lightText: false,
 })
 
 const invalidCategory = createCategoryDefinition({
-  "id": "00000000-0000-4000-b000-000000000000",
-  "name": "Invalid Category",
-  "shortName": `╳`,
-  "color": "black",
-  "lightText": true
+  id: '00000000-0000-4000-b000-000000000000',
+  name: 'Invalid Category',
+  shortName: `╳`,
+  color: 'black',
+  lightText: true,
 })
 
 function getCategory(props: Props): CategoryDefinition {
