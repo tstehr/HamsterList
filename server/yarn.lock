@@ -4954,6 +4954,11 @@ prepend-http@^2.0.0:
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-2.0.0.tgz#e92434bfa5ea8c19f41cdfd401d741a3c819d897"
   integrity sha1-6SQ0v6XqjBn0HN/UAddBo8gZ2Jc=
 
+prettier@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.0.2.tgz#1ba8f3eb92231e769b7fcd7cb73ae1b6b74ade08"
+  integrity sha512-5xJQIPT8BraI7ZnaDwSbu5zLrB6vvi8hVV58yHQ+QK64qrY40dULy0HSRlQ2/2IdzeBpjhDkqdcFBnFeDEMVdg==
+
 pretty-format@^24.8.0:
   version "24.8.0"
   resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-24.8.0.tgz#8dae7044f58db7cb8be245383b565a963e3c27f2"
@@ -5531,17 +5536,8 @@ shellwords@^0.1.1:
   integrity sha512-vFwSUfQvqybiICwZY5+DAWIPLKsWO31Q91JSKl3UYv+K5c2QRPzn0qzec6QPu1Qc9eHYItiP3NdJqNVqetYAww==
 
 "shoppinglist-shared@link:../shared":
-  version "1.0.0"
-  dependencies:
-    "@babel/runtime" "^7.5.4"
-    color-string "^1.5.2"
-    date-fns "^1.30.1"
-    deep-freeze "^0.0.1"
-    escape-string-regexp "^2.0.0"
-    is-uuid "^1.0.2"
-    lodash "^4.17.14"
-    mathjs "^5.0.2"
-    uuid "^3.1.0"
+  version "0.0.0"
+  uid ""
 
 signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"

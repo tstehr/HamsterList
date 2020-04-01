@@ -10,13 +10,13 @@ import { type CategoryDefinition } from './CategoryDefinition'
 
 export type CompletionItem = {
   +name: string,
-  +category: ?UUID // undefined = no category specified | null = category explicitly set to not set
+  +category: ?UUID, // undefined = no category specified | null = category explicitly set to not set
 }
 
 export type BaseItem = {
   +name: string,
   +amount: ?Amount,
-  +category: ?UUID // undefined = no category specified | null = category explicitly set to not set
+  +category: ?UUID, // undefined = no category specified | null = category explicitly set to not set
 }
 
 export type LocalItem = {
@@ -32,7 +32,6 @@ export type Item = {
   +category: ?UUID, // undefined = no category specified | null = category explicitly set to not set
 }
 
-
 export function createCompletionItem(completionItemSpec: any): CompletionItem {
   checkKeys(completionItemSpec, ['name', 'category'])
   checkAttributeType(completionItemSpec, 'name', 'string')
@@ -45,7 +44,6 @@ export function createCompletionItem(completionItemSpec: any): CompletionItem {
   return deepFreeze(item)
 }
 
-
 export function createLocalItem(localItemSpec: any): LocalItem {
   const localItem = createCompletionItem(_.omit(localItemSpec, ['amount']))
   checkAttributeType(localItemSpec, 'amount', 'object', true)
@@ -57,17 +55,19 @@ export function createLocalItem(localItemSpec: any): LocalItem {
   return deepFreeze(item)
 }
 
-
-export function createLocalItemFromString(stringRepresentation: string, categories: $ReadOnlyArray<CategoryDefinition>): LocalItem {
+export function createLocalItemFromString(
+  stringRepresentation: string,
+  categories: $ReadOnlyArray<CategoryDefinition>
+): LocalItem {
   let category: ?UUID = undefined
   const categoryResult = stringRepresentation.match(/^\s*\(([^)]+)\)(.*)$/u)
   if (categoryResult != null) {
     const shortName = categoryResult[1]
-    if (shortName === "?") {
+    if (shortName === '?') {
       category = null
       stringRepresentation = categoryResult[2]
     } else {
-      const categoryCandidate = categories.find(cat => cat.shortName.toUpperCase() == shortName.toUpperCase())
+      const categoryCandidate = categories.find((cat) => cat.shortName.toUpperCase() == shortName.toUpperCase())
       if (categoryCandidate) {
         category = categoryCandidate.id
         stringRepresentation = categoryResult[2]
@@ -78,11 +78,11 @@ export function createLocalItemFromString(stringRepresentation: string, categori
   const split = stringRepresentation.trim().split(/\s+/)
 
   for (let i = split.length; i > 0; i--) {
-    const str = split.slice(0, i).join(" ")
+    const str = split.slice(0, i).join(' ')
     try {
       const amount = createAmountFromString(str)
       return createLocalItem({
-        name: split.slice(i, split.length).join(" "),
+        name: split.slice(i, split.length).join(' '),
         amount: amount,
         category: category,
       })
@@ -92,20 +92,20 @@ export function createLocalItemFromString(stringRepresentation: string, categori
   }
 
   return createLocalItem({
-    name: split.join(" "),
+    name: split.join(' '),
     category: category,
   })
 }
 
-
-
-export function createLocalItemFromItemStringRepresentation(itemStringRepresentation: any, categories: $ReadOnlyArray<CategoryDefinition>): LocalItem {
+export function createLocalItemFromItemStringRepresentation(
+  itemStringRepresentation: any,
+  categories: $ReadOnlyArray<CategoryDefinition>
+): LocalItem {
   checkKeys(itemStringRepresentation, ['stringRepresentation'])
   checkAttributeType(itemStringRepresentation, 'stringRepresentation', 'string')
 
   return createLocalItemFromString(itemStringRepresentation.stringRepresentation, categories)
 }
-
 
 export function createItem(itemSpec: any): Item {
   const localItem = createLocalItem(_.omit(itemSpec, ['id']))
@@ -118,7 +118,10 @@ export function createItem(itemSpec: any): Item {
   return deepFreeze(item)
 }
 
-export function createItemFromItemStringRepresentation(itemStringRepresentation: any, categories: $ReadOnlyArray<CategoryDefinition>): Item {
+export function createItemFromItemStringRepresentation(
+  itemStringRepresentation: any,
+  categories: $ReadOnlyArray<CategoryDefinition>
+): Item {
   const localItem = createLocalItemFromItemStringRepresentation(_.omit(itemStringRepresentation, ['id']), categories)
 
   const item = {}
@@ -129,7 +132,7 @@ export function createItemFromItemStringRepresentation(itemStringRepresentation:
 }
 
 export function itemToString(item: BaseItem): string {
-  const name = item.name != null ? item.name.trim() : ""
+  const name = item.name != null ? item.name.trim() : ''
   const amount = item.amount
   if (amount != null) {
     const unit = amount.unit
@@ -192,24 +195,31 @@ export function mergeItemsTwoWay(client: Item, server: Item): Item {
 }
 
 export function addMatchingCategory<T: LocalItem>(item: T, completions: $ReadOnlyArray<CompletionItem>): T {
-  const exactMatchingCompletion = completions
-    .find((completionItem) =>
-      completionItem.name === item.name
-        && (item.category === undefined || item.category === completionItem.category)
-    )
+  const exactMatchingCompletion = completions.find(
+    (completionItem) =>
+      completionItem.name === item.name && (item.category === undefined || item.category === completionItem.category)
+  )
   if (exactMatchingCompletion != null) {
     // $FlowFixMe
-    return Object.assign({}, item, _.omitBy(exactMatchingCompletion, (val) => val == null))
+    return Object.assign(
+      {},
+      item,
+      _.omitBy(exactMatchingCompletion, (val) => val == null)
+    )
   }
 
-  const matchingCompletion = completions
-    .find((completionItem) =>
-      normalizeCompletionName(completionItem.name) === normalizeCompletionName(item.name)
-        && (item.category === undefined || item.category === completionItem.category)
-    )
+  const matchingCompletion = completions.find(
+    (completionItem) =>
+      normalizeCompletionName(completionItem.name) === normalizeCompletionName(item.name) &&
+      (item.category === undefined || item.category === completionItem.category)
+  )
   if (matchingCompletion != null) {
     // $FlowFixMe
-    return Object.assign({}, item, _.omitBy(matchingCompletion, (val) => val == null))
+    return Object.assign(
+      {},
+      item,
+      _.omitBy(matchingCompletion, (val) => val == null)
+    )
   }
 
   return item

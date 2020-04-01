@@ -45,6 +45,7 @@
     "flow-bin": "^0.102.0",
     "flow-typed": "^2.5.2",
     "jest": "^24.8.0",
-    "nodemon": "^1.18.1"
+    "nodemon": "^1.18.1",
+    "prettier": "2.0.2"
   }
 }
