@@ -1,4 +1,3 @@
-// @flow
 export * from './util/uuid'
 export * from './util/validation'
 export * from './util/frecency'

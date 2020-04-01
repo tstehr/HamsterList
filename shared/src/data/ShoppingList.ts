@@ -1,31 +1,27 @@
-// @flow
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
-import { type Item, createItem, mergeItems, mergeItemsTwoWay } from './Item'
-import { type CategoryDefinition } from './CategoryDefinition'
+import { createItem, mergeItems, mergeItemsTwoWay } from './Item'
+import { Item } from './Item'
+import { CategoryDefinition } from './CategoryDefinition'
 import { sortItems } from './Order'
-import { type UUID } from '../util/uuid'
+import { UUID } from '../util/uuid'
 import { checkKeys, checkAttributeType, errorMap } from '../util/validation'
-
 export type BaseShoppingList = {
-  +id: string,
-  +title: string,
-  +items: $ReadOnlyArray<Item>,
+  readonly id: string
+  readonly title: string
+  readonly items: ReadonlyArray<Item>
 }
-
 export type ShoppingList = {
-  +id: string,
-  +title: string,
-  +items: $ReadOnlyArray<Item>,
-  [any]: empty,
+  readonly id: string
+  readonly title: string
+  readonly items: ReadonlyArray<Item>
+  [x: any]: never
 }
-
-export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnlyArray<CategoryDefinition>): ShoppingList {
+export function createShoppingList(shoppingListSpec: any, categories?: ReadonlyArray<CategoryDefinition> | null): ShoppingList {
   checkKeys(shoppingListSpec, ['id', 'title', 'items'])
   checkAttributeType(shoppingListSpec, 'id', 'string')
   checkAttributeType(shoppingListSpec, 'title', 'string')
   checkAttributeType(shoppingListSpec, 'items', 'array')
-
   let items = errorMap(shoppingListSpec.items, createItem)
 
   let duplicatedIds = _.chain(items)
@@ -34,6 +30,7 @@ export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnly
     .filter(([, items]) => items.length > 1)
     .map(([id]) => id)
     .value()
+
   if (duplicatedIds.length > 0) {
     throw new TypeError(`ShoppingList "${shoppingListSpec.title}" has duplicated ids: ${duplicatedIds.join(', ')}`)
   }
@@ -49,15 +46,13 @@ export function createShoppingList(shoppingListSpec: any, categories: ?$ReadOnly
   shoppingList.id = shoppingListSpec.id
   shoppingList.title = shoppingListSpec.title
   shoppingList.items = items
-
   return deepFreeze(shoppingList)
 }
-
 export function mergeShoppingLists(
   base: ShoppingList,
   client: ShoppingList,
   server: ShoppingList,
-  categories: ?$ReadOnlyArray<CategoryDefinition>
+  categories?: ReadonlyArray<CategoryDefinition> | null
 ): ShoppingList {
   const newList = {}
   newList.id = base.id
@@ -70,9 +65,11 @@ export function mergeShoppingLists(
 
   newList.items = []
 
-  const baseMap: { [UUID]: ?Item } = _.keyBy([...base.items], 'id')
-  const clientMap: { [UUID]: ?Item } = _.keyBy([...client.items], 'id')
-  const serverMap: { [UUID]: ?Item } = _.keyBy([...server.items], 'id')
+  const baseMap: { [k in UUID]: Item | undefined | null } = _.keyBy([...base.items], 'id')
+
+  const clientMap: { [k in UUID]: Item | undefined | null } = _.keyBy([...client.items], 'id')
+
+  const serverMap: { [k in UUID]: Item | undefined | null } = _.keyBy([...server.items], 'id')
 
   const allIds = _.union(_.keys(baseMap), _.keys(clientMap), _.keys(serverMap))
 

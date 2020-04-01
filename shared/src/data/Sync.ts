@@ -1,57 +1,55 @@
-// @flow
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
-import { type UUID, createUUID } from '../util/uuid'
-import { type Item, type CompletionItem, createCompletionItem } from './Item'
-import { type ShoppingList, createShoppingList } from './ShoppingList'
-import { type CategoryDefinition, createCategoryDefinition } from './CategoryDefinition'
-import { type Order, createOrder } from './Order'
-import { type Change, createChange } from './Change'
+import { createUUID } from '../util/uuid'
+import { UUID } from '../util/uuid'
+import { createCompletionItem } from './Item'
+import { Item, CompletionItem } from './Item'
+import { createShoppingList } from './ShoppingList'
+import { ShoppingList } from './ShoppingList'
+import { createCategoryDefinition } from './CategoryDefinition'
+import { CategoryDefinition } from './CategoryDefinition'
+import { createOrder } from './Order'
+import { Order } from './Order'
+import { createChange } from './Change'
+import { Change } from './Change'
 import { checkKeys, checkAttributeType, nullSafe, errorMap } from '../util/validation'
-
 export type SyncedShoppingList = {
-  +id: string,
-  +title: string,
-  +token: string,
-  +changeId: ?UUID,
-  +items: $ReadOnlyArray<Item>,
-  [any]: empty,
+  readonly id: string
+  readonly title: string
+  readonly token: string
+  readonly changeId: UUID | undefined | null
+  readonly items: ReadonlyArray<Item>
+  [x: any]: never
 }
-
 export type SyncRequest = {
-  +previousSync: SyncedShoppingList,
-  +currentState: ShoppingList,
-  +includeInResponse?: string[],
-  +categories?: $ReadOnlyArray<CategoryDefinition>,
-  +orders?: $ReadOnlyArray<Order>,
-  +deleteCompletions?: $ReadOnlyArray<string>,
-  [any]: empty,
+  readonly previousSync: SyncedShoppingList
+  readonly currentState: ShoppingList
+  readonly includeInResponse?: string[]
+  readonly categories?: ReadonlyArray<CategoryDefinition>
+  readonly orders?: ReadonlyArray<Order>
+  readonly deleteCompletions?: ReadonlyArray<string>
+  [x: any]: never
 }
-
 export type SyncResponse = {
-  list: SyncedShoppingList,
-  completions?: $ReadOnlyArray<CompletionItem>,
-  categories?: $ReadOnlyArray<CategoryDefinition>,
-  orders?: $ReadOnlyArray<Order>,
-  changes?: $ReadOnlyArray<Change>,
+  list: SyncedShoppingList
+  completions?: ReadonlyArray<CompletionItem>
+  categories?: ReadonlyArray<CategoryDefinition>
+  orders?: ReadonlyArray<Order>
+  changes?: ReadonlyArray<Change>
 }
-
 export function createSyncedShoppingList(
   syncedShoppingListSpec: any,
-  categories: ?$ReadOnlyArray<CategoryDefinition>
+  categories?: ReadonlyArray<CategoryDefinition> | null
 ): SyncedShoppingList {
   const shoppingList = createShoppingList(_.omit(syncedShoppingListSpec, ['token', 'changeId']), categories)
   checkAttributeType(syncedShoppingListSpec, 'token', 'string')
   checkAttributeType(syncedShoppingListSpec, 'changeId', 'string', true)
-
   const syncedShoppingList = {}
   Object.assign(syncedShoppingList, shoppingList)
   syncedShoppingList.token = syncedShoppingListSpec.token
   syncedShoppingList.changeId = nullSafe(createUUID)(syncedShoppingListSpec.changeId)
-
   return deepFreeze(syncedShoppingList)
 }
-
 export function createSyncRequest(syncRequestSpec: any): SyncRequest {
   checkKeys(syncRequestSpec, ['previousSync', 'currentState', 'includeInResponse', 'categories', 'orders', 'deleteCompletions'])
   checkAttributeType(syncRequestSpec, 'previousSync', 'object')
@@ -60,7 +58,6 @@ export function createSyncRequest(syncRequestSpec: any): SyncRequest {
   checkAttributeType(syncRequestSpec, 'categories', 'array', true)
   checkAttributeType(syncRequestSpec, 'orders', 'array', true)
   checkAttributeType(syncRequestSpec, 'deleteCompletions', 'array', true)
-
   const syncRequest = {}
 
   try {
@@ -101,6 +98,7 @@ export function createSyncRequest(syncRequestSpec: any): SyncRequest {
         if (typeof c !== 'string') {
           throw TypeError('Completion name must be string!')
         }
+
         return c
       })
     } catch (e) {
@@ -110,7 +108,6 @@ export function createSyncRequest(syncRequestSpec: any): SyncRequest {
 
   return deepFreeze(syncRequest)
 }
-
 export function createSyncResponse(syncResponseSpec: any): SyncResponse {
   checkKeys(syncResponseSpec, ['list', 'completions', 'categories', 'orders', 'changes'])
   checkAttributeType(syncResponseSpec, 'list', 'object')
@@ -118,8 +115,8 @@ export function createSyncResponse(syncResponseSpec: any): SyncResponse {
   checkAttributeType(syncResponseSpec, 'categories', 'array', true)
   checkAttributeType(syncResponseSpec, 'orders', 'array', true)
   checkAttributeType(syncResponseSpec, 'changes', 'array', true)
-
   const syncResponse: SyncResponse = {}
+
   try {
     syncResponse.list = createSyncedShoppingList(syncResponseSpec.list, null)
   } catch (e) {

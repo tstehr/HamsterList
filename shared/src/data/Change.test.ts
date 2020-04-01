@@ -1,10 +1,8 @@
-// @flow
 /* eslint-env jest */
 import { createShoppingList } from './ShoppingList'
 import { createItem } from './Item'
 import { createUUID } from '../util/uuid'
 import {
-  type DeleteItem,
   ADD_ITEM,
   UPDATE_ITEM,
   DELETE_ITEM,
@@ -18,7 +16,7 @@ import {
   isDiffApplicable,
   createReverseDiff,
 } from './Change'
-
+import { DeleteItem } from './Change'
 const shoppingList = createShoppingList(
   {
     id: 'Unterwegs',
@@ -46,7 +44,6 @@ const shoppingList = createShoppingList(
   },
   []
 )
-
 describe('createChange', () => {
   it('Creates a change', () => {
     createChange({
@@ -56,7 +53,6 @@ describe('createChange', () => {
       diffs: [],
     })
   })
-
   it("Doesn't create change for invalid date", () => {
     expect(() => {
       createChange({
@@ -68,7 +64,6 @@ describe('createChange', () => {
     }).toThrow('Expected attribute "date" to be formatted as an ISO 8061 date')
   })
 })
-
 describe('createDiff', () => {
   it('Creates an AddItem', () => {
     createDiff({
@@ -81,7 +76,6 @@ describe('createDiff', () => {
       },
     })
   })
-
   it('Creates an UpdateItem', () => {
     createDiff({
       type: UPDATE_ITEM,
@@ -103,7 +97,6 @@ describe('createDiff', () => {
       },
     })
   })
-
   it('Creates a DeleteItem', () => {
     createDiff({
       type: DELETE_ITEM,
@@ -117,7 +110,6 @@ describe('createDiff', () => {
       },
     })
   })
-
   it('Throws for unknown diff types', () => {
     expect(() => {
       createDiff({
@@ -126,7 +118,6 @@ describe('createDiff', () => {
     }).toThrow(`Unknown diff type Yer mom!`)
   })
 })
-
 describe('diffShoppingLists', () => {
   it('Recognizes addition', () => {
     const originalDiff = generateAddItem(
@@ -142,7 +133,6 @@ describe('diffShoppingLists', () => {
     expect(diffs).toHaveLength(1)
     expect(diffs).toContainEqual(originalDiff)
   })
-
   it('Recognizes update', () => {
     const originalDiff = generateUpdateItem(
       shoppingList,
@@ -160,7 +150,6 @@ describe('diffShoppingLists', () => {
     expect(diffs).toHaveLength(1)
     expect(diffs).toContainEqual(originalDiff)
   })
-
   it('Recognizes delete', () => {
     const originalDiff = generateDeleteItem(shoppingList, createUUID('69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd'))
     const newShoppingList = applyDiff(shoppingList, originalDiff)
@@ -169,7 +158,6 @@ describe('diffShoppingLists', () => {
     expect(diffs).toContainEqual(originalDiff)
   })
 })
-
 describe('applyDiff', () => {
   it('Applies an ADD_ITEM diff', () => {
     const item = createItem({
@@ -181,29 +169,24 @@ describe('applyDiff', () => {
     const result = applyDiff(shoppingList, generateAddItem(item))
     expect(result.items).toContainEqual(item)
   })
-
   it("Doesn't apply ADD_ITEM if item with id already exists", () => {
     const item = createItem({
       name: 'Kaffeebohnen',
       category: '1508d447-3e0d-4b50-bcae-ae4a9c85a3ea',
       id: '69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd',
     })
-
     expect(() => {
       applyDiff(shoppingList, generateAddItem(item))
     }).toThrow(`Can't apply diff, there already exists an item with id ${item.id}`)
   })
-
   it('Applies a UPDATE_ITEM diff', () => {
     const result = applyDiff(shoppingList, generateDeleteItem(shoppingList, createUUID('69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd')))
     expect(result.items).toHaveLength(2)
   })
-
   it('Applies a DELETE_ITEM diff', () => {
     const result = applyDiff(shoppingList, generateDeleteItem(shoppingList, createUUID('69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd')))
     expect(result.items).toHaveLength(2)
   })
-
   it("Doesn't apply DELETE_ITEM if item doesn't exit", () => {
     // we don't use generateDeleteItem, because we need an invalid diff
     const deleteItemDiff: DeleteItem = {
@@ -219,19 +202,16 @@ describe('applyDiff', () => {
       applyDiff(shoppingList, deleteItemDiff)
     }).toThrow(`Can't apply diff, old item not found in list`)
   })
-
   it('Throws for unknown diff types', () => {
     const notDiff = {
       type: 'q2323334',
     }
-
     expect(() => {
       // $FlowFixMe Expected type error, to test runtime type exception
       applyDiff(shoppingList, notDiff)
     }).toThrow(`Diff to be applied is not an element of type 'Diff'`)
   })
 })
-
 describe('generateUpdateItem', () => {
   it("Doesn't create an update if the item didn't exist before", () => {
     const item = createItem({
@@ -240,12 +220,10 @@ describe('generateUpdateItem', () => {
       id: 'cbda3946-f136-4c94-8280-4931100576b4',
       amount: null,
     })
-
     expect(() => {
       generateUpdateItem(shoppingList, item)
     }).toThrow(`Can't create update for item with id ${item.id}, it doesn't exist in list.`)
   })
-
   it("Doesn't create an update if nothing was changed", () => {
     const item = createItem({
       name: 'Dosen Kichererbsen',
@@ -255,12 +233,10 @@ describe('generateUpdateItem', () => {
       },
       id: 'c14ef9de-3075-445e-9225-6a50e0c0adca',
     })
-
     expect(() => {
       generateUpdateItem(shoppingList, item)
     }).toThrow(`Can't create update for item with id ${item.id}, it is unchanged in the list.`)
   })
-
   it("Doesn't create an update if a key was changed from not defined to undefined", () => {
     const item = createItem({
       name: 'Kaffeebohnen',
@@ -268,13 +244,11 @@ describe('generateUpdateItem', () => {
       id: '69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd',
       amount: undefined,
     })
-
     expect(() => {
       generateUpdateItem(shoppingList, item)
     }).toThrow(`Can't create update for item with id ${item.id}, it is unchanged in the list.`)
   })
 })
-
 describe('isDiffApplicable', () => {
   it('Returns true for applicable diff', () => {
     const item = createItem({
@@ -286,7 +260,6 @@ describe('isDiffApplicable', () => {
     const diff = generateAddItem(item)
     expect(isDiffApplicable(shoppingList, diff)).toBe(true)
   })
-
   it('Returns false for non-applicable diff', () => {
     const item = createItem({
       name: 'Kaffeebohnen',
@@ -297,7 +270,6 @@ describe('isDiffApplicable', () => {
     expect(isDiffApplicable(shoppingList, diff)).toBe(false)
   })
 })
-
 describe('createReverseDiff', () => {
   const oldItem = {
     name: 'loser Pfefferminztee',
@@ -305,7 +277,6 @@ describe('createReverseDiff', () => {
     id: 'cbda3946-f136-4c94-8280-4931100576b4',
     amount: null,
   }
-
   const item = {
     name: 'loser Pfefferminztee',
     category: '1508d447-3e0d-4b50-bcae-ae4a9c85a3ea',
@@ -314,13 +285,11 @@ describe('createReverseDiff', () => {
       value: 5,
     },
   }
-
   it('Creates reverse diff for AddItem', () => {
     const diff = createDiff({
       type: ADD_ITEM,
       item: item,
     })
-
     expect(createReverseDiff(diff)).toEqual(
       createDiff({
         type: DELETE_ITEM,
@@ -328,14 +297,12 @@ describe('createReverseDiff', () => {
       })
     )
   })
-
   it('Creates reverse diff for UpdateItem', () => {
     const diff = createDiff({
       type: UPDATE_ITEM,
       oldItem: oldItem,
       item: item,
     })
-
     expect(createReverseDiff(diff)).toEqual(
       createDiff({
         type: UPDATE_ITEM,
@@ -344,13 +311,11 @@ describe('createReverseDiff', () => {
       })
     )
   })
-
   it('Creates reverse diff for DeleteItem', () => {
     const diff = createDiff({
       type: DELETE_ITEM,
       oldItem: oldItem,
     })
-
     expect(createReverseDiff(diff)).toEqual(
       createDiff({
         type: ADD_ITEM,
@@ -358,7 +323,6 @@ describe('createReverseDiff', () => {
       })
     )
   })
-
   it('Throws for unknown diff types', () => {
     expect(() => {
       // $FlowFixMe Expected type error, to test runtime type exception

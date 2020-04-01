@@ -1,10 +1,7 @@
-// @flow
 /* eslint-env jest */
 import { createCategoryDefinition } from './CategoryDefinition'
 import { createUUID } from '../util/uuid'
-
 const id = createUUID('a58df112-085f-4742-873d-8f8e31af7826')
-
 describe(`createCategoryDefinition`, () => {
   it(`Creates Category`, () => {
     createCategoryDefinition({
@@ -15,7 +12,6 @@ describe(`createCategoryDefinition`, () => {
       lightText: false,
     })
   })
-
   it(`Doesn't create category for unknown color`, () => {
     expect(() => {
       createCategoryDefinition({
