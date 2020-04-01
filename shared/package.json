@@ -4,15 +4,12 @@
   "main": "build/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "yarn run build:clean && yarn run build:babel && yarn run build:flow",
+    "build": "yarn run build:clean && yarn run build:babel",
     "build:clean": "rm -rf ./build",
-    "build:babel": "babel src --out-dir build --source-maps",
-    "build:flow": "flow-copy-source -v src build",
-    "watch": "yarn run build:clean && yarn run watch:babel & yarn run watch:flow",
+    "build:babel": "babel src --out-dir build --source-maps --extensions '.ts'",
+    "watch": "yarn run build:clean && yarn run watch:babel",
     "watch:babel": "yarn run build:babel --watch",
-    "watch:flow": "yarn run build:flow --watch",
     "test": "jest src",
-    "flow": "flow",
     "lint": "eslint src"
   },
   "dependencies": {
@@ -31,14 +28,11 @@
     "@babel/core": "^7.5.4",
     "@babel/plugin-proposal-class-properties": "^7.5.0",
     "@babel/plugin-transform-runtime": "^7.5.0",
+    "@babel/plugin-transform-typescript": "^7.9.4",
     "@babel/preset-env": "^7.5.4",
-    "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-typescript": "^7.9.0",
     "babel-eslint": "^10.0.2",
     "eslint": "^6.0.1",
-    "eslint-plugin-flowtype": "^3.11.1",
-    "flow-bin": "^0.102.0",
-    "flow-copy-source": "^2.0.1",
-    "flow-typed": "^2.5.2",
     "jest": "^24.8.0",
     "mockdate": "^2.0.3",
     "prettier": "2.0.2"
@@ -47,7 +41,7 @@
     "collectCoverage": true,
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
-      "src/**/*.js"
+      "src/**/*.ts"
     ]
   }
 }

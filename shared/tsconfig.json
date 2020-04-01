@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "isolatedModules": true,
+        "jsx": "react",
+        "lib": ["es6", "dom"],
+        "moduleResolution": "node",
+        "noEmit": true,
+        "strict": true,
+        "target": "esnext",
+        "skipLibCheck": true
+    },
+    "exclude": [
+        "node_modules",
+        "e2e",
+        "**/*.json",
+        "**/*.spec.ts",
+    ]
+}
