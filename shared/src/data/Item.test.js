@@ -112,18 +112,24 @@ describe('createLocalItemFromString', () => {
     })
   })
 
-  it('Doesn\'t create an object with unit and no amount', () => {
+  it('Creates an object with zero value from valid unit', () => {
     expect(createLocalItemFromString('kg Käse', categories)).toEqual({
-      name: 'kg Käse',
-      amount: undefined,
+      name: 'Käse',
+      amount: {
+         value: 0,
+         unit: 'kg'
+      },
       category: undefined,
     })
   })
 
-  it('Doesn\'t create an object with negative amount', () => {
+  it('Creates an object with negative amount', () => {
     expect(createLocalItemFromString('-1 kg Käse', categories)).toEqual({
-      name: '-1 kg Käse',
-      amount: undefined,
+      name: 'Käse',
+      amount: {
+        value: -1, 
+        unit: 'kg',
+      },
       category: undefined,
     })
   })
