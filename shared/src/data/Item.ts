@@ -5,7 +5,6 @@ import { createUUID, UUID } from '../util/uuid'
 import { checkAttributeType, checkKeys, nullSafe } from '../util/validation'
 import { Amount, createAmount, createAmountFromString, mergeAmounts, mergeAmountsTwoWay } from './Amount'
 import { CategoryDefinition } from './CategoryDefinition'
-import cli from 'jest'
 
 export interface CompletionItem {
   readonly name: string

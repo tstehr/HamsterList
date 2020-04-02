@@ -77,14 +77,14 @@ const unicodeVulgarFractions = {
 
 const amountStringTransformations = [
   // comma as decimal seperator and semicolon as argument seperator
-  (amountString: string) => amountString.replace(/,|;/g, (match) => (match == ',' ? '.' : ',')),
+  (amountString: string): string => amountString.replace(/,|;/g, (match) => (match == ',' ? '.' : ',')),
 
   // replace unicode vulgar fractions
-  (amountString: string) => mapReplace(amountString, unicodeVulgarFractions),
+  (amountString: string): string => mapReplace(amountString, unicodeVulgarFractions),
 
   // replace possible mixed fractions with implicit addition
   // see https://github.com/josdejong/mathjs/issues/731
-  (amountString: string) => amountString.replace(/(\d+)\s+(\d+)\/(\d+)/, '($1 + $2/$3)'),
+  (amountString: string): string => amountString.replace(/(\d+)\s+(\d+)\/(\d+)/, '($1 + $2/$3)'),
 ]
 const amountStringTransformationCombinations = powerSet(amountStringTransformations)
 
@@ -97,7 +97,7 @@ export function createAmountFromString(amountString: string): Amount {
     const modAmountString: string = transformationCombination.reduce((memo, transformation) => transformation(memo), amountString)
 
     try {
-      let evalResult = mathjs.evaluate(modAmountString)
+      const evalResult = mathjs.evaluate(modAmountString)
       return mathjsValueToAmount(evalResult)
     } catch (e) {
       if (!initialError) {
@@ -132,8 +132,8 @@ export function mergeAmounts(base?: Amount | null, client?: Amount | null, serve
 }
 
 export function mergeAmountsTwoWay(client?: Amount | null, server?: Amount | null): Amount | undefined | null {
-  let mathjsClient = amountToMathjsValue(client)
-  let mathjsServer = amountToMathjsValue(server)
+  const mathjsClient = amountToMathjsValue(client)
+  const mathjsServer = amountToMathjsValue(server)
 
   try {
     if (mathjs.compare(mathjsClient, mathjsServer) > 0) {
@@ -145,7 +145,8 @@ export function mergeAmountsTwoWay(client?: Amount | null, server?: Amount | nul
     return client
   }
 }
-export function getSIUnit(amount: Amount) {
+
+export function getSIUnit(amount: Amount): string | null {
   const mathjsValue = amountToMathjsValue(amount)
 
   if (isMathjsUnit(mathjsValue)) {
@@ -155,7 +156,7 @@ export function getSIUnit(amount: Amount) {
   }
 }
 
-export function addAmounts(a1?: Amount | null, a2?: Amount | null) {
+export function addAmounts(a1?: Amount | null, a2?: Amount | null): Amount {
   const mv1 = amountToMathjsValue(a1)
   const mv2 = amountToMathjsValue(a2)
   const mres = mathjs.add(mv1, mv2)
@@ -167,7 +168,7 @@ type MathjsValue = mathjs.MathType
 
 function mathjsValueToAmount(mathjsValue: MathjsValue): Amount {
   if (isMathjsUnit(mathjsValue)) {
-    let unit = mathjsValue.formatUnits()
+    const unit = mathjsValue.formatUnits()
     return {
       value: createAmountValue(mathjsValue.toJSON().value),
       unit,
@@ -225,7 +226,7 @@ export function mapReplace(
   replacements: {
     [x: string]: string
   }
-) {
+): string {
   const regexpStr = Object.keys(replacements)
     .map((r) => escapeStringRegexp(r))
     .join('|')

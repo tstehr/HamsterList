@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 type AttributeType = 'object' | 'boolean' | 'number' | 'string' | 'array'
 
-export function checkKeys(object: unknown, expectedKeys: string[]) {
+export function checkKeys(object: unknown, expectedKeys: string[]): void {
   if (!_.isObject(object)) {
     throw new TypeError('Given value must be an object')
   }
@@ -16,7 +16,7 @@ export function checkKeys(object: unknown, expectedKeys: string[]) {
   }
 }
 
-export function checkAttributeType(object: any, key: string, type: AttributeType, optional: boolean = false) {
+export function checkAttributeType(object: any, key: string, type: AttributeType, optional = false): void {
   if (!optional && object[key] == null) {
     throw new TypeError(`Given object must have an attribute "${key}"`)
   }
@@ -45,7 +45,7 @@ export function errorMap<I, O>(array: ReadonlyArray<I>, transformer: (a: I) => O
 }
 
 export function nullSafe<T, R>(func: (a: T) => R): (a: T | undefined | null) => R | undefined | null {
-  return function (p: T | undefined | null) {
+  return function (p: T | undefined | null): R | undefined | null {
     if (p === null) {
       return null
     }
@@ -63,7 +63,7 @@ const IDENTIFICATION_FIELDS = Object.freeze(['name', 'title', 'id'])
 function getIdentification(o: unknown): string | undefined | null {
   if (_.isObject(o)) {
     const indexableO = o as { [key: string]: any }
-    for (let identificationField of IDENTIFICATION_FIELDS) {
+    for (const identificationField of IDENTIFICATION_FIELDS) {
       const value = indexableO[identificationField]
       if (typeof value === 'string') {
         return `${identificationField}="${value}"`

@@ -1,11 +1,9 @@
-import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
-import { createItem, mergeItems, mergeItemsTwoWay } from './Item'
-import { Item } from './Item'
+import _ from 'lodash'
+import { checkAttributeType, checkKeys, errorMap } from '../util/validation'
 import { CategoryDefinition } from './CategoryDefinition'
+import { createItem, Item, mergeItems, mergeItemsTwoWay } from './Item'
 import { sortItems } from './Order'
-import { UUID } from '../util/uuid'
-import { checkKeys, checkAttributeType, errorMap } from '../util/validation'
 
 export interface BaseShoppingList {
   readonly id: string
@@ -25,7 +23,7 @@ export function createShoppingList(shoppingListSpec: any, categories?: ReadonlyA
   checkAttributeType(shoppingListSpec, 'items', 'array')
   let items = errorMap(shoppingListSpec.items, createItem)
 
-  let duplicatedIds = _.chain(items)
+  const duplicatedIds = _.chain(items)
     .groupBy('id')
     .entries()
     .filter(([, items]) => items.length > 1)
@@ -65,7 +63,7 @@ export function mergeShoppingLists(
     title = server.title
   }
 
-  let items = []
+  const items = []
 
   const baseMap = _.keyBy([...base.items], 'id')
   const clientMap = _.keyBy([...client.items], 'id')
@@ -108,7 +106,7 @@ export function mergeShoppingLists(
   )
 }
 
-function mergeHandleDelete(items: Item[], base: Item, remaining: Item) {
+function mergeHandleDelete(items: Item[], base: Item, remaining: Item): void {
   if (!_.isEqual(base, remaining)) {
     items.push(remaining)
   }

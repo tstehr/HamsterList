@@ -53,8 +53,8 @@ export function createChange(changeSpec: any): Change {
     diffs: errorMap(changeSpec.diffs, createDiff),
   }
 
-  // @ts-ignore TODO deep-freeze makes a readonly date
-  return deepFreeze(change)
+  // TODO deepFreeze makes a readonly date, so it is removed here. Should be re-added?
+  return change
 }
 
 export function createDiff(diffSpec: any): Diff {
@@ -195,7 +195,7 @@ export function applyDiff(shoppingList: ShoppingList, diff: Diff): ShoppingList 
   if (diff.type === DELETE_ITEM) {
     const index = _findOldItemIndex(shoppingList, diff.oldItem)
 
-    let listItems = [...shoppingList.items]
+    const listItems = [...shoppingList.items]
     listItems.splice(index, 1)
     return { ...shoppingList, items: listItems }
   }
@@ -289,7 +289,7 @@ export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): Di
   throw TypeError(`Diff to be converted to applicable diff is not an element of type 'Diff'`)
 }
 
-function _findOldItemIndex(shoppingList: ShoppingList, oldItem: Item) {
+function _findOldItemIndex(shoppingList: ShoppingList, oldItem: Item): number {
   const index = _.findIndex(shoppingList.items, (item) => _.isEqual(item, oldItem))
 
   if (index === -1) {

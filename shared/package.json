@@ -12,7 +12,7 @@
     "watch:babel": "yarn run build:babel --watch",
     "watch:tsc": "yarn run build:tsc --warch",
     "test": "jest src",
-    "lint": "eslint src"
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
     "@babel/runtime": "^7.5.4",
@@ -41,8 +41,11 @@
     "@types/lodash": "^4.14.149",
     "@types/mathjs": "^6.0.4",
     "@types/uuid": "^3.4.8",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
     "babel-eslint": "^10.0.2",
-    "eslint": "^6.0.1",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
     "jest": "^24.8.0",
     "mockdate": "^2.0.3",
     "prettier": "2.0.2"

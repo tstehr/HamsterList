@@ -29,18 +29,18 @@ export function createOrder(orderSpec: any): Order {
 }
 
 export function sortItems(items: ReadonlyArray<Item>, categoryOrder: CategoryOrder): ReadonlyArray<Item> {
-  const categoryIteratee = (item: Item) => convertSmallerZeroToInf(categoryOrder.indexOf(undefinedToNull(item.category))) // sortBy doesn't mutate, but isn't annotated correctly...
+  const categoryIteratee = (item: Item): number => convertSmallerZeroToInf(categoryOrder.indexOf(undefinedToNull(item.category)))
 
-  return _.sortBy((items as any) as Item[], [categoryIteratee, getNameLowerCase, 'id'])
+  return _.sortBy(items, [categoryIteratee, getNameLowerCase, 'id'])
 }
 
 export function sortCategories(
   categories: ReadonlyArray<CategoryDefinition>,
   categoryOrder: CategoryOrder
 ): ReadonlyArray<CategoryDefinition> {
-  const categoryIteratee = (cat: CategoryDefinition) => convertSmallerZeroToInf(categoryOrder.indexOf(cat.id)) // sortBy doesn't mutate, but isn't annotated correctly...
+  const categoryIteratee = (cat: CategoryDefinition): number => convertSmallerZeroToInf(categoryOrder.indexOf(cat.id))
 
-  return _.sortBy((categories as any) as CategoryDefinition[], categoryIteratee)
+  return _.sortBy(categories as CategoryDefinition[], categoryIteratee)
 }
 
 export function completeCategoryOrder(
@@ -58,10 +58,10 @@ function undefinedToNull<T>(input?: T | null): T | undefined | null {
   return input
 }
 
-function convertSmallerZeroToInf(index: number) {
+function convertSmallerZeroToInf(index: number): number {
   return index < 0 ? Infinity : index
 }
 
-function getNameLowerCase(named: { name: string }) {
+function getNameLowerCase(named: { name: string }): string {
   return named.name.toLowerCase()
 }
