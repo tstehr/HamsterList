@@ -4,12 +4,13 @@
   "main": "build/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "yarn run build:clean && yarn run build:babel",
+    "build": "yarn run build:clean && yarn run build:babel && yarn run build:tsc",
     "build:clean": "rm -rf ./build",
     "build:babel": "babel src --out-dir build --source-maps --extensions '.ts'",
-    
+    "build:tsc": "tsc",
     "watch": "yarn run build:clean && yarn run watch:babel",
     "watch:babel": "yarn run build:babel --watch",
+    "watch:tsc": "yarn run build:tsc --warch",
     "test": "jest src",
     "lint": "eslint src"
   },
@@ -22,6 +23,7 @@
     "is-uuid": "^1.0.2",
     "lodash": "^4.17.14",
     "mathjs": "^6.6.2",
+    "typescript": "^3.8.3",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
@@ -47,9 +49,18 @@
   },
   "jest": {
     "collectCoverage": true,
+    "mapCoverage": true,
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
       "src/**/*.ts"
+    ],
+    "testPathIgnorePatterns": [
+      "/build/",
+      "/node_modules/"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "ts"
     ]
   }
 }
