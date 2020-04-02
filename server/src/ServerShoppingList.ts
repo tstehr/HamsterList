@@ -1,34 +1,32 @@
-// @flow
-import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
+import _ from 'lodash'
 import {
-  type Item,
-  type ShoppingList,
-  type SyncedShoppingList,
-  type CompletionItem,
-  type CategoryDefinition,
-  type Order,
-  type Change,
-  createShoppingList,
-  checkKeys,
   checkAttributeType,
-  createCompletionItem,
+  checkKeys,
   createCategoryDefinition,
-  createOrder,
   createChange,
+  createCompletionItem,
+  createOrder,
+  createShoppingList,
 } from 'shoppinglist-shared'
+import { CategoryDefinition, Change, CompletionItem, Item, Order, ShoppingList, SyncedShoppingList } from 'shoppinglist-shared'
 
-export type RecentlyUsed = { lastUsedTimestamp: number, uses: number, item: CompletionItem }
-export type RecentlyUsedArray = $ReadOnlyArray<RecentlyUsed>
+export type RecentlyUsed = {
+  lastUsedTimestamp: number
+  uses: number
+  item: CompletionItem
+}
+
+export type RecentlyUsedArray = ReadonlyArray<RecentlyUsed>
 
 export type ServerShoppingList = {
-  +id: string,
-  +title: string,
-  +items: $ReadOnlyArray<Item>,
-  +recentlyUsed: RecentlyUsedArray,
-  +categories: $ReadOnlyArray<CategoryDefinition>,
-  +orders: $ReadOnlyArray<Order>,
-  +changes: $ReadOnlyArray<Change>,
+  readonly id: string
+  readonly title: string
+  readonly items: ReadonlyArray<Item>
+  readonly recentlyUsed: RecentlyUsedArray
+  readonly categories: ReadonlyArray<CategoryDefinition>
+  readonly orders: ReadonlyArray<Order>
+  readonly changes: ReadonlyArray<Change>
 }
 
 export function createServerShoppingList(serverShoppingListSpec: any): ServerShoppingList {
@@ -42,24 +40,24 @@ export function createServerShoppingList(serverShoppingListSpec: any): ServerSho
     checkAttributeType(used, 'lastUsedTimestamp', 'number')
     checkAttributeType(used, 'uses', 'number')
     checkAttributeType(used, 'item', 'object')
-
     return { ...used, item: createCompletionItem(used.item) }
   })
+
   const categories = serverShoppingListSpec.categories.map(createCategoryDefinition)
   const orders = serverShoppingListSpec.orders.map(createOrder)
   const changes = serverShoppingListSpec.changes.map(createChange)
-
   const shoppingList = createShoppingList(
     _.omit(serverShoppingListSpec, ['recentlyUsed', 'categories', 'orders', 'changes']),
     categories
   )
 
-  const serverShoppingList = {}
-  Object.assign(serverShoppingList, shoppingList)
-  serverShoppingList.recentlyUsed = recentlyUsed
-  serverShoppingList.categories = categories
-  serverShoppingList.orders = orders
-  serverShoppingList.changes = changes
+  const serverShoppingList = {
+    ...shoppingList,
+    recentlyUsed: recentlyUsed,
+    categories: categories,
+    orders: orders,
+    changes: changes,
+  }
 
   return deepFreeze(serverShoppingList)
 }
@@ -70,9 +68,5 @@ export function getBaseShoppingList(serverShoppingList: ServerShoppingList): Sho
 
 export function getSyncedShoppingList(serverShoppingList: ServerShoppingList): SyncedShoppingList {
   const changeId = serverShoppingList.changes.length === 0 ? null : _.last(serverShoppingList.changes).id
-  return {
-    ...getBaseShoppingList(serverShoppingList),
-    token: '',
-    changeId,
-  }
+  return { ...getBaseShoppingList(serverShoppingList), token: '', changeId }
 }

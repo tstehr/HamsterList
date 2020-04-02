@@ -1,12 +1,10 @@
-// @flow
 /* eslint-env jest */
+
 /* eslint-env jest */
 import TokenCreator from './TokenCreator'
 import { createUUID } from 'shoppinglist-shared'
-
 const tokenCreator = new TokenCreator('123')
 const changeId = createUUID('a58df112-085f-4742-873d-8f8e31af7826')
-
 it('creates token', () => {
   const list = tokenCreator.setToken({
     id: 'ads',

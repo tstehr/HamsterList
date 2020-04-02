@@ -1,30 +1,40 @@
-// @flow
+import { NextFunction, Response } from 'express'
 import _ from 'lodash'
-import { type Change, type UUID, createUUID } from 'shoppinglist-shared'
-import { type ShoppingListRequest } from './ShoppingListController'
+import { createUUID } from 'shoppinglist-shared'
+import { Change, UUID } from 'shoppinglist-shared'
+import { ShoppingListRequest } from './ShoppingListController'
 
 export default class ChangesController {
-  handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+  handleGet = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
     try {
       res.json(getChangesBetween(req.list.changes, this.getUUID(req.query['oldest']), this.getUUID(req.query['newest'])))
     } catch (e) {
-      res.status(400).json({ error: e.message })
+      res.status(400).json({
+        error: e.message,
+      })
     }
+
     next()
   }
 
-  getUUID(queryParam: string | string[] | void): ?UUID {
+  getUUID(queryParam: string | string[] | void): UUID | undefined | null {
     if (Array.isArray(queryParam)) {
       throw new TypeError('Given parameters must be of type string')
     }
+
     if (queryParam == null) {
       return null
     }
+
     return createUUID(queryParam)
   }
 }
 
-export function getChangesBetween(changes: $ReadOnlyArray<Change>, oldest: ?UUID, newest: ?UUID): $ReadOnlyArray<Change> {
+export function getChangesBetween(
+  changes: ReadonlyArray<Change>,
+  oldest?: UUID | null,
+  newest?: UUID | null
+): ReadonlyArray<Change> {
   const oldestIndex = _.findIndex(changes, (c) => c.id === oldest)
   const startIndex = oldestIndex === -1 ? 0 : oldestIndex
   const newestIndex = _.findIndex(changes, (c) => c.id === newest)

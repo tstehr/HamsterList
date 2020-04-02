@@ -1,26 +1,30 @@
-// @flow
-import path from 'path'
-import fs from 'fs-extra'
-import http from 'http'
-import https from 'https'
-import express from 'express'
 import bodyParser from 'body-parser'
 import bunyan, { Logger } from 'bunyan'
+import express, { NextFunction, Response, Request } from 'express'
+import fs from 'fs-extra'
 import helmet from 'helmet'
-import { type UUID, createRandomUUID } from 'shoppinglist-shared'
+import http from 'http'
+import https from 'https'
+import path from 'path'
+import { createRandomUUID } from 'shoppinglist-shared'
+import { UUID } from 'shoppinglist-shared'
+import CategoriesController from './CategoriesController'
+import ChangesController from './ChangesController'
+import CompletionsController from './CompletionsController'
 import { getConfig } from './config'
 import { DB } from './DB'
-import ShoppingListController from './ShoppingListController'
 import ItemController from './ItemController'
+import OrdersController from './OrdersController'
+import ShoppingListController from './ShoppingListController'
 import SocketController from './SocketController'
 import SyncController from './SyncController'
-import CompletionsController from './CompletionsController'
-import CategoriesController from './CategoriesController'
-import OrdersController from './OrdersController'
-import ChangesController from './ChangesController'
 import TokenCreator from './TokenCreator'
 
-export type UserRequest = { id: UUID, username: ?string, log: Logger } & express$Request
+export type UserRequest = {
+  id: UUID
+  username: string | undefined | null
+  log: Logger
+} & Request
 
 const config = getConfig()
 
@@ -32,12 +36,13 @@ var log = bunyan.createLogger({
 
 const db = new DB(config.get('databaseFilePath'))
 const app = express()
-
 const connectSrc = ["'self'"]
 const websocketHost = config.get('websocketHost') || config.get('host')
+
 if (config.get('https')) {
   connectSrc.push(`https://${websocketHost}`, `wss://${websocketHost}`)
 }
+
 if (config.get('http')) {
   connectSrc.push(`http://${websocketHost}`, `ws://${websocketHost}`)
 }
@@ -56,7 +61,12 @@ app.use(
 db.load()
   .then(() => {
     const router = express.Router()
-    router.use(bodyParser.json({ strict: false, limit: '2mb' }))
+    router.use(
+      bodyParser.json({
+        strict: false,
+        limit: '2mb',
+      })
+    )
 
     const tokenCreator = new TokenCreator(config.get('secret'))
 
@@ -78,9 +88,8 @@ db.load()
     router.param('listid', shoppingListController.handleParamListid)
     router.param('itemid', itemController.handleParamItemid)
 
-    router.use('*', (req: UserRequest, res: express$Response, next: express$NextFunction) => {
+    router.use('*', (req: UserRequest, res: Response, next: NextFunction) => {
       req.id = createRandomUUID()
-
       const encodedUsername = req.get('X-ShoppingList-Username')
       if (encodedUsername !== undefined) {
         try {
@@ -89,23 +98,33 @@ db.load()
             req.username = null
           }
         } catch (e) {
-          res.status(400).json({ error: 'Header field X-ShoppingList-Username is malformed.' })
+          res.status(400).json({
+            error: 'Header field X-ShoppingList-Username is malformed.',
+          })
           return
         }
       } else {
         req.username = null
       }
 
-      req.log = log.child({ id: req.id, username: req.username })
-
-      req.log.info({ req: req })
-
+      req.log = log.child({
+        id: req.id,
+        username: req.username,
+      })
+      req.log.info({
+        req: req,
+      })
       next()
 
       if (!res.headersSent) {
-        res.status(404).json({ error: "This route doesn't exist." })
+        res.status(404).json({
+          error: "This route doesn't exist.",
+        })
       }
-      req.log.info({ res: res })
+
+      req.log.info({
+        res: res,
+      })
     })
 
     router.get('/:listid', shoppingListController.handleGet)
@@ -137,7 +156,7 @@ db.load()
 
     if (config.get('nodeEnv') === 'production') {
       app.use(express.static('static'))
-      app.use((req: express$Request, res: express$Response) => res.sendFile(path.resolve('static/index.html')))
+      app.use((req: Request, res: Response) => res.sendFile(path.resolve('static/index.html')))
     }
 
     if (config.get('https')) {
@@ -154,9 +173,7 @@ db.load()
       }
 
       const server = https.createServer(options, app)
-
       socketController.initializeFor(server)
-
       const port = config.get('httpsPort')
       server.listen(port)
       log.info(`HTTPS server listening on port ${port} `)
@@ -165,7 +182,6 @@ db.load()
     if (config.get('http')) {
       const server = http.createServer(app)
       socketController.initializeFor(server)
-
       const port = config.get('port')
       server.listen(port)
       log.info(`HTTP server listening on port ${port} `)

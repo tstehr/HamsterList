@@ -1,4 +1,3 @@
-// @flow
 import path from 'path'
 import fs from 'fs-extra'
 import nconf from 'nconf'
@@ -10,16 +9,20 @@ export function getConfig() {
   // sources are defined in order of priority
 
   // command line arg
-  config.argv({ parseValues: true })
+  config.argv({
+    parseValues: true,
+  })
 
   // env variable
   config.env({
     lowerCase: true,
     transform: (obj) => {
       const camelCased = camelCase(obj.key)
+
       if (camelCased.length > 0) {
         obj.key = camelCased
       }
+
       return obj
     },
     parseValues: true,
@@ -38,7 +41,9 @@ export function getConfig() {
       {
         secret: TokenCreator.createRandomSecret(),
       },
-      { spaces: 2 }
+      {
+        spaces: 2,
+      }
     )
   }
 
@@ -50,12 +55,15 @@ export function getConfig() {
 
   // sanity check config
   config.required(['secret', 'host'])
+
   if (config.get('https')) {
     config.required(['keyFile', 'certFile', 'httpsPort'])
   }
+
   if (config.get('http')) {
     config.required(['port'])
   }
+
   if (!config.get('http') && !config.get('https')) {
     throw new Error('Either http or https must be enabled!')
   }

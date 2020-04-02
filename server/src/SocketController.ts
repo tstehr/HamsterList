@@ -1,4 +1,3 @@
-// @flow
 import http from 'http'
 import https from 'https'
 import _ from 'lodash'
@@ -6,20 +5,22 @@ import WebSocket from 'ws'
 import { Logger } from 'bunyan'
 import { createRandomUUID } from 'shoppinglist-shared'
 import TokenCreator from './TokenCreator'
-import { type ServerShoppingList, getSyncedShoppingList } from './ServerShoppingList'
+import { getSyncedShoppingList } from './ServerShoppingList'
+import { ServerShoppingList } from './ServerShoppingList'
 
 export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 
 export default class SocketController {
   tokenCreator: TokenCreator
   log: Logger
-  registeredWebSockets: { [string]: WebSocket[] }
+  registeredWebSockets: {
+    [x: string]: WebSocket[]
+  }
 
   constructor(tokenCreator: TokenCreator, log: Logger) {
     this.tokenCreator = tokenCreator
     this.log = log
     this.registeredWebSockets = {}
-
     setInterval(() => {
       const sockets = _.chain(this.registeredWebSockets).values().flatten().value()
 
@@ -27,7 +28,6 @@ export default class SocketController {
         sockets.map((ws) => ws.log.fields),
         'All connected'
       )
-
       sockets.forEach((ws) => {
         if (ws.isAlive === false) {
           ws.log.debug(`Terminating`)
@@ -45,46 +45,47 @@ export default class SocketController {
     const wss = new WebSocket.Server({
       server: server,
     })
-
     wss.on('connection', (ws, req: Request) => {
       const match = req.url.match(/\/api\/([^/]+)\/socket/)
+
       if (match == null) {
         ws.close()
         return
       }
-      const listid = match[1]
 
+      const listid = match[1]
       this.handleWs(ws, req, listid)
     })
   }
 
   handleWs = (ws: WebSocket, req: Request, listid: string) => {
-    ws.log = this.log.child({ id: createRandomUUID(), operation: '/socket', listid: listid })
-    ws.log.info({ req: req })
+    ws.log = this.log.child({
+      id: createRandomUUID(),
+      operation: '/socket',
+      listid: listid,
+    })
+    ws.log.info({
+      req: req,
+    })
 
     if (this.registeredWebSockets[listid] == null) {
       this.registeredWebSockets[listid] = []
     }
+
     this.registeredWebSockets[listid].push(ws)
-
     ws.isAlive = true
-
     ws.log.debug(`Connected`)
-
     ws.on('message', (msg) => {
       ws.log.debug(`Received: ${msg}`)
     })
-
     ws.on('close', () => {
       this.registeredWebSockets[listid].splice(this.registeredWebSockets[listid].indexOf(ws), 1)
       ws.log.debug(`Disconnected`)
     })
-
     ws.on('pong', () => {
       ws.isAlive = true
       ws.log.trace(`Pong`)
     })
-
     ws.on('error', ws.log.error)
   }
 

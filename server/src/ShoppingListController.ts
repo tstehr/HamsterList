@@ -1,28 +1,29 @@
-// @flow
-import {
-  type CategoryDefinition,
-  type Change,
-  createShoppingList,
-  diffShoppingLists,
-  getOnlyNewChanges,
-} from 'shoppinglist-shared'
-import { type DB, updateInArray } from './DB'
-import { type ServerShoppingList, createServerShoppingList, getBaseShoppingList } from './ServerShoppingList'
-import { type ShoppingListChangeCallback } from './SocketController'
-import { type UserRequest } from './index'
+import { NextFunction, Response } from 'express'
+import { createShoppingList, diffShoppingLists, getOnlyNewChanges } from 'shoppinglist-shared'
+import { CategoryDefinition, Change } from 'shoppinglist-shared'
+import { updateInArray } from './DB'
+import { DB } from './DB'
+import { UserRequest } from './index'
+import { createServerShoppingList, getBaseShoppingList } from './ServerShoppingList'
+import { ServerShoppingList } from './ServerShoppingList'
+import { ShoppingListChangeCallback } from './SocketController'
 import TokenCreator from './TokenCreator'
 
-export type ShoppingListRequest = { listid: string, list: ServerShoppingList, updatedList?: ServerShoppingList } & UserRequest
+export type ShoppingListRequest = {
+  listid: string
+  list: ServerShoppingList
+  updatedList?: ServerShoppingList
+} & UserRequest
 
 export default class ShoppingListController {
   db: DB
-  defaultCategories: $ReadOnlyArray<CategoryDefinition>
+  defaultCategories: ReadonlyArray<CategoryDefinition>
   tokenCreator: TokenCreator
   changeCallback: ShoppingListChangeCallback
 
   constructor(
     db: DB,
-    defaultCategories: $ReadOnlyArray<CategoryDefinition>,
+    defaultCategories: ReadonlyArray<CategoryDefinition>,
     tokenCreator: TokenCreator,
     changeCallback: ShoppingListChangeCallback
   ) {
@@ -32,10 +33,14 @@ export default class ShoppingListController {
     this.changeCallback = changeCallback
   }
 
-  handleParamListid = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+  handleParamListid = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
     req.listid = req.params.listid
-    req.log = req.log.child({ operation: req.url.substring(req.listid.length + 1), listid: req.listid })
+    req.log = req.log.child({
+      operation: req.url.substring(req.listid.length + 1),
+      listid: req.listid,
+    })
     const list = this.db.get().lists.find((list) => list.id == req.params.listid)
+
     if (list != null) {
       req.list = list
     } else {
@@ -49,46 +54,56 @@ export default class ShoppingListController {
         changes: [],
       })
     }
+
     next()
   }
 
-  handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+  handleGet = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
     res.json(getBaseShoppingList(req.list))
     next()
   }
 
-  handleGetItems = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+  handleGetItems = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
     res.json(req.list.items)
     next()
   }
 
-  handlePut = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+  handlePut = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
     let bodyList
     try {
-      bodyList = createShoppingList({ items: [], ...req.body }, req.list.categories)
+      bodyList = createShoppingList(
+        {
+          items: [],
+          ...req.body,
+        },
+        req.list.categories
+      )
     } catch (e) {
-      res.status(400).json({ error: e.message })
+      res.status(400).json({
+        error: e.message,
+      })
       return
     }
+
     if (bodyList.id !== req.listid) {
-      res.status(400).json({ error: "List ids don't match" })
+      res.status(400).json({
+        error: "List ids don't match",
+      })
       return
     }
 
     const updatedList = createServerShoppingList({ ...req.list, title: bodyList.title })
     req.updatedList = updatedList
-
     res.json(getBaseShoppingList(updatedList))
     next()
   }
 
-  saveUpdatedList = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+  saveUpdatedList = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
     if (req.list && req.updatedList) {
       const updatedList = req.updatedList
-
       const diffs = diffShoppingLists(req.list, updatedList)
-
       let newList: ServerShoppingList
+
       if (diffs.length > 0) {
         const change: Change = {
           username: req.username,
@@ -96,26 +111,18 @@ export default class ShoppingListController {
           date: new Date(),
           diffs: diffs,
         }
-
         const changes = getOnlyNewChanges([...updatedList.changes, change])
-
-        newList = {
-          ...updatedList,
-          changes,
-        }
+        newList = { ...updatedList, changes }
         req.updatedList = newList
       } else {
         newList = updatedList
       }
 
       this.changeCallback(newList)
-
-      this.db.set({
-        ...this.db.get(),
-        lists: updateInArray(this.db.get().lists, newList, true),
-      })
+      this.db.set({ ...this.db.get(), lists: updateInArray(this.db.get().lists, newList, true) })
       this.db.write().catch(req.log.error)
     }
+
     next()
   }
 }

@@ -1,7 +1,6 @@
-// @flow
 import crypto from 'crypto'
 import stringify from 'json-stable-stringify'
-import { type SyncedShoppingList } from 'shoppinglist-shared'
+import { SyncedShoppingList } from 'shoppinglist-shared'
 
 export default class TokenCreator {
   secret: string

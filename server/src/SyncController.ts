@@ -1,21 +1,16 @@
-// @flow
 import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
 import {
-  type ShoppingList,
-  type SyncRequest,
-  type SyncResponse,
-  type SyncedShoppingList,
-  type Item,
-  type UUID,
   createSyncRequest,
   mergeShoppingLists,
   addMatchingCategory,
   createItemFromItemStringRepresentation,
   normalizeCompletionName,
 } from 'shoppinglist-shared'
-import { type ServerShoppingList, getBaseShoppingList, getSyncedShoppingList } from './ServerShoppingList'
-import { type ShoppingListRequest } from './ShoppingListController'
+import { ShoppingList, SyncRequest, SyncResponse, SyncedShoppingList, Item, UUID } from 'shoppinglist-shared'
+import { getBaseShoppingList, getSyncedShoppingList } from './ServerShoppingList'
+import { ServerShoppingList } from './ServerShoppingList'
+import { ShoppingListRequest } from './ShoppingListController'
 import { updateRecentlyUsed } from './ItemController'
 import { getSortedCompletions } from './CompletionsController'
 import { getChangesBetween } from './ChangesController'
@@ -35,6 +30,7 @@ export default class SyncController {
 
   handlePost = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
     let syncRequest: SyncRequest
+
     try {
       // Convert stringRepresentation items to full items
       if (req.body && req.body.currentState && Array.isArray(req.body.currentState.items)) {
@@ -43,6 +39,7 @@ export default class SyncController {
           if (itemSpec != null && typeof itemSpec === 'object' && itemSpec.stringRepresentation == null) {
             return itemSpec
           }
+
           let item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
           return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
         })
@@ -50,25 +47,32 @@ export default class SyncController {
 
       syncRequest = createSyncRequest(req.body)
     } catch (e) {
-      res.status(400).json({ error: e.message })
+      res.status(400).json({
+        error: e.message,
+      })
       return
     }
 
     if (syncRequest.previousSync.id != syncRequest.currentState.id || syncRequest.currentState.id != req.listid) {
-      res.status(400).json({ error: "List ids don't match" })
+      res.status(400).json({
+        error: "List ids don't match",
+      })
       return
     }
 
     if (!this.tokenCreator.validateToken(syncRequest.previousSync)) {
-      res.status(400).json({ error: 'previousSync is no valid SyncedList' })
+      res.status(400).json({
+        error: 'previousSync is no valid SyncedList',
+      })
       return
     }
 
     const server = getBaseShoppingList(req.list)
+
     const base = _.omit(syncRequest.previousSync, 'token')
+
     const client = syncRequest.currentState
     const merged = mergeShoppingLists(base, client, server, req.list.categories)
-
     let recentlyUsed = getUpdatedItems(server, merged).reduce((ru, item) => {
       return updateRecentlyUsed(ru, item)
     }, req.list.recentlyUsed)
@@ -85,27 +89,27 @@ export default class SyncController {
       recentlyUsed: recentlyUsed,
       ...merged,
     }
-
     req.log.debug({
       base,
       server,
       client,
       merged,
     })
-
     next()
 
     if (req.updatedList != null) {
       res.send(this.buildResponse(req.updatedList, syncRequest.includeInResponse, syncRequest.previousSync.changeId))
     } else {
-      res.status(500).send({ error: 'req.updatedList was null' })
+      res.status(500).send({
+        error: 'req.updatedList was null',
+      })
     }
   }
 
   buildResponse(
     serverList: ServerShoppingList,
     includeInResponse: string | string[] | void,
-    previousSyncChangeId: ?UUID
+    previousSyncChangeId?: UUID | null
   ): SyncedShoppingList | SyncResponse {
     const list = this.tokenCreator.setToken(getSyncedShoppingList(serverList))
 
@@ -125,15 +129,19 @@ export default class SyncController {
     const response: SyncResponse = {
       list,
     }
+
     if (includeTypes.indexOf('categories') !== -1) {
       response.categories = serverList.categories
     }
+
     if (includeTypes.indexOf('orders') !== -1) {
       response.orders = serverList.orders
     }
+
     if (includeTypes.indexOf('completions') !== -1) {
       response.completions = getSortedCompletions(serverList.recentlyUsed)
     }
+
     if (includeTypes.indexOf('changes') !== -1) {
       response.changes = getChangesBetween(serverList.changes, previousSyncChangeId, list.changeId)
     }
@@ -142,17 +150,18 @@ export default class SyncController {
   }
 }
 
-function getUpdatedItems(oldList: ShoppingList, newList: ShoppingList): $ReadOnlyArray<Item> {
-  const oldMap: { [UUID]: ?Item } = _.keyBy([...oldList.items], 'id')
-  const newMap: { [UUID]: ?Item } = _.keyBy([...newList.items], 'id')
+function getUpdatedItems(oldList: ShoppingList, newList: ShoppingList): ReadonlyArray<Item> {
+  const oldMap: { [k in UUID]: Item | undefined | null } = _.keyBy([...oldList.items], 'id')
+
+  const newMap: { [k in UUID]: Item | undefined | null } = _.keyBy([...newList.items], 'id')
 
   const ids = _.uniq([..._.keys(oldMap), ..._.keys(newMap)])
 
   const updated: Item[] = []
 
-  for (const id: UUID of ids) {
-    const oldItem: ?Item = oldMap[id]
-    const newItem: ?Item = newMap[id]
+  for (const id of ids) {
+    const oldItem: Item | undefined | null = oldMap[id]
+    const newItem: Item | undefined | null = newMap[id]
 
     // deletes don't count as updates
     if (!_.isEqual(oldItem, newItem) && newItem != null) {

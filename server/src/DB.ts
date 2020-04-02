@@ -1,15 +1,15 @@
-// @flow
 import fs from 'fs-extra'
 import deepFreeze from 'deep-freeze'
-import { type ServerShoppingList, createServerShoppingList } from './ServerShoppingList'
+import { createServerShoppingList } from './ServerShoppingList'
+import { ServerShoppingList } from './ServerShoppingList'
 
-export type DBContents = {|
-  +lists: $ReadOnlyArray<ServerShoppingList>,
-|}
+export type DBContents = {
+  readonly lists: ReadonlyArray<ServerShoppingList>
+}
 
 export class DB {
   path: string
-  contents: ?DBContents
+  contents: DBContents | undefined | null
 
   constructor(path: string) {
     this.path = path
@@ -24,18 +24,21 @@ export class DB {
     try {
       json = await fs.readJson(this.path)
     } catch (e) {
-      json = { lists: [] }
+      json = {
+        lists: [],
+      }
     }
 
     this.contents = deepFreeze({
       lists: json.lists.map(createServerShoppingList),
     })
-
     return this.contents
   }
 
   write(): Promise<void> {
-    return fs.outputJSON(this.path, this.contents, { spaces: 2 })
+    return fs.outputJSON(this.path, this.contents, {
+      spaces: 2,
+    })
   }
 
   get(): DBContents {
@@ -50,11 +53,11 @@ export class DB {
   }
 }
 
-export function updateInArray<T, U: { +id: T }>(
-  arr: $ReadOnlyArray<U>,
+export function updateInArray<T, U extends { readonly id: T }>(
+  arr: ReadonlyArray<U>,
   toUpdate: U,
   insertIfNotFound: boolean = false
-): Array<U> {
+): ReadonlyArray<U> {
   const index = arr.findIndex((arrEl) => arrEl.id == toUpdate.id)
   if (index === -1) {
     if (!insertIfNotFound) {
