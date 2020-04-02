@@ -1,13 +1,12 @@
 import bodyParser from 'body-parser'
-import bunyan, { Logger } from 'bunyan'
-import express, { NextFunction, Response, Request } from 'express'
+import Logger from 'bunyan'
+import express, { NextFunction, Request, Response } from 'express'
 import fs from 'fs-extra'
 import helmet from 'helmet'
 import http from 'http'
 import https from 'https'
 import path from 'path'
-import { createRandomUUID } from 'shoppinglist-shared'
-import { UUID } from 'shoppinglist-shared'
+import { createRandomUUID, UUID } from 'shoppinglist-shared'
 import CategoriesController from './CategoriesController'
 import ChangesController from './ChangesController'
 import CompletionsController from './CompletionsController'
@@ -28,7 +27,7 @@ export type UserRequest = {
 
 const config = getConfig()
 
-var log = bunyan.createLogger({
+var log = Logger.createLogger({
   name: 'shoppinglist',
   serializers: bunyan.stdSerializers,
   level: config.get('logLevel'),

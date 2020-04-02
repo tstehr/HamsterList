@@ -1,19 +1,24 @@
-import _ from 'lodash'
 import deepFreeze from 'deep-freeze'
+import { NextFunction, Response } from 'express'
+import _ from 'lodash'
 import {
-  createSyncRequest,
-  mergeShoppingLists,
   addMatchingCategory,
   createItemFromItemStringRepresentation,
+  createSyncRequest,
+  Item,
+  mergeShoppingLists,
   normalizeCompletionName,
+  ShoppingList,
+  SyncedShoppingList,
+  SyncRequest,
+  SyncResponse,
+  UUID,
 } from 'shoppinglist-shared'
-import { ShoppingList, SyncRequest, SyncResponse, SyncedShoppingList, Item, UUID } from 'shoppinglist-shared'
-import { getBaseShoppingList, getSyncedShoppingList } from './ServerShoppingList'
-import { ServerShoppingList } from './ServerShoppingList'
-import { ShoppingListRequest } from './ShoppingListController'
-import { updateRecentlyUsed } from './ItemController'
-import { getSortedCompletions } from './CompletionsController'
 import { getChangesBetween } from './ChangesController'
+import { getSortedCompletions } from './CompletionsController'
+import { updateRecentlyUsed } from './ItemController'
+import { getBaseShoppingList, getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList'
+import { ShoppingListRequest } from './ShoppingListController'
 import TokenCreator from './TokenCreator'
 
 export default class SyncController {
@@ -23,19 +28,18 @@ export default class SyncController {
     this.tokenCreator = tokenCreator
   }
 
-  handleGet = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+  handleGet = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
     res.send(this.buildResponse(req.list, req.query['includeInResponse']))
     next()
   }
 
-  handlePost = (req: ShoppingListRequest, res: express$Response, next: express$NextFunction) => {
+  handlePost = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
     let syncRequest: SyncRequest
 
     try {
       // Convert stringRepresentation items to full items
       if (req.body && req.body.currentState && Array.isArray(req.body.currentState.items)) {
-        // $FlowFixMe
-        req.body.currentState.items = req.body.currentState.items.map((itemSpec) => {
+        req.body.currentState.items = req.body.currentState.items.map((itemSpec: any) => {
           if (itemSpec != null && typeof itemSpec === 'object' && itemSpec.stringRepresentation == null) {
             return itemSpec
           }
@@ -108,12 +112,12 @@ export default class SyncController {
 
   buildResponse(
     serverList: ServerShoppingList,
-    includeInResponse: string | string[] | void,
+    includeInResponse: string | readonly string[] | void,
     previousSyncChangeId?: UUID | null
   ): SyncedShoppingList | SyncResponse {
     const list = this.tokenCreator.setToken(getSyncedShoppingList(serverList))
 
-    let includeTypes: string[]
+    let includeTypes: readonly string[]
     if (typeof includeInResponse === 'string') {
       includeTypes = [includeInResponse]
     } else if (includeInResponse == null) {

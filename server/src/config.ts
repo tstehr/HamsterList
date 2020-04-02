@@ -16,7 +16,7 @@ export function getConfig() {
   // env variable
   config.env({
     lowerCase: true,
-    transform: (obj) => {
+    transform: (obj: { key: string }) => {
       const camelCased = camelCase(obj.key)
 
       if (camelCased.length > 0) {

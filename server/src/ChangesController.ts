@@ -1,7 +1,6 @@
 import { NextFunction, Response } from 'express'
 import _ from 'lodash'
-import { createUUID } from 'shoppinglist-shared'
-import { Change, UUID } from 'shoppinglist-shared'
+import { Change, createUUID, UUID } from 'shoppinglist-shared'
 import { ShoppingListRequest } from './ShoppingListController'
 
 export default class ChangesController {

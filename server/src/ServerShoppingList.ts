@@ -1,15 +1,21 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
 import {
+  CategoryDefinition,
+  Change,
   checkAttributeType,
   checkKeys,
+  CompletionItem,
   createCategoryDefinition,
   createChange,
   createCompletionItem,
   createOrder,
   createShoppingList,
+  Item,
+  Order,
+  ShoppingList,
+  SyncedShoppingList,
 } from 'shoppinglist-shared'
-import { CategoryDefinition, Change, CompletionItem, Item, Order, ShoppingList, SyncedShoppingList } from 'shoppinglist-shared'
 
 export type RecentlyUsed = {
   lastUsedTimestamp: number
@@ -35,7 +41,7 @@ export function createServerShoppingList(serverShoppingListSpec: any): ServerSho
   checkAttributeType(serverShoppingListSpec, 'orders', 'array')
   checkAttributeType(serverShoppingListSpec, 'changes', 'array')
 
-  const recentlyUsed = serverShoppingListSpec.recentlyUsed.map((used) => {
+  const recentlyUsed = serverShoppingListSpec.recentlyUsed.map((used: any) => {
     checkKeys(used, ['lastUsedTimestamp', 'uses', 'item'])
     checkAttributeType(used, 'lastUsedTimestamp', 'number')
     checkAttributeType(used, 'uses', 'number')

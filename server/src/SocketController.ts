@@ -1,12 +1,11 @@
+import Logger from 'bunyan'
 import http from 'http'
 import https from 'https'
 import _ from 'lodash'
-import WebSocket from 'ws'
-import { Logger } from 'bunyan'
 import { createRandomUUID } from 'shoppinglist-shared'
+import WebSocket from 'ws'
+import { getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList'
 import TokenCreator from './TokenCreator'
-import { getSyncedShoppingList } from './ServerShoppingList'
-import { ServerShoppingList } from './ServerShoppingList'
 
 export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 
