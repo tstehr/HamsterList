@@ -169,7 +169,7 @@ function mathjsValueToAmount(mathjsValue: MathjsValue): Amount {
   if (isMathjsUnit(mathjsValue)) {
     let unit = mathjsValue.formatUnits()
     return {
-      value: mathjsValue.toJSON().value,
+      value: createAmountValue(mathjsValue.toJSON().value),
       unit,
     }
   }
@@ -180,9 +180,9 @@ function mathjsValueToAmount(mathjsValue: MathjsValue): Amount {
 
   let value: number
   if (typeof mathjsValue === 'number') {
-    value = mathjsValue
+    value = createAmountValue(mathjsValue)
   } else if (isMathjsBigNumber(mathjsValue)) {
-    value = mathjsValue.toNumber()
+    value = createAmountValue(mathjsValue.toNumber())
   } else {
     throw new TypeError('Argument is not a mathjs value that can be converted to Amount')
   }

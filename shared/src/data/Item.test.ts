@@ -109,15 +109,10 @@ describe('createLocalItemFromString', () => {
       category: undefined,
     })
   })
-
-  it('Creates an object with zero value from valid unit', () => {
-    let i = createLocalItemFromString('kg Käse', categories)
-    expect(i).toEqual({
-      name: 'Käse',
-      amount: {
-        value: 0,
-        unit: 'kg',
-      },
+  it("Doesn't create an object with unit and no amount", () => {
+    expect(createLocalItemFromString('kg Käse', categories)).toEqual({
+      name: 'kg Käse',
+      amount: undefined,
       category: undefined,
     })
   })
