@@ -9,11 +9,16 @@ import TokenCreator from './TokenCreator'
 
 export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 
+interface LoggingWebSocket extends WebSocket {
+  isAlive: boolean
+  log: Logger
+}
+
 export default class SocketController {
   tokenCreator: TokenCreator
   log: Logger
   registeredWebSockets: {
-    [x: string]: WebSocket[]
+    [x: string]: LoggingWebSocket[]
   }
 
   constructor(tokenCreator: TokenCreator, log: Logger) {
@@ -57,15 +62,8 @@ export default class SocketController {
     })
   }
 
-  handleWs = (ws: WebSocket, req: Request, listid: string) => {
-    ws.log = this.log.child({
-      id: createRandomUUID(),
-      operation: '/socket',
-      listid: listid,
-    })
-    ws.log.info({
-      req: req,
-    })
+  handleWs = (baseWs: WebSocket, req: Request, listid: string) => {
+    const ws = this.makeLoggingWebSocket(baseWs, req, listid)
 
     if (this.registeredWebSockets[listid] == null) {
       this.registeredWebSockets[listid] = []
@@ -86,6 +84,19 @@ export default class SocketController {
       ws.log.trace(`Pong`)
     })
     ws.on('error', ws.log.error)
+  }
+
+  makeLoggingWebSocket(baseWs: WebSocket, req: Request, listid: string): LoggingWebSocket {
+    const ws = baseWs as LoggingWebSocket
+    ws.log = this.log.child({
+      id: createRandomUUID(),
+      operation: '/socket',
+      listid: listid,
+    })
+    ws.log.info({
+      req: req,
+    })
+    return ws
   }
 
   notifiyChanged: ShoppingListChangeCallback = (list: ServerShoppingList) => {

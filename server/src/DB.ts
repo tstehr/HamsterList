@@ -3,7 +3,7 @@ import deepFreeze from 'deep-freeze'
 import { createServerShoppingList } from './ServerShoppingList'
 import { ServerShoppingList } from './ServerShoppingList'
 
-export type DBContents = {
+export interface DBContents {
   readonly lists: ReadonlyArray<ServerShoppingList>
 }
 

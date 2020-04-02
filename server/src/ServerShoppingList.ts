@@ -73,6 +73,6 @@ export function getBaseShoppingList(serverShoppingList: ServerShoppingList): Sho
 }
 
 export function getSyncedShoppingList(serverShoppingList: ServerShoppingList): SyncedShoppingList {
-  const changeId = serverShoppingList.changes.length === 0 ? null : _.last(serverShoppingList.changes).id
+  const changeId = _.last(serverShoppingList.changes)?.id
   return { ...getBaseShoppingList(serverShoppingList), token: '', changeId }
 }

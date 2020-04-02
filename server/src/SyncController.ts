@@ -3,11 +3,15 @@ import { NextFunction, Response } from 'express'
 import _ from 'lodash'
 import {
   addMatchingCategory,
+  CategoryDefinition,
+  Change,
+  CompletionItem,
   createItemFromItemStringRepresentation,
   createSyncRequest,
   Item,
   mergeShoppingLists,
   normalizeCompletionName,
+  Order,
   ShoppingList,
   SyncedShoppingList,
   SyncRequest,
@@ -130,27 +134,33 @@ export default class SyncController {
       return list
     }
 
-    const response: SyncResponse = {
-      list,
-    }
-
+    let categories: readonly CategoryDefinition[] | undefined = undefined
     if (includeTypes.indexOf('categories') !== -1) {
-      response.categories = serverList.categories
+      categories = serverList.categories
     }
 
+    let orders: readonly Order[] | undefined = undefined
     if (includeTypes.indexOf('orders') !== -1) {
-      response.orders = serverList.orders
+      orders = serverList.orders
     }
 
+    let completions: readonly CompletionItem[] | undefined = undefined
     if (includeTypes.indexOf('completions') !== -1) {
-      response.completions = getSortedCompletions(serverList.recentlyUsed)
+      completions = getSortedCompletions(serverList.recentlyUsed)
     }
 
+    let changes: readonly Change[] | undefined = undefined
     if (includeTypes.indexOf('changes') !== -1) {
-      response.changes = getChangesBetween(serverList.changes, previousSyncChangeId, list.changeId)
+      changes = getChangesBetween(serverList.changes, previousSyncChangeId, list.changeId)
     }
 
-    return response
+    return {
+      list,
+      categories,
+      orders,
+      completions,
+      changes,
+    }
   }
 }
 
