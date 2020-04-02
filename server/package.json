@@ -1,14 +1,13 @@
 {
   "name": "shoppinglist-server",
   "version": "1.0.0",
-  "main": "src/index.js",
   "license": "MIT",
   "scripts": {
     "production": "NODE_ENV=production node build/index.js | bunyan",
-    "start": "nodemon --watch src --watch ../shared/build --exec babel-node src/index.js | bunyan",
+    "start": "nodemon --watch src --watch ../shared/build --exec babel-node src/index.ts --extensions '.ts' | bunyan",
     "build": "yarn run build:clean && yarn run build:babel",
     "build:clean": "rm -rf ./build",
-    "build:babel": "babel src --out-dir build --source-maps",
+    "build:babel": "babel src --out-dir build --source-maps --extensions '.ts'",
     "test": "jest src",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx"
   },
