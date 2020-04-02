@@ -9,6 +9,7 @@
     "moduleResolution": "node",
     "declaration": true,
     "emitDeclarationOnly": true,
+    "declarationMap": true,
     "strict": true,
     "target": "esnext",
     "skipLibCheck": true,
