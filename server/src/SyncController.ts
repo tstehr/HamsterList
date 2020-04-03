@@ -1,5 +1,5 @@
 import deepFreeze from 'deep-freeze'
-import { NextFunction, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import _ from 'lodash'
 import {
   addMatchingCategory,
@@ -22,7 +22,6 @@ import { getChangesBetween } from './ChangesController'
 import { getSortedCompletions } from './CompletionsController'
 import { updateRecentlyUsed } from './ItemController'
 import { getBaseShoppingList, getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList'
-import { ShoppingListRequest } from './ShoppingListController'
 import TokenCreator from './TokenCreator'
 
 export default class SyncController {
@@ -32,12 +31,12 @@ export default class SyncController {
     this.tokenCreator = tokenCreator
   }
 
-  handleGet = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
+  handleGet = (req: Request, res: Response, next: NextFunction) => {
     res.send(this.buildResponse(req.list, req.query['includeInResponse']))
     next()
   }
 
-  handlePost = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
+  handlePost = (req: Request, res: Response, next: NextFunction) => {
     let syncRequest: SyncRequest
 
     try {

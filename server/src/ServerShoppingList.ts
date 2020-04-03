@@ -17,7 +17,7 @@ import {
   SyncedShoppingList,
 } from 'shoppinglist-shared'
 
-export type RecentlyUsed = {
+export interface RecentlyUsed {
   lastUsedTimestamp: number
   uses: number
   item: CompletionItem
@@ -25,7 +25,7 @@ export type RecentlyUsed = {
 
 export type RecentlyUsedArray = ReadonlyArray<RecentlyUsed>
 
-export type ServerShoppingList = {
+export interface ServerShoppingList {
   readonly id: string
   readonly title: string
   readonly items: ReadonlyArray<Item>

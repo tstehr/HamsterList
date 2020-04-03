@@ -1,16 +1,9 @@
-import { NextFunction, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { CategoryDefinition, Change, createShoppingList, diffShoppingLists, getOnlyNewChanges } from 'shoppinglist-shared'
 import { DB, updateInArray } from './DB'
-import { UserRequest } from './index'
 import { createServerShoppingList, getBaseShoppingList, ServerShoppingList } from './ServerShoppingList'
 import { ShoppingListChangeCallback } from './SocketController'
 import TokenCreator from './TokenCreator'
-
-export type ShoppingListRequest = {
-  listid: string
-  list: ServerShoppingList
-  updatedList?: ServerShoppingList
-} & UserRequest
 
 export default class ShoppingListController {
   db: DB
@@ -30,7 +23,7 @@ export default class ShoppingListController {
     this.changeCallback = changeCallback
   }
 
-  handleParamListid = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
+  handleParamListid = (req: Request, res: Response, next: NextFunction) => {
     req.listid = req.params.listid
     req.log = req.log.child({
       operation: req.url.substring(req.listid.length + 1),
@@ -55,17 +48,17 @@ export default class ShoppingListController {
     next()
   }
 
-  handleGet = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
+  handleGet = (req: Request, res: Response, next: NextFunction) => {
     res.json(getBaseShoppingList(req.list))
     next()
   }
 
-  handleGetItems = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
+  handleGetItems = (req: Request, res: Response, next: NextFunction) => {
     res.json(req.list.items)
     next()
   }
 
-  handlePut = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
+  handlePut = (req: Request, res: Response, next: NextFunction) => {
     let bodyList
     try {
       bodyList = createShoppingList(
@@ -95,7 +88,7 @@ export default class ShoppingListController {
     next()
   }
 
-  saveUpdatedList = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
+  saveUpdatedList = (req: Request, res: Response, next: NextFunction) => {
     if (req.list && req.updatedList) {
       const updatedList = req.updatedList
       const diffs = diffShoppingLists(req.list, updatedList)

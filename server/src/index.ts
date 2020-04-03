@@ -18,18 +18,13 @@ import ShoppingListController from './ShoppingListController'
 import SocketController from './SocketController'
 import SyncController from './SyncController'
 import TokenCreator from './TokenCreator'
-
-export type UserRequest = {
-  id: UUID
-  username: string | undefined | null
-  log: Logger
-} & Request
+import { ServerShoppingList } from './ServerShoppingList'
 
 const config = getConfig()
 
 var log = Logger.createLogger({
   name: 'shoppinglist',
-  serializers: bunyan.stdSerializers,
+  serializers: Logger.stdSerializers,
   level: config.get('logLevel'),
 })
 
@@ -87,7 +82,7 @@ db.load()
     router.param('listid', shoppingListController.handleParamListid)
     router.param('itemid', itemController.handleParamItemid)
 
-    router.use('*', (req: UserRequest, res: Response, next: NextFunction) => {
+    router.use('*', (req: Request, res: Response, next: NextFunction) => {
       req.id = createRandomUUID()
       const encodedUsername = req.get('X-ShoppingList-Username')
       if (encodedUsername !== undefined) {

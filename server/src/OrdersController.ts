@@ -1,14 +1,13 @@
-import { NextFunction, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { createOrder, errorMap } from 'shoppinglist-shared'
-import { ShoppingListRequest } from './ShoppingListController'
 
 export default class OrdersController {
-  handleGet = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
+  handleGet = (req: Request, res: Response, next: NextFunction) => {
     res.json(req.list.orders)
     next()
   }
 
-  handlePut = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
+  handlePut = (req: Request, res: Response, next: NextFunction) => {
     if (!Array.isArray(req.body)) {
       res.status(400).json({
         error: 'Must be array of orders!',

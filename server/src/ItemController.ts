@@ -1,4 +1,4 @@
-import { NextFunction, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import _ from 'lodash'
 import {
   addMatchingCategory,
@@ -9,20 +9,16 @@ import {
   createLocalItemFromItemStringRepresentation,
   createRandomUUID,
   createUUID,
+  Item,
+  LocalItem,
   normalizeCompletionName,
 } from 'shoppinglist-shared'
-import { Item, LocalItem, UUID } from 'shoppinglist-shared'
 import { getSortedCompletions } from './CompletionsController'
 import { updateInArray } from './DB'
 import { RecentlyUsedArray } from './ServerShoppingList'
-import { ShoppingListRequest } from './ShoppingListController'
-
-export type ItemIdRequest = {
-  itemid: UUID
-} & ShoppingListRequest
 
 export default class ItemController {
-  handleParamItemid = (req: ItemIdRequest, res: Response, next: NextFunction) => {
+  handleParamItemid = (req: Request, res: Response, next: NextFunction) => {
     try {
       req.itemid = createUUID(req.params.itemid)
       next()
@@ -34,7 +30,7 @@ export default class ItemController {
     }
   }
 
-  handleGet = (req: ItemIdRequest, res: Response, next: NextFunction) => {
+  handleGet = (req: Request, res: Response, next: NextFunction) => {
     const item = req.list.items.find((item) => item.id === req.itemid)
     if (item != null) {
       res.json(createItem(item))
@@ -46,7 +42,7 @@ export default class ItemController {
     }
   }
 
-  handlePost = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
+  handlePost = (req: Request, res: Response, next: NextFunction) => {
     let localItem: LocalItem
     try {
       if (req.body.stringRepresentation != null) {
@@ -72,7 +68,7 @@ export default class ItemController {
     next()
   }
 
-  handlePut = (req: ItemIdRequest, res: Response, next: NextFunction) => {
+  handlePut = (req: Request, res: Response, next: NextFunction) => {
     let item: Item
     try {
       if (req.body.stringRepresentation != null) {
@@ -116,7 +112,7 @@ export default class ItemController {
     next()
   }
 
-  handleDelete = (req: ItemIdRequest, res: Response, next: NextFunction) => {
+  handleDelete = (req: Request, res: Response, next: NextFunction) => {
     const item = req.list.items.find((item) => item.id === req.itemid)
 
     if (item == null) {

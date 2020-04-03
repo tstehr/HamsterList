@@ -1,10 +1,9 @@
-import { NextFunction, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import _ from 'lodash'
 import { Change, createUUID, UUID } from 'shoppinglist-shared'
-import { ShoppingListRequest } from './ShoppingListController'
 
 export default class ChangesController {
-  handleGet = (req: ShoppingListRequest, res: Response, next: NextFunction) => {
+  handleGet = (req: Request, res: Response, next: NextFunction) => {
     try {
       res.json(getChangesBetween(req.list.changes, this.getUUID(req.query['oldest']), this.getUUID(req.query['newest'])))
     } catch (e) {
