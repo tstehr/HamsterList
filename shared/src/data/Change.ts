@@ -9,7 +9,7 @@ import { BaseShoppingList, ShoppingList } from './ShoppingList'
 export interface Change {
   readonly username: string | undefined | null
   readonly id: UUID
-  readonly date: Date
+  readonly date: Date | deepFreeze.DeepReadonly<Date>
   readonly diffs: ReadonlyArray<Diff>
 }
 
@@ -53,8 +53,7 @@ export function createChange(changeSpec: any): Change {
     diffs: errorMap(changeSpec.diffs, createDiff),
   }
 
-  // TODO deepFreeze makes a readonly date, so it is removed here. Should be re-added?
-  return change
+  return deepFreeze(change)
 }
 
 export function createDiff(diffSpec: any): Diff {
@@ -85,14 +84,14 @@ export function createDiff(diffSpec: any): Diff {
     throw new TypeError(`Unknown diff type ${type}`)
   }
 
-  return diff
+  return deepFreeze(diff)
 }
 
 export function getOnlyNewChanges(changes: ReadonlyArray<Change>): ReadonlyArray<Change> {
   const now = new Date()
 
   // index of first change that is newer than 14 days
-  const dateIndex = _.findIndex(changes, (c) => differenceInDays(now, c.date) < 14)
+  const dateIndex = _.findIndex(changes, (c) => differenceInDays(now, c.date as Date) < 14)
 
   // index of first change that is more than 200
   const lengthIndex = Math.max(0, changes.length - 200)

@@ -1,5 +1,5 @@
 import fs from 'fs-extra'
-import deepFreeze from 'deep-freeze'
+import deepFreeze, { DeepReadonly } from 'deep-freeze'
 import { createServerShoppingList } from './ServerShoppingList'
 import { ServerShoppingList } from './ServerShoppingList'
 
@@ -57,7 +57,7 @@ export function updateInArray<T, U extends { readonly id: T }>(
   arr: ReadonlyArray<U>,
   toUpdate: U,
   insertIfNotFound: boolean = false
-): ReadonlyArray<U> {
+): DeepReadonly<U[]> {
   const index = arr.findIndex((arrEl) => arrEl.id == toUpdate.id)
   if (index === -1) {
     if (!insertIfNotFound) {
