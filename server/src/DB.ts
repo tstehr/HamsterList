@@ -48,7 +48,7 @@ export class DB {
     return this.contents
   }
 
-  set(newContents: DBContents) {
+  set(newContents: DBContents): void {
     this.contents = deepFreeze(newContents)
   }
 }
@@ -56,7 +56,7 @@ export class DB {
 export function updateInArray<T, U extends { readonly id: T }>(
   arr: ReadonlyArray<U>,
   toUpdate: U,
-  insertIfNotFound: boolean = false
+  insertIfNotFound = false
 ): DeepReadonly<U[]> {
   const index = arr.findIndex((arrEl) => arrEl.id == toUpdate.id)
   if (index === -1) {

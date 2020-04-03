@@ -4,7 +4,7 @@ import nconf from 'nconf'
 import camelCase from 'camel-case'
 import TokenCreator from './TokenCreator'
 
-export function getConfig() {
+export function getConfig(): nconf.Provider {
   const config = new nconf.Provider()
   // sources are defined in order of priority
 

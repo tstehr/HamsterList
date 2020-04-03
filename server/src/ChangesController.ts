@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { Change, createUUID, UUID } from 'shoppinglist-shared'
 
 export default class ChangesController {
-  handleGet = (req: Request, res: Response, next: NextFunction) => {
+  handleGet = (req: Request, res: Response, next: NextFunction): void => {
     try {
       res.json(getChangesBetween(req.list.changes, this.getUUID(req.query['oldest']), this.getUUID(req.query['newest'])))
     } catch (e) {

@@ -5,7 +5,7 @@ import { SyncedShoppingList } from 'shoppinglist-shared'
 export default class TokenCreator {
   secret: string
 
-  static createRandomSecret() {
+  static createRandomSecret(): string {
     return crypto.randomBytes(1024).toString('base64')
   }
 

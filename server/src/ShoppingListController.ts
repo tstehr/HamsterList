@@ -23,7 +23,7 @@ export default class ShoppingListController {
     this.changeCallback = changeCallback
   }
 
-  handleParamListid = (req: Request, res: Response, next: NextFunction) => {
+  handleParamListid = (req: Request, res: Response, next: NextFunction): void => {
     req.listid = req.params.listid
     req.log = req.log.child({
       operation: req.url.substring(req.listid.length + 1),
@@ -48,17 +48,17 @@ export default class ShoppingListController {
     next()
   }
 
-  handleGet = (req: Request, res: Response, next: NextFunction) => {
+  handleGet = (req: Request, res: Response, next: NextFunction): void => {
     res.json(getBaseShoppingList(req.list))
     next()
   }
 
-  handleGetItems = (req: Request, res: Response, next: NextFunction) => {
+  handleGetItems = (req: Request, res: Response, next: NextFunction): void => {
     res.json(req.list.items)
     next()
   }
 
-  handlePut = (req: Request, res: Response, next: NextFunction) => {
+  handlePut = (req: Request, res: Response, next: NextFunction): void => {
     let bodyList
     try {
       bodyList = createShoppingList(
@@ -88,7 +88,7 @@ export default class ShoppingListController {
     next()
   }
 
-  saveUpdatedList = (req: Request, res: Response, next: NextFunction) => {
+  saveUpdatedList = (req: Request, res: Response, next: NextFunction): void => {
     if (req.list && req.updatedList) {
       const updatedList = req.updatedList
       const diffs = diffShoppingLists(req.list, updatedList)

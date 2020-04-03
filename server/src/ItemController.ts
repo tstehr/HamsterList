@@ -18,7 +18,7 @@ import { updateInArray } from './DB'
 import { RecentlyUsedArray } from './ServerShoppingList'
 
 export default class ItemController {
-  handleParamItemid = (req: Request, res: Response, next: NextFunction) => {
+  handleParamItemid = (req: Request, res: Response, next: NextFunction): void => {
     try {
       req.itemid = createUUID(req.params.itemid)
       next()
@@ -30,7 +30,7 @@ export default class ItemController {
     }
   }
 
-  handleGet = (req: Request, res: Response, next: NextFunction) => {
+  handleGet = (req: Request, res: Response, next: NextFunction): void => {
     const item = req.list.items.find((item) => item.id === req.itemid)
     if (item != null) {
       res.json(createItem(item))
@@ -42,7 +42,7 @@ export default class ItemController {
     }
   }
 
-  handlePost = (req: Request, res: Response, next: NextFunction) => {
+  handlePost = (req: Request, res: Response, next: NextFunction): void => {
     let localItem: LocalItem
     try {
       if (req.body.stringRepresentation != null) {
@@ -68,7 +68,7 @@ export default class ItemController {
     next()
   }
 
-  handlePut = (req: Request, res: Response, next: NextFunction) => {
+  handlePut = (req: Request, res: Response, next: NextFunction): void => {
     let item: Item
     try {
       if (req.body.stringRepresentation != null) {
@@ -112,7 +112,7 @@ export default class ItemController {
     next()
   }
 
-  handleDelete = (req: Request, res: Response, next: NextFunction) => {
+  handleDelete = (req: Request, res: Response, next: NextFunction): void => {
     const item = req.list.items.find((item) => item.id === req.itemid)
 
     if (item == null) {

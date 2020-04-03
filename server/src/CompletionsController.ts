@@ -4,12 +4,12 @@ import { CompletionItem, frecency, normalizeCompletionName } from 'shoppinglist-
 import { RecentlyUsed, RecentlyUsedArray } from './ServerShoppingList'
 
 export default class CompletionsController {
-  handleGet = (req: Request, res: Response, next: NextFunction) => {
+  handleGet = (req: Request, res: Response, next: NextFunction): void => {
     res.json(getSortedCompletions(req.list.recentlyUsed))
     next()
   }
 
-  handleDelete = (req: Request, res: Response, next: NextFunction) => {
+  handleDelete = (req: Request, res: Response, next: NextFunction): void => {
     const completionName = normalizeCompletionName(req.params.completionname)
     const entryIdx = _.findIndex(req.list.recentlyUsed, (entry) => normalizeCompletionName(entry.item.name) === completionName)
 
@@ -28,7 +28,7 @@ export default class CompletionsController {
   }
 }
 
-export function getSortedCompletions(recentlyUsed: RecentlyUsedArray) {
-  const sortedRecentlyUsed = _.orderBy<RecentlyUsed>(recentlyUsed, [(entry: RecentlyUsed) => frecency(entry)], ['desc'])
+export function getSortedCompletions(recentlyUsed: RecentlyUsedArray): readonly CompletionItem[] {
+  const sortedRecentlyUsed = _.orderBy<RecentlyUsed>(recentlyUsed, [(entry: RecentlyUsed): number => frecency(entry)], ['desc'])
   return sortedRecentlyUsed.map<CompletionItem>((entry) => entry.item)
 }

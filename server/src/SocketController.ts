@@ -45,7 +45,7 @@ export default class SocketController {
     }, 30000)
   }
 
-  initializeFor(server: http.Server | https.Server) {
+  initializeFor(server: http.Server | https.Server): void {
     const wss = new WebSocket.Server({
       server: server,
     })
@@ -62,7 +62,7 @@ export default class SocketController {
     })
   }
 
-  handleWs = (baseWs: WebSocket, req: Request, listid: string) => {
+  handleWs = (baseWs: WebSocket, req: Request, listid: string): void => {
     const ws = this.makeLoggingWebSocket(baseWs, req, listid)
 
     if (this.registeredWebSockets[listid] == null) {

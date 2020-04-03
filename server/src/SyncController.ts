@@ -31,12 +31,12 @@ export default class SyncController {
     this.tokenCreator = tokenCreator
   }
 
-  handleGet = (req: Request, res: Response, next: NextFunction) => {
+  handleGet = (req: Request, res: Response, next: NextFunction): void => {
     res.send(this.buildResponse(req.list, req.query['includeInResponse']))
     next()
   }
 
-  handlePost = (req: Request, res: Response, next: NextFunction) => {
+  handlePost = (req: Request, res: Response, next: NextFunction): void => {
     let syncRequest: SyncRequest
 
     try {
@@ -47,7 +47,7 @@ export default class SyncController {
             return itemSpec
           }
 
-          let item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
+          const item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
           return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
         })
       }

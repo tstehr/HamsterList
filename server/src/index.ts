@@ -6,7 +6,7 @@ import helmet from 'helmet'
 import http from 'http'
 import https from 'https'
 import path from 'path'
-import { createRandomUUID, UUID } from 'shoppinglist-shared'
+import { createRandomUUID } from 'shoppinglist-shared'
 import CategoriesController from './CategoriesController'
 import ChangesController from './ChangesController'
 import CompletionsController from './CompletionsController'
@@ -18,11 +18,10 @@ import ShoppingListController from './ShoppingListController'
 import SocketController from './SocketController'
 import SyncController from './SyncController'
 import TokenCreator from './TokenCreator'
-import { ServerShoppingList } from './ServerShoppingList'
 
 const config = getConfig()
 
-var log = Logger.createLogger({
+const log = Logger.createLogger({
   name: 'shoppinglist',
   serializers: Logger.stdSerializers,
   level: config.get('logLevel'),
