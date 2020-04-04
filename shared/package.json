@@ -9,7 +9,7 @@
     "build:clean": "rm -rf ./build",
     "build:babel": "babel src --out-dir build --source-maps --extensions '.ts'",
     "build:tsc": "tsc",
-    "watch": "yarn run build:clean && yarn run watch:babel",
+    "watch": "yarn run build:clean && yarn run watch:babel & yarn run watch:tsc",
     "watch:babel": "yarn run build:babel --watch",
     "watch:tsc": "yarn run build:tsc --watch",
     "test": "jest src",
