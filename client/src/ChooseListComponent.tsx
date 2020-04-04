@@ -1,39 +1,39 @@
-// @flow
 import React, { Component } from 'react'
-import { Redirect, Link } from 'react-router-dom'
 import FlipMove from 'react-flip-move'
+import { Link, Redirect } from 'react-router-dom'
 import { createRandomUUID } from 'shoppinglist-shared'
-import { createDB, getRecentlyUsedLists } from './db'
-import { responseToJSON } from './utils'
-import TopBarComponent from './TopBarComponent'
 import './ChooseListComponent.css'
+import { createDB, getRecentlyUsedLists } from './db'
+import TopBarComponent from './TopBarComponent'
+import { responseToJSON } from './utils'
 
 export type RecentlyUsedList = {
-  id: string,
-  uses: number,
-  lastUsedTimestamp: number,
-  title?: string,
+  id: string
+  uses: number
+  lastUsedTimestamp: number
+  title?: string
 }
+
+type Props = {}
 
 type State = {
-  listid: ?string,
-  recentlyUsedLists: $ReadOnlyArray<RecentlyUsedList>,
+  listid: string | undefined | null
+  recentlyUsedLists: ReadonlyArray<RecentlyUsedList>
 }
 
-export default class ChooseListComponent extends Component<void, State> {
-  db: Object
-  inputListid: { current: null | HTMLInputElement }
+export default class ChooseListComponent extends Component<Props, State> {
+  db: any
+  inputListid: {
+    current: null | HTMLInputElement
+  }
 
-  constructor() {
-    super()
-
+  constructor(props: Props) {
+    super(props)
     this.db = createDB()
-
     this.state = {
       listid: null,
       recentlyUsedLists: getRecentlyUsedLists(this.db),
     }
-
     this.inputListid = React.createRef()
   }
 
@@ -41,6 +41,7 @@ export default class ChooseListComponent extends Component<void, State> {
     if (this.inputListid.current) {
       this.inputListid.current.focus()
     }
+
     window.addEventListener('storage', this.handleStorage)
   }
 
@@ -55,10 +56,10 @@ export default class ChooseListComponent extends Component<void, State> {
     })
   }
 
-  onSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
+  onSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
     this.setState({
-      // $FlowFixMe
+      // @ts-ignore
       listid: e.currentTarget.elements['listid'].value.trim(),
     })
   }

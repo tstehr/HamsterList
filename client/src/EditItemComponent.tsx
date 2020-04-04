@@ -1,33 +1,32 @@
-// @flow
-import React, { Component } from 'react'
 import _ from 'lodash'
-import { Route } from 'react-router-dom'
-import { type Item, type LocalItem, type CategoryDefinition, itemToString, createLocalItemFromString } from 'shoppinglist-shared'
-import { type Up } from './HistoryTracker'
-import type { DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
-import ItemComponent from './ItemComponent'
-import CategoryComponent from './CategoryComponent'
-import IconButton from './IconButton'
+import React, { Component } from 'react'
 import AutosizeTextarea from 'react-autosize-textarea'
+import { Route } from 'react-router-dom'
+import { CategoryDefinition, createLocalItemFromString, Item, itemToString, LocalItem } from 'shoppinglist-shared'
+import CategoryComponent from './CategoryComponent'
 import './EditItemComponent.css'
+import { Up } from './HistoryTracker'
+import IconButton from './IconButton'
+import ItemComponent from './ItemComponent'
+import { DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
 
 type Props = {
-  item: Item,
-  categories: $ReadOnlyArray<CategoryDefinition>,
-  deleteItem: DeleteItem,
-  updateItem: UpdateItem,
-  up: Up,
+  item: Item
+  categories: ReadonlyArray<CategoryDefinition>
+  deleteItem: DeleteItem
+  updateItem: UpdateItem
+  up: Up
 }
 
 type State = {
-  hasFocus: boolean,
-  isEditing: boolean,
-  inputValue: string,
+  hasFocus: boolean
+  isEditing: boolean
+  inputValue: string
 }
 
 export default class EditItemComponent extends Component<Props, State> {
-  input: ?HTMLInputElement
-  itemDiv: ?HTMLDivElement
+  input: HTMLTextAreaElement | undefined | null
+  itemDiv: HTMLDivElement | undefined | null
 
   constructor(props: Props) {
     super(props)
@@ -44,10 +43,7 @@ export default class EditItemComponent extends Component<Props, State> {
 
   saveItem() {
     const itemFromString: LocalItem = createLocalItemFromString(this.state.inputValue, this.props.categories)
-    const updatedItem: LocalItem = {
-      ...itemFromString,
-      category: itemFromString.category || this.props.item.category,
-    }
+    const updatedItem: LocalItem = { ...itemFromString, category: itemFromString.category || this.props.item.category }
     this.props.updateItem(this.props.item.id, updatedItem)
   }
 
@@ -67,7 +63,7 @@ export default class EditItemComponent extends Component<Props, State> {
     })
   }
 
-  handleSumbit = (e: SyntheticEvent<>) => {
+  handleSumbit = (e: React.SyntheticEvent) => {
     this.saveItem()
     this.setState({
       isEditing: false,
@@ -75,7 +71,7 @@ export default class EditItemComponent extends Component<Props, State> {
     e.preventDefault()
   }
 
-  handleInputKeyDown = (e: SyntheticKeyboardEvent<>) => {
+  handleInputKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       this.saveItem()
       this.setState({
@@ -83,6 +79,7 @@ export default class EditItemComponent extends Component<Props, State> {
       })
       e.preventDefault()
     }
+
     if (e.key === 'Escape') {
       this.setState({
         isEditing: false,
@@ -92,11 +89,13 @@ export default class EditItemComponent extends Component<Props, State> {
     }
   }
 
-  handleChange = (e: SyntheticInputEvent<>) => {
-    this.setState({ inputValue: e.target.value })
+  handleChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    this.setState({
+      inputValue: e.currentTarget.value,
+    })
   }
 
-  handleDivKeyDown = (e: SyntheticKeyboardEvent<>) => {
+  handleDivKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       this.setState({
         hasFocus: true,
@@ -110,7 +109,7 @@ export default class EditItemComponent extends Component<Props, State> {
     }
   }
 
-  handleDivClick = (e: SyntheticEvent<>) => {
+  handleDivClick = (e: React.SyntheticEvent) => {
     this.setState({
       hasFocus: true,
       isEditing: true,
@@ -149,7 +148,7 @@ export default class EditItemComponent extends Component<Props, State> {
         ) : (
           <div
             className="EditItemComponent__name"
-            tabIndex="0"
+            tabIndex={0}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
             onKeyDown={this.handleDivKeyDown}

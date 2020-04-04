@@ -1,56 +1,64 @@
-// @flow
+import fuzzy from 'fuzzy'
 import _ from 'lodash'
 import React, { Component, Fragment } from 'react'
 // import FlipMove from 'react-flip-move'
-import fuzzy from 'fuzzy'
-import { type LocalItem, type CompletionItem, type CategoryDefinition, itemToString } from 'shoppinglist-shared'
-import type { CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
-import { type ItemInput } from './CreateItemComponent'
+import { CategoryDefinition, CompletionItem, itemToString, LocalItem } from 'shoppinglist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
+import { ItemInput } from './CreateItemComponent'
+import { CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
 
-type Props = {|
-  focusItemsInCreation: boolean,
-  itemsInCreation: $ReadOnlyArray<ItemInput>,
-  completions: $ReadOnlyArray<CompletionItem>,
-  categories: $ReadOnlyArray<CategoryDefinition>,
-  createItem: CreateItem,
-  deleteCompletion: DeleteCompletion,
-  focusInput: () => void,
-|}
-
+type Props = {
+  focusItemsInCreation: boolean
+  itemsInCreation: ReadonlyArray<ItemInput>
+  completions: ReadonlyArray<CompletionItem>
+  categories: ReadonlyArray<CategoryDefinition>
+  createItem: CreateItem
+  deleteCompletion: DeleteCompletion
+  focusInput: () => void
+}
 export default class CompletionsComponent extends Component<Props> {
-  getCompletionItems(): $ReadOnlyArray<LocalItem> {
+  getCompletionItems(): ReadonlyArray<LocalItem> {
     if (this.props.itemsInCreation.length === 0) {
       return []
     }
 
     const itemsInCreationNames = this.props.itemsInCreation.map((ii) => ii.item.name.trim().toLowerCase())
 
-    let results = []
+    let results: (fuzzy.FilterResult<CompletionItem> & { item: LocalItem })[] = []
     for (const itemInput of this.props.itemsInCreation) {
       const itemInCreation = itemInput.item
-      const resultsForItem = fuzzy.filter(itemInCreation.name, this.props.completions, { extract: (item) => item.name })
-      resultsForItem.forEach((el) => (el.item = Object.assign({}, itemInCreation, el.original)))
+      const resultsForItem = fuzzy
+        .filter(itemInCreation.name, this.props.completions as CompletionItem[], {
+          extract: (item: CompletionItem) => item.name,
+        })
+        .map((el) => ({
+          ...el,
+          item: { ...itemInCreation, ...el.original },
+        }))
       results.splice(results.length, 0, ...resultsForItem)
     }
     results = results.filter((el) => itemsInCreationNames.indexOf(el.item.name.trim().toLowerCase()) === -1)
     results = _.orderBy(results, ['score'], ['desc'])
-    results = results.map((el) => el.item)
-    results = _.uniqBy(results, (item) => item.name.trim().toLowerCase())
-    results = results.slice(0, 10)
 
-    return results
+    let resultItems = results.map((el) => el.item)
+    resultItems = _.uniqBy(resultItems, (item) => item.name.trim().toLowerCase())
+    resultItems = resultItems.slice(0, 10)
+
+    return resultItems
   }
 
   render() {
     const itemsInCreation = this.props.itemsInCreation.map((ii) => ii.item)
     const itemToKey = new Map()
+
     const itemsByRepr = _.groupBy(itemsInCreation, itemToString)
-    // $FlowFixMe
+
     const entries: Array<[string, LocalItem[]]> = Object.entries(itemsByRepr)
+
     for (const [repr, items] of entries) {
       for (const [iStr, item] of Object.entries(items)) {
         const i: number = +iStr
+
         if (i === 0) {
           itemToKey.set(item, repr)
         } else {

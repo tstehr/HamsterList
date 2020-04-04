@@ -13,7 +13,7 @@
     "lowdb": "^1.0.0",
     "material-color-hash": "^0.1.4",
     "mathjs": "^5.0.2",
-    "memoize-one": "^5.0.4",
+    "memoize-one": "^5.1.1",
     "react": "^16.8.0",
     "react-autosize-textarea": "^4.0.0",
     "react-dom": "^16.4.0",
@@ -31,8 +31,10 @@
     "build-sw": "node ./src/sw-build.js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "flow": "flow",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "format": "yarn run format:imports; yarn run format:prettier",
+    "format:imports": "organize-imports-cli tsconfig.json",
+    "format:prettier": "prettier src --write"
   },
   "browserslist": {
     "production": [
@@ -47,9 +49,22 @@
     ]
   },
   "devDependencies": {
-    "flow-bin": "^0.102.0",
-    "flow-typed": "^2.5.2",
+    "@types/classnames": "^2.2.10",
+    "@types/deep-freeze": "^0.1.2",
+    "@types/http-proxy-middleware": "^0.19.3",
+    "@types/jest": "^25.2.1",
+    "@types/lodash": "^4.14.149",
+    "@types/lowdb": "^1.0.9",
+    "@types/mathjs": "^6.0.5",
+    "@types/prettier": "2.0.0",
+    "@types/react": "^16.9.32",
+    "@types/react-dom": "^16.9.6",
+    "@types/react-router-dom": "^4.3.1",
+    "@types/smoothscroll-polyfill": "^0.3.1",
+    "@types/workbox-build": "^5.0.0",
+    "organize-imports-cli": "^0.7.0",
     "prettier": "2.0.2",
+    "typescript": "^3.8.3",
     "workbox-build": "^4.3.1"
   }
 }

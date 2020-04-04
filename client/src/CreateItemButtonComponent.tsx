@@ -1,27 +1,26 @@
-// @flow
-import React, { Component } from 'react'
 import classNames from 'classnames'
-import { type LocalItem, type CategoryDefinition } from 'shoppinglist-shared'
-import type { CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
-import ItemComponent from './ItemComponent'
+import React, { Component } from 'react'
+import { CategoryDefinition, LocalItem } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
-import IconButton from './IconButton'
 import './CreateItemButtonComponent.css'
+import IconButton from './IconButton'
+import ItemComponent from './ItemComponent'
+import { CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
 
 type Props = {
-  item: LocalItem,
-  categories: $ReadOnlyArray<CategoryDefinition>,
-  createItem: CreateItem,
-  deleteCompletion?: ?DeleteCompletion,
-  focusInput: () => void,
-  focused?: boolean,
-  noArrowFocus?: boolean,
+  item: LocalItem
+  categories: ReadonlyArray<CategoryDefinition>
+  createItem: CreateItem
+  deleteCompletion?: DeleteCompletion | null
+  focusInput: () => void
+  focused?: boolean
+  noArrowFocus?: boolean
 }
 
 type State = {
-  enterPressed: boolean,
-  altPressed: boolean,
-  createButtonFocused: boolean,
+  enterPressed: boolean
+  altPressed: boolean
+  createButtonFocused: boolean
 }
 
 export default class CreateItemButtonComponent extends Component<Props, State> {
@@ -34,14 +33,15 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
     }
   }
 
-  handleClick = (e: SyntheticEvent<>) => {
+  handleClick = (e: React.SyntheticEvent) => {
     this.props.createItem(this.props.item)
+
     if (this.state.enterPressed) {
       this.props.focusInput()
     }
   }
 
-  handleKeyDown = (e: SyntheticKeyboardEvent<>) => {
+  handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Delete' || e.key === 'Backspace') {
       if (this.props.deleteCompletion) {
         this.props.deleteCompletion(this.props.item.name)
@@ -55,7 +55,7 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
     }
   }
 
-  handleKeyUp = (e: SyntheticKeyboardEvent<>) => {
+  handleKeyUp = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       this.setState({
         enterPressed: false,
@@ -63,13 +63,13 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
     }
   }
 
-  handleFocus = (e: SyntheticFocusEvent<>) => {
+  handleFocus = (e: React.FocusEvent) => {
     this.setState({
       createButtonFocused: true,
     })
   }
 
-  handleBlur = (e: SyntheticFocusEvent<>) => {
+  handleBlur = (e: React.FocusEvent) => {
     this.setState({
       createButtonFocused: false,
     })
@@ -77,15 +77,12 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
 
   render() {
     const props = this.props
-
     const className = classNames('CreateItemButtonComponent', {
       focused: props.focused || this.state.createButtonFocused,
     })
-
     const buttonClassName = classNames('CreateItemButtonComponent__button', {
       'KeyFocusComponent--noFocus': props.noArrowFocus,
     })
-
     return (
       <div className={className}>
         <CategoryComponent categoryId={props.item.category} categories={props.categories} />

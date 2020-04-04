@@ -1,32 +1,24 @@
-// @flow
-import React, { Component, useState, useMemo } from 'react'
-import _ from 'lodash'
-import FlipMove from 'react-flip-move'
-import distanceInWords from 'date-fns/distance_in_words'
+import classNames from 'classnames'
 import differenceInHours from 'date-fns/difference_in_hours'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
-import memoize from 'memoize-one'
+import distanceInWords from 'date-fns/distance_in_words'
 import format from 'date-fns/format'
-import classNames from 'classnames'
-import {
-  type Change,
-  type Diff,
-  type CategoryDefinition,
-  ADD_ITEM,
-  UPDATE_ITEM,
-  DELETE_ITEM,
-  createReverseDiff,
-} from 'shoppinglist-shared'
-import PillItemComponent from './PillItemComponent'
-import type { ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
+import _ from 'lodash'
+import memoize from 'memoize-one'
+import React, { Component, useMemo, useState } from 'react'
+import FlipMove from 'react-flip-move'
+import { ADD_ITEM, CategoryDefinition, Change, createReverseDiff, DELETE_ITEM, Diff, UPDATE_ITEM } from 'shoppinglist-shared'
+import { DeepReadonly } from 'shoppinglist-shared/node_modules/@types/deep-freeze'
 import './ChangesComponent.css'
+import PillItemComponent from './PillItemComponent'
+import { ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
 
 type Props = {
-  changes: $ReadOnlyArray<Change>,
-  unsyncedChanges: $ReadOnlyArray<Change>,
-  categories: $ReadOnlyArray<CategoryDefinition>,
-  applyDiff: ApplyDiff,
-  createApplicableDiff: CreateApplicableDiff,
+  changes: ReadonlyArray<Change>
+  unsyncedChanges: ReadonlyArray<Change>
+  categories: ReadonlyArray<CategoryDefinition>
+  applyDiff: ApplyDiff
+  createApplicableDiff: CreateApplicableDiff
 }
 
 const defaultDiffLength = 15
@@ -35,31 +27,36 @@ const maxDiffLength = 50
 export default function ChangesComponent(props: Props) {
   const [start, setStart] = useState(0)
   const [end, setEnd] = useState(defaultDiffLength)
-  const [detailsExpandedDiff, setDetailsExpandedDiff] = useState<{ change: ?Change, diffIndex: number }>({
+  const [detailsExpandedDiff, setDetailsExpandedDiff] = useState<{
+    change: Change | undefined | null
+    diffIndex: number
+  }>({
     change: null,
     diffIndex: NaN,
-  })
+  }) // changes chronologically
 
-  // changes chronologically
-  const allChanges = [...props.changes, ...props.unsyncedChanges]
-
-  // if the expanded change doesn't exist anymore, search for a recent change containing the same diffs
+  const allChanges = [...props.changes, ...props.unsyncedChanges] // if the expanded change doesn't exist anymore, search for a recent change containing the same diffs
   // this will in most cases be the equivalent to the unsynced change that was removed during sync
+
   const expandedChange = useMemo(() => {
     const originalExpandedChange = detailsExpandedDiff.change
+
     if (originalExpandedChange != null && !allChanges.some((c) => c.id === originalExpandedChange.id)) {
       const now = new Date()
+
       const matchingChange = _.findLast(
         allChanges,
         (c) =>
-          differenceInMinutes(now, c.date) <= 5 &&
+          differenceInMinutes(now, c.date as Date) <= 5 &&
           _.isEqual(originalExpandedChange.diffs, c.diffs) &&
           originalExpandedChange.username === c.username
       )
+
       if (matchingChange != null) {
         return matchingChange
       }
     }
+
     return originalExpandedChange
   }, [detailsExpandedDiff, allChanges])
 
@@ -72,9 +69,10 @@ export default function ChangesComponent(props: Props) {
       diffIndex,
     }))
   )
+
   allDiffs.reverse()
 
-  const undoAll = (diffs: $ReadOnlyArray<Diff>) => {
+  const undoAll = (diffs: ReadonlyArray<Diff>) => {
     for (const diff of diffs) {
       try {
         const reverseDiff = createReverseDiff(diff)
@@ -88,6 +86,7 @@ export default function ChangesComponent(props: Props) {
   const loadOlder = () => {
     const newEnd = Math.min(end + defaultDiffLength, allDiffs.length)
     setEnd(newEnd)
+
     if (newEnd - start > maxDiffLength) {
       setStart(Math.max(newEnd - maxDiffLength, 0))
     }
@@ -96,19 +95,23 @@ export default function ChangesComponent(props: Props) {
   const loadNewer = () => {
     const newStart = Math.max(start - defaultDiffLength, 0)
     setStart(newStart)
+
     if (newStart - end > maxDiffLength) {
       setEnd(Math.min(newStart + maxDiffLength, allDiffs.length))
     }
   }
 
   const reset = () => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    })
     setStart(0)
     setEnd(defaultDiffLength)
   }
 
   const diffs = allDiffs.slice(start, end)
-
   return (
     <div className="ChangesComponent">
       {start > 0 && (
@@ -139,7 +142,12 @@ export default function ChangesComponent(props: Props) {
               createApplicableDiff={props.createApplicableDiff}
               detailsExpanded={detailsExpanded}
               isNewest={absoluteDiffIndex === 0}
-              onHeaderClick={() => setDetailsExpandedDiff({ change: detailsExpanded ? null : change, diffIndex })}
+              onHeaderClick={() =>
+                setDetailsExpandedDiff({
+                  change: detailsExpanded ? null : change,
+                  diffIndex,
+                })
+              }
               undoNewer={() => undoAll(diffs.slice(0, absoluteDiffIndex).map(({ diff }) => diff))}
             />
           )
@@ -161,20 +169,21 @@ export default function ChangesComponent(props: Props) {
 }
 
 type DiffProps = {
-  change: Change,
-  diff: Diff,
-  categories: $ReadOnlyArray<CategoryDefinition>,
-  unsynced: boolean,
-  detailsExpanded: boolean,
-  isNewest: boolean,
-  applyDiff: ApplyDiff,
-  createApplicableDiff: CreateApplicableDiff,
-  undoNewer: () => void,
-  onHeaderClick: () => void,
+  change: Change
+  diff: Diff
+  categories: ReadonlyArray<CategoryDefinition>
+  unsynced: boolean
+  detailsExpanded: boolean
+  isNewest: boolean
+  applyDiff: ApplyDiff
+  createApplicableDiff: CreateApplicableDiff
+  undoNewer: () => void
+  onHeaderClick: () => void
 }
 
 export class DiffComponent extends Component<DiffProps> {
-  getDateString = memoize((date: Date) => {
+  getDateString = memoize((readonlyDate: DeepReadonly<Date>) => {
+    const date = readonlyDate as Date
     const now = new Date()
     const absoluteDateString = format(date, 'YYYY-MM-DD HH:mm')
     const hours = differenceInHours(now, date)
@@ -182,10 +191,12 @@ export class DiffComponent extends Component<DiffProps> {
     return [dateString, absoluteDateString, date.toISOString()]
   }, _.isEqual)
 
-  getApplicableDiff = (diff: Diff) => {
+  getApplicableDiff = (diff: Diff): [Diff | null | undefined, boolean] => {
     const reverseDiff = createReverseDiff(this.props.diff)
     const applicableDiff = this.props.createApplicableDiff(reverseDiff)
+
     const reverseEqualApplicable = _.isEqual(reverseDiff, applicableDiff)
+
     return [applicableDiff, reverseEqualApplicable]
   }
 
@@ -194,12 +205,12 @@ export class DiffComponent extends Component<DiffProps> {
       'DiffComponent--unsynced': this.props.unsynced,
       'DiffComponent--expanded': this.props.detailsExpanded,
     })
-
     const [dateString, absoluteDateString, isoDateString] = this.getDateString(this.props.change.date)
     const [applicableDiff, reverseEqualApplicable] = this.getApplicableDiff(this.props.diff)
 
-    const undo = (e) => {
+    const undo = (e: React.SyntheticEvent) => {
       e.preventDefault()
+
       if (applicableDiff != null) {
         try {
           this.props.applyDiff(applicableDiff)
@@ -209,11 +220,13 @@ export class DiffComponent extends Component<DiffProps> {
       }
     }
 
-    const undoNewer = (e) => {
+    const undoNewer = (e: React.SyntheticEvent) => {
       e.preventDefault()
+
       if (!window.confirm('Undo all newer changes?')) {
         return
       }
+
       this.props.undoNewer()
     }
 
@@ -243,7 +256,9 @@ export class DiffComponent extends Component<DiffProps> {
               onClick={undo}
               tabIndex={this.props.detailsExpanded ? 0 : -1}
               role="button"
-              className={classNames('DiffComponent__UndoLink', { 'DiffComponent__UndoLink--disabled': applicableDiff == null })}
+              className={classNames('DiffComponent__UndoLink', {
+                'DiffComponent__UndoLink--disabled': applicableDiff == null,
+              })}
             >
               {applicableDiff != null ? (
                 <>
@@ -262,7 +277,9 @@ export class DiffComponent extends Component<DiffProps> {
               onClick={undoNewer}
               tabIndex={this.props.detailsExpanded ? 0 : -1}
               role="button"
-              className={classNames('DiffComponent__UndoLink', { 'DiffComponent__UndoLink--disabled': this.props.isNewest })}
+              className={classNames('DiffComponent__UndoLink', {
+                'DiffComponent__UndoLink--disabled': this.props.isNewest,
+              })}
             >
               Undo all newer changes
             </a>
@@ -272,7 +289,7 @@ export class DiffComponent extends Component<DiffProps> {
     )
   }
 
-  createDiffElement(diff: Diff, tense: 'PAST' | 'PRESENT'): React$Node {
+  createDiffElement(diff: Diff, tense: 'PAST' | 'PRESENT'): React.ReactNode {
     const categories = this.props.categories
 
     if (diff.type === UPDATE_ITEM) {
@@ -300,6 +317,6 @@ export class DiffComponent extends Component<DiffProps> {
       )
     }
 
-    return (diff: empty) || <>Unknown diff type</> // https://stackoverflow.com/a/54030217
+    return (diff as never) || <>Unknown diff type</> // https://stackoverflow.com/a/54030217
   }
 }

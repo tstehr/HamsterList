@@ -1,18 +1,16 @@
-// @flow
 import _ from 'lodash'
-
 import React from 'react'
-import { type Item, type CategoryDefinition } from 'shoppinglist-shared'
-import ItemComponent from './ItemComponent'
+import { CategoryDefinition, Item } from 'shoppinglist-shared'
 import { CategoryTextComponent } from './CategoryComponent'
+import ItemComponent from './ItemComponent'
 import './PillItemComponent.css'
 
 type Props = {
-  item: Item,
-  categories: $ReadOnlyArray<CategoryDefinition>,
+  item: Item
+  categories: ReadonlyArray<CategoryDefinition>
 }
 
-const PillItemComponent: React$ComponentType<Props> = React.memo(
+const PillItemComponent = React.memo(
   (props: Props) => (
     <div className="PillItemComponent">
       <CategoryTextComponent categoryId={props.item.category} categories={props.categories} />{' '}

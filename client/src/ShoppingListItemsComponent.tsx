@@ -1,68 +1,75 @@
-// @flow
-import React from 'react'
+import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
+import React from 'react'
 import FlipMove from 'react-flip-move'
-import {
-  type Item,
-  type CategoryDefinition,
-  type Order,
-  type CategoryOrder,
-  type UUID,
-  sortItems,
-  completeCategoryOrder,
-} from 'shoppinglist-shared'
-import { type Up } from './HistoryTracker'
-import KeyFocusComponent from './KeyFocusComponent'
-import EditItemComponent from './EditItemComponent'
-import type { DeleteItem, UpdateItem, SelectOrder } from './ShoppingListContainerComponent'
-import OrderSelectComponent from './OrderSelectComponent'
+import { CategoryDefinition, CategoryOrder, completeCategoryOrder, Item, Order, sortItems, UUID } from 'shoppinglist-shared'
 import { CategoryListItemComponent } from './CategoryComponent'
-import './ShoppingListItemsComponent.css'
-import classNames from 'classnames'
 import './CategoryComponent.css'
+import EditItemComponent from './EditItemComponent'
+import { Up } from './HistoryTracker'
+import KeyFocusComponent from './KeyFocusComponent'
+import OrderSelectComponent from './OrderSelectComponent'
+import { DeleteItem, SelectOrder, UpdateItem } from './ShoppingListContainerComponent'
+import './ShoppingListItemsComponent.css'
 
 type Props = {
-  items: $ReadOnlyArray<Item>,
-  categories: $ReadOnlyArray<CategoryDefinition>,
-  orders: $ReadOnlyArray<Order>,
-  selectedOrder: ?UUID,
-  selectOrder: SelectOrder,
-  deleteItem: DeleteItem,
-  updateItem: UpdateItem,
-  selectOrder: SelectOrder,
-  up: Up,
+  items: ReadonlyArray<Item>
+  categories: ReadonlyArray<CategoryDefinition>
+  orders: ReadonlyArray<Order>
+  selectedOrder: UUID | undefined | null
+  selectOrder: SelectOrder
+  deleteItem: DeleteItem
+  updateItem: UpdateItem
+  up: Up
 }
 
-type ItemOrCategory = { type: 'item', item: Item } | { type: 'category', categoryId: ?UUID }
+type ItemOrCategory =
+  | {
+      type: 'item'
+      item: Item
+    }
+  | {
+      type: 'category'
+      categoryId: UUID | undefined | null
+    }
 
-function createItemOrCategoryList(order: CategoryOrder, items: $ReadOnlyArray<Item>): $ReadOnlyArray<ItemOrCategory> {
+function createItemOrCategoryList(order: CategoryOrder, items: ReadonlyArray<Item>): ReadonlyArray<ItemOrCategory> {
   const sortedItems = sortItems(items, order)
-
-  const itemOrCategoryList = []
+  const itemOrCategoryList: ItemOrCategory[] = []
   let prevCategory = null
+
   for (const item of sortedItems) {
     if (item.category !== prevCategory) {
-      itemOrCategoryList.push({ type: 'category', categoryId: item.category })
+      itemOrCategoryList.push({
+        type: 'category',
+        categoryId: item.category,
+      })
     }
-    itemOrCategoryList.push({ type: 'item', item })
+
+    itemOrCategoryList.push({
+      type: 'item',
+      item,
+    })
     prevCategory = item.category
   }
 
-  return itemOrCategoryList
+  return deepFreeze(itemOrCategoryList)
 }
 
 export default function ShoppingListItemsComponent(props: Props) {
   const order = _.find(props.orders, _.matchesProperty('id', props.selectedOrder))
+
   const completedCategoryOrder = completeCategoryOrder(order ? order.categoryOrder : [], props.categories)
   const itemOrCategoryList = createItemOrCategoryList(completedCategoryOrder, props.items)
   const delay = Math.min(10, 100 / props.items.length)
-
   return (
     <KeyFocusComponent
       direction="vertical"
       rootTagName="ul"
       className=" ShoppingListItemsComponent"
-      style={{ minHeight: `${Math.max(3 * props.items.length + 6, 11)}rem` }}
+      style={{
+        minHeight: `${Math.max(3 * props.items.length + 6, 11)}rem`,
+      }}
     >
       <FlipMove
         typeName={null}
@@ -92,7 +99,7 @@ export default function ShoppingListItemsComponent(props: Props) {
             />
           ) : (
             <CategoryListItemComponent
-              key={itemOrCategory.categoryId}
+              key={itemOrCategory.categoryId ?? 'unknown'}
               categoryId={itemOrCategory.categoryId}
               categories={props.categories}
             />

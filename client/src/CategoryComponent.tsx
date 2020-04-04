@@ -1,24 +1,21 @@
-// @flow
-import React, { Component } from 'react'
 import _ from 'lodash'
-import { type CategoryDefinition, type UUID, createCategoryDefinition } from 'shoppinglist-shared'
+import React, { Component } from 'react'
+import { CategoryDefinition, createCategoryDefinition, UUID } from 'shoppinglist-shared'
 import './CategoryComponent.css'
 
 type Props = {
-  category?: CategoryDefinition,
-  categories?: $ReadOnlyArray<CategoryDefinition>,
-  categoryId?: ?UUID,
+  category?: CategoryDefinition
+  categories?: ReadonlyArray<CategoryDefinition>
+  categoryId?: UUID | null
 }
 
-const CategoryComponent: React$ComponentType<Props> = React.memo((props: Props) => {
+const CategoryComponent = React.memo((props: Props) => {
   let category = getCategory(props)
-
   const initials = category.shortName
   const style = {
     backgroundColor: category.color,
     color: category.lightText ? '#fff' : '#000',
   }
-
   return (
     <div className="CategoryComponent" title={category.name}>
       <div className="CategoryComponent__circle" style={style}>
@@ -28,8 +25,9 @@ const CategoryComponent: React$ComponentType<Props> = React.memo((props: Props) 
   )
 }, _.isEqual)
 
-const CategoryTextComponent: React$ComponentType<Props> = React.memo((props: Props) => {
+const CategoryTextComponent = React.memo((props: Props) => {
   let category = getCategory(props)
+
   if (category === unknownCategory) {
     return null
   }
@@ -39,7 +37,6 @@ const CategoryTextComponent: React$ComponentType<Props> = React.memo((props: Pro
     backgroundColor: category.color,
     color: category.lightText ? '#fff' : '#000',
   }
-
   return (
     <span className="CategoryTextComponent" title={category.name} style={style}>
       {initials}
@@ -51,12 +48,10 @@ const CategoryTextComponent: React$ComponentType<Props> = React.memo((props: Pro
 class CategoryListItemComponent extends Component<Props> {
   render() {
     let category = getCategory(this.props)
-
     const style = {
       backgroundColor: category.color,
       color: category.lightText ? '#fff' : '#000',
     }
-
     return (
       <li className="CategoryListItemComponent" style={style}>
         {category.name}
@@ -85,11 +80,13 @@ function getCategory(props: Props): CategoryDefinition {
   if (props.category != null) {
     return props.category
   }
+
   if (props.categories == null || props.categoryId == null) {
     return unknownCategory
   }
 
   const category = _.find(props.categories, (category) => category.id === props.categoryId)
+
   if (category != null) {
     return category
   }

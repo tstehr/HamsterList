@@ -1,19 +1,19 @@
-// @flow
-import React, { Component } from 'react'
 import _ from 'lodash'
-import { type Order, type UUID, createUUID } from 'shoppinglist-shared'
-import type { SelectOrder } from './ShoppingListContainerComponent'
+import React, { Component } from 'react'
+import { createUUID, Order, UUID } from 'shoppinglist-shared'
 import './OrderSelectComponent.css'
+import { SelectOrder } from './ShoppingListContainerComponent'
 
 type Props = {
-  orders: $ReadOnlyArray<Order>,
-  selectedOrder: ?UUID,
-  selectOrder: SelectOrder,
+  orders: ReadonlyArray<Order>
+  selectedOrder: UUID | undefined | null
+  selectOrder: SelectOrder
 }
 
 export default class OrderSelectComponent extends Component<Props> {
-  handleChange = (e: SyntheticEvent<HTMLSelectElement>) => {
+  handleChange = (e: React.SyntheticEvent<HTMLSelectElement>) => {
     const val = e.currentTarget.value
+
     if (val === 'default') {
       this.props.selectOrder(null)
     } else {

@@ -1,16 +1,12 @@
-// @flow
 import React from 'react'
 import './IconButton.css'
-
 type IconType = 'DELETE' | 'ADD'
-
 type Props = {
-  icon: IconType,
-  alt: string,
-  className?: string,
-  onClick?: (SyntheticEvent<HTMLButtonElement>) => void,
+  icon: IconType
+  alt: string
+  className?: string
+  onClick?: (a: React.SyntheticEvent<HTMLButtonElement>) => void
 }
-
 export default function IconButton(props: Props) {
   return (
     <button onClick={props.onClick} className={'IconButton ' + (props.className ? props.className : '')}>
@@ -28,6 +24,7 @@ function getSvg(icon: IconType, alt: string) {
           <path d="M465.167 211.614H280.245V26.691c0-8.424-11.439-26.69-34.316-26.69s-34.316 18.267-34.316 26.69v184.924H26.69C18.267 211.614 0 223.053 0 245.929s18.267 34.316 26.69 34.316h184.924v184.924c0 8.422 11.438 26.69 34.316 26.69s34.316-18.268 34.316-26.69V280.245H465.17c8.422 0 26.69-11.438 26.69-34.316s-18.27-34.315-26.693-34.315z" />
         </svg>
       )
+
     case 'DELETE':
       return (
         <svg viewBox="0 0 268.476 268.476">
@@ -39,6 +36,7 @@ function getSvg(icon: IconType, alt: string) {
           />
         </svg>
       )
+
     default:
       throw Error(`Unknwon icon type: ${icon}`)
   }

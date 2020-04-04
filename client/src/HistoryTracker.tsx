@@ -1,43 +1,55 @@
-// @flow
+import { Location } from 'history'
 import _ from 'lodash'
 import { Component } from 'react'
-import { type RouterHistory, type Location, withRouter } from 'react-router-dom'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 
 export type Up = (levels: number | 'home' | 'list') => void
 
 type Props = {
-  render: (up: Up) => React$Node,
-  history: RouterHistory,
-}
+  render: (up: Up) => React.ReactNode
+} & RouteComponentProps
 
 type NavigationStackEntry = {
-  path: string,
-  key: ?string,
+  path: string
+  key: string | undefined | null
 }
 
 class UnboundHistoryTracker extends Component<Props> {
-  unlisten: (() => void) | void
+  unlisten: (() => void) | null = null
   navigationStack: NavigationStackEntry[]
   navigationStackIndex: number
 
-  historyListener = (location: Location, action) => {
+  constructor(props: Props) {
+    super(props)
+    this.navigationStack = [this.createNavigationStackEntry(this.props.history.location)]
+    this.navigationStackIndex = 0
+    this.setupHistoryListener()
+  }
+
+  historyListener = (location: Location, action: string) => {
     switch (action) {
       case 'PUSH':
         this.navigationStackIndex++
         this.navigationStack.splice(this.navigationStackIndex, Infinity, this.createNavigationStackEntry(location))
         break
+
       case 'POP':
         const stackEntry = this.createNavigationStackEntry(location)
+
         const keyIndex = _.findIndex(this.navigationStack, (entry) => _.isEqual(entry, stackEntry))
+
         if (keyIndex === -1) {
           this.navigationStack.splice(this.navigationStackIndex - 2, Infinity, stackEntry)
         } else {
           this.navigationStackIndex = keyIndex
         }
+
         break
+
       case 'REPLACE':
         this.navigationStack.splice(this.navigationStackIndex, 1, this.createNavigationStackEntry(location))
         break
+
       default:
         console.warn(`Unkonwn navigation action: ${action}`)
     }
@@ -56,18 +68,13 @@ class UnboundHistoryTracker extends Component<Props> {
     }
   }
 
-  escapeListener = (e) => {
+  escapeListener = (e: KeyboardEvent) => {
     if (e.code === 'Escape' && !e.defaultPrevented) {
       this.up('list')
     }
   }
 
   componentDidMount() {
-    this.navigationStack = [this.createNavigationStackEntry(this.props.history.location)]
-    this.navigationStackIndex = 0
-
-    this.setupHistoryListener()
-
     window.addEventListener('keydown', this.escapeListener)
   }
 
@@ -75,10 +82,11 @@ class UnboundHistoryTracker extends Component<Props> {
     if (this.unlisten) {
       this.unlisten()
     }
+
     window.removeEventListener('keydown', this.escapeListener)
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: Props) {
     if (prevProps.history !== this.props.history) {
       this.setupHistoryListener()
     }
@@ -88,6 +96,7 @@ class UnboundHistoryTracker extends Component<Props> {
     if (this.unlisten) {
       this.unlisten()
     }
+
     this.unlisten = this.props.history.listen(this.historyListener)
   }
 
@@ -102,6 +111,7 @@ class UnboundHistoryTracker extends Component<Props> {
     if (pathname.endsWith('/')) {
       return pathname.substr(0, pathname.length - 1)
     }
+
     return pathname
   }
 
@@ -112,6 +122,7 @@ class UnboundHistoryTracker extends Component<Props> {
       this.props.history.push(pathname)
     } else {
       const stepsBack = this.navigationStackIndex - idx
+
       if (stepsBack > 0) {
         this.props.history.go(-stepsBack)
       }

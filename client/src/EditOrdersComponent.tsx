@@ -1,28 +1,29 @@
-// @flow
-import React, { Component } from 'react'
+import { History } from 'history'
 import _ from 'lodash'
+import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { type RouterHistory, type ContextRouter, Route } from 'react-router-dom'
-import { SortableContainer, SortableElement, SortableHandle, arrayMove } from 'react-sortable-hoc'
-import { Link } from 'react-router-dom'
-import { type Order, type UUID, type CategoryDefinition, createRandomUUID, sortCategories } from 'shoppinglist-shared'
-import { type Up } from './HistoryTracker'
+import { Link, Route, RouteComponentProps } from 'react-router-dom'
+import { arrayMove, SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
+import { CategoryDefinition, createRandomUUID, Order, sortCategories, UUID } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
-import { type UpdateOrders } from './ShoppingListContainerComponent'
 import './EditOrdersComponent.css'
+import { Up } from './HistoryTracker'
+import { UpdateOrders } from './ShoppingListContainerComponent'
 
 type Props = {
-  listid: string,
-  orders: $ReadOnlyArray<Order>,
-  categories: $ReadOnlyArray<CategoryDefinition>,
-  updateOrders: UpdateOrders,
-  up: Up,
+  listid: string
+  orders: ReadonlyArray<Order>
+  categories: ReadonlyArray<CategoryDefinition>
+  updateOrders: UpdateOrders
+  up: Up
 }
 
 export default class EditOrdersComponent extends Component<Props> {
   updateOrder = (orderToUpdate: Order) => {
     const orders = [...this.props.orders]
+
     const index = _.findIndex(orders, (order) => order.id === orderToUpdate.id)
+
     orders[index] = orderToUpdate
     this.props.updateOrders(orders)
   }
@@ -33,13 +34,14 @@ export default class EditOrdersComponent extends Component<Props> {
     this.props.up(1)
   }
 
-  makeCreateOrder(history: RouterHistory) {
+  makeCreateOrder(history: History) {
     return () => {
       const id = createRandomUUID()
-
       let name = `New Order`
       let i = 1
-      const orderPredicate = (order) => order.name === name
+
+      const orderPredicate = (order: Order) => order.name === name
+
       while (this.props.orders.find(orderPredicate) != null) {
         name = `New Order ${i}`
         i++
@@ -57,8 +59,8 @@ export default class EditOrdersComponent extends Component<Props> {
     }
   }
 
-  handleSortEnd = ({ oldIndex, newIndex }: { oldIndex: number, newIndex: number }) => {
-    this.props.updateOrders(arrayMove(this.props.orders, oldIndex, newIndex))
+  handleSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) => {
+    this.props.updateOrders(arrayMove(this.props.orders as Order[], oldIndex, newIndex))
   }
 
   render() {
@@ -67,16 +69,16 @@ export default class EditOrdersComponent extends Component<Props> {
     if (target != null) {
       return ReactDOM.createPortal(
         <Route
-          render={({ history }: ContextRouter) => (
+          render={({ history }: RouteComponentProps) => (
             <div
               className="EditOrdersComponent"
-              onClick={(e: SyntheticEvent<>) => e.target === e.currentTarget && this.props.up('list')}
+              onClick={(e: React.SyntheticEvent) => e.target === e.currentTarget && this.props.up('list')}
             >
               <div className="EditOrdersComponent__window">
                 <div className="EditOrdersComponent__window__body">
                   <Route
                     path="/:listid/orders/:orderid"
-                    render={({ history, match }: ContextRouter) => (
+                    render={({ history, match }: RouteComponentProps<{ orderid: string }>) => (
                       <div className="EditOrdersComponent__order">
                         <NullSafeEditOrderComponent
                           listid={this.props.listid}
@@ -136,7 +138,7 @@ export default class EditOrdersComponent extends Component<Props> {
   }
 }
 
-const SortableOrders = SortableContainer(({ orders, listid }) => {
+const SortableOrders = SortableContainer(({ orders, listid }: { orders: readonly Order[]; listid: string }) => {
   return (
     <div>
       {orders.map((order, index) => (
@@ -146,7 +148,7 @@ const SortableOrders = SortableContainer(({ orders, listid }) => {
   )
 })
 
-const SortableOrder = SortableElement(({ order, listid }) => (
+const SortableOrder = SortableElement(({ order, listid }: { order: Order; listid: string }) => (
   <Link to={`/${listid}/orders/${order.id}`} className="SortableOrder Button">
     <span className="SortableOrder__name">{order.name}</span>
     <DragHandle />
@@ -154,17 +156,17 @@ const SortableOrder = SortableElement(({ order, listid }) => (
 ))
 
 type NullSafeEditOrderProps = {
-  listid: string,
-  orderid: ?string,
-  orders: $ReadOnlyArray<Order>,
-  categories: $ReadOnlyArray<CategoryDefinition>,
-  updateOrder: (Order) => void,
-  deleteOrder: (UUID) => void,
-  up: Up,
+  listid: string
+  orderid: string | undefined | null
+  orders: ReadonlyArray<Order>
+  categories: ReadonlyArray<CategoryDefinition>
+  updateOrder: (a: Order) => void
+  deleteOrder: (a: UUID) => void
+  up: Up
 }
 
 function NullSafeEditOrderComponent(props: NullSafeEditOrderProps) {
-  const order: ?Order = _.find(props.orders, _.matchesProperty('id', props.orderid))
+  const order: Order | undefined | null = _.find(props.orders, _.matchesProperty('id', props.orderid))
 
   return (
     <>
@@ -190,17 +192,16 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps) {
 }
 
 type EditOrderProps = {
-  listid: string,
-  order: Order,
-  categories: $ReadOnlyArray<CategoryDefinition>,
-  updateOrder: (Order) => void,
-  deleteOrder: (UUID) => void,
-  up: Up,
+  listid: string
+  order: Order
+  categories: ReadonlyArray<CategoryDefinition>
+  updateOrder: (a: Order) => void
+  deleteOrder: (a: UUID) => void
+  up: Up
 }
-
 type EditOrderState = {
-  inputValue: string,
-  hasFocus: boolean,
+  inputValue: string
+  hasFocus: boolean
 }
 
 class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
@@ -222,37 +223,32 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     return sortCategories(this.props.categories, this.props.order.categoryOrder)
   }
 
-  handleChange = (e: SyntheticInputEvent<>) => {
-    this.setState({ inputValue: e.target.value })
+  handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+    this.setState({
+      inputValue: e.currentTarget.value,
+    })
   }
 
-  handleFocus = (e: SyntheticEvent<>) => {
+  handleFocus = (e: React.SyntheticEvent) => {
     this.setState({
       hasFocus: true,
     })
   }
 
-  handleBlur = (e: SyntheticEvent<>) => {
+  handleBlur = (e: React.SyntheticEvent) => {
     this.setState({
       hasFocus: false,
     })
-    this.props.updateOrder({
-      ...this.props.order,
-      name: this.state.inputValue,
-    })
+    this.props.updateOrder({ ...this.props.order, name: this.state.inputValue })
   }
 
-  handleSortEnd = ({ oldIndex, newIndex }) => {
+  handleSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) => {
     const categoryOrder = this.getSortedCategories().map((cat) => cat.id)
-    this.props.updateOrder({
-      ...this.props.order,
-      categoryOrder: arrayMove(categoryOrder, oldIndex, newIndex),
-    })
+    this.props.updateOrder({ ...this.props.order, categoryOrder: arrayMove(categoryOrder, oldIndex, newIndex) })
   }
 
   render() {
     const sortedCategories = this.getSortedCategories()
-
     return (
       <div>
         <input
@@ -288,7 +284,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
   }
 }
 
-const SortableCategories = SortableContainer(({ categories }) => {
+const SortableCategories = SortableContainer(({ categories }: { categories: readonly CategoryDefinition[] }) => {
   return (
     <div>
       {categories.map((category, index) => (
@@ -297,13 +293,11 @@ const SortableCategories = SortableContainer(({ categories }) => {
     </div>
   )
 })
-
-const SortableCategory = SortableElement(({ category }) => (
+const SortableCategory = SortableElement(({ category }: { category: CategoryDefinition }) => (
   <div className="SortableCategory Button">
     <CategoryComponent category={category} />
     <span className="SortableCategory__name">{category.name}</span>
     <DragHandle />
   </div>
 ))
-
 const DragHandle = SortableHandle(() => <span className="DragHandle">≡</span>)

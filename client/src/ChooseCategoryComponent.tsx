@@ -1,20 +1,19 @@
-// @flow
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { type CategoryDefinition, type UUID } from 'shoppinglist-shared'
+import { CategoryDefinition, UUID } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
-import KeyFocusComponent from './KeyFocusComponent'
 import './ChooseCategoryComponent.css'
+import KeyFocusComponent from './KeyFocusComponent'
 
 type Props = {
-  categories: $ReadOnlyArray<CategoryDefinition>,
-  categoryId: ?UUID,
-  updateCategory: (?UUID) => void,
+  categories: ReadonlyArray<CategoryDefinition>
+  categoryId: UUID | undefined | null
+  updateCategory: (a?: UUID | null) => void
 }
 
 export default class ChooseCategoryComponent extends Component<Props> {
-  createOnClick(categoryId: ?UUID) {
-    return (e: SyntheticEvent<>) => {
+  createOnClick(categoryId?: UUID | null) {
+    return (e: React.SyntheticEvent) => {
       this.props.updateCategory(categoryId)
       e.preventDefault()
       e.stopPropagation()
@@ -26,7 +25,6 @@ export default class ChooseCategoryComponent extends Component<Props> {
 
     if (target != null) {
       const count = Math.ceil((this.props.categories.length + 1) / 10) * 10
-
       return ReactDOM.createPortal(
         <div className="ChooseCategoryComponent" onClick={this.createOnClick(this.props.categoryId)} data-categorycount={count}>
           <KeyFocusComponent direction="vertical" rootTagName="div" className="ChooseCategoryComponent__window">

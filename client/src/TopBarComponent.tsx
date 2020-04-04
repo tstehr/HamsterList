@@ -1,24 +1,21 @@
-// @flow
-import * as React from 'react'
-import { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
-import { type Up } from './HistoryTracker'
-import { type ConnectionState, type UpdateListTitle } from './ShoppingListContainerComponent'
+import * as React from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Up } from './HistoryTracker'
+import { ConnectionState, UpdateListTitle } from './ShoppingListContainerComponent'
 import './TopBarComponent.css'
 
 type Props = {
-  up?: Up,
-  responsive?: boolean,
-  children: React.Node,
+  up?: Up
+  responsive?: boolean
+  children: React.ReactNode
 }
 
 const variantSelector15 = String.fromCharCode(0xfe0e)
-
 export default function TopBarComponent(props: Props) {
   const className = classNames('TopBarComponent', {
     'TopBarComponent--responsive': props.responsive == null ? true : props.responsive,
   })
-
   return (
     <header className={className}>
       <div className="TopBarComponent__content">
@@ -39,14 +36,13 @@ export default function TopBarComponent(props: Props) {
 }
 
 type EditTitleProps = {
-  title: string,
-  updateListTitle: UpdateListTitle,
+  title: string
+  updateListTitle: UpdateListTitle
 }
-
 export function EditTitleComponent(props: EditTitleProps) {
-  const [hasFocus, setHasFocus] = useState()
+  const [hasFocus, setHasFocus] = useState<boolean>()
   const [inputValue, setInputValue] = useState(props.title)
-  const inputEl = useRef(null)
+  const inputEl = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (hasFocus && inputEl.current != null) {
@@ -60,8 +56,8 @@ export function EditTitleComponent(props: EditTitleProps) {
       props.updateListTitle(inputValue)
     }
 
-    const handleChange = (e: SyntheticInputEvent<>) => {
-      setInputValue(e.target.value)
+    const handleChange = (e: React.SyntheticEvent<HTMLInputElement>) => {
+      setInputValue(e.currentTarget.value)
     }
 
     return (
@@ -81,7 +77,7 @@ export function EditTitleComponent(props: EditTitleProps) {
     }
 
     return (
-      <h1 tabIndex="0" className="EditTitleComponent" onFocus={handleFocus}>
+      <h1 tabIndex={0} className="EditTitleComponent" onFocus={handleFocus}>
         <span>{props.title}</span>
       </h1>
     )
@@ -89,14 +85,14 @@ export function EditTitleComponent(props: EditTitleProps) {
 }
 
 type SyncStatusProps = {
-  connectionState: ConnectionState,
-  syncing: boolean,
-  lastSyncFailed: boolean,
-  dirty: boolean,
-  manualSync: () => void,
+  connectionState: ConnectionState
+  syncing: boolean
+  lastSyncFailed: boolean
+  dirty: boolean
+  manualSync: () => void
 }
 
-const stateMapping: { [ConnectionState]: string } = {
+const stateMapping: { [k in ConnectionState]: string } = {
   disconnected: '✖',
   polling: `⬆${variantSelector15}`,
   socket: `⬆${variantSelector15}⬇${variantSelector15}`,
@@ -104,18 +100,20 @@ const stateMapping: { [ConnectionState]: string } = {
 
 export function SyncStatusComponent(props: SyncStatusProps) {
   const [fakeSyncing, setFakeSyncing] = useState(false)
-  const [fakeSyncingTimeoutId, setFakeSyncingTimeoutId] = useState<?TimeoutID>(undefined)
+  const [fakeSyncingTimeoutID, setFakeSyncingTimeoutID] = useState<number | undefined>(undefined)
 
   useEffect(() => {
     if (props.syncing) {
       setFakeSyncing(true)
-      clearTimeout(fakeSyncingTimeoutId)
-      const timeoutId = setTimeout(() => {
+      if (fakeSyncingTimeoutID) {
+        clearTimeout(fakeSyncingTimeoutID)
+      }
+      const number = window.setTimeout(() => {
         setFakeSyncing(false)
       }, 2000)
-      setFakeSyncingTimeoutId(timeoutId)
+      setFakeSyncingTimeoutID(number)
     }
-  }, [props.syncing, fakeSyncingTimeoutId])
+  }, [props.syncing, fakeSyncingTimeoutID])
 
   const showSyncing = props.syncing || fakeSyncing
   const showFailure = props.lastSyncFailed || props.connectionState === 'disconnected'

@@ -1,22 +1,21 @@
-// @flow
 import React, { Component } from 'react'
-import { type ContextRouter, BrowserRouter, Switch, Route } from 'react-router-dom'
-import HistoryTracker, { type Up } from './HistoryTracker'
+import { BrowserRouter, Route, RouteComponentProps, Switch } from 'react-router-dom'
 import ChooseListComponent from './ChooseListComponent'
+import HistoryTracker, { Up } from './HistoryTracker'
 import ShoppingListContainerComponent from './ShoppingListContainerComponent'
 
 function createShoppingListContainerComponentRender(up: Up) {
-  return (props: ContextRouter) => {
+  return (props: RouteComponentProps<{ listid: string }>) => {
     return <ShoppingListContainerComponent listid={props.match.params['listid'] || ''} up={up} />
   }
 }
 
-export default class App extends Component<void> {
+export default class App extends Component {
   render() {
     return (
       <BrowserRouter>
         <HistoryTracker
-          render={(up) => (
+          render={(up: Up) => (
             <Switch>
               <Route exact path="/" component={ChooseListComponent} />
               <Route path="/:listid" exact render={createShoppingListContainerComponentRender(up)} />
@@ -32,6 +31,6 @@ export default class App extends Component<void> {
   }
 }
 
-function Error404(props) {
-  return 'Not found 🙁'
+const Error404: React.SFC = () => {
+  return <>Not found 🙁</>
 }

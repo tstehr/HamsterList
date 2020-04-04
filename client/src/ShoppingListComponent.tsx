@@ -1,80 +1,80 @@
-// @flow
+import _ from 'lodash'
 import React, { Component } from 'react'
 import { Link, Route } from 'react-router-dom'
-import _ from 'lodash'
 import {
-  type ShoppingList,
-  type CompletionItem,
-  type Item,
-  type LocalItem,
-  type CategoryDefinition,
-  type Order,
-  type Change,
-  type UUID,
+  addAmounts,
+  CategoryDefinition,
+  Change,
+  CompletionItem,
   createCookingAmount,
   getSIUnit,
-  addAmounts,
+  Item,
+  LocalItem,
+  Order,
+  ShoppingList,
+  UUID,
 } from 'shoppinglist-shared'
-import type {
-  ConnectionState,
-  UpdateListTitle,
-  CreateItem,
-  DeleteItem,
-  UpdateItem,
-  SelectOrder,
-  UpdateOrders,
-  SetUsername,
-  ApplyDiff,
-  CreateApplicableDiff,
-  DeleteCompletion,
-} from './ShoppingListContainerComponent'
-import { type Up } from './HistoryTracker'
-import TopBarComponent, { EditTitleComponent, SyncStatusComponent } from './TopBarComponent'
-import CreateItemComponent from './CreateItemComponent'
-import ShoppingListItemsComponent from './ShoppingListItemsComponent'
-import EditOrdersComponent from './EditOrdersComponent'
 import ChooseCategoryComponent from './ChooseCategoryComponent'
+import CreateItemComponent from './CreateItemComponent'
+import EditOrdersComponent from './EditOrdersComponent'
+import { Up } from './HistoryTracker'
 import './ShoppingListComponent.css'
+import {
+  ApplyDiff,
+  ConnectionState,
+  CreateApplicableDiff,
+  CreateItem,
+  DeleteCompletion,
+  DeleteItem,
+  SelectOrder,
+  SetUsername,
+  UpdateItem,
+  UpdateListTitle,
+  UpdateOrders,
+} from './ShoppingListContainerComponent'
+import ShoppingListItemsComponent from './ShoppingListItemsComponent'
+import TopBarComponent, { EditTitleComponent, SyncStatusComponent } from './TopBarComponent'
 
 type Props = {
-  shoppingList: ShoppingList,
-  completions: $ReadOnlyArray<CompletionItem>,
-  categories: $ReadOnlyArray<CategoryDefinition>,
-  orders: $ReadOnlyArray<Order>,
-  changes: $ReadOnlyArray<Change>,
-  selectedOrder: ?UUID,
-  username: ?string,
-  unsyncedChanges: $ReadOnlyArray<Change>,
-  connectionState: ConnectionState,
-  syncing: boolean,
-  lastSyncFailed: boolean,
-  dirty: boolean,
-  updateListTitle: UpdateListTitle,
-  createItem: CreateItem,
-  deleteItem: DeleteItem,
-  updateItem: UpdateItem,
-  selectOrder: SelectOrder,
-  updateOrders: UpdateOrders,
-  setUsername: SetUsername,
-  applyDiff: ApplyDiff,
-  createApplicableDiff: CreateApplicableDiff,
-  deleteCompletion: DeleteCompletion,
-  manualSync: () => void,
-  clearLocalStorage: () => void,
-  up: Up,
+  shoppingList: ShoppingList
+  completions: ReadonlyArray<CompletionItem>
+  categories: ReadonlyArray<CategoryDefinition>
+  orders: ReadonlyArray<Order>
+  changes: ReadonlyArray<Change>
+  selectedOrder: UUID | undefined | null
+  username: string | undefined | null
+  unsyncedChanges: ReadonlyArray<Change>
+  connectionState: ConnectionState
+  syncing: boolean
+  lastSyncFailed: boolean
+  dirty: boolean
+  updateListTitle: UpdateListTitle
+  createItem: CreateItem
+  deleteItem: DeleteItem
+  updateItem: UpdateItem
+  selectOrder: SelectOrder
+  updateOrders: UpdateOrders
+  setUsername: SetUsername
+  applyDiff: ApplyDiff
+  createApplicableDiff: CreateApplicableDiff
+  deleteCompletion: DeleteCompletion
+  manualSync: () => void
+  clearLocalStorage: () => void
+  up: Up
 }
 
 export default class ShoppingListComponent extends Component<Props> {
   clearLocalStorage = () => {
     const performClear = window.confirm('This will delete any unsynced data. Continue?')
+
     if (performClear) {
       this.props.clearLocalStorage()
     }
   }
 
   componentDidMount() {
-    document.title = this.props.shoppingList.title
-    // "hide" OrderSelectComponent for mobile (reveal by scrolling up)
+    document.title = this.props.shoppingList.title // "hide" OrderSelectComponent for mobile (reveal by scrolling up)
+
     if (window.matchMedia('(max-width: 30rem)').matches) {
       window.scrollTo(0, 38)
     }
@@ -84,25 +84,19 @@ export default class ShoppingListComponent extends Component<Props> {
     document.title = this.props.shoppingList.title
   }
 
-  editUsername = (e: SyntheticEvent<HTMLInputElement>) => {
+  editUsername = (e: React.SyntheticEvent<HTMLInputElement>) => {
     this.props.setUsername(e.currentTarget.value)
   }
 
-  updateCategory = (item: Item, category: ?UUID) => {
-    const updatedItem: LocalItem = {
-      ...item,
-      category: category,
-    }
+  updateCategory = (item: Item, category?: UUID | null) => {
+    const updatedItem: LocalItem = { ...item, category: category }
     this.props.updateItem(item.id, updatedItem)
   }
 
   convertToCookingAmounts = () => {
     for (const item of this.props.shoppingList.items) {
       if (item.amount != null) {
-        const cookingAmountItem = {
-          ...item,
-          amount: createCookingAmount(item.amount),
-        }
+        const cookingAmountItem = { ...item, amount: createCookingAmount(item.amount) }
         this.props.updateItem(item.id, cookingAmountItem)
       }
     }
@@ -116,15 +110,11 @@ export default class ShoppingListComponent extends Component<Props> {
         unit: item.amount == null ? null : getSIUnit(item.amount),
         name: item.name.trim().toLowerCase(),
       })
-    })
+    }) // see https://github.com/facebook/flow/issues/2221#issuecomment-366519862
 
-    // see https://github.com/facebook/flow/issues/2221#issuecomment-366519862
     for (const group of Object.keys(grouped).map((key) => grouped[key])) {
       if (group.length > 1) {
-        const newItem = {
-          ...group[0],
-          amount: group.map((item) => item.amount).reduce(addAmounts),
-        }
+        const newItem = { ...group[0], amount: group.map((item) => item.amount).reduce(addAmounts) }
         this.props.updateItem(newItem.id, newItem)
         group.slice(1).forEach((item) => this.props.deleteItem(item.id))
       }
@@ -135,20 +125,25 @@ export default class ShoppingListComponent extends Component<Props> {
     if (!window.confirm('Delete all items?')) {
       return
     }
+
     for (const item of this.props.shoppingList.items) {
       this.props.deleteItem(item.id)
     }
   }
 
-  shareList = () => {
-    window.navigator
-      .share({
+  shareList = async (): Promise<void> => {
+    try {
+      // @ts-ignore
+      const share = window.navigator.share
+      await share({
         title: this.props.shoppingList.title,
         text: 'A shared shopping list',
         url: window.location.href,
       })
-      .then((_) => console.log('Yay, you shared it :)'))
-      .catch((error) => console.log("Oh noh! You couldn't share it! :'(\n", error))
+      console.log('Yay, you shared it')
+    } catch (error) {
+      console.log("Oh noh! You couldn't share it! :'(\n", error)
+    }
   }
 
   render() {
@@ -201,7 +196,7 @@ export default class ShoppingListComponent extends Component<Props> {
             <p>
               <label>
                 Username:{' '}
-                <input type="text" placeholder="username" defaultValue={this.props.username} onBlur={this.editUsername} />
+                <input type="text" placeholder="username" defaultValue={this.props.username ?? ''} onBlur={this.editUsername} />
               </label>
             </p>
             <p>
@@ -250,10 +245,12 @@ export default class ShoppingListComponent extends Component<Props> {
           path={`/:listid/:itemid/category`}
           render={({ history, match }) => {
             const item = this.props.shoppingList.items.find((i) => i.id === match.params['itemid'])
+
             if (item == null) {
               history.replace(`/${match.params['listid'] || ''}`)
               return null
             }
+
             return (
               <ChooseCategoryComponent
                 categories={this.props.categories}
