@@ -1,14 +1,14 @@
 /* eslint-env jest */
 import {
+  addAmounts,
   createAmount,
   createAmountFromString,
-  createCookingAmount,
   createAmountValue,
+  createCookingAmount,
   createUnit,
-  mergeAmounts,
   getSIUnit,
-  addAmounts,
   mapReplace,
+  mergeAmounts,
   powerSet,
 } from './Amount'
 

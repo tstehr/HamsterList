@@ -1,7 +1,7 @@
-import path from 'path'
+import camelCase from 'camel-case'
 import fs from 'fs-extra'
 import nconf from 'nconf'
-import camelCase from 'camel-case'
+import path from 'path'
 import TokenCreator from './TokenCreator'
 
 export function getConfig(): nconf.Provider {

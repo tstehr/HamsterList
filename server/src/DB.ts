@@ -1,7 +1,6 @@
-import fs from 'fs-extra'
 import deepFreeze, { DeepReadonly } from 'deep-freeze'
-import { createServerShoppingList } from './ServerShoppingList'
-import { ServerShoppingList } from './ServerShoppingList'
+import fs from 'fs-extra'
+import { createServerShoppingList, ServerShoppingList } from './ServerShoppingList'
 
 export interface DBContents {
   readonly lists: ReadonlyArray<ServerShoppingList>

@@ -1,8 +1,7 @@
-import deepFreeze from 'deep-freeze'
 import colorString from 'color-string'
-import { createUUID } from '../util/uuid'
-import { UUID } from '../util/uuid'
-import { checkKeys, checkAttributeType } from '../util/validation'
+import deepFreeze from 'deep-freeze'
+import { createUUID, UUID } from '../util/uuid'
+import { checkAttributeType, checkKeys } from '../util/validation'
 
 export type Color = string
 export type CategoryDefinition = {

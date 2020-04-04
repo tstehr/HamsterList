@@ -1,10 +1,7 @@
 /* eslint-env jest */
-import { createOrder, sortItems, completeCategoryOrder } from './Order'
-import { createItem } from './Item'
-import { Item } from './Item'
-import { createCategoryDefinition } from './CategoryDefinition'
-import { CategoryDefinition } from './CategoryDefinition'
-import { sortCategories } from './Order'
+import { CategoryDefinition, createCategoryDefinition } from './CategoryDefinition'
+import { createItem, Item } from './Item'
+import { completeCategoryOrder, createOrder, sortCategories, sortItems } from './Order'
 
 describe('createOrder', () => {
   it('Creates an order from a valid spec', () => {

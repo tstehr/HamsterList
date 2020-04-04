@@ -9,10 +9,10 @@ import {
   createItemFromItemStringRepresentation,
   createLocalItemFromItemStringRepresentation,
   createLocalItemFromString,
+  Item,
   itemToString,
   mergeItems,
   mergeItemsTwoWay,
-  Item,
 } from './Item'
 
 const id = createUUID('a58df112-085f-4742-873d-8f8e31af7826')

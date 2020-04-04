@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid'
 import isUUID from 'is-uuid'
+import { v4 as uuidv4 } from 'uuid'
 export type UUID = string
 
 export function createRandomUUID(): UUID {

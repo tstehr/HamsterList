@@ -13,7 +13,10 @@
     "watch:babel": "yarn run build:babel --watch",
     "watch:tsc": "yarn run build:tsc --watch",
     "test": "jest src",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "format": "yarn run format:imports; yarn run format:prettier",
+    "format:imports": "organize-imports-cli tsconfig.json",
+    "format:prettier": "prettier src --write"
   },
   "dependencies": {
     "@babel/runtime": "^7.9.2",
@@ -52,6 +55,7 @@
     "eslint-config-prettier": "^6.10.1",
     "jest": "^24.8.0",
     "mockdate": "^2.0.3",
+    "organize-imports-cli": "^0.7.0",
     "prettier": "2.0.2"
   },
   "jest": {
