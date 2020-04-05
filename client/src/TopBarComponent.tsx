@@ -112,12 +112,8 @@ export function SyncStatusComponent(props: SyncStatusProps) {
         setFakeSyncing(false)
       }, 2000)
       setFakeSyncingTimeoutID(timeoutID)
-
-      return () => {
-        clearTimeout(timeoutID)
-      }
     }
-  }, [props.syncing, fakeSyncingTimeoutID])
+  }, [props.syncing])
 
   const showSyncing = props.syncing || fakeSyncing
   const showFailure = props.lastSyncFailed || props.connectionState === 'disconnected'
