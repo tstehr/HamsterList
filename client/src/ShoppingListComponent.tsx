@@ -80,7 +80,7 @@ export default class ShoppingListComponent extends Component<Props> {
     }
   }
 
-  componentWillReceiveProps() {
+  componentDidUpdate() {
     document.title = this.props.shoppingList.title
   }
 
