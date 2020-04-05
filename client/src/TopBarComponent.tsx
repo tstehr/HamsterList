@@ -100,18 +100,17 @@ const stateMapping: { [k in ConnectionState]: string } = {
 
 export function SyncStatusComponent(props: SyncStatusProps) {
   const [fakeSyncing, setFakeSyncing] = useState(false)
-  const [fakeSyncingTimeoutID, setFakeSyncingTimeoutID] = useState<number | undefined>(undefined)
+  const fakeSyncingTimeoutIDRef = useRef<number | undefined>(undefined)
 
   useEffect(() => {
     if (props.syncing) {
       setFakeSyncing(true)
-      if (fakeSyncingTimeoutID) {
-        clearTimeout(fakeSyncingTimeoutID)
+      if (fakeSyncingTimeoutIDRef.current) {
+        clearTimeout(fakeSyncingTimeoutIDRef.current)
       }
-      const timeoutID = window.setTimeout(() => {
+      fakeSyncingTimeoutIDRef.current = window.setTimeout(() => {
         setFakeSyncing(false)
       }, 2000)
-      setFakeSyncingTimeoutID(timeoutID)
     }
   }, [props.syncing])
 
