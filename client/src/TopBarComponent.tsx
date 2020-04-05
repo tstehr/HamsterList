@@ -108,10 +108,14 @@ export function SyncStatusComponent(props: SyncStatusProps) {
       if (fakeSyncingTimeoutID) {
         clearTimeout(fakeSyncingTimeoutID)
       }
-      const number = window.setTimeout(() => {
+      const timeoutID = window.setTimeout(() => {
         setFakeSyncing(false)
       }, 2000)
-      setFakeSyncingTimeoutID(number)
+      setFakeSyncingTimeoutID(timeoutID)
+
+      return () => {
+        clearTimeout(timeoutID)
+      }
     }
   }, [props.syncing, fakeSyncingTimeoutID])
 
