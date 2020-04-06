@@ -132,10 +132,12 @@ export default class ShoppingListComponent extends Component<Props> {
   }
 
   shareList = async (): Promise<void> => {
+    if (!window.navigator.share) {
+      alert("Your browser doesn't support the share API")
+      return
+    }
     try {
-      // @ts-ignore
-      const share = window.navigator.share
-      await share({
+      await window.navigator.share({
         title: this.props.shoppingList.title,
         text: 'A shared shopping list',
         url: window.location.href,
