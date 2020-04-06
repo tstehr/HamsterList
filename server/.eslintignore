@@ -4,6 +4,3 @@ node_modules
 build
 # don't lint nyc coverage output
 coverage
-# build scripts that can't be typescript
-src/setupProxy.js
-src/sw-build.js
