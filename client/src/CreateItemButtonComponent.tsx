@@ -33,7 +33,7 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
     }
   }
 
-  handleClick = (e: React.SyntheticEvent) => {
+  handleClick = (e: React.SyntheticEvent): void => {
     this.props.createItem(this.props.item)
 
     if (this.state.enterPressed) {
@@ -41,7 +41,7 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
     }
   }
 
-  handleKeyDown = (e: React.KeyboardEvent) => {
+  handleKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === 'Delete' || e.key === 'Backspace') {
       if (this.props.deleteCompletion) {
         this.props.deleteCompletion(this.props.item.name)
@@ -55,7 +55,7 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
     }
   }
 
-  handleKeyUp = (e: React.KeyboardEvent) => {
+  handleKeyUp = (e: React.KeyboardEvent): void => {
     if (e.key === 'Enter') {
       this.setState({
         enterPressed: false,
@@ -63,19 +63,19 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
     }
   }
 
-  handleFocus = (e: React.FocusEvent) => {
+  handleFocus = (e: React.FocusEvent): void => {
     this.setState({
       createButtonFocused: true,
     })
   }
 
-  handleBlur = (e: React.FocusEvent) => {
+  handleBlur = (e: React.FocusEvent): void => {
     this.setState({
       createButtonFocused: false,
     })
   }
 
-  render() {
+  render(): JSX.Element {
     const props = this.props
     const className = classNames('CreateItemButtonComponent', {
       focused: props.focused || this.state.createButtonFocused,
@@ -98,7 +98,7 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
         </button>
         {this.props.deleteCompletion && (
           <IconButton
-            onClick={() => (!!this.props.deleteCompletion ? this.props.deleteCompletion(this.props.item.name) : undefined)}
+            onClick={() => (this.props.deleteCompletion ? this.props.deleteCompletion(this.props.item.name) : undefined)}
             icon="DELETE"
             alt="Delete completion"
             className="KeyFocusComponent--noFocus"

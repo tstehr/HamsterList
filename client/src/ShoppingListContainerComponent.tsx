@@ -102,11 +102,11 @@ type CompletionStateUpdate = {
 export default class ShoppingListContainerComponent extends Component<Props, State> {
   db: DB
   socket: WebSocket | undefined | null
-  supressSave: boolean = false
-  isInSyncMethod: boolean = false
-  waitForOnlineTimeoutID: number = -1
-  changePushSyncTimeoutID: number = -1
-  requestSyncTimeoutID: number = -1
+  supressSave = false
+  isInSyncMethod = false
+  waitForOnlineTimeoutID = -1
+  changePushSyncTimeoutID = -1
+  requestSyncTimeoutID = -1
 
   constructor(props: Props) {
     super(props)
@@ -125,7 +125,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     window.addEventListener('storage', this.handleStorage)
     window.addEventListener('online', this.handleOnline)
     window.addEventListener('offline', this.handleOffline)
@@ -136,19 +136,19 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     window.removeEventListener('storage', this.handleStorage)
     window.removeEventListener('online', this.handleOnline)
     window.removeEventListener('offline', this.handleOffline)
 
     if (this.socket != null) {
-      this.socket.onclose = () => {}
+      this.socket.onclose = null
 
       this.socket.close()
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(): void {
     if (!this.supressSave && this.state.loaded) {
       console.info('LOCALSTORAGE', 'Scheduled save')
       this.save()
@@ -157,7 +157,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     this.supressSave = false
   }
 
-  save = _.debounce(() => {
+  save = _.debounce((): void => {
     const state = _.cloneDeep(this.state)
 
     console.info('LOCALSTORAGE', 'Save')
@@ -169,7 +169,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }, 500)
 
-  load(callback?: () => void) {
+  load(callback?: () => void): void {
     console.info('LOCALSTORAGE', 'Load')
     this.supressSave = true
     this.setState(this.getStateFromLocalStorage(), callback)
@@ -189,20 +189,20 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }
 
-  clearLocalStorage() {
+  clearLocalStorage(): void {
     if (this.socket != null) {
-      this.socket.onclose = () => {}
+      this.socket.onclose = null
 
       this.socket.close()
     }
 
     this.db.get('lists').removeById(this.props.listid).write()
-    this.load(() => {
+    this.load((): void => {
       this.initiateSyncConnection()
     })
   }
 
-  initiateSyncConnection() {
+  initiateSyncConnection(): void {
     this.sync()
 
     if (this.socket != null && this.socket.readyState === WebSocket.OPEN) {
@@ -224,8 +224,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     let onopenTimeoutID: number
     this.socket = new WebSocket(base + `/api/${this.props.listid}/socket`)
 
-    this.socket.onopen = () => {
-      onopenTimeoutID = window.setTimeout(() => {
+    this.socket.onopen = (): void => {
+      onopenTimeoutID = window.setTimeout((): void => {
         console.log('SOCKET', 'socket open')
         this.setState({
           connectionState: 'socket',
@@ -233,10 +233,10 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       }, 100)
     }
 
-    this.socket.onmessage = (evt) => {
+    this.socket.onmessage = (evt): void => {
       console.log('SOCKET', 'Receiced change push!')
       clearTimeout(this.changePushSyncTimeoutID)
-      this.changePushSyncTimeoutID = window.setTimeout(() => {
+      this.changePushSyncTimeoutID = window.setTimeout((): void => {
         if (this.state.previousSync != null && evt.data !== this.state.previousSync.token) {
           console.log('SOCKET', "Tokens don't match, syncing!")
           this.sync()
@@ -246,12 +246,12 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       }, 300)
     }
 
-    this.socket.onerror = () => {
+    this.socket.onerror = (): void => {
       console.log('SOCKET', 'error')
       clearTimeout(onopenTimeoutID)
     }
 
-    this.socket.onclose = () => {
+    this.socket.onclose = (): void => {
       clearTimeout(onopenTimeoutID)
       console.log('SOCKET', 'socket closed')
 
@@ -271,7 +271,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }
 
-  waitForOnline() {
+  waitForOnline(): void {
     console.log('SYNC', 'checking online')
 
     if (window.navigator.onLine) {
@@ -282,7 +282,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }
 
-  async sync(manuallyTriggered: boolean = false) {
+  async sync(manuallyTriggered = false): Promise<void> {
     window.clearTimeout(this.requestSyncTimeoutID)
 
     if (this.isInSyncMethod) {
@@ -397,14 +397,14 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
           return syncState
         },
-        () => {
+        (): void => {
           if (initialSync) {
             this.markListAsUsed()
           }
         }
       )
     } catch (e) {
-      let failedState = {
+      const failedState = {
         lastSyncFailed: true,
         syncing: false,
       }
@@ -418,7 +418,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     return createShoppingList(_.pick(clientShoppingList, ['id', 'title', 'items']), this.state.categories)
   }
 
-  fetch(input: RequestInfo, init?: RequestInit) {
+  fetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
     init = init ?? {}
 
     _.merge(init, {
@@ -430,7 +430,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     return fetch(input, init)
   }
 
-  markListAsUsed() {
+  markListAsUsed(): void {
     let listUsed: RecentlyUsedList = this.db.get('recentlyUsedLists').getById(this.props.listid).value() || {
       id: this.props.listid,
       uses: 0,
@@ -461,7 +461,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
     const entryIdx = _.findIndex(state.completions, (i) => normalizeCompletionName(i.name) === completionName)
 
-    let completions = [...state.completions]
+    const completions = [...state.completions]
 
     if (entryIdx === -1) {
       completions.push(completionItem)
@@ -475,7 +475,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }
 
-  applyDiff = (diff: Diff) => {
+  applyDiff = (diff: Diff): void => {
     this.markListAsUsed()
     this.setState((prevState) => {
       try {
@@ -509,7 +509,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     return createApplicableDiff(this.getShoppingList(this.state), diff)
   }
 
-  deleteCompletion = (completionName: string) => {
+  deleteCompletion = (completionName: string): void => {
     const normalizedCompletionName = normalizeCompletionName(completionName)
     this.setState(
       (prevState) => ({
@@ -523,7 +523,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     )
   }
 
-  updateListTitle = (newTitle: string) => {
+  updateListTitle = (newTitle: string): void => {
     this.markListAsUsed()
     this.setState((prevState) => {
       return {
@@ -533,7 +533,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }, this.requestSync)
   }
 
-  createItem = (localItem: LocalItem) => {
+  createItem = (localItem: LocalItem): void => {
     const item = { ...localItem, id: createRandomUUID() }
 
     try {
@@ -546,7 +546,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }
 
-  deleteItem = (id: UUID) => {
+  deleteItem = (id: UUID): void => {
     try {
       const diff = generateDeleteItem(this.getShoppingList(this.state), id)
       this.applyDiff(diff)
@@ -557,7 +557,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }
 
-  updateItem = (id: UUID, localItem: LocalItem) => {
+  updateItem = (id: UUID, localItem: LocalItem): void => {
     const item = { ...localItem, id: id }
 
     try {
@@ -570,13 +570,13 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }
 
-  selectOrder = (id?: UUID | null) => {
+  selectOrder = (id?: UUID | null): void => {
     this.setState({
       selectedOrder: id,
     })
   }
 
-  updateOrders = (orders: ReadonlyArray<Order>) => {
+  updateOrders = (orders: ReadonlyArray<Order>): void => {
     this.markListAsUsed()
     this.setState(
       {
@@ -588,7 +588,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     )
   }
 
-  setUsername = (username?: string | null) => {
+  setUsername = (username?: string | null): void => {
     if (username != null) {
       username = username.trim()
 
@@ -603,21 +603,21 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }))
   }
 
-  requestSync = (delay: number = 1000) => {
+  requestSync = (delay = 1000): void => {
     window.clearTimeout(this.requestSyncTimeoutID)
     this.requestSyncTimeoutID = window.setTimeout(this.sync.bind(this), delay)
   }
 
-  handleStorage = (e: StorageEvent) => {
+  handleStorage = (e: StorageEvent): void => {
     // TODO filter for list
     this.load()
   }
 
-  handleOnline = () => {
+  handleOnline = (): void => {
     this.initiateSyncConnection()
   }
 
-  handleOffline = () => {
+  handleOffline = (): void => {
     console.log('offline')
     this.setState({
       connectionState: 'disconnected',
@@ -625,7 +625,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     this.waitForOnline()
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div>
         {this.state.loaded && (

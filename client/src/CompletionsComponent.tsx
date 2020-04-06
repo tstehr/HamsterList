@@ -47,7 +47,7 @@ export default class CompletionsComponent extends Component<Props> {
     return resultItems
   }
 
-  render() {
+  render(): JSX.Element {
     const itemsInCreation = this.props.itemsInCreation.map((ii) => ii.item)
     const itemToKey = new Map()
 

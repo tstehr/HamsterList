@@ -11,7 +11,7 @@ type Props = {
 }
 
 export default class OrderSelectComponent extends Component<Props> {
-  handleChange = (e: React.SyntheticEvent<HTMLSelectElement>) => {
+  handleChange = (e: React.SyntheticEvent<HTMLSelectElement>): void => {
     const val = e.currentTarget.value
 
     if (val === 'default') {
@@ -21,7 +21,7 @@ export default class OrderSelectComponent extends Component<Props> {
     }
   }
 
-  render() {
+  render(): JSX.Element {
     const order = _.find(this.props.orders, _.matchesProperty('id', this.props.selectedOrder))
 
     return (

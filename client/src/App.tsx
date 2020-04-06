@@ -4,6 +4,10 @@ import ChooseListComponent from './ChooseListComponent'
 import HistoryTracker, { Up } from './HistoryTracker'
 import ShoppingListContainerComponent from './ShoppingListContainerComponent'
 
+const Error404: React.SFC = () => {
+  return <>Not found 🙁</>
+}
+
 function createShoppingListContainerComponentRender(up: Up) {
   return (props: RouteComponentProps<{ listid: string }>) => {
     return <ShoppingListContainerComponent listid={props.match.params['listid'] || ''} up={up} />
@@ -11,7 +15,7 @@ function createShoppingListContainerComponentRender(up: Up) {
 }
 
 export default class App extends Component {
-  render() {
+  render(): JSX.Element {
     return (
       <BrowserRouter>
         <HistoryTracker
@@ -29,8 +33,4 @@ export default class App extends Component {
       </BrowserRouter>
     )
   }
-}
-
-const Error404: React.SFC = () => {
-  return <>Not found 🙁</>
 }

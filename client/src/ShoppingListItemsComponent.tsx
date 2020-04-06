@@ -56,7 +56,7 @@ function createItemOrCategoryList(order: CategoryOrder, items: ReadonlyArray<Ite
   return deepFreeze(itemOrCategoryList)
 }
 
-export default function ShoppingListItemsComponent(props: Props) {
+export default function ShoppingListItemsComponent(props: Props): JSX.Element {
   const order = _.find(props.orders, _.matchesProperty('id', props.selectedOrder))
 
   const completedCategoryOrder = completeCategoryOrder(order ? order.categoryOrder : [], props.categories)

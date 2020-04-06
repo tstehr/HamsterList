@@ -6,7 +6,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 export type Up = (levels: number | 'home' | 'list') => void
 
 type Props = {
-  render: (up: Up) => React.ReactNode
+  render: (up: Up) => JSX.Element
 } & RouteComponentProps
 
 type NavigationStackEntry = {
@@ -26,16 +26,15 @@ class UnboundHistoryTracker extends Component<Props> {
     this.setupHistoryListener()
   }
 
-  historyListener = (location: Location, action: string) => {
+  historyListener = (location: Location, action: string): void => {
     switch (action) {
-      case 'PUSH':
+      case 'PUSH': {
         this.navigationStackIndex++
         this.navigationStack.splice(this.navigationStackIndex, Infinity, this.createNavigationStackEntry(location))
         break
-
-      case 'POP':
+      }
+      case 'POP': {
         const stackEntry = this.createNavigationStackEntry(location)
-
         const keyIndex = _.findIndex(this.navigationStack, (entry) => _.isEqual(entry, stackEntry))
 
         if (keyIndex === -1) {
@@ -45,17 +44,18 @@ class UnboundHistoryTracker extends Component<Props> {
         }
 
         break
-
-      case 'REPLACE':
+      }
+      case 'REPLACE': {
         this.navigationStack.splice(this.navigationStackIndex, 1, this.createNavigationStackEntry(location))
         break
-
-      default:
+      }
+      default: {
         console.warn(`Unkonwn navigation action: ${action}`)
+      }
     }
   }
 
-  up = (levels: number | 'home' | 'list') => {
+  up = (levels: number | 'home' | 'list'): void => {
     if (levels === 'home') {
       this.navigateBackTo('')
     } else if (levels === 'list') {
@@ -68,17 +68,17 @@ class UnboundHistoryTracker extends Component<Props> {
     }
   }
 
-  escapeListener = (e: KeyboardEvent) => {
+  escapeListener = (e: KeyboardEvent): void => {
     if (e.code === 'Escape' && !e.defaultPrevented) {
       this.up('list')
     }
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     window.addEventListener('keydown', this.escapeListener)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     if (this.unlisten) {
       this.unlisten()
     }
@@ -86,13 +86,13 @@ class UnboundHistoryTracker extends Component<Props> {
     window.removeEventListener('keydown', this.escapeListener)
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate(prevProps: Props): void {
     if (prevProps.history !== this.props.history) {
       this.setupHistoryListener()
     }
   }
 
-  setupHistoryListener() {
+  setupHistoryListener(): void {
     if (this.unlisten) {
       this.unlisten()
     }
@@ -107,7 +107,7 @@ class UnboundHistoryTracker extends Component<Props> {
     })
   }
 
-  removeTrailingSlash(pathname: string) {
+  removeTrailingSlash(pathname: string): string {
     if (pathname.endsWith('/')) {
       return pathname.substr(0, pathname.length - 1)
     }
@@ -115,7 +115,7 @@ class UnboundHistoryTracker extends Component<Props> {
     return pathname
   }
 
-  navigateBackTo(pathname: string) {
+  navigateBackTo(pathname: string): void {
     const idx = _.findLastIndex(this.navigationStack, (entry) => entry.path === pathname, this.navigationStackIndex)
 
     if (idx === -1) {
@@ -129,7 +129,7 @@ class UnboundHistoryTracker extends Component<Props> {
     }
   }
 
-  render() {
+  render(): JSX.Element {
     return this.props.render(this.up)
   }
 }

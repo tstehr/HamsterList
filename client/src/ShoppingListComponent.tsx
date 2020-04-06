@@ -64,7 +64,7 @@ type Props = {
 }
 
 export default class ShoppingListComponent extends Component<Props> {
-  clearLocalStorage = () => {
+  clearLocalStorage = (): void => {
     const performClear = window.confirm('This will delete any unsynced data. Continue?')
 
     if (performClear) {
@@ -72,7 +72,7 @@ export default class ShoppingListComponent extends Component<Props> {
     }
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     document.title = this.props.shoppingList.title // "hide" OrderSelectComponent for mobile (reveal by scrolling up)
 
     if (window.matchMedia('(max-width: 30rem)').matches) {
@@ -80,20 +80,20 @@ export default class ShoppingListComponent extends Component<Props> {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(): void {
     document.title = this.props.shoppingList.title
   }
 
-  editUsername = (e: React.SyntheticEvent<HTMLInputElement>) => {
+  editUsername = (e: React.SyntheticEvent<HTMLInputElement>): void => {
     this.props.setUsername(e.currentTarget.value)
   }
 
-  updateCategory = (item: Item, category?: UUID | null) => {
+  updateCategory = (item: Item, category?: UUID | null): void => {
     const updatedItem: LocalItem = { ...item, category: category }
     this.props.updateItem(item.id, updatedItem)
   }
 
-  convertToCookingAmounts = () => {
+  convertToCookingAmounts = (): void => {
     for (const item of this.props.shoppingList.items) {
       if (item.amount != null) {
         const cookingAmountItem = { ...item, amount: createCookingAmount(item.amount) }
@@ -102,7 +102,7 @@ export default class ShoppingListComponent extends Component<Props> {
     }
   }
 
-  mergeItems = () => {
+  mergeItems = (): void => {
     // $FlowFixMe
     const grouped = _.groupBy(this.props.shoppingList.items, (item) => {
       return JSON.stringify({
@@ -121,7 +121,7 @@ export default class ShoppingListComponent extends Component<Props> {
     }
   }
 
-  clearList = () => {
+  clearList = (): void => {
     if (!window.confirm('Delete all items?')) {
       return
     }
@@ -146,7 +146,7 @@ export default class ShoppingListComponent extends Component<Props> {
     }
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="ShoppingListComponent">
         <TopBarComponent up={this.props.up}>

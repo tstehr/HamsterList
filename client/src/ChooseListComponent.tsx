@@ -37,7 +37,7 @@ export default class ChooseListComponent extends Component<Props, State> {
     this.inputListid = React.createRef()
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     if (this.inputListid.current) {
       this.inputListid.current.focus()
     }
@@ -45,18 +45,18 @@ export default class ChooseListComponent extends Component<Props, State> {
     window.addEventListener('storage', this.handleStorage)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     window.removeEventListener('storage', this.handleStorage)
   }
 
-  handleStorage = () => {
+  handleStorage = (): void => {
     this.db.read()
     this.setState({
       recentlyUsedLists: getRecentlyUsedLists(this.db),
     })
   }
 
-  onSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+  onSubmit = (e: React.SyntheticEvent<HTMLFormElement>): void => {
     e.preventDefault()
     this.setState({
       // @ts-ignore
@@ -64,7 +64,7 @@ export default class ChooseListComponent extends Component<Props, State> {
     })
   }
 
-  async createRandomList() {
+  async createRandomList(): Promise<void> {
     const listid = createRandomUUID()
     const response = await fetch(`/api/${listid}/`, {
       headers: {
@@ -83,7 +83,7 @@ export default class ChooseListComponent extends Component<Props, State> {
     })
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="ChooseListComponent">
         {this.state.listid && <Redirect to={this.state.listid} push />}

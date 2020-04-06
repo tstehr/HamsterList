@@ -1,13 +1,3 @@
-export async function responseToJSON(res: Response) {
-  const json = await res.json()
-
-  if (!res.ok) {
-    const errorMessage = json && json.error
-    throw new HTTPErrorStatusError(errorMessage, res.status)
-  }
-
-  return json
-}
 export class HTTPErrorStatusError extends Error {
   code: number
 
@@ -16,4 +6,15 @@ export class HTTPErrorStatusError extends Error {
     this.code = code
     Error.captureStackTrace(this, HTTPErrorStatusError)
   }
+}
+
+export async function responseToJSON(res: Response): Promise<unknown> {
+  const json = await res.json()
+
+  if (!res.ok) {
+    const errorMessage = json && json.error
+    throw new HTTPErrorStatusError(errorMessage, res.status)
+  }
+
+  return json
 }

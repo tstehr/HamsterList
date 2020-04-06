@@ -24,7 +24,7 @@ type Props = {
 const defaultDiffLength = 15
 const maxDiffLength = 50
 
-export default function ChangesComponent(props: Props) {
+export default function ChangesComponent(props: Props): JSX.Element {
   const [start, setStart] = useState(0)
   const [end, setEnd] = useState(defaultDiffLength)
   const [detailsExpandedDiff, setDetailsExpandedDiff] = useState<{
@@ -38,7 +38,7 @@ export default function ChangesComponent(props: Props) {
   const allChanges = [...props.changes, ...props.unsyncedChanges] // if the expanded change doesn't exist anymore, search for a recent change containing the same diffs
   // this will in most cases be the equivalent to the unsynced change that was removed during sync
 
-  const expandedChange = useMemo(() => {
+  const expandedChange = useMemo((): Change | undefined | null => {
     const originalExpandedChange = detailsExpandedDiff.change
 
     if (originalExpandedChange != null && !allChanges.some((c) => c.id === originalExpandedChange.id)) {
@@ -72,7 +72,7 @@ export default function ChangesComponent(props: Props) {
 
   allDiffs.reverse()
 
-  const undoAll = (diffs: ReadonlyArray<Diff>) => {
+  const undoAll = (diffs: ReadonlyArray<Diff>): void => {
     for (const diff of diffs) {
       try {
         const reverseDiff = createReverseDiff(diff)
@@ -83,7 +83,7 @@ export default function ChangesComponent(props: Props) {
     }
   }
 
-  const loadOlder = () => {
+  const loadOlder = (): void => {
     const newEnd = Math.min(end + defaultDiffLength, allDiffs.length)
     setEnd(newEnd)
 
@@ -92,7 +92,7 @@ export default function ChangesComponent(props: Props) {
     }
   }
 
-  const loadNewer = () => {
+  const loadNewer = (): void => {
     const newStart = Math.max(start - defaultDiffLength, 0)
     setStart(newStart)
 
@@ -101,7 +101,7 @@ export default function ChangesComponent(props: Props) {
     }
   }
 
-  const reset = () => {
+  const reset = (): void => {
     window.scrollTo({
       top: 0,
       left: 0,
@@ -200,7 +200,7 @@ export class DiffComponent extends Component<DiffProps> {
     return [applicableDiff, reverseEqualApplicable]
   }
 
-  render() {
+  render(): JSX.Element {
     const elClasses = classNames('DiffComponent', {
       'DiffComponent--unsynced': this.props.unsynced,
       'DiffComponent--expanded': this.props.detailsExpanded,
@@ -208,7 +208,7 @@ export class DiffComponent extends Component<DiffProps> {
     const [dateString, absoluteDateString, isoDateString] = this.getDateString(this.props.change.date)
     const [applicableDiff, reverseEqualApplicable] = this.getApplicableDiff(this.props.diff)
 
-    const undo = (e: React.SyntheticEvent) => {
+    const undo = (e: React.SyntheticEvent): void => {
       e.preventDefault()
 
       if (applicableDiff != null) {
@@ -220,7 +220,7 @@ export class DiffComponent extends Component<DiffProps> {
       }
     }
 
-    const undoNewer = (e: React.SyntheticEvent) => {
+    const undoNewer = (e: React.SyntheticEvent): void => {
       e.preventDefault()
 
       if (!window.confirm('Undo all newer changes?')) {

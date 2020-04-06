@@ -44,8 +44,8 @@ export default class CreateItemComponent extends Component<Props, State> {
   root: HTMLDivElement | undefined | null
   input: HTMLTextAreaElement | undefined | null
   lastChange: number
-  focusTimeoutID: number = -1
-  changingQuicklyTimeoutID: number = -1
+  focusTimeoutID = -1
+  changingQuicklyTimeoutID = -1
 
   constructor(props: Props) {
     super(props)
@@ -60,7 +60,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     this.lastChange = Date.now()
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     if (this.input) {
       this.input.focus()
     }
@@ -85,7 +85,7 @@ export default class CreateItemComponent extends Component<Props, State> {
       })
   }
 
-  saveItems() {
+  saveItems(): void {
     this.state.itemsInCreation.forEach((ii) => this.props.createItem(ii.item))
     this.setState(this.createInputValueUpdate(''))
 
@@ -94,28 +94,28 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
   }
 
-  handleFocus = (e: React.FocusEvent) => {
+  handleFocus = (e: React.FocusEvent): void => {
     clearTimeout(this.focusTimeoutID)
     this.setState({
       formHasFocus: true,
     })
   }
 
-  handleBlur = (e: React.FocusEvent) => {
-    this.focusTimeoutID = window.setTimeout(() => {
+  handleBlur = (e: React.FocusEvent): void => {
+    this.focusTimeoutID = window.setTimeout((): void => {
       this.setState({
         formHasFocus: false,
       })
     }, 0)
   }
 
-  handleChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
+  handleChange = (e: React.FormEvent<HTMLTextAreaElement>): void => {
     const changingQuickly = Date.now() - this.lastChange < 250
     this.lastChange = Date.now()
     clearTimeout(this.changingQuicklyTimeoutID)
 
     if (changingQuickly) {
-      this.changingQuicklyTimeoutID = window.setTimeout(() => {
+      this.changingQuicklyTimeoutID = window.setTimeout((): void => {
         this.setState({
           changingQuickly: false,
         })
@@ -125,7 +125,13 @@ export default class CreateItemComponent extends Component<Props, State> {
     this.setState({ ...this.createInputValueUpdate(e.currentTarget.value), changingQuickly: changingQuickly })
   }
 
-  createInputValueUpdate(newInputValue: string) {
+  createInputValueUpdate(
+    newInputValue: string
+  ): {
+    inputValue: string
+    itemsForInputLines: readonly (ItemInput | null)[]
+    itemsInCreation: readonly ItemInput[]
+  } {
     const itemsForInputLines = this.getItemsForInputLines(newInputValue)
     const itemsInCreation: ReadonlyArray<ItemInput> = itemsForInputLines.filter(
       (ii: ItemInput | null): ii is ItemInput => ii != null
@@ -138,12 +144,12 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
   }
 
-  handleSubmit = (e: React.SyntheticEvent) => {
+  handleSubmit = (e: React.SyntheticEvent): void => {
     this.saveItems()
     e.preventDefault()
   }
 
-  handleKeyDown = (e: React.KeyboardEvent) => {
+  handleKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === 'Escape') {
       this.setState({
         inputValue: '',
@@ -152,7 +158,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
   }
 
-  handleKeyDownTextarea = (e: React.KeyboardEvent) => {
+  handleKeyDownTextarea = (e: React.KeyboardEvent): void => {
     if (e.key === 'Enter' && !e.shiftKey && (!this.isMultiline() || e.metaKey)) {
       this.saveItems()
       e.preventDefault()
@@ -163,7 +169,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
   }
 
-  handleToggleMultiline = (e: React.SyntheticEvent) => {
+  handleToggleMultiline = (e: React.SyntheticEvent): void => {
     if (this.isMultiline() && this.hasMulipleLines()) {
       const confirmation = window.confirm('This will delete the current input, continue?')
 
@@ -178,7 +184,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     })
   }
 
-  createItem = (item: LocalItem) => {
+  createItem = (item: LocalItem): void => {
     if (!this.isMultiline()) {
       this.setState(this.createInputValueUpdate(''))
     } else {
@@ -195,21 +201,21 @@ export default class CreateItemComponent extends Component<Props, State> {
     this.props.createItem(item)
   }
 
-  focusInput = () => {
+  focusInput = (): void => {
     if (this.input != null) {
       this.input.focus()
     }
   }
 
-  hasMulipleLines() {
+  hasMulipleLines(): boolean {
     return this.state.inputValue.indexOf('\n') !== -1
   }
 
-  isMultiline() {
+  isMultiline(): boolean {
     return this.hasMulipleLines() || this.state.forceMultiline
   }
 
-  render() {
+  render(): JSX.Element {
     const isCreatingItem = this.state.inputValue !== ''
     const isMultiline = this.isMultiline()
     const itemsInCreation = this.state.itemsInCreation

@@ -34,7 +34,7 @@ export default class KeyFocusComponent extends Component<Props> {
     }
   }
 
-  handleKeyDown = (e: React.KeyboardEvent) => {
+  handleKeyDown = (e: React.KeyboardEvent): void => {
     if (!e.altKey && !e.ctrlKey && !e.metaKey && this.root != null && (e.key === this.back || e.key === this.forward)) {
       const root = this.root
       const focused = root.querySelector(':focus')
@@ -88,7 +88,7 @@ export default class KeyFocusComponent extends Component<Props> {
     }
   }
 
-  canReceiveFocus(el: HTMLElement) {
+  canReceiveFocus(el: HTMLElement): boolean {
     if (el.classList.contains('KeyFocusComponent--noFocus')) {
       return false
     }
@@ -96,7 +96,7 @@ export default class KeyFocusComponent extends Component<Props> {
     return el.tabIndex != null && el.tabIndex !== -1
   }
 
-  render() {
+  render(): JSX.Element {
     const Component = this.props.rootTagName
     const className = this.props.className != null ? this.props.className + ' KeyFocusComponent' : 'KeyFocusComponent'
 

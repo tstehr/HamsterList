@@ -7,7 +7,7 @@ type Props = {
   className?: string
   onClick?: (a: React.SyntheticEvent<HTMLButtonElement>) => void
 }
-export default function IconButton(props: Props) {
+export default function IconButton(props: Props): JSX.Element {
   return (
     <button onClick={props.onClick} className={'IconButton ' + (props.className ? props.className : '')}>
       {getSvg(props.icon, props.alt)}
@@ -15,7 +15,7 @@ export default function IconButton(props: Props) {
   )
 }
 
-function getSvg(icon: IconType, alt: string) {
+function getSvg(icon: IconType, alt: string): JSX.Element {
   switch (icon) {
     case 'ADD':
       return (

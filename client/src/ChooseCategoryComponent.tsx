@@ -20,7 +20,7 @@ export default class ChooseCategoryComponent extends Component<Props> {
     }
   }
 
-  render() {
+  render(): JSX.Element | null {
     const target = document.querySelector('#modal-root')
 
     if (target != null) {

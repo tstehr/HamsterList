@@ -3,6 +3,22 @@ import React, { Component } from 'react'
 import { CategoryDefinition, createCategoryDefinition, UUID } from 'shoppinglist-shared'
 import './CategoryComponent.css'
 
+const unknownCategory = createCategoryDefinition({
+  id: 'ffffffff-ffff-4fff-bfff-ffffffffffff',
+  name: 'Unknown Category',
+  shortName: '?',
+  color: 'hsl(0, 0%, 80%)',
+  lightText: false,
+})
+
+const invalidCategory = createCategoryDefinition({
+  id: '00000000-0000-4000-b000-000000000000',
+  name: 'Invalid Category',
+  shortName: `╳`,
+  color: 'black',
+  lightText: true,
+})
+
 type Props = {
   category?: CategoryDefinition
   categories?: ReadonlyArray<CategoryDefinition>
@@ -10,7 +26,7 @@ type Props = {
 }
 
 const CategoryComponent = React.memo((props: Props) => {
-  let category = getCategory(props)
+  const category = getCategory(props)
   const initials = category.shortName
   const style = {
     backgroundColor: category.color,
@@ -26,7 +42,7 @@ const CategoryComponent = React.memo((props: Props) => {
 }, _.isEqual)
 
 const CategoryTextComponent = React.memo((props: Props) => {
-  let category = getCategory(props)
+  const category = getCategory(props)
 
   if (category === unknownCategory) {
     return null
@@ -46,8 +62,8 @@ const CategoryTextComponent = React.memo((props: Props) => {
 
 // needs to be a class to be usable in FlipMove
 class CategoryListItemComponent extends Component<Props> {
-  render() {
-    let category = getCategory(this.props)
+  render(): JSX.Element {
+    const category = getCategory(this.props)
     const style = {
       backgroundColor: category.color,
       color: category.lightText ? '#fff' : '#000',
@@ -59,22 +75,6 @@ class CategoryListItemComponent extends Component<Props> {
     )
   }
 }
-
-const unknownCategory = createCategoryDefinition({
-  id: 'ffffffff-ffff-4fff-bfff-ffffffffffff',
-  name: 'Unknown Category',
-  shortName: '?',
-  color: 'hsl(0, 0%, 80%)',
-  lightText: false,
-})
-
-const invalidCategory = createCategoryDefinition({
-  id: '00000000-0000-4000-b000-000000000000',
-  name: 'Invalid Category',
-  shortName: `╳`,
-  color: 'black',
-  lightText: true,
-})
 
 function getCategory(props: Props): CategoryDefinition {
   if (props.category != null) {

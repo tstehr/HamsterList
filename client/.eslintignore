@@ -1,0 +1,3 @@
+# build scripts that can't be typescript
+src/setupProxy.js
+src/sw-build.js

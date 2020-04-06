@@ -12,7 +12,7 @@ type Props = {
 }
 
 const variantSelector15 = String.fromCharCode(0xfe0e)
-export default function TopBarComponent(props: Props) {
+export default function TopBarComponent(props: Props): JSX.Element {
   const className = classNames('TopBarComponent', {
     'TopBarComponent--responsive': props.responsive == null ? true : props.responsive,
   })
@@ -39,24 +39,24 @@ type EditTitleProps = {
   title: string
   updateListTitle: UpdateListTitle
 }
-export function EditTitleComponent(props: EditTitleProps) {
+export function EditTitleComponent(props: EditTitleProps): JSX.Element {
   const [hasFocus, setHasFocus] = useState<boolean>()
   const [inputValue, setInputValue] = useState(props.title)
   const inputEl = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
+  useEffect((): void => {
     if (hasFocus && inputEl.current != null) {
       inputEl.current.focus()
     }
   })
 
   if (hasFocus) {
-    const handleBlur = () => {
+    const handleBlur = (): void => {
       setHasFocus(false)
       props.updateListTitle(inputValue)
     }
 
-    const handleChange = (e: React.SyntheticEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.SyntheticEvent<HTMLInputElement>): void => {
       setInputValue(e.currentTarget.value)
     }
 
@@ -71,7 +71,7 @@ export function EditTitleComponent(props: EditTitleProps) {
       />
     )
   } else {
-    const handleFocus = () => {
+    const handleFocus = (): void => {
       setHasFocus(true)
       setInputValue(props.title)
     }
@@ -98,17 +98,17 @@ const stateMapping: { [k in ConnectionState]: string } = {
   socket: `⬆${variantSelector15}⬇${variantSelector15}`,
 }
 
-export function SyncStatusComponent(props: SyncStatusProps) {
+export function SyncStatusComponent(props: SyncStatusProps): JSX.Element {
   const [fakeSyncing, setFakeSyncing] = useState(false)
   const fakeSyncingTimeoutIDRef = useRef<number | undefined>(undefined)
 
-  useEffect(() => {
+  useEffect((): void => {
     if (props.syncing) {
       setFakeSyncing(true)
       if (fakeSyncingTimeoutIDRef.current) {
         clearTimeout(fakeSyncingTimeoutIDRef.current)
       }
-      fakeSyncingTimeoutIDRef.current = window.setTimeout(() => {
+      fakeSyncingTimeoutIDRef.current = window.setTimeout((): void => {
         setFakeSyncing(false)
       }, 2000)
     }

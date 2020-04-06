@@ -41,13 +41,13 @@ export default class EditItemComponent extends Component<Props, State> {
     return !_.isEqual(this.state, nextState) || !_.isEqual(this.props.item, nextProps.item)
   }
 
-  saveItem() {
+  saveItem(): void {
     const itemFromString: LocalItem = createLocalItemFromString(this.state.inputValue, this.props.categories)
     const updatedItem: LocalItem = { ...itemFromString, category: itemFromString.category || this.props.item.category }
     this.props.updateItem(this.props.item.id, updatedItem)
   }
 
-  handleFocus = () => {
+  handleFocus = (): void => {
     this.setState((prevState) => ({
       hasFocus: true,
       isEditing: prevState.hasFocus ? false : true,
@@ -55,7 +55,7 @@ export default class EditItemComponent extends Component<Props, State> {
     }))
   }
 
-  handleBlur = () => {
+  handleBlur = (): void => {
     this.saveItem()
     this.setState({
       hasFocus: false,
@@ -63,7 +63,7 @@ export default class EditItemComponent extends Component<Props, State> {
     })
   }
 
-  handleSumbit = (e: React.SyntheticEvent) => {
+  handleSumbit = (e: React.SyntheticEvent): void => {
     this.saveItem()
     this.setState({
       isEditing: false,
@@ -71,7 +71,7 @@ export default class EditItemComponent extends Component<Props, State> {
     e.preventDefault()
   }
 
-  handleInputKeyDown = (e: React.KeyboardEvent) => {
+  handleInputKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === 'Enter') {
       this.saveItem()
       this.setState({
@@ -89,13 +89,13 @@ export default class EditItemComponent extends Component<Props, State> {
     }
   }
 
-  handleChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
+  handleChange = (e: React.FormEvent<HTMLTextAreaElement>): void => {
     this.setState({
       inputValue: e.currentTarget.value,
     })
   }
 
-  handleDivKeyDown = (e: React.KeyboardEvent) => {
+  handleDivKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === 'Enter') {
       this.setState({
         hasFocus: true,
@@ -109,7 +109,7 @@ export default class EditItemComponent extends Component<Props, State> {
     }
   }
 
-  handleDivClick = (e: React.SyntheticEvent) => {
+  handleDivClick = (e: React.SyntheticEvent): void => {
     this.setState({
       hasFocus: true,
       isEditing: true,
@@ -117,7 +117,7 @@ export default class EditItemComponent extends Component<Props, State> {
     })
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <li className="EditItemComponent">
         <Route
@@ -168,7 +168,7 @@ export default class EditItemComponent extends Component<Props, State> {
     )
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(): void {
     if (this.state.hasFocus) {
       if (this.input != null) {
         this.input.focus()

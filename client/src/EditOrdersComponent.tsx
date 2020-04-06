@@ -19,7 +19,7 @@ type Props = {
 }
 
 export default class EditOrdersComponent extends Component<Props> {
-  updateOrder = (orderToUpdate: Order) => {
+  updateOrder = (orderToUpdate: Order): void => {
     const orders = [...this.props.orders]
 
     const index = _.findIndex(orders, (order) => order.id === orderToUpdate.id)
@@ -28,19 +28,19 @@ export default class EditOrdersComponent extends Component<Props> {
     this.props.updateOrders(orders)
   }
 
-  deleteOrder = (id: UUID) => {
+  deleteOrder = (id: UUID): void => {
     const orders = this.props.orders.filter((order) => order.id !== id)
     this.props.updateOrders(orders)
     this.props.up(1)
   }
 
   makeCreateOrder(history: History) {
-    return () => {
+    return (): void => {
       const id = createRandomUUID()
       let name = `New Order`
       let i = 1
 
-      const orderPredicate = (order: Order) => order.name === name
+      const orderPredicate = (order: Order): boolean => order.name === name
 
       while (this.props.orders.find(orderPredicate) != null) {
         name = `New Order ${i}`
@@ -59,11 +59,11 @@ export default class EditOrdersComponent extends Component<Props> {
     }
   }
 
-  handleSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) => {
+  handleSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void => {
     this.props.updateOrders(arrayMove(this.props.orders as Order[], oldIndex, newIndex))
   }
 
-  render() {
+  render(): JSX.Element | null {
     const target = document.querySelector('#modal-root')
 
     if (target != null) {
@@ -165,7 +165,7 @@ type NullSafeEditOrderProps = {
   up: Up
 }
 
-function NullSafeEditOrderComponent(props: NullSafeEditOrderProps) {
+function NullSafeEditOrderComponent(props: NullSafeEditOrderProps): JSX.Element {
   const order: Order | undefined | null = _.find(props.orders, _.matchesProperty('id', props.orderid))
 
   return (
@@ -213,41 +213,41 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     }
   }
 
-  componentWillReceiveProps(nextProps: EditOrderProps) {
+  componentWillReceiveProps(nextProps: EditOrderProps): void {
     this.setState((oldState) => ({
       inputValue: oldState.hasFocus ? oldState.inputValue : nextProps.order.name,
     }))
   }
 
-  getSortedCategories() {
+  getSortedCategories(): readonly CategoryDefinition[] {
     return sortCategories(this.props.categories, this.props.order.categoryOrder)
   }
 
-  handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+  handleChange = (e: React.FormEvent<HTMLInputElement>): void => {
     this.setState({
       inputValue: e.currentTarget.value,
     })
   }
 
-  handleFocus = (e: React.SyntheticEvent) => {
+  handleFocus = (e: React.SyntheticEvent): void => {
     this.setState({
       hasFocus: true,
     })
   }
 
-  handleBlur = (e: React.SyntheticEvent) => {
+  handleBlur = (e: React.SyntheticEvent): void => {
     this.setState({
       hasFocus: false,
     })
     this.props.updateOrder({ ...this.props.order, name: this.state.inputValue })
   }
 
-  handleSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) => {
+  handleSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void => {
     const categoryOrder = this.getSortedCategories().map((cat) => cat.id)
     this.props.updateOrder({ ...this.props.order, categoryOrder: arrayMove(categoryOrder, oldIndex, newIndex) })
   }
 
-  render() {
+  render(): JSX.Element {
     const sortedCategories = this.getSortedCategories()
     return (
       <div>
