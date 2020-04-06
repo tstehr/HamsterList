@@ -1,6 +1,6 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { checkAttributeType, checkKeys, errorMap } from '../util/validation'
+import { checkAttributeType, checkKeys, endValidation, errorMap } from '../util/validation'
 import { CategoryDefinition } from './CategoryDefinition'
 import { createItem, Item, mergeItems, mergeItemsTwoWay } from './Item'
 import { sortItems } from './Order'
@@ -16,38 +16,44 @@ export interface ShoppingList {
   readonly items: ReadonlyArray<Item>
 }
 
-export function createShoppingList(shoppingListSpec: any, categories?: ReadonlyArray<CategoryDefinition> | null): ShoppingList {
-  checkKeys(shoppingListSpec, ['id', 'title', 'items'])
-  checkAttributeType(shoppingListSpec, 'id', 'string')
-  checkAttributeType(shoppingListSpec, 'title', 'string')
-  checkAttributeType(shoppingListSpec, 'items', 'array')
-  let items = errorMap(shoppingListSpec.items, createItem)
+export function createShoppingList(
+  shoppingListSpec: unknown,
+  categories?: ReadonlyArray<CategoryDefinition> | null
+): ShoppingList {
+  if (
+    checkKeys(shoppingListSpec, ['id', 'title', 'items']) &&
+    checkAttributeType(shoppingListSpec, 'id', 'string') &&
+    checkAttributeType(shoppingListSpec, 'title', 'string') &&
+    checkAttributeType(shoppingListSpec, 'items', 'array')
+  ) {
+    let items = errorMap(shoppingListSpec.items, createItem)
+    const duplicatedIds = _.chain(items)
+      .groupBy('id')
+      .entries()
+      .filter(([, items]) => items.length > 1)
+      .map(([id]) => id)
+      .value()
 
-  const duplicatedIds = _.chain(items)
-    .groupBy('id')
-    .entries()
-    .filter(([, items]) => items.length > 1)
-    .map(([id]) => id)
-    .value()
+    if (duplicatedIds.length > 0) {
+      throw new TypeError(`ShoppingList "${shoppingListSpec.title}" has duplicated ids: ${duplicatedIds.join(', ')}`)
+    }
 
-  if (duplicatedIds.length > 0) {
-    throw new TypeError(`ShoppingList "${shoppingListSpec.title}" has duplicated ids: ${duplicatedIds.join(', ')}`)
+    if (categories != null) {
+      items = sortItems(
+        items,
+        categories.map((cat) => cat.id)
+      )
+    }
+
+    const shoppingList = {
+      id: shoppingListSpec.id,
+      title: shoppingListSpec.title,
+      items: items,
+    }
+
+    return deepFreeze(shoppingList)
   }
-
-  if (categories != null) {
-    items = sortItems(
-      items,
-      categories.map((cat) => cat.id)
-    )
-  }
-
-  const shoppingList = {
-    id: shoppingListSpec.id,
-    title: shoppingListSpec.title,
-    items: items,
-  }
-
-  return deepFreeze(shoppingList)
+  endValidation()
 }
 
 export function mergeShoppingLists(

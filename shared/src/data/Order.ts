@@ -1,7 +1,7 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { createUUID, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, errorMap, nullSafe } from '../util/validation'
+import { createUUID, createUUIDFromUnknown, UUID } from '../util/uuid'
+import { checkAttributeType, checkKeys, endValidation, errorMap } from '../util/validation'
 import { CategoryDefinition } from './CategoryDefinition'
 import { Item } from './Item'
 
@@ -13,19 +13,22 @@ export interface Order {
   readonly categoryOrder: CategoryOrder
 }
 
-export function createOrder(orderSpec: any): Order {
-  checkKeys(orderSpec, ['id', 'name', 'categoryOrder'])
-  checkAttributeType(orderSpec, 'id', 'string')
-  checkAttributeType(orderSpec, 'name', 'string')
-  checkAttributeType(orderSpec, 'categoryOrder', 'array')
+export function createOrder(orderSpec: unknown): Order {
+  if (
+    checkKeys(orderSpec, ['id', 'name', 'categoryOrder']) &&
+    checkAttributeType(orderSpec, 'id', 'string') &&
+    checkAttributeType(orderSpec, 'name', 'string') &&
+    checkAttributeType(orderSpec, 'categoryOrder', 'array')
+  ) {
+    const order = {
+      id: createUUID(orderSpec.id),
+      name: orderSpec.name.trim(),
+      categoryOrder: errorMap(orderSpec.categoryOrder, createUUIDFromUnknown),
+    }
 
-  const order = {
-    id: createUUID(orderSpec.id),
-    name: orderSpec.name.trim(),
-    categoryOrder: errorMap(orderSpec.categoryOrder, nullSafe(createUUID)),
+    return deepFreeze(order)
   }
-
-  return deepFreeze(order)
+  endValidation()
 }
 
 export function sortItems(items: ReadonlyArray<Item>, categoryOrder: CategoryOrder): ReadonlyArray<Item> {

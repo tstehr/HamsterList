@@ -2,7 +2,7 @@ import deepFreeze from 'deep-freeze'
 import escapeStringRegexp from 'escape-string-regexp'
 import _ from 'lodash'
 import * as mathjs from 'mathjs'
-import { checkAttributeType, checkKeys, nullSafe } from '../util/validation'
+import { checkAttributeType, checkKeys, endValidation, nullSafe } from '../util/validation'
 
 export type Unit = string
 // TODO implement opaque type: https://codemix.com/opaque-types-in-javascript/
@@ -41,17 +41,20 @@ export function createAmountValue(valueSpec: number): AmountValue {
   return valueSpec
 }
 
-export function createAmount(amountSpec: any): Amount {
-  checkKeys(amountSpec, ['value', 'unit'])
-  checkAttributeType(amountSpec, 'value', 'number')
-  checkAttributeType(amountSpec, 'unit', 'string', true)
+export function createAmount(amountSpec: unknown): Amount {
+  if (
+    checkKeys(amountSpec, ['value', 'unit']) &&
+    checkAttributeType(amountSpec, 'value', 'number') &&
+    checkAttributeType(amountSpec, 'unit', 'string', true)
+  ) {
+    const amount: Amount = {
+      value: createAmountValue(amountSpec.value),
+      unit: nullSafe(createUnit)(amountSpec.unit),
+    }
 
-  const amount: Amount = {
-    value: createAmountValue(amountSpec.value),
-    unit: nullSafe(createUnit)(amountSpec.unit),
+    return deepFreeze(amount)
   }
-
-  return deepFreeze(amount)
+  endValidation()
 }
 
 const unicodeVulgarFractions = {
@@ -245,14 +248,14 @@ export function powerSet<T>(list: Array<T>): Array<Array<T>> {
   return result
 }
 
-function isMathjsUnit(value: any): value is mathjs.Unit {
+function isMathjsUnit(value: unknown): value is mathjs.Unit {
   return mathjs.typeOf(value) === 'Unit'
 }
 
-function isMathjsBigNumber(value: any): value is mathjs.BigNumber {
+function isMathjsBigNumber(value: unknown): value is mathjs.BigNumber {
   return mathjs.typeOf(value) === 'BigNumber'
 }
 
-function isMathjsFraction(value: any): value is mathjs.Fraction {
+function isMathjsFraction(value: unknown): value is mathjs.Fraction {
   return mathjs.typeOf(value) === 'Fraction'
 }

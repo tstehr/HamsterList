@@ -2,7 +2,7 @@ import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
 import * as mathjs from 'mathjs'
 import { createUUID, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, nullSafe } from '../util/validation'
+import { checkAttributeType, checkKeys, endValidation, isIndexable, nullSafe } from '../util/validation'
 import { Amount, createAmount, createAmountFromString, mergeAmounts, mergeAmountsTwoWay } from './Amount'
 import { CategoryDefinition } from './CategoryDefinition'
 
@@ -30,29 +30,33 @@ export interface Item {
   readonly category?: UUID | undefined | null
 }
 
-export function createCompletionItem(completionItemSpec: any): CompletionItem {
-  checkKeys(completionItemSpec, ['name', 'category'])
-  checkAttributeType(completionItemSpec, 'name', 'string')
-  checkAttributeType(completionItemSpec, 'category', 'string', true)
+export function createCompletionItem(completionItemSpec: unknown): CompletionItem {
+  if (
+    checkKeys(completionItemSpec, ['name', 'category']) &&
+    checkAttributeType(completionItemSpec, 'name', 'string') &&
+    checkAttributeType(completionItemSpec, 'category', 'string', true)
+  ) {
+    const item = {
+      name: completionItemSpec.name.trim(),
+      category: nullSafe(createUUID)(completionItemSpec.category),
+    }
 
-  const item = {
-    name: completionItemSpec.name.trim(),
-    category: nullSafe(createUUID)(completionItemSpec.category),
+    return deepFreeze(item)
   }
-
-  return deepFreeze(item)
+  endValidation()
 }
 
-export function createLocalItem(localItemSpec: any): LocalItem {
-  const completionItem = createCompletionItem(_.omit(localItemSpec, ['amount']))
-  checkAttributeType(localItemSpec, 'amount', 'object', true)
+export function createLocalItem(localItemSpec: unknown): LocalItem {
+  if (isIndexable(localItemSpec)) {
+    const completionItem = createCompletionItem(_.omit(localItemSpec, ['amount']))
+    const localItem = {
+      ...completionItem,
+      amount: nullSafe(createAmount)(localItemSpec.amount),
+    }
 
-  const localItem = {
-    ...completionItem,
-    amount: nullSafe(createAmount)(localItemSpec.amount),
+    return deepFreeze(localItem)
   }
-
-  return deepFreeze(localItem)
+  endValidation()
 }
 
 export function createLocalItemFromString(
@@ -102,37 +106,48 @@ export function createLocalItemFromString(
 }
 
 export function createLocalItemFromItemStringRepresentation(
-  itemStringRepresentation: any,
+  itemStringRepresentation: unknown,
   categories: ReadonlyArray<CategoryDefinition>
 ): LocalItem {
-  checkKeys(itemStringRepresentation, ['stringRepresentation'])
-  checkAttributeType(itemStringRepresentation, 'stringRepresentation', 'string')
-  return createLocalItemFromString(itemStringRepresentation.stringRepresentation, categories)
+  if (
+    checkKeys(itemStringRepresentation, ['stringRepresentation']) &&
+    checkAttributeType(itemStringRepresentation, 'stringRepresentation', 'string')
+  ) {
+    return createLocalItemFromString(itemStringRepresentation.stringRepresentation, categories)
+  }
+  endValidation()
 }
 
-export function createItem(itemSpec: any): Item {
-  const localItem = createLocalItem(_.omit(itemSpec, ['id']))
-  checkAttributeType(itemSpec, 'id', 'string')
+export function createItem(itemSpec: unknown): Item {
+  if (isIndexable(itemSpec)) {
+    const localItem = createLocalItem(_.omit(itemSpec, ['id']))
 
-  const item = {
-    ...localItem,
-    id: createUUID(itemSpec.id),
+    if (checkAttributeType(itemSpec, 'id', 'string')) {
+      const item = {
+        ...localItem,
+        id: createUUID(itemSpec.id),
+      }
+      return deepFreeze(item)
+    }
   }
-
-  return deepFreeze(item)
+  endValidation()
 }
 
 export function createItemFromItemStringRepresentation(
-  itemStringRepresentation: any,
+  itemStringRepresentation: unknown,
   categories: ReadonlyArray<CategoryDefinition>
 ): Item {
-  const localItem = createLocalItemFromItemStringRepresentation(_.omit(itemStringRepresentation, ['id']), categories)
-  const item = {
-    ...localItem,
-    id: createUUID(itemStringRepresentation.id),
+  if (isIndexable(itemStringRepresentation)) {
+    const localItem = createLocalItemFromItemStringRepresentation(_.omit(itemStringRepresentation, ['id']), categories)
+    if (checkAttributeType(itemStringRepresentation, 'id', 'string')) {
+      const item = {
+        ...localItem,
+        id: createUUID(itemStringRepresentation.id),
+      }
+      return deepFreeze(item)
+    }
   }
-
-  return deepFreeze(item)
+  endValidation()
 }
 
 export function itemToString(item: BaseItem): string {

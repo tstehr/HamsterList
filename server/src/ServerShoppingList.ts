@@ -11,9 +11,13 @@ import {
   createCompletionItem,
   createOrder,
   createShoppingList,
+  endValidation,
+  getLiteralKeys,
+  isIndexable,
   Item,
   Order,
   ShoppingList,
+  sortItems,
   SyncedShoppingList,
 } from 'shoppinglist-shared'
 
@@ -35,37 +39,50 @@ export interface ServerShoppingList {
   readonly changes: ReadonlyArray<Change>
 }
 
-export function createServerShoppingList(serverShoppingListSpec: any): ServerShoppingList {
-  checkAttributeType(serverShoppingListSpec, 'recentlyUsed', 'array')
-  checkAttributeType(serverShoppingListSpec, 'categories', 'array')
-  checkAttributeType(serverShoppingListSpec, 'orders', 'array')
-  checkAttributeType(serverShoppingListSpec, 'changes', 'array')
+export function createServerShoppingList(serverShoppingListSpec: unknown): ServerShoppingList {
+  if (isIndexable(serverShoppingListSpec)) {
+    const shoppingList = createShoppingList(_.omit(serverShoppingListSpec, ['recentlyUsed', 'categories', 'orders', 'changes']))
+    if (
+      checkKeys(serverShoppingListSpec, [...getLiteralKeys(shoppingList), 'recentlyUsed', 'categories', 'orders', 'changes']) &&
+      checkAttributeType(serverShoppingListSpec, 'recentlyUsed', 'array') &&
+      checkAttributeType(serverShoppingListSpec, 'categories', 'array') &&
+      checkAttributeType(serverShoppingListSpec, 'orders', 'array') &&
+      checkAttributeType(serverShoppingListSpec, 'changes', 'array')
+    ) {
+      const recentlyUsed = serverShoppingListSpec.recentlyUsed.map(
+        (used: unknown): RecentlyUsed => {
+          if (
+            checkKeys(used, ['lastUsedTimestamp', 'uses', 'item']) &&
+            checkAttributeType(used, 'lastUsedTimestamp', 'number') &&
+            checkAttributeType(used, 'uses', 'number') &&
+            checkAttributeType(used, 'item', 'object')
+          ) {
+            return { ...used, item: createCompletionItem(used.item) }
+          }
+          endValidation()
+        }
+      )
 
-  const recentlyUsed = serverShoppingListSpec.recentlyUsed.map((used: any) => {
-    checkKeys(used, ['lastUsedTimestamp', 'uses', 'item'])
-    checkAttributeType(used, 'lastUsedTimestamp', 'number')
-    checkAttributeType(used, 'uses', 'number')
-    checkAttributeType(used, 'item', 'object')
-    return { ...used, item: createCompletionItem(used.item) }
-  })
+      const categories = serverShoppingListSpec.categories.map(createCategoryDefinition)
+      const orders = serverShoppingListSpec.orders.map(createOrder)
+      const changes = serverShoppingListSpec.changes.map(createChange)
 
-  const categories = serverShoppingListSpec.categories.map(createCategoryDefinition)
-  const orders = serverShoppingListSpec.orders.map(createOrder)
-  const changes = serverShoppingListSpec.changes.map(createChange)
-  const shoppingList = createShoppingList(
-    _.omit(serverShoppingListSpec, ['recentlyUsed', 'categories', 'orders', 'changes']),
-    categories
-  )
+      const serverShoppingList = {
+        ...shoppingList,
+        items: sortItems(
+          shoppingList.items,
+          categories.map((cat) => cat.id)
+        ),
+        recentlyUsed: recentlyUsed,
+        categories: categories,
+        orders: orders,
+        changes: changes,
+      }
 
-  const serverShoppingList = {
-    ...shoppingList,
-    recentlyUsed: recentlyUsed,
-    categories: categories,
-    orders: orders,
-    changes: changes,
+      return deepFreeze(serverShoppingList)
+    }
   }
-
-  return deepFreeze(serverShoppingList)
+  endValidation()
 }
 
 export function getBaseShoppingList(serverShoppingList: ServerShoppingList): ShoppingList {

@@ -2,7 +2,7 @@ import differenceInDays from 'date-fns/difference_in_days'
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
 import { createUUID, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, errorMap } from '../util/validation'
+import { checkAttributeType, checkKeys, endValidation, errorMap, isIndexable } from '../util/validation'
 import { createItem, Item } from './Item'
 import { BaseShoppingList, ShoppingList } from './ShoppingList'
 
@@ -34,57 +34,57 @@ export interface DeleteItem {
 
 export type Diff = AddItem | UpdateItem | DeleteItem
 
-export function createChange(changeSpec: any): Change {
-  checkKeys(changeSpec, ['username', 'id', 'date', 'diffs'])
-  checkAttributeType(changeSpec, 'username', 'string', true)
-  checkAttributeType(changeSpec, 'id', 'string')
-  checkAttributeType(changeSpec, 'date', 'string')
-  checkAttributeType(changeSpec, 'diffs', 'array')
-  const date = new Date(changeSpec.date)
+export function createChange(changeSpec: unknown): Change {
+  if (
+    checkKeys(changeSpec, ['username', 'id', 'date', 'diffs']) &&
+    checkAttributeType(changeSpec, 'username', 'string', true) &&
+    checkAttributeType(changeSpec, 'id', 'string') &&
+    checkAttributeType(changeSpec, 'date', 'string') &&
+    checkAttributeType(changeSpec, 'diffs', 'array')
+  ) {
+    const date = new Date(changeSpec.date)
+    if (isNaN(date.getTime())) {
+      throw new TypeError('Expected attribute "date" to be formatted as an ISO 8061 date')
+    }
 
-  if (isNaN(date.getTime())) {
-    throw new TypeError('Expected attribute "date" to be formatted as an ISO 8061 date')
+    const change = {
+      username: changeSpec.username,
+      id: createUUID(changeSpec.id),
+      date: date,
+      diffs: errorMap(changeSpec.diffs, createDiff),
+    }
+
+    return deepFreeze(change)
   }
-
-  const change = {
-    username: changeSpec.username,
-    id: createUUID(changeSpec.id),
-    date: date,
-    diffs: errorMap(changeSpec.diffs, createDiff),
-  }
-
-  return deepFreeze(change)
+  endValidation()
 }
 
-export function createDiff(diffSpec: any): Diff {
-  checkAttributeType(diffSpec, 'type', 'string')
-  let diff: Diff
-  const type = diffSpec.type
+export function createDiff(diffSpec: unknown): Diff {
+  if (isIndexable(diffSpec)) {
+    let diff: Diff
+    if (diffSpec.type === ADD_ITEM && checkKeys(diffSpec, ['type', 'item'])) {
+      diff = {
+        type: ADD_ITEM,
+        item: createItem(diffSpec.item),
+      }
+    } else if (diffSpec.type === UPDATE_ITEM && checkKeys(diffSpec, ['type', 'oldItem', 'item'])) {
+      diff = {
+        type: UPDATE_ITEM,
+        oldItem: createItem(diffSpec.oldItem),
+        item: createItem(diffSpec.item),
+      }
+    } else if (diffSpec.type === DELETE_ITEM && checkKeys(diffSpec, ['type', 'oldItem'])) {
+      diff = {
+        type: DELETE_ITEM,
+        oldItem: createItem(diffSpec.oldItem),
+      }
+    } else {
+      throw new TypeError(`Unknown diff type ${diffSpec.type}`)
+    }
 
-  if (type === ADD_ITEM) {
-    checkKeys(diffSpec, ['type', 'item'])
-    diff = {
-      type: ADD_ITEM,
-      item: createItem(diffSpec.item),
-    }
-  } else if (type === UPDATE_ITEM) {
-    checkKeys(diffSpec, ['type', 'oldItem', 'item'])
-    diff = {
-      type: UPDATE_ITEM,
-      oldItem: createItem(diffSpec.oldItem),
-      item: createItem(diffSpec.item),
-    }
-  } else if (type === DELETE_ITEM) {
-    checkKeys(diffSpec, ['type', 'oldItem'])
-    diff = {
-      type: DELETE_ITEM,
-      oldItem: createItem(diffSpec.oldItem),
-    }
-  } else {
-    throw new TypeError(`Unknown diff type ${type}`)
+    return deepFreeze(diff)
   }
-
-  return deepFreeze(diff)
+  endValidation()
 }
 
 export function getOnlyNewChanges(changes: ReadonlyArray<Change>): ReadonlyArray<Change> {

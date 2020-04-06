@@ -13,3 +13,10 @@ export function createUUID(uuidStr: string): UUID {
 
   return uuidStr
 }
+
+export function createUUIDFromUnknown(uuidSpec: unknown): UUID {
+  if (typeof uuidSpec !== 'string') {
+    throw TypeError(`Expected type "string", got "${typeof uuidSpec}" instead!`)
+  }
+  return createUUID(uuidSpec)
+}

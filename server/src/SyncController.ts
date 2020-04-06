@@ -42,11 +42,10 @@ export default class SyncController {
     try {
       // Convert stringRepresentation items to full items
       if (req.body && req.body.currentState && Array.isArray(req.body.currentState.items)) {
-        req.body.currentState.items = req.body.currentState.items.map((itemSpec: any) => {
-          if (itemSpec != null && typeof itemSpec === 'object' && itemSpec.stringRepresentation == null) {
+        req.body.currentState.items = req.body.currentState.items.map((itemSpec: unknown) => {
+          if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
             return itemSpec
           }
-
           const item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
           return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
         })

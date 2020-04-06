@@ -1,8 +1,26 @@
 import _ from 'lodash'
 
-type AttributeType = 'object' | 'boolean' | 'number' | 'string' | 'array'
+interface TypeMap {
+  // can also be a type
+  object: object
+  string: string
+  number: number
+  boolean: boolean
+  array: unknown[]
+}
 
-export function checkKeys(object: unknown, expectedKeys: string[]): void {
+type AttributeType = keyof TypeMap
+
+export function isIndexable(object: unknown): object is { [k: string]: unknown } {
+  return _.isObject(object)
+}
+
+export function getLiteralKeys<O>(object: O): readonly (keyof O)[] {
+  // This is technically only a retyping of Object.keys
+  return Object.keys(object) as (keyof O)[]
+}
+
+export function checkKeys<T extends string>(object: unknown, expectedKeys: T[]): object is { [K in T]?: unknown } {
   if (!_.isObject(object)) {
     throw new TypeError('Given value must be an object')
   }
@@ -14,9 +32,26 @@ export function checkKeys(object: unknown, expectedKeys: string[]): void {
   if (unexpectedKeys.length > 0) {
     throw new TypeError(`Given object contained unexpected keys: ${unexpectedKeys.toString()}`)
   }
+  return true
 }
 
-export function checkAttributeType(object: any, key: string, type: AttributeType, optional = false): void {
+export function checkAttributeType<T extends AttributeType, K extends string, O extends { [P in K]?: unknown }>(
+  object: O,
+  key: K,
+  type: T
+): object is O & { [P in K]: TypeMap[T] }
+export function checkAttributeType<T extends AttributeType, K extends string, O extends { [P in K]?: unknown }>(
+  object: O,
+  key: K,
+  type: T,
+  optional: true
+): object is O & { [P in K]?: TypeMap[T] }
+export function checkAttributeType<T extends AttributeType, K extends string, O extends { [P in K]: unknown }>(
+  object: O,
+  key: K,
+  type: T,
+  optional = false
+): boolean {
   if (!optional && object[key] == null) {
     throw new TypeError(`Given object must have an attribute "${key}"`)
   }
@@ -26,6 +61,12 @@ export function checkAttributeType(object: any, key: string, type: AttributeType
   if (actualType !== type && !(optional && object[key] == null)) {
     throw new TypeError(`Expected attribute "${key}" to be of type "${type}" but is of type "${actualType}" instead`)
   }
+  return true
+}
+
+export function endValidation(): never {
+  // this should be unreachable
+  throw TypeError('Given object is invalid!')
 }
 
 export function errorMap<I, O>(array: ReadonlyArray<I>, transformer: (a: I) => O): ReadonlyArray<O> {
@@ -62,7 +103,7 @@ const IDENTIFICATION_FIELDS = Object.freeze(['name', 'title', 'id'])
 
 function getIdentification(o: unknown): string | undefined | null {
   if (_.isObject(o)) {
-    const indexableO = o as { [key: string]: any }
+    const indexableO = o as { [key: string]: unknown }
     for (const identificationField of IDENTIFICATION_FIELDS) {
       const value = indexableO[identificationField]
       if (typeof value === 'string') {
@@ -78,7 +119,7 @@ function getIdentification(o: unknown): string | undefined | null {
   return null
 }
 
-function getAttributeType(attribute: any): string {
+function getAttributeType(attribute: unknown): string {
   if (Array.isArray(attribute)) {
     return 'array'
   } else {
