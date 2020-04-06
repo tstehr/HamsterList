@@ -64,6 +64,7 @@ export function checkAttributeType<T extends AttributeType, K extends string, O 
   return true
 }
 
+/* istanbul ignore next */
 export function endValidation(): never {
   // this should be unreachable
   throw TypeError('Given object is invalid!')
