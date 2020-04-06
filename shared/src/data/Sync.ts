@@ -1,7 +1,7 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { createUUIDFromUnknown, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, endValidation, errorMap, getLiteralKeys, isIndexable } from '../util/validation'
+import { createUUID, UUID } from '../util/uuid'
+import { checkAttributeType, checkKeys, endValidation, errorMap, getLiteralKeys, isIndexable, nullSafe } from '../util/validation'
 import { CategoryDefinition, createCategoryDefinition } from './CategoryDefinition'
 import { Change, createChange } from './Change'
 import { CompletionItem, createCompletionItem, Item } from './Item'
@@ -47,7 +47,7 @@ export function createSyncedShoppingList(
       const syncedShoppingList = {
         ...shoppingList,
         token: syncedShoppingListSpec.token,
-        changeId: createUUIDFromUnknown(syncedShoppingListSpec.changeId),
+        changeId: nullSafe(createUUID)(syncedShoppingListSpec.changeId),
       }
 
       return deepFreeze(syncedShoppingList)

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import FlipMove from 'react-flip-move'
 import { Link, Redirect } from 'react-router-dom'
-import { createRandomUUID } from 'shoppinglist-shared'
+import { createRandomUUID, createShoppingList } from 'shoppinglist-shared'
 import './ChooseListComponent.css'
 import { createDB, getRecentlyUsedLists } from './db'
 import TopBarComponent from './TopBarComponent'
@@ -78,8 +78,9 @@ export default class ChooseListComponent extends Component<Props, State> {
       }),
     })
     const json = await responseToJSON(response)
+    const shoppingList = createShoppingList(json)
     this.setState({
-      listid: json.id,
+      listid: shoppingList.id,
     })
   }
 
