@@ -12,5 +12,13 @@
   "rules": {
     "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
     "@typescript-eslint/explicit-function-return-type": ["warn", { "allowExpressions": true }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.test.ts"],
+      "rules": {
+        "@typescript-eslint/ban-ts-ignore": "off"
+      }
+    }
+  ]
 }
