@@ -250,7 +250,11 @@ export class DiffComponent extends Component<DiffProps> {
             </time>
           </li>
           <li>
-            {/* Use a link even if undo isn't possible so focus isn't lost after undo */}
+            {
+              // Use a link even if undo isn't possible so focus isn't lost after undo
+              // We can't use a button, because we want line breaks to be possible inside the element
+            }
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
             <a
               href="#"
               onClick={undo}
@@ -271,7 +275,11 @@ export class DiffComponent extends Component<DiffProps> {
             </a>
           </li>
           <li>
-            {/* Use a link even if undo isn't possible so focus isn't lost after undo */}
+            {
+              // Use a link even if undo isn't possible so focus isn't lost after undo
+              // We can't use a button, because we want line breaks to be possible inside the element
+            }
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
             <a
               href="#"
               onClick={undoNewer}

@@ -8,7 +8,9 @@ import * as serviceWorker from './serviceWorker'
 
 // kick off the polyfill!
 smoothscroll.polyfill()
-// share api polyfill needs to be imported and referenced to not be a unused import
+
+// share api polyfill needs to be imported and referenced to not be a unused import that will be optimized away
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const dummy = shareApiPolyfill
 
 ReactDOM.render(<App />, document.getElementById('root'))
