@@ -22,7 +22,7 @@
     "react-scripts": "3.4.1",
     "react-sortable-hoc": "^0.8.3",
     "share-api-polyfill": "^1.0.7",
-    "shoppinglist-shared": "link:../shared",
+    "shoppinglist-shared": "1.0.0",
     "smoothscroll-polyfill": "^0.4.4"
   },
   "scripts": {
