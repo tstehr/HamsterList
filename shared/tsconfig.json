@@ -8,7 +8,6 @@
     "lib": ["es6", "dom"],
     "moduleResolution": "node",
     "declaration": true,
-    "emitDeclarationOnly": true,
     "declarationMap": true,
     "strict": true,
     "target": "esnext",

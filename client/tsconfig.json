@@ -18,5 +18,5 @@
     "module": "esnext",
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "scripts/setupProxy.js", "scripts/sw-build.js"]
+  "include": ["src/**/*"]
 }

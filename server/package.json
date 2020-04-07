@@ -11,6 +11,7 @@
     "build:babel": "babel src --out-dir build --source-maps --extensions '.ts'",
     "test": "jest src",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "typecheck": "tsc --noEmit",
     "format": "yarn run format:imports; yarn run format:prettier",
     "format:imports": "organize-imports-cli tsconfig.json",
     "format:prettier": "prettier src --write"
