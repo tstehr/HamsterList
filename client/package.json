@@ -31,7 +31,7 @@
     "build-sw": "node ./src/sw-build.js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx -c ../.eslintrc",
     "format": "yarn run format:imports; yarn run format:prettier",
     "format:imports": "organize-imports-cli tsconfig.json",
     "format:prettier": "prettier src --write"
@@ -62,10 +62,6 @@
     "@types/react-router-dom": "^4.3.1",
     "@types/smoothscroll-polyfill": "^0.3.1",
     "@types/workbox-build": "^5.0.0",
-    "eslint-config-prettier": "^6.10.1",
-    "organize-imports-cli": "^0.7.0",
-    "prettier": "2.0.2",
-    "typescript": "^3.8.3",
     "workbox-build": "^4.3.1"
   }
 }

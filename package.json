@@ -6,6 +6,16 @@
     "server",
     "client"
   ],
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
+    "babel-eslint": "^10.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "typescript": "^3.8.3",
+    "prettier": "2.0.2",
+    "organize-imports-cli": "^0.7.0"
+  },
   "scripts": {
     "shared": "yarn workspace shoppinglist-shared",
     "server": "yarn workspace shoppinglist-server",

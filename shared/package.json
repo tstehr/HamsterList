@@ -27,7 +27,6 @@
     "is-uuid": "^1.0.2",
     "lodash": "^4.17.14",
     "mathjs": "^6.6.2",
-    "typescript": "^3.8.3",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
@@ -48,15 +47,8 @@
     "@types/mathjs": "^6.0.4",
     "@types/node": "^13.11.0",
     "@types/uuid": "^3.4.8",
-    "@typescript-eslint/eslint-plugin": "^2.26.0",
-    "@typescript-eslint/parser": "^2.26.0",
-    "babel-eslint": "^10.0.2",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.1",
     "jest": "^24.8.0",
-    "mockdate": "^2.0.3",
-    "organize-imports-cli": "^0.7.0",
-    "prettier": "2.0.2"
+    "mockdate": "^2.0.3"
   },
   "jest": {
     "collectCoverage": true,
