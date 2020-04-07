@@ -1,0 +1,15 @@
+{
+  "name": "shoppinglist",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "shared": "yarn workspace shoppinglist-shared",
+    "server": "yarn workspace shoppinglist-server",
+    "client": "yarn workspace shoppinglist-client",
+    "all": "func() { yarn shared run \"$1\"; yarn server run \"$1\"; yarn client run \"$1\"; }; func"
+  }
+}
