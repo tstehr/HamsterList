@@ -46,10 +46,7 @@ export function sortCategories(
   return _.sortBy(categories as CategoryDefinition[], categoryIteratee)
 }
 
-export function completeCategoryOrder(
-  categoryOrder: CategoryOrder,
-  categories: readonly CategoryDefinition[]
-): CategoryOrder {
+export function completeCategoryOrder(categoryOrder: CategoryOrder, categories: readonly CategoryDefinition[]): CategoryOrder {
   return sortCategories(categories, categoryOrder).map((cat) => cat.id)
 }
 

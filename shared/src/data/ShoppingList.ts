@@ -16,10 +16,7 @@ export interface ShoppingList {
   readonly items: readonly Item[]
 }
 
-export function createShoppingList(
-  shoppingListSpec: unknown,
-  categories?: readonly CategoryDefinition[] | null
-): ShoppingList {
+export function createShoppingList(shoppingListSpec: unknown, categories?: readonly CategoryDefinition[] | null): ShoppingList {
   if (
     checkKeys(shoppingListSpec, ['id', 'title', 'items']) &&
     checkAttributeType(shoppingListSpec, 'id', 'string') &&

@@ -133,9 +133,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     itemsInCreation: readonly ItemInput[]
   } {
     const itemsForInputLines = this.getItemsForInputLines(newInputValue)
-    const itemsInCreation: readonly ItemInput[] = itemsForInputLines.filter(
-      (ii: ItemInput | null): ii is ItemInput => ii != null
-    )
+    const itemsInCreation: readonly ItemInput[] = itemsForInputLines.filter((ii: ItemInput | null): ii is ItemInput => ii != null)
 
     return {
       inputValue: newInputValue,
