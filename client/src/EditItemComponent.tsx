@@ -43,7 +43,7 @@ export default class EditItemComponent extends Component<Props, State> {
 
   saveItem(): void {
     const itemFromString: LocalItem = createLocalItemFromString(this.state.inputValue, this.props.categories)
-    const updatedItem: LocalItem = { ...itemFromString, category: itemFromString.category || this.props.item.category }
+    const updatedItem: LocalItem = { ...itemFromString, category: itemFromString.category ?? this.props.item.category }
     this.props.updateItem(this.props.item.id, updatedItem)
   }
 

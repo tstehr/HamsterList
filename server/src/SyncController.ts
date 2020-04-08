@@ -85,13 +85,13 @@ export default class SyncController {
 
     if (syncRequest.deleteCompletions != null) {
       const normalizedNames = syncRequest.deleteCompletions.map((name) => normalizeCompletionName(name))
-      recentlyUsed = recentlyUsed.filter((entry) => normalizedNames.indexOf(normalizeCompletionName(entry.item.name)) === -1)
+      recentlyUsed = recentlyUsed.filter((entry) => normalizedNames.includes(normalizeCompletionName(entry.item.name)))
     }
 
     req.updatedList = {
       ...req.list,
-      categories: syncRequest.categories || req.list.categories,
-      orders: syncRequest.orders || req.list.orders,
+      categories: syncRequest.categories ?? req.list.categories,
+      orders: syncRequest.orders ?? req.list.orders,
       recentlyUsed: recentlyUsed,
       ...merged,
     }
@@ -133,22 +133,22 @@ export default class SyncController {
     }
 
     let categories: readonly CategoryDefinition[] | undefined = undefined
-    if (includeTypes.indexOf('categories') !== -1) {
+    if (includeTypes.includes('categories')) {
       categories = serverList.categories
     }
 
     let orders: readonly Order[] | undefined = undefined
-    if (includeTypes.indexOf('orders') !== -1) {
+    if (includeTypes.includes('orders')) {
       orders = serverList.orders
     }
 
     let completions: readonly CompletionItem[] | undefined = undefined
-    if (includeTypes.indexOf('completions') !== -1) {
+    if (includeTypes.includes('completions')) {
       completions = getSortedCompletions(serverList.recentlyUsed)
     }
 
     let changes: readonly Change[] | undefined = undefined
-    if (includeTypes.indexOf('changes') !== -1) {
+    if (includeTypes.includes('changes')) {
       changes = getChangesBetween(serverList.changes, previousSyncChangeId, list.changeId)
     }
 

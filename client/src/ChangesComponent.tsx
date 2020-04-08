@@ -325,6 +325,6 @@ export class DiffComponent extends Component<DiffProps> {
       )
     }
 
-    return (diff as never) || <>Unknown diff type</> // https://stackoverflow.com/a/54030217
+    return (diff) || <>Unknown diff type</> // https://stackoverflow.com/a/54030217
   }
 }

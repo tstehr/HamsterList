@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { isEqual } from 'lodash'
 import React from 'react'
 import { CategoryDefinition, Item } from 'shoppinglist-shared'
 import { CategoryTextComponent } from './CategoryComponent'
@@ -17,7 +17,7 @@ const PillItemComponent = React.memo(
       <ItemComponent item={props.item} className="PillItemComponent__item" />
     </div>
   ),
-  _.isEqual
+  isEqual
 )
 
 export default PillItemComponent

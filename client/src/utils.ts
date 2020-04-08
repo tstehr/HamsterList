@@ -12,7 +12,7 @@ export async function responseToJSON(res: Response): Promise<unknown> {
   const json = await res.json()
 
   if (!res.ok) {
-    const errorMessage = json && json.error
+    const errorMessage = json?.error
     throw new HTTPErrorStatusError(errorMessage, res.status)
   }
 

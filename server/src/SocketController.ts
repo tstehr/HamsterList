@@ -50,7 +50,7 @@ export default class SocketController {
       server: server,
     })
     wss.on('connection', (ws, req: Request) => {
-      const match = req.url.match(/\/api\/([^/]+)\/socket/)
+      const match = /\/api\/([^/]+)\/socket/.exec(req.url)
 
       if (match == null) {
         ws.close()
@@ -83,7 +83,7 @@ export default class SocketController {
       ws.isAlive = true
       ws.log.trace(`Pong`)
     })
-    ws.on('error', ws.log.error)
+    ws.on('error', ws.log.error.bind(ws.log))
   }
 
   makeLoggingWebSocket(baseWs: WebSocket, req: Request, listid: string): LoggingWebSocket {

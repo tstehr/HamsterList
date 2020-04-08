@@ -94,7 +94,7 @@ const amountStringTransformationCombinations = powerSet(amountStringTransformati
 export function createAmountFromString(amountString: string): Amount {
   // We store the error that occured during the first try and throw that in the end as it would
   // be confusing to receive the error for a transformed version.
-  let initialError: Error | undefined | null = null
+  let initialError: Error | null = null
 
   for (const transformationCombination of amountStringTransformationCombinations) {
     const modAmountString: string = transformationCombination.reduce((memo, transformation) => transformation(memo), amountString)
@@ -109,7 +109,11 @@ export function createAmountFromString(amountString: string): Amount {
     }
   }
 
-  throw initialError
+  if (initialError) {
+    throw initialError
+  } else {
+    throw TypeError("String couldn't be converted to Amount")
+  }
 }
 
 export function createCookingAmount(amount: Amount): Amount {

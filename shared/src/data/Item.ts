@@ -59,12 +59,9 @@ export function createLocalItem(localItemSpec: unknown): LocalItem {
   endValidation()
 }
 
-export function createLocalItemFromString(
-  stringRepresentation: string,
-  categories: readonly CategoryDefinition[]
-): LocalItem {
+export function createLocalItemFromString(stringRepresentation: string, categories: readonly CategoryDefinition[]): LocalItem {
   let category: UUID | undefined | null = undefined
-  const categoryResult = stringRepresentation.match(/^\s*\(([^)]+)\)(.*)$/u)
+  const categoryResult = /^\s*\(([^)]+)\)(.*)$/u.exec(stringRepresentation)
 
   if (categoryResult != null) {
     const shortName = categoryResult[1]

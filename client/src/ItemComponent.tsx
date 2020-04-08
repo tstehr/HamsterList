@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import _ from 'lodash'
+import { isEqual } from 'lodash'
 import mathjs from 'mathjs'
 import React from 'react'
 import { Amount, BaseItem } from 'shoppinglist-shared'
@@ -21,7 +21,7 @@ const AmountComponent = React.memo((props: AmountProps) => {
   } else {
     return null
   }
-}, _.isEqual)
+}, isEqual)
 
 interface Props {
   item: BaseItem
@@ -34,7 +34,7 @@ const ItemComponent = React.memo(
       <AmountComponent amount={props.item.amount} /> {props.item.name}
     </span>
   ),
-  _.isEqual
+  isEqual
 )
 
 export default ItemComponent

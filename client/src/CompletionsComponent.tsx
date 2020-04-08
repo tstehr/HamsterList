@@ -37,7 +37,7 @@ export default class CompletionsComponent extends Component<Props> {
         }))
       results.splice(results.length, 0, ...resultsForItem)
     }
-    results = results.filter((el) => itemsInCreationNames.indexOf(el.item.name.trim().toLowerCase()) === -1)
+    results = results.filter((el) => !itemsInCreationNames.includes(el.item.name.trim().toLowerCase()))
     results = _.orderBy(results, ['score'], ['desc'])
 
     let resultItems = results.map((el) => el.item)

@@ -78,7 +78,7 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
   render(): JSX.Element {
     const props = this.props
     const className = classNames('CreateItemButtonComponent', {
-      focused: props.focused || this.state.createButtonFocused,
+      focused: props.focused ?? this.state.createButtonFocused,
     })
     const buttonClassName = classNames('CreateItemButtonComponent__button', {
       'KeyFocusComponent--noFocus': props.noArrowFocus,

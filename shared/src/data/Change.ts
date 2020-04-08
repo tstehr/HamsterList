@@ -199,8 +199,7 @@ export function applyDiff(shoppingList: ShoppingList, diff: Diff): ShoppingList 
     return { ...shoppingList, items: listItems }
   }
 
-  diff as never
-  throw TypeError(`Diff to be applied is not an element of type 'Diff'`)
+  exhaustiveCheck(diff, `Diff to be applied is not an element of type 'Diff'`)
 }
 
 export function isDiffApplicable(shoppingList: ShoppingList, diff: Diff): boolean {
@@ -235,8 +234,7 @@ export function createReverseDiff(diff: Diff): Diff {
     }
   }
 
-  diff as never
-  throw TypeError(`Diff to be reversed is not of type 'Diff'`)
+  exhaustiveCheck(diff, `Diff to be reversed is not of type 'Diff'`)
 }
 
 export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): Diff | undefined | null {
@@ -284,8 +282,7 @@ export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): Di
     }
   }
 
-  diff as never
-  throw TypeError(`Diff to be converted to applicable diff is not an element of type 'Diff'`)
+  exhaustiveCheck(diff, `Diff to be converted to applicable diff is not an element of type 'Diff'`)
 }
 
 function _findOldItemIndex(shoppingList: ShoppingList, oldItem: Item): number {
@@ -296,4 +293,8 @@ function _findOldItemIndex(shoppingList: ShoppingList, oldItem: Item): number {
   }
 
   return index
+}
+
+function exhaustiveCheck(param: never, errorMsg: string): never {
+  throw TypeError(errorMsg)
 }

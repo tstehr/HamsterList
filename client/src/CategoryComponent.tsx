@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, { isEqual } from 'lodash'
 import React, { Component } from 'react'
 import { CategoryDefinition, createCategoryDefinition, UUID } from 'shoppinglist-shared'
 import './CategoryComponent.css'
@@ -39,7 +39,7 @@ const CategoryComponent = React.memo((props: Props) => {
       </div>
     </div>
   )
-}, _.isEqual)
+}, isEqual)
 
 const CategoryTextComponent = React.memo((props: Props) => {
   const category = getCategory(props)
@@ -58,7 +58,7 @@ const CategoryTextComponent = React.memo((props: Props) => {
       {initials}
     </span>
   )
-}, _.isEqual)
+}, isEqual)
 
 // needs to be a class to be usable in FlipMove
 class CategoryListItemComponent extends Component<Props> {

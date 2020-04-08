@@ -146,7 +146,7 @@ export default class ChooseListComponent extends Component<{}, State> {
                 www.flaticon.com
               </a>
             </p>
-            <p>Version: {process.env.REACT_APP_GIT_SHA || 'No version information found!'}</p>
+            <p>Version: {process.env.REACT_APP_GIT_SHA ?? 'No version information found!'}</p>
           </section>
         </div>
       </div>

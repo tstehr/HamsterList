@@ -208,7 +208,7 @@ export default class CreateItemComponent extends Component<Props, State> {
   }
 
   hasMulipleLines(): boolean {
-    return this.state.inputValue.indexOf('\n') !== -1
+    return this.state.inputValue.includes('\n')
   }
 
   isMultiline(): boolean {

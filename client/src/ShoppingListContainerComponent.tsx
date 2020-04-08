@@ -118,7 +118,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       const otherUsername = getRecentlyUsedLists(this.db)
         .map((rul) => {
           const state: State = this.db.read().get('lists').getById(rul.id).value()
-          return state && state.username
+          return state?.username
         })
         .find((name) => name != null)
       this.state = { ...this.state, username: otherUsername }
@@ -331,10 +331,10 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     try {
       const syncResponse = createSyncResponse(await responseToJSON(await syncPromise))
       const serverSyncedShoppingList = syncResponse.list
-      const newChanges: readonly Change[] = syncResponse.changes || []
-      const categories: readonly CategoryDefinition[] = syncResponse.categories || []
-      const orders: readonly Order[] = syncResponse.orders || []
-      const completions: readonly CompletionItem[] = syncResponse.completions || []
+      const newChanges: readonly Change[] = syncResponse.changes ?? []
+      const categories: readonly CategoryDefinition[] = syncResponse.categories ?? []
+      const orders: readonly Order[] = syncResponse.orders ?? []
+      const completions: readonly CompletionItem[] = syncResponse.completions ?? []
       this.setState(
         (prevState) => {
           const serverShoppingList: ShoppingList = _.omit(serverSyncedShoppingList, 'token', 'changeId')
@@ -351,7 +351,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           } // retain completion deletions performed during sync
 
           const unsyncedDeletedCompletions = prevState.deletedCompletions.filter(
-            (name) => preSyncDeletedCompletions.indexOf(normalizeCompletionName(name)) === -1
+            (name) => !preSyncDeletedCompletions.includes(normalizeCompletionName(name))
           )
           dirty = dirty || unsyncedDeletedCompletions.length > 0 // add newly fetched changes to local changes
 
@@ -371,7 +371,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
           const syncState = {
             completions: completions.filter(
-              (completionItem) => unsyncedDeletedCompletions.indexOf(normalizeCompletionName(completionItem.name)) === -1
+              (completionItem) => !unsyncedDeletedCompletions.includes(normalizeCompletionName(completionItem.name))
             ),
             categories,
             orders,
@@ -605,7 +605,9 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
 
   requestSync = (delay = 1000): void => {
     window.clearTimeout(this.requestSyncTimeoutID)
-    this.requestSyncTimeoutID = window.setTimeout(this.sync.bind(this), delay)
+    this.requestSyncTimeoutID = window.setTimeout(() => {
+      this.sync()
+    }, delay)
   }
 
   handleStorage = (e: StorageEvent): void => {
