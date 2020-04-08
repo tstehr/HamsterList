@@ -172,31 +172,33 @@ export function generateDeleteItem(shoppingList: ShoppingList, itemid: UUID): De
 }
 
 export function applyDiff(shoppingList: ShoppingList, diff: Diff): ShoppingList {
-  if (diff.type === ADD_ITEM) {
-    const item = diff.item
+  switch (diff.type) {
+    case ADD_ITEM: {
+      const item = diff.item
 
-    if (shoppingList.items.some((i) => i.id === item.id)) {
-      // TODO error type
-      throw Error(`Can't apply diff, there already exists an item with id ${item.id}`)
+      if (shoppingList.items.some((i) => i.id === item.id)) {
+        // TODO error type
+        throw Error(`Can't apply diff, there already exists an item with id ${item.id}`)
+      }
+
+      return { ...shoppingList, items: [...shoppingList.items, item] }
     }
 
-    return { ...shoppingList, items: [...shoppingList.items, item] }
-  }
+    case UPDATE_ITEM: {
+      const index = _findOldItemIndex(shoppingList, diff.oldItem)
 
-  if (diff.type === UPDATE_ITEM) {
-    const index = _findOldItemIndex(shoppingList, diff.oldItem)
+      const listItems = [...shoppingList.items]
+      listItems[index] = diff.item
+      return { ...shoppingList, items: listItems }
+    }
 
-    const listItems = [...shoppingList.items]
-    listItems[index] = diff.item
-    return { ...shoppingList, items: listItems }
-  }
+    case DELETE_ITEM: {
+      const index = _findOldItemIndex(shoppingList, diff.oldItem)
 
-  if (diff.type === DELETE_ITEM) {
-    const index = _findOldItemIndex(shoppingList, diff.oldItem)
-
-    const listItems = [...shoppingList.items]
-    listItems.splice(index, 1)
-    return { ...shoppingList, items: listItems }
+      const listItems = [...shoppingList.items]
+      listItems.splice(index, 1)
+      return { ...shoppingList, items: listItems }
+    }
   }
 
   exhaustiveCheck(diff, `Diff to be applied is not an element of type 'Diff'`)
@@ -212,25 +214,25 @@ export function isDiffApplicable(shoppingList: ShoppingList, diff: Diff): boolea
 }
 
 export function createReverseDiff(diff: Diff): Diff {
-  if (diff.type === ADD_ITEM) {
-    return {
-      type: DELETE_ITEM,
-      oldItem: diff.item,
+  switch (diff.type) {
+    case ADD_ITEM: {
+      return {
+        type: DELETE_ITEM,
+        oldItem: diff.item,
+      }
     }
-  }
-
-  if (diff.type === UPDATE_ITEM) {
-    return {
-      type: UPDATE_ITEM,
-      oldItem: diff.item,
-      item: diff.oldItem,
+    case UPDATE_ITEM: {
+      return {
+        type: UPDATE_ITEM,
+        oldItem: diff.item,
+        item: diff.oldItem,
+      }
     }
-  }
-
-  if (diff.type === DELETE_ITEM) {
-    return {
-      type: ADD_ITEM,
-      item: diff.oldItem,
+    case DELETE_ITEM: {
+      return {
+        type: ADD_ITEM,
+        item: diff.oldItem,
+      }
     }
   }
 
@@ -242,43 +244,45 @@ export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): Di
     return diff
   }
 
-  if (diff.type === ADD_ITEM) {
-    const item = diff.item
-    const oldItemInList = shoppingList.items.find((i) => i.id === item.id)
+  switch (diff.type) {
+    case ADD_ITEM: {
+      const item = diff.item
+      const oldItemInList = shoppingList.items.find((i) => i.id === item.id)
 
-    if (_.isEqual(oldItemInList, item)) {
-      return null
-    } else {
-      return generateUpdateItem(shoppingList, diff.item)
-    }
-  }
-
-  if (diff.type === UPDATE_ITEM) {
-    const oldItem = diff.oldItem
-    const oldItemInList = shoppingList.items.find((i) => i.id === oldItem.id)
-
-    if (oldItemInList != null) {
-      if (_.isEqual(oldItemInList, diff.item)) {
+      if (_.isEqual(oldItemInList, item)) {
         return null
       } else {
         return generateUpdateItem(shoppingList, diff.item)
       }
-    } else {
-      return generateAddItem(diff.item)
     }
-  }
 
-  if (diff.type === DELETE_ITEM) {
-    const oldItem = diff.oldItem
-    const oldItemInList = shoppingList.items.find((i) => i.id === oldItem.id)
+    case UPDATE_ITEM: {
+      const oldItem = diff.oldItem
+      const oldItemInList = shoppingList.items.find((i) => i.id === oldItem.id)
 
-    if (oldItemInList != null) {
-      return {
-        type: DELETE_ITEM,
-        oldItem: oldItemInList,
+      if (oldItemInList != null) {
+        if (_.isEqual(oldItemInList, diff.item)) {
+          return null
+        } else {
+          return generateUpdateItem(shoppingList, diff.item)
+        }
+      } else {
+        return generateAddItem(diff.item)
       }
-    } else {
-      return null
+    }
+
+    case DELETE_ITEM: {
+      const oldItem = diff.oldItem
+      const oldItemInList = shoppingList.items.find((i) => i.id === oldItem.id)
+
+      if (oldItemInList != null) {
+        return {
+          type: DELETE_ITEM,
+          oldItem: oldItemInList,
+        }
+      } else {
+        return null
+      }
     }
   }
 

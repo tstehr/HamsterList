@@ -3,9 +3,9 @@ declare module 'lodash-id' {
     interface CollectionChain<T> {
       // minimal subsets of lodash-id functions we use
       // see https://github.com/typicode/lodash-id
-      getById(id): ExpChain<T | undefined>
+      getById(id): ExpChain<T> | PrimitiveChain<null>
       upsert(object: T): CollectionChain<T>
-      removeById(id): ExpChain<T | undefined>
+      removeById(id): ExpChain<T> | PrimitiveChain<null>
     }
   }
 }

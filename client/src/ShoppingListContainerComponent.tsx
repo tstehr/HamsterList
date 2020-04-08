@@ -117,7 +117,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       // take username from most frecent used list
       const otherUsername = getRecentlyUsedLists(this.db)
         .map((rul) => {
-          const state: State = this.db.read().get('lists').getById(rul.id).value()
+          const state = this.db.read().get('lists').getById(rul.id).value()
           return state?.username
         })
         .find((name) => name != null)
@@ -431,7 +431,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
   }
 
   markListAsUsed(): void {
-    let listUsed: RecentlyUsedList = this.db.get('recentlyUsedLists').getById(this.props.listid).value() || {
+    let listUsed: RecentlyUsedList = this.db.get('recentlyUsedLists').getById(this.props.listid).value() ?? {
       id: this.props.listid,
       uses: 0,
       lastUsedTimestamp: Date.now(),

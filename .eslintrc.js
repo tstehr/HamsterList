@@ -21,7 +21,6 @@ module.exports = {
     '@typescript-eslint/ban-types': ['error'],
     '@typescript-eslint/no-extra-non-null-assertion': ['error'],
     '@typescript-eslint/no-implied-eval': ['error'],
-    //'@typescript-eslint/no-floating-promises': ['error'],
     '@typescript-eslint/no-throw-literal': ['error'],
     '@typescript-eslint/no-unnecessary-condition': ['warn', { ignoreRhs: true }],
     '@typescript-eslint/no-unnecessary-qualifier': ['warn'],
@@ -29,6 +28,7 @@ module.exports = {
     '@typescript-eslint/prefer-nullish-coalescing': ['warn'],
     '@typescript-eslint/prefer-optional-chain': ['warn'],
     '@typescript-eslint/restrict-plus-operands': ['error'],
+    '@typescript-eslint/switch-exhaustiveness-check': ['error'],
   },
   overrides: [
     {

@@ -4,7 +4,7 @@ import differenceInMinutes from 'date-fns/difference_in_minutes'
 import distanceInWords from 'date-fns/distance_in_words'
 import format from 'date-fns/format'
 import { DeepReadonly } from 'deep-freeze'
-import _ from 'lodash'
+import _, { isEqual } from 'lodash'
 import memoize from 'memoize-one'
 import React, { Component, useMemo, useState } from 'react'
 import FlipMove from 'react-flip-move'
@@ -189,7 +189,7 @@ export class DiffComponent extends Component<DiffProps> {
     const hours = differenceInHours(now, date)
     const dateString = hours < 12 ? `${distanceInWords(now, date)} ago` : absoluteDateString
     return [dateString, absoluteDateString, date.toISOString()]
-  }, _.isEqual)
+  }, isEqual)
 
   getApplicableDiff = (diff: Diff): [Diff | null | undefined, boolean] => {
     const reverseDiff = createReverseDiff(this.props.diff)
@@ -300,31 +300,29 @@ export class DiffComponent extends Component<DiffProps> {
   createDiffElement(diff: Diff, tense: 'PAST' | 'PRESENT'): React.ReactNode {
     const categories = this.props.categories
 
-    if (diff.type === UPDATE_ITEM) {
-      return (
-        <>
-          {tense === 'PAST' ? 'Changed' : 'Change'} <PillItemComponent item={diff.oldItem} categories={categories} /> to{' '}
-          <PillItemComponent item={diff.item} categories={categories} />
-        </>
-      )
+    switch (diff.type) {
+      case UPDATE_ITEM: {
+        return (
+          <>
+            {tense === 'PAST' ? 'Changed' : 'Change'} <PillItemComponent item={diff.oldItem} categories={categories} /> to{' '}
+            <PillItemComponent item={diff.item} categories={categories} />
+          </>
+        )
+      }
+      case ADD_ITEM: {
+        return (
+          <>
+            {tense === 'PAST' ? 'Added' : 'Add'} <PillItemComponent item={diff.item} categories={categories} />
+          </>
+        )
+      }
+      case DELETE_ITEM: {
+        return (
+          <>
+            {tense === 'PAST' ? 'Deleted' : 'Delete'} <PillItemComponent item={diff.oldItem} categories={categories} />
+          </>
+        )
+      }
     }
-
-    if (diff.type === ADD_ITEM) {
-      return (
-        <>
-          {tense === 'PAST' ? 'Added' : 'Add'} <PillItemComponent item={diff.item} categories={categories} />
-        </>
-      )
-    }
-
-    if (diff.type === DELETE_ITEM) {
-      return (
-        <>
-          {tense === 'PAST' ? 'Deleted' : 'Delete'} <PillItemComponent item={diff.oldItem} categories={categories} />
-        </>
-      )
-    }
-
-    return (diff) || <>Unknown diff type</> // https://stackoverflow.com/a/54030217
   }
 }
