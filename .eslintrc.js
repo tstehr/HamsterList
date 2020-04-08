@@ -23,7 +23,7 @@ module.exports = {
     '@typescript-eslint/no-implied-eval': ['error'],
     //'@typescript-eslint/no-floating-promises': ['error'],
     '@typescript-eslint/no-throw-literal': ['error'],
-    // '@typescript-eslint/no-unnecessary-condition': ['warn'],
+    '@typescript-eslint/no-unnecessary-condition': ['warn', { ignoreRhs: true }],
     '@typescript-eslint/no-unnecessary-qualifier': ['warn'],
     '@typescript-eslint/no-unnecessary-type-arguments': ['warn'],
     '@typescript-eslint/prefer-nullish-coalescing': ['warn'],

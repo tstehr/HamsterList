@@ -1,15 +1,16 @@
 import { NextFunction, Request, Response } from 'express'
 import _ from 'lodash'
 import { CompletionItem, frecency, normalizeCompletionName } from 'shoppinglist-shared'
+import { ListidParam } from 'ShoppingListController'
 import { RecentlyUsed, RecentlyUsedArray } from './ServerShoppingList'
 
 export default class CompletionsController {
-  handleGet = (req: Request, res: Response, next: NextFunction): void => {
+  handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     res.json(getSortedCompletions(req.list.recentlyUsed))
     next()
   }
 
-  handleDelete = (req: Request, res: Response, next: NextFunction): void => {
+  handleDelete = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     const completionName = normalizeCompletionName(req.params.completionname)
     const entryIdx = _.findIndex(req.list.recentlyUsed, (entry) => normalizeCompletionName(entry.item.name) === completionName)
 

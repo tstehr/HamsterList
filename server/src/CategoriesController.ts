@@ -1,13 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
 import { CategoryDefinition, createCategoryDefinition, errorMap } from 'shoppinglist-shared'
+import { ListidParam } from 'ShoppingListController'
 
 export default class CategoriesController {
-  handleGet = (req: Request, res: Response, next: NextFunction): void => {
+  handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     res.json(req.list.categories)
     next()
   }
 
-  handlePut = (req: Request, res: Response, next: NextFunction): void => {
+  handlePut = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     if (!Array.isArray(req.body)) {
       res.status(400).json({
         error: 'Must be array of categories!',

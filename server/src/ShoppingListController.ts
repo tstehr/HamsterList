@@ -1,9 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
+import { ParamsDictionary } from 'express-serve-static-core'
 import { CategoryDefinition, Change, createShoppingList, diffShoppingLists, getOnlyNewChanges } from 'shoppinglist-shared'
 import { DB, updateInArray } from './DB'
 import { createServerShoppingList, getBaseShoppingList, ServerShoppingList } from './ServerShoppingList'
 import { ShoppingListChangeCallback } from './SocketController'
 import TokenCreator from './TokenCreator'
+
+export interface ListidParam extends ParamsDictionary {
+  listid: string
+}
 
 export default class ShoppingListController {
   db: DB
@@ -23,7 +28,7 @@ export default class ShoppingListController {
     this.changeCallback = changeCallback
   }
 
-  handleParamListid = (req: Request, res: Response, next: NextFunction): void => {
+  handleParamListid = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     req.listid = req.params.listid
     req.log = req.log.child({
       operation: req.url.substring(req.listid.length + 1),
@@ -48,17 +53,17 @@ export default class ShoppingListController {
     next()
   }
 
-  handleGet = (req: Request, res: Response, next: NextFunction): void => {
+  handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     res.json(getBaseShoppingList(req.list))
     next()
   }
 
-  handleGetItems = (req: Request, res: Response, next: NextFunction): void => {
+  handleGetItems = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     res.json(req.list.items)
     next()
   }
 
-  handlePut = (req: Request, res: Response, next: NextFunction): void => {
+  handlePut = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     let bodyList
     try {
       bodyList = createShoppingList(
@@ -88,8 +93,8 @@ export default class ShoppingListController {
     next()
   }
 
-  saveUpdatedList = (req: Request, res: Response, next: NextFunction): void => {
-    if (req.list && req.updatedList) {
+  saveUpdatedList = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
+    if (req.updatedList) {
       const updatedList = req.updatedList
       const diffs = diffShoppingLists(req.list, updatedList)
       let newList: ServerShoppingList

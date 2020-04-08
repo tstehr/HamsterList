@@ -18,6 +18,7 @@ import {
   SyncResponse,
   UUID,
 } from 'shoppinglist-shared'
+import { ListidParam } from 'ShoppingListController'
 import { getChangesBetween } from './ChangesController'
 import { getSortedCompletions } from './CompletionsController'
 import { updateRecentlyUsed } from './ItemController'
@@ -31,12 +32,12 @@ export default class SyncController {
     this.tokenCreator = tokenCreator
   }
 
-  handleGet = (req: Request, res: Response, next: NextFunction): void => {
+  handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     res.send(this.buildResponse(req.list, req.query['includeInResponse']))
     next()
   }
 
-  handlePost = (req: Request, res: Response, next: NextFunction): void => {
+  handlePost = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     let syncRequest: SyncRequest
 
     try {

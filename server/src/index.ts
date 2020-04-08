@@ -1,6 +1,6 @@
 import bodyParser from 'body-parser'
 import Logger from 'bunyan'
-import express, { NextFunction, Request, Response } from 'express'
+import express, { NextFunction, Request, RequestParamHandler, Response } from 'express'
 import fs from 'fs-extra'
 import helmet from 'helmet'
 import http from 'http'
@@ -12,9 +12,9 @@ import ChangesController from './ChangesController'
 import CompletionsController from './CompletionsController'
 import { getConfig } from './config'
 import { DB } from './DB'
-import ItemController from './ItemController'
+import ItemController, { ItemidParam } from './ItemController'
 import OrdersController from './OrdersController'
-import ShoppingListController from './ShoppingListController'
+import ShoppingListController, { ListidParam } from './ShoppingListController'
 import SocketController from './SocketController'
 import SyncController from './SyncController'
 import TokenCreator from './TokenCreator'
@@ -78,8 +78,8 @@ db.load()
     const completionsController = new CompletionsController()
     const changesController = new ChangesController()
 
-    router.param('listid', shoppingListController.handleParamListid)
-    router.param('itemid', itemController.handleParamItemid)
+    router.param('listid', (shoppingListController.handleParamListid as unknown) as RequestParamHandler)
+    router.param('itemid', (itemController.handleParamItemid as unknown) as RequestParamHandler)
 
     router.use('*', (req: Request, res: Response, next: NextFunction) => {
       req.id = createRandomUUID()
@@ -120,30 +120,30 @@ db.load()
       })
     })
 
-    router.get('/:listid', shoppingListController.handleGet)
-    router.put('/:listid', shoppingListController.handlePut)
-    router.get('/:listid/items', shoppingListController.handleGetItems)
+    router.get<ListidParam>('/:listid', shoppingListController.handleGet)
+    router.put<ListidParam>('/:listid', shoppingListController.handlePut)
+    router.get<ListidParam>('/:listid/items', shoppingListController.handleGetItems)
 
-    router.post('/:listid/items', itemController.handlePost)
-    router.get('/:listid/items/:itemid', itemController.handleGet)
-    router.put('/:listid/items/:itemid', itemController.handlePut)
-    router.delete('/:listid/items/:itemid', itemController.handleDelete)
+    router.post<ListidParam>('/:listid/items', itemController.handlePost)
+    router.get<ItemidParam>('/:listid/items/:itemid', itemController.handleGet)
+    router.put<ItemidParam>('/:listid/items/:itemid', itemController.handlePut)
+    router.delete<ItemidParam>('/:listid/items/:itemid', itemController.handleDelete)
 
-    router.get('/:listid/completions', completionsController.handleGet)
-    router.delete('/:listid/completions/:completionname', completionsController.handleDelete)
+    router.get<ListidParam>('/:listid/completions', completionsController.handleGet)
+    router.delete<ListidParam>('/:listid/completions/:completionname', completionsController.handleDelete)
 
-    router.get('/:listid/categories', categoriesController.handleGet)
-    router.put('/:listid/categories', categoriesController.handlePut)
+    router.get<ListidParam>('/:listid/categories', categoriesController.handleGet)
+    router.put<ListidParam>('/:listid/categories', categoriesController.handlePut)
 
-    router.get('/:listid/orders', ordersController.handleGet)
-    router.put('/:listid/orders', ordersController.handlePut)
+    router.get<ListidParam>('/:listid/orders', ordersController.handleGet)
+    router.put<ListidParam>('/:listid/orders', ordersController.handlePut)
 
-    router.get('/:listid/changes', changesController.handleGet)
+    router.get<ListidParam>('/:listid/changes', changesController.handleGet)
 
-    router.get('/:listid/sync', syncController.handleGet)
-    router.post('/:listid/sync', syncController.handlePost)
+    router.get<ListidParam>('/:listid/sync', syncController.handleGet)
+    router.post<ListidParam>('/:listid/sync', syncController.handlePost)
 
-    router.use('*', shoppingListController.saveUpdatedList)
+    router.use<ListidParam>('/:listid', shoppingListController.saveUpdatedList)
 
     app.use('/api', router)
 
