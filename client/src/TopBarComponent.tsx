@@ -5,7 +5,7 @@ import { Up } from './HistoryTracker'
 import { ConnectionState, UpdateListTitle } from './ShoppingListContainerComponent'
 import './TopBarComponent.css'
 
-type Props = {
+interface Props {
   up?: Up
   responsive?: boolean
   children: React.ReactNode
@@ -35,7 +35,7 @@ export default function TopBarComponent(props: Props): JSX.Element {
   )
 }
 
-type EditTitleProps = {
+interface EditTitleProps {
   title: string
   updateListTitle: UpdateListTitle
 }
@@ -84,7 +84,7 @@ export function EditTitleComponent(props: EditTitleProps): JSX.Element {
   }
 }
 
-type SyncStatusProps = {
+interface SyncStatusProps {
   connectionState: ConnectionState
   syncing: boolean
   lastSyncFailed: boolean

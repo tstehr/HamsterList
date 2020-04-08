@@ -61,7 +61,7 @@ export function createLocalItem(localItemSpec: unknown): LocalItem {
 
 export function createLocalItemFromString(
   stringRepresentation: string,
-  categories: ReadonlyArray<CategoryDefinition>
+  categories: readonly CategoryDefinition[]
 ): LocalItem {
   let category: UUID | undefined | null = undefined
   const categoryResult = stringRepresentation.match(/^\s*\(([^)]+)\)(.*)$/u)
@@ -107,7 +107,7 @@ export function createLocalItemFromString(
 
 export function createLocalItemFromItemStringRepresentation(
   itemStringRepresentation: unknown,
-  categories: ReadonlyArray<CategoryDefinition>
+  categories: readonly CategoryDefinition[]
 ): LocalItem {
   if (
     checkKeys(itemStringRepresentation, ['stringRepresentation']) &&
@@ -135,7 +135,7 @@ export function createItem(itemSpec: unknown): Item {
 
 export function createItemFromItemStringRepresentation(
   itemStringRepresentation: unknown,
-  categories: ReadonlyArray<CategoryDefinition>
+  categories: readonly CategoryDefinition[]
 ): Item {
   if (isIndexable(itemStringRepresentation)) {
     const localItem = createLocalItemFromItemStringRepresentation(_.omit(itemStringRepresentation, ['id']), categories)
@@ -217,7 +217,7 @@ export function mergeItemsTwoWay(client: Item, server: Item): Item {
   }
 }
 
-export function addMatchingCategory<T extends LocalItem>(item: T, completions: ReadonlyArray<CompletionItem>): T {
+export function addMatchingCategory<T extends LocalItem>(item: T, completions: readonly CompletionItem[]): T {
   const exactMatchingCompletion = completions.find(
     (completionItem) =>
       completionItem.name === item.name && (item.category === undefined || item.category === completionItem.category)

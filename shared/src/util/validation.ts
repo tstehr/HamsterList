@@ -15,9 +15,9 @@ export function isIndexable(object: unknown): object is { [k: string]: unknown }
   return _.isObject(object)
 }
 
-export function getLiteralKeys<O>(object: O): readonly (keyof O)[] {
+export function getLiteralKeys<O>(object: O): ReadonlyArray<keyof O> {
   // This is technically only a retyping of Object.keys
-  return Object.keys(object) as (keyof O)[]
+  return Object.keys(object) as Array<keyof O>
 }
 
 export function checkKeys<T extends string>(object: unknown, expectedKeys: T[]): object is { [K in T]?: unknown } {
@@ -70,7 +70,7 @@ export function endValidation(): never {
   throw TypeError('Given object is invalid!')
 }
 
-export function errorMap<I, O>(array: ReadonlyArray<I>, transformer: (a: I) => O): ReadonlyArray<O> {
+export function errorMap<I, O>(array: readonly I[], transformer: (a: I) => O): readonly O[] {
   return array.map((el, i) => {
     try {
       return transformer(el)

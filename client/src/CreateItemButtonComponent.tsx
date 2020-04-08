@@ -7,9 +7,9 @@ import IconButton from './IconButton'
 import ItemComponent from './ItemComponent'
 import { CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
 
-type Props = {
+interface Props {
   item: LocalItem
-  categories: ReadonlyArray<CategoryDefinition>
+  categories: readonly CategoryDefinition[]
   createItem: CreateItem
   deleteCompletion?: DeleteCompletion | null
   focusInput: () => void
@@ -17,7 +17,7 @@ type Props = {
   noArrowFocus?: boolean
 }
 
-type State = {
+interface State {
   enterPressed: boolean
   altPressed: boolean
   createButtonFocused: boolean

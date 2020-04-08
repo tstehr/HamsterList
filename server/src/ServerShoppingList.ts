@@ -27,16 +27,16 @@ export interface RecentlyUsed {
   item: CompletionItem
 }
 
-export type RecentlyUsedArray = ReadonlyArray<RecentlyUsed>
+export type RecentlyUsedArray = readonly RecentlyUsed[]
 
 export interface ServerShoppingList {
   readonly id: string
   readonly title: string
-  readonly items: ReadonlyArray<Item>
+  readonly items: readonly Item[]
   readonly recentlyUsed: RecentlyUsedArray
-  readonly categories: ReadonlyArray<CategoryDefinition>
-  readonly orders: ReadonlyArray<Order>
-  readonly changes: ReadonlyArray<Change>
+  readonly categories: readonly CategoryDefinition[]
+  readonly orders: readonly Order[]
+  readonly changes: readonly Change[]
 }
 
 export function createServerShoppingList(serverShoppingListSpec: unknown): ServerShoppingList {

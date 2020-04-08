@@ -19,9 +19,9 @@ const invalidCategory = createCategoryDefinition({
   lightText: true,
 })
 
-type Props = {
+interface Props {
   category?: CategoryDefinition
-  categories?: ReadonlyArray<CategoryDefinition>
+  categories?: readonly CategoryDefinition[]
   categoryId?: UUID | null
 }
 

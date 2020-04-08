@@ -236,7 +236,7 @@ export function mapReplace(
   return str.replace(RegExp(regexpStr, 'g'), (match) => replacements[match])
 }
 
-export function powerSet<T>(list: Array<T>): Array<Array<T>> {
+export function powerSet<T>(list: T[]): T[][] {
   const resultLength = 2 ** list.length
   const result = []
 

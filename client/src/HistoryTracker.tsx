@@ -9,7 +9,7 @@ type Props = {
   render: (up: Up) => JSX.Element
 } & RouteComponentProps
 
-type NavigationStackEntry = {
+interface NavigationStackEntry {
   path: string
   key: string | undefined | null
 }

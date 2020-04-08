@@ -7,13 +7,13 @@ import TokenCreator from './TokenCreator'
 
 export default class ShoppingListController {
   db: DB
-  defaultCategories: ReadonlyArray<CategoryDefinition>
+  defaultCategories: readonly CategoryDefinition[]
   tokenCreator: TokenCreator
   changeCallback: ShoppingListChangeCallback
 
   constructor(
     db: DB,
-    defaultCategories: ReadonlyArray<CategoryDefinition>,
+    defaultCategories: readonly CategoryDefinition[],
     tokenCreator: TokenCreator,
     changeCallback: ShoppingListChangeCallback
   ) {

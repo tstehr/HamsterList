@@ -38,27 +38,27 @@ export type CreateItem = (item: LocalItem) => void
 export type DeleteItem = (id: UUID) => void
 export type UpdateItem = (id: UUID, localItem: LocalItem) => void
 export type SelectOrder = (id?: UUID | null) => void
-export type UpdateOrders = (orders: ReadonlyArray<Order>) => void
+export type UpdateOrders = (orders: readonly Order[]) => void
 export type SetUsername = (username?: string | null) => void
 export type ApplyDiff = (diff: Diff) => void
 export type CreateApplicableDiff = (diff: Diff) => Diff | undefined | null
 export type DeleteCompletion = (completionName: string) => void
 
-type Props = {
+interface Props {
   listid: string
   up: Up
 }
 
 export interface ClientShoppingList {
   previousSync: SyncedShoppingList | undefined | null
-  completions: ReadonlyArray<CompletionItem>
-  deletedCompletions: ReadonlyArray<string>
-  categories: ReadonlyArray<CategoryDefinition>
-  orders: ReadonlyArray<Order>
-  changes: ReadonlyArray<Change>
+  completions: readonly CompletionItem[]
+  deletedCompletions: readonly string[]
+  categories: readonly CategoryDefinition[]
+  orders: readonly Order[]
+  changes: readonly Change[]
   selectedOrder: UUID | undefined | null
   username: string | undefined | null
-  unsyncedChanges: ReadonlyArray<Change>
+  unsyncedChanges: readonly Change[]
   loaded: boolean
   dirty: boolean
   syncing: boolean
@@ -68,7 +68,7 @@ export interface ClientShoppingList {
   // ShoppingList
   id: string
   title: string
-  items: ReadonlyArray<Item>
+  items: readonly Item[]
 }
 
 type State = ClientShoppingList
@@ -94,9 +94,9 @@ const initialState: ClientShoppingList = deepFreeze({
   connectionState: 'disconnected',
 })
 
-type CompletionStateUpdate = {
-  completions?: ReadonlyArray<CompletionItem>
-  deletedCompletions?: ReadonlyArray<string>
+interface CompletionStateUpdate {
+  completions?: readonly CompletionItem[]
+  deletedCompletions?: readonly string[]
 }
 
 export default class ShoppingListContainerComponent extends Component<Props, State> {
@@ -331,10 +331,10 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     try {
       const syncResponse = createSyncResponse(await responseToJSON(await syncPromise))
       const serverSyncedShoppingList = syncResponse.list
-      const newChanges: ReadonlyArray<Change> = syncResponse.changes || []
-      const categories: ReadonlyArray<CategoryDefinition> = syncResponse.categories || []
-      const orders: ReadonlyArray<Order> = syncResponse.orders || []
-      const completions: ReadonlyArray<CompletionItem> = syncResponse.completions || []
+      const newChanges: readonly Change[] = syncResponse.changes || []
+      const categories: readonly CategoryDefinition[] = syncResponse.categories || []
+      const orders: readonly Order[] = syncResponse.orders || []
+      const completions: readonly CompletionItem[] = syncResponse.completions || []
       this.setState(
         (prevState) => {
           const serverShoppingList: ShoppingList = _.omit(serverSyncedShoppingList, 'token', 'changeId')
@@ -576,7 +576,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     })
   }
 
-  updateOrders = (orders: ReadonlyArray<Order>): void => {
+  updateOrders = (orders: readonly Order[]): void => {
     this.markListAsUsed()
     this.setState(
       {

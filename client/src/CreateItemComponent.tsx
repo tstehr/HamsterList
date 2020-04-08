@@ -15,26 +15,26 @@ import IconButton from './IconButton'
 import KeyFocusComponent from './KeyFocusComponent'
 import { ApplyDiff, CreateApplicableDiff, CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
 
-export type ItemInput = {
+export interface ItemInput {
   item: LocalItem
   categoryAdded: boolean
 }
 
-type Props = {
-  completions: ReadonlyArray<CompletionItem>
-  changes: ReadonlyArray<Change>
-  unsyncedChanges: ReadonlyArray<Change>
-  categories: ReadonlyArray<CategoryDefinition>
+interface Props {
+  completions: readonly CompletionItem[]
+  changes: readonly Change[]
+  unsyncedChanges: readonly Change[]
+  categories: readonly CategoryDefinition[]
   createItem: CreateItem
   deleteCompletion: DeleteCompletion
   applyDiff: ApplyDiff
   createApplicableDiff: CreateApplicableDiff
 }
 
-type State = {
+interface State {
   inputValue: string
   itemsForInputLines: ReadonlyArray<ItemInput | null>
-  itemsInCreation: ReadonlyArray<ItemInput>
+  itemsInCreation: readonly ItemInput[]
   formHasFocus: boolean
   forceMultiline: boolean
   changingQuickly: boolean
@@ -129,11 +129,11 @@ export default class CreateItemComponent extends Component<Props, State> {
     newInputValue: string
   ): {
     inputValue: string
-    itemsForInputLines: readonly (ItemInput | null)[]
+    itemsForInputLines: ReadonlyArray<ItemInput | null>
     itemsInCreation: readonly ItemInput[]
   } {
     const itemsForInputLines = this.getItemsForInputLines(newInputValue)
-    const itemsInCreation: ReadonlyArray<ItemInput> = itemsForInputLines.filter(
+    const itemsInCreation: readonly ItemInput[] = itemsForInputLines.filter(
       (ii: ItemInput | null): ii is ItemInput => ii != null
     )
 

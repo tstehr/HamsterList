@@ -13,10 +13,10 @@ import './ChangesComponent.css'
 import PillItemComponent from './PillItemComponent'
 import { ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
 
-type Props = {
-  changes: ReadonlyArray<Change>
-  unsyncedChanges: ReadonlyArray<Change>
-  categories: ReadonlyArray<CategoryDefinition>
+interface Props {
+  changes: readonly Change[]
+  unsyncedChanges: readonly Change[]
+  categories: readonly CategoryDefinition[]
   applyDiff: ApplyDiff
   createApplicableDiff: CreateApplicableDiff
 }
@@ -72,7 +72,7 @@ export default function ChangesComponent(props: Props): JSX.Element {
 
   allDiffs.reverse()
 
-  const undoAll = (diffs: ReadonlyArray<Diff>): void => {
+  const undoAll = (diffs: readonly Diff[]): void => {
     for (const diff of diffs) {
       try {
         const reverseDiff = createReverseDiff(diff)
@@ -168,10 +168,10 @@ export default function ChangesComponent(props: Props): JSX.Element {
   )
 }
 
-type DiffProps = {
+interface DiffProps {
   change: Change
   diff: Diff
-  categories: ReadonlyArray<CategoryDefinition>
+  categories: readonly CategoryDefinition[]
   unsynced: boolean
   detailsExpanded: boolean
   isNewest: boolean

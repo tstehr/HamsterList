@@ -15,8 +15,8 @@ export default class CategoriesController {
       return
     }
 
-    const categorySpecs: ReadonlyArray<unknown> = req.body
-    let categories: ReadonlyArray<CategoryDefinition>
+    const categorySpecs: readonly unknown[] = req.body
+    let categories: readonly CategoryDefinition[]
 
     try {
       categories = errorMap<unknown, CategoryDefinition>(categorySpecs, createCategoryDefinition)

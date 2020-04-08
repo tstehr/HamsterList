@@ -29,10 +29,10 @@ export default class ChangesController {
 }
 
 export function getChangesBetween(
-  changes: ReadonlyArray<Change>,
+  changes: readonly Change[],
   oldest?: UUID | null,
   newest?: UUID | null
-): ReadonlyArray<Change> {
+): readonly Change[] {
   const oldestIndex = _.findIndex(changes, (c) => c.id === oldest)
   const startIndex = oldestIndex === -1 ? 0 : oldestIndex
   const newestIndex = _.findIndex(changes, (c) => c.id === newest)

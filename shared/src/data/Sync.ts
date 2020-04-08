@@ -13,29 +13,29 @@ export interface SyncedShoppingList {
   readonly title: string
   readonly token: string
   readonly changeId: UUID | undefined | null
-  readonly items: ReadonlyArray<Item>
+  readonly items: readonly Item[]
 }
 
 export interface SyncRequest {
   readonly previousSync: SyncedShoppingList
   readonly currentState: ShoppingList
-  readonly includeInResponse?: ReadonlyArray<string>
-  readonly categories?: ReadonlyArray<CategoryDefinition>
-  readonly orders?: ReadonlyArray<Order>
-  readonly deleteCompletions?: ReadonlyArray<string>
+  readonly includeInResponse?: readonly string[]
+  readonly categories?: readonly CategoryDefinition[]
+  readonly orders?: readonly Order[]
+  readonly deleteCompletions?: readonly string[]
 }
 
 export interface SyncResponse {
   readonly list: SyncedShoppingList
-  readonly completions?: ReadonlyArray<CompletionItem>
-  readonly categories?: ReadonlyArray<CategoryDefinition>
-  readonly orders?: ReadonlyArray<Order>
-  readonly changes?: ReadonlyArray<Change>
+  readonly completions?: readonly CompletionItem[]
+  readonly categories?: readonly CategoryDefinition[]
+  readonly orders?: readonly Order[]
+  readonly changes?: readonly Change[]
 }
 
 export function createSyncedShoppingList(
   syncedShoppingListSpec: unknown,
-  categories?: ReadonlyArray<CategoryDefinition> | null
+  categories?: readonly CategoryDefinition[] | null
 ): SyncedShoppingList {
   if (isIndexable(syncedShoppingListSpec)) {
     const shoppingList = createShoppingList(_.omit(syncedShoppingListSpec, ['token', 'changeId']), categories)
@@ -87,7 +87,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
       throw new TypeError(`Error in currentState: ${e.message}`)
     }
 
-    let includeInResponse: ReadonlyArray<string> | undefined = undefined
+    let includeInResponse: readonly string[] | undefined = undefined
     if (syncRequestSpec.includeInResponse != null) {
       includeInResponse = errorMap(syncRequestSpec.includeInResponse, (s) => {
         if (typeof s !== 'string') {
@@ -97,7 +97,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
       })
     }
 
-    let categories: ReadonlyArray<CategoryDefinition> | undefined = undefined
+    let categories: readonly CategoryDefinition[] | undefined = undefined
     if (syncRequestSpec.categories != null) {
       try {
         categories = errorMap(syncRequestSpec.categories, createCategoryDefinition)
@@ -106,7 +106,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
       }
     }
 
-    let orders: ReadonlyArray<Order> | undefined = undefined
+    let orders: readonly Order[] | undefined = undefined
     if (syncRequestSpec.orders != null) {
       try {
         orders = errorMap(syncRequestSpec.orders, createOrder)
@@ -115,7 +115,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
       }
     }
 
-    let deleteCompletions: ReadonlyArray<string> | undefined = undefined
+    let deleteCompletions: readonly string[] | undefined = undefined
     if (syncRequestSpec.deleteCompletions != null) {
       try {
         deleteCompletions = errorMap(syncRequestSpec.deleteCompletions, (c) => {
@@ -158,7 +158,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
       throw new TypeError(`Error in list: ${e.message}`)
     }
 
-    let completions: ReadonlyArray<CompletionItem> | undefined = undefined
+    let completions: readonly CompletionItem[] | undefined = undefined
     if (syncResponseSpec.completions != null) {
       try {
         completions = errorMap(syncResponseSpec.completions, createCompletionItem)
@@ -167,7 +167,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
       }
     }
 
-    let categories: ReadonlyArray<CategoryDefinition> | undefined = undefined
+    let categories: readonly CategoryDefinition[] | undefined = undefined
     if (syncResponseSpec.categories != null) {
       try {
         categories = errorMap(syncResponseSpec.categories, createCategoryDefinition)
@@ -176,7 +176,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
       }
     }
 
-    let orders: ReadonlyArray<Order> | undefined = undefined
+    let orders: readonly Order[] | undefined = undefined
     if (syncResponseSpec.orders != null) {
       try {
         orders = errorMap(syncResponseSpec.orders, createOrder)
@@ -185,7 +185,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
       }
     }
 
-    let changes: ReadonlyArray<Change> | undefined = undefined
+    let changes: readonly Change[] | undefined = undefined
     if (syncResponseSpec.changes != null) {
       try {
         changes = errorMap(syncResponseSpec.changes, createChange)

@@ -5,9 +5,9 @@ import { CategoryTextComponent } from './CategoryComponent'
 import ItemComponent from './ItemComponent'
 import './PillItemComponent.css'
 
-type Props = {
+interface Props {
   item: Item
-  categories: ReadonlyArray<CategoryDefinition>
+  categories: readonly CategoryDefinition[]
 }
 
 const PillItemComponent = React.memo(

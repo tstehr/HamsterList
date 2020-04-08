@@ -31,16 +31,16 @@ export function createOrder(orderSpec: unknown): Order {
   endValidation()
 }
 
-export function sortItems(items: ReadonlyArray<Item>, categoryOrder: CategoryOrder): ReadonlyArray<Item> {
+export function sortItems(items: readonly Item[], categoryOrder: CategoryOrder): readonly Item[] {
   const categoryIteratee = (item: Item): number => convertSmallerZeroToInf(categoryOrder.indexOf(undefinedToNull(item.category)))
 
   return _.sortBy(items, [categoryIteratee, getNameLowerCase, 'id'])
 }
 
 export function sortCategories(
-  categories: ReadonlyArray<CategoryDefinition>,
+  categories: readonly CategoryDefinition[],
   categoryOrder: CategoryOrder
-): ReadonlyArray<CategoryDefinition> {
+): readonly CategoryDefinition[] {
   const categoryIteratee = (cat: CategoryDefinition): number => convertSmallerZeroToInf(categoryOrder.indexOf(cat.id))
 
   return _.sortBy(categories as CategoryDefinition[], categoryIteratee)
@@ -48,7 +48,7 @@ export function sortCategories(
 
 export function completeCategoryOrder(
   categoryOrder: CategoryOrder,
-  categories: ReadonlyArray<CategoryDefinition>
+  categories: readonly CategoryDefinition[]
 ): CategoryOrder {
   return sortCategories(categories, categoryOrder).map((cat) => cat.id)
 }

@@ -12,10 +12,10 @@ import OrderSelectComponent from './OrderSelectComponent'
 import { DeleteItem, SelectOrder, UpdateItem } from './ShoppingListContainerComponent'
 import './ShoppingListItemsComponent.css'
 
-type Props = {
-  items: ReadonlyArray<Item>
-  categories: ReadonlyArray<CategoryDefinition>
-  orders: ReadonlyArray<Order>
+interface Props {
+  items: readonly Item[]
+  categories: readonly CategoryDefinition[]
+  orders: readonly Order[]
   selectedOrder: UUID | undefined | null
   selectOrder: SelectOrder
   deleteItem: DeleteItem
@@ -33,7 +33,7 @@ type ItemOrCategory =
       categoryId: UUID | undefined | null
     }
 
-function createItemOrCategoryList(order: CategoryOrder, items: ReadonlyArray<Item>): ReadonlyArray<ItemOrCategory> {
+function createItemOrCategoryList(order: CategoryOrder, items: readonly Item[]): readonly ItemOrCategory[] {
   const sortedItems = sortItems(items, order)
   const itemOrCategoryList: ItemOrCategory[] = []
   let prevCategory = null

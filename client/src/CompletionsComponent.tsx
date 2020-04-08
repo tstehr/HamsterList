@@ -7,24 +7,24 @@ import CreateItemButtonComponent from './CreateItemButtonComponent'
 import { ItemInput } from './CreateItemComponent'
 import { CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
 
-type Props = {
+interface Props {
   focusItemsInCreation: boolean
-  itemsInCreation: ReadonlyArray<ItemInput>
-  completions: ReadonlyArray<CompletionItem>
-  categories: ReadonlyArray<CategoryDefinition>
+  itemsInCreation: readonly ItemInput[]
+  completions: readonly CompletionItem[]
+  categories: readonly CategoryDefinition[]
   createItem: CreateItem
   deleteCompletion: DeleteCompletion
   focusInput: () => void
 }
 export default class CompletionsComponent extends Component<Props> {
-  getCompletionItems(): ReadonlyArray<LocalItem> {
+  getCompletionItems(): readonly LocalItem[] {
     if (this.props.itemsInCreation.length === 0) {
       return []
     }
 
     const itemsInCreationNames = this.props.itemsInCreation.map((ii) => ii.item.name.trim().toLowerCase())
 
-    let results: (fuzzy.FilterResult<CompletionItem> & { item: LocalItem })[] = []
+    let results: Array<fuzzy.FilterResult<CompletionItem> & { item: LocalItem }> = []
     for (const itemInput of this.props.itemsInCreation) {
       const itemInCreation = itemInput.item
       const resultsForItem = fuzzy

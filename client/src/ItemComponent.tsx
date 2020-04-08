@@ -5,7 +5,7 @@ import React from 'react'
 import { Amount, BaseItem } from 'shoppinglist-shared'
 import './ItemComponent.css'
 
-type AmountProps = {
+interface AmountProps {
   amount: Amount | undefined | null
 }
 
@@ -23,7 +23,7 @@ const AmountComponent = React.memo((props: AmountProps) => {
   }
 }, _.isEqual)
 
-type Props = {
+interface Props {
   item: BaseItem
   className?: string
 }

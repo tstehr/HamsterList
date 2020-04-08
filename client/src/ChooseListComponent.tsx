@@ -7,18 +7,18 @@ import { createDB, getRecentlyUsedLists } from './db'
 import TopBarComponent from './TopBarComponent'
 import { responseToJSON } from './utils'
 
-export type RecentlyUsedList = {
+export interface RecentlyUsedList {
   id: string
   uses: number
   lastUsedTimestamp: number
   title?: string
 }
 
-type Props = {}
+interface Props {}
 
-type State = {
+interface State {
   listid: string | undefined | null
-  recentlyUsedLists: ReadonlyArray<RecentlyUsedList>
+  recentlyUsedLists: readonly RecentlyUsedList[]
 }
 
 export default class ChooseListComponent extends Component<Props, State> {

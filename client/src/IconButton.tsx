@@ -1,7 +1,7 @@
 import React from 'react'
 import './IconButton.css'
 type IconType = 'DELETE' | 'ADD'
-type Props = {
+interface Props {
   icon: IconType
   alt: string
   className?: string

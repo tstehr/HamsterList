@@ -10,15 +10,15 @@ import IconButton from './IconButton'
 import ItemComponent from './ItemComponent'
 import { DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
 
-type Props = {
+interface Props {
   item: Item
-  categories: ReadonlyArray<CategoryDefinition>
+  categories: readonly CategoryDefinition[]
   deleteItem: DeleteItem
   updateItem: UpdateItem
   up: Up
 }
 
-type State = {
+interface State {
   hasFocus: boolean
   isEditing: boolean
   inputValue: string

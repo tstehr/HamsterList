@@ -162,7 +162,7 @@ export default class SyncController {
   }
 }
 
-function getUpdatedItems(oldList: ShoppingList, newList: ShoppingList): ReadonlyArray<Item> {
+function getUpdatedItems(oldList: ShoppingList, newList: ShoppingList): readonly Item[] {
   const oldMap: { [k in UUID]: Item | undefined | null } = _.keyBy([...oldList.items], 'id')
 
   const newMap: { [k in UUID]: Item | undefined | null } = _.keyBy([...newList.items], 'id')

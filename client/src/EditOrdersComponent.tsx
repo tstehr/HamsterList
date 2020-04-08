@@ -10,10 +10,10 @@ import './EditOrdersComponent.css'
 import { Up } from './HistoryTracker'
 import { UpdateOrders } from './ShoppingListContainerComponent'
 
-type Props = {
+interface Props {
   listid: string
-  orders: ReadonlyArray<Order>
-  categories: ReadonlyArray<CategoryDefinition>
+  orders: readonly Order[]
+  categories: readonly CategoryDefinition[]
   updateOrders: UpdateOrders
   up: Up
 }
@@ -155,11 +155,11 @@ const SortableOrder = SortableElement(({ order, listid }: { order: Order; listid
   </Link>
 ))
 
-type NullSafeEditOrderProps = {
+interface NullSafeEditOrderProps {
   listid: string
   orderid: string | undefined | null
-  orders: ReadonlyArray<Order>
-  categories: ReadonlyArray<CategoryDefinition>
+  orders: readonly Order[]
+  categories: readonly CategoryDefinition[]
   updateOrder: (a: Order) => void
   deleteOrder: (a: UUID) => void
   up: Up
@@ -191,15 +191,15 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps): JSX.Element 
   )
 }
 
-type EditOrderProps = {
+interface EditOrderProps {
   listid: string
   order: Order
-  categories: ReadonlyArray<CategoryDefinition>
+  categories: readonly CategoryDefinition[]
   updateOrder: (a: Order) => void
   deleteOrder: (a: UUID) => void
   up: Up
 }
-type EditOrderState = {
+interface EditOrderState {
   inputValue: string
   hasFocus: boolean
 }

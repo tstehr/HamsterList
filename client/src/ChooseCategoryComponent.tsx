@@ -5,8 +5,8 @@ import CategoryComponent from './CategoryComponent'
 import './ChooseCategoryComponent.css'
 import KeyFocusComponent from './KeyFocusComponent'
 
-type Props = {
-  categories: ReadonlyArray<CategoryDefinition>
+interface Props {
+  categories: readonly CategoryDefinition[]
   categoryId: UUID | undefined | null
   updateCategory: (a?: UUID | null) => void
 }

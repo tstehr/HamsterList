@@ -4,8 +4,8 @@ import { createUUID, Order, UUID } from 'shoppinglist-shared'
 import './OrderSelectComponent.css'
 import { SelectOrder } from './ShoppingListContainerComponent'
 
-type Props = {
-  orders: ReadonlyArray<Order>
+interface Props {
+  orders: readonly Order[]
   selectedOrder: UUID | undefined | null
   selectOrder: SelectOrder
 }

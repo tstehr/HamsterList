@@ -35,15 +35,15 @@ import {
 import ShoppingListItemsComponent from './ShoppingListItemsComponent'
 import TopBarComponent, { EditTitleComponent, SyncStatusComponent } from './TopBarComponent'
 
-type Props = {
+interface Props {
   shoppingList: ShoppingList
-  completions: ReadonlyArray<CompletionItem>
-  categories: ReadonlyArray<CategoryDefinition>
-  orders: ReadonlyArray<Order>
-  changes: ReadonlyArray<Change>
+  completions: readonly CompletionItem[]
+  categories: readonly CategoryDefinition[]
+  orders: readonly Order[]
+  changes: readonly Change[]
   selectedOrder: UUID | undefined | null
   username: string | undefined | null
-  unsyncedChanges: ReadonlyArray<Change>
+  unsyncedChanges: readonly Change[]
   connectionState: ConnectionState
   syncing: boolean
   lastSyncFailed: boolean

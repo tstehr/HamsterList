@@ -4,7 +4,7 @@ import { createUUID, UUID } from '../util/uuid'
 import { checkAttributeType, checkKeys, endValidation } from '../util/validation'
 
 export type Color = string
-export type CategoryDefinition = {
+export interface CategoryDefinition {
   readonly id: UUID
   readonly name: string
   readonly shortName: string

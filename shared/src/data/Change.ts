@@ -10,7 +10,7 @@ export interface Change {
   readonly username: string | undefined | null
   readonly id: UUID
   readonly date: Date | deepFreeze.DeepReadonly<Date>
-  readonly diffs: ReadonlyArray<Diff>
+  readonly diffs: readonly Diff[]
 }
 
 export const ADD_ITEM: 'ADD_ITEM' = 'ADD_ITEM'
@@ -87,7 +87,7 @@ export function createDiff(diffSpec: unknown): Diff {
   endValidation()
 }
 
-export function getOnlyNewChanges(changes: ReadonlyArray<Change>): ReadonlyArray<Change> {
+export function getOnlyNewChanges(changes: readonly Change[]): readonly Change[] {
   const now = new Date()
 
   // index of first change that is newer than 14 days
@@ -100,7 +100,7 @@ export function getOnlyNewChanges(changes: ReadonlyArray<Change>): ReadonlyArray
   return changes.slice(Math.min(dateIndex, lengthIndex), changes.length)
 }
 
-export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShoppingList: BaseShoppingList): ReadonlyArray<Diff> {
+export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShoppingList: BaseShoppingList): readonly Diff[] {
   const diffs = []
 
   const oldMap: { [k in UUID]: Item | undefined | null } = _.keyBy([...oldShoppingList.items], 'id')

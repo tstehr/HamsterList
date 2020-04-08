@@ -8,17 +8,17 @@ import { sortItems } from './Order'
 export interface BaseShoppingList {
   readonly id: string
   readonly title: string
-  readonly items: ReadonlyArray<Item>
+  readonly items: readonly Item[]
 }
 export interface ShoppingList {
   readonly id: string
   readonly title: string
-  readonly items: ReadonlyArray<Item>
+  readonly items: readonly Item[]
 }
 
 export function createShoppingList(
   shoppingListSpec: unknown,
-  categories?: ReadonlyArray<CategoryDefinition> | null
+  categories?: readonly CategoryDefinition[] | null
 ): ShoppingList {
   if (
     checkKeys(shoppingListSpec, ['id', 'title', 'items']) &&
@@ -60,7 +60,7 @@ export function mergeShoppingLists(
   base: ShoppingList,
   client: ShoppingList,
   server: ShoppingList,
-  categories?: ReadonlyArray<CategoryDefinition> | null
+  categories?: readonly CategoryDefinition[] | null
 ): ShoppingList {
   let title: string
   if (base.title != client.title) {

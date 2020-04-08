@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import { createServerShoppingList, ServerShoppingList } from './ServerShoppingList'
 
 export interface DBContents {
-  readonly lists: ReadonlyArray<ServerShoppingList>
+  readonly lists: readonly ServerShoppingList[]
 }
 
 export class DB {
@@ -53,7 +53,7 @@ export class DB {
 }
 
 export function updateInArray<T, U extends { readonly id: T }>(
-  arr: ReadonlyArray<U>,
+  arr: readonly U[],
   toUpdate: U,
   insertIfNotFound = false
 ): DeepReadonly<U[]> {
