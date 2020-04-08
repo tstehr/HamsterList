@@ -3,7 +3,7 @@ import FlipMove from 'react-flip-move'
 import { Link, Redirect } from 'react-router-dom'
 import { createRandomUUID, createShoppingList } from 'shoppinglist-shared'
 import './ChooseListComponent.css'
-import { createDB, getRecentlyUsedLists } from './db'
+import { createDB, DB, getRecentlyUsedLists } from './db'
 import TopBarComponent from './TopBarComponent'
 import { responseToJSON } from './utils'
 
@@ -14,20 +14,18 @@ export interface RecentlyUsedList {
   title?: string
 }
 
-interface Props {}
-
 interface State {
   listid: string | undefined | null
   recentlyUsedLists: readonly RecentlyUsedList[]
 }
 
-export default class ChooseListComponent extends Component<Props, State> {
-  db: any
+export default class ChooseListComponent extends Component<{}, State> {
+  db: DB
   inputListid: {
     current: null | HTMLInputElement
   }
 
-  constructor(props: Props) {
+  constructor(props: {}) {
     super(props)
     this.db = createDB()
     this.state = {
@@ -58,9 +56,11 @@ export default class ChooseListComponent extends Component<Props, State> {
 
   onSubmit = (e: React.SyntheticEvent<HTMLFormElement>): void => {
     e.preventDefault()
+    if (this.inputListid.current == null) {
+      return
+    }
     this.setState({
-      // @ts-ignore
-      listid: e.currentTarget.elements['listid'].value.trim(),
+      listid: this.inputListid.current.value.trim(),
     })
   }
 

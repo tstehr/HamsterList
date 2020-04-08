@@ -1,4 +1,14 @@
-declare module 'lodash-id'
+declare module 'lodash-id' {
+  declare module 'lodash' {
+    interface CollectionChain<T> {
+      // minimal subsets of lodash-id functions we use
+      // see https://github.com/typicode/lodash-id
+      getById(id): ExpChain<T | undefined>
+      upsert(object: T): CollectionChain<T>
+      removeById(id): ExpChain<T | undefined>
+    }
+  }
+}
 
 declare module 'share-api-polyfill'
 

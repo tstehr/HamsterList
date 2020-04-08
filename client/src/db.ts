@@ -6,7 +6,7 @@ import { frecency } from 'shoppinglist-shared'
 import { ClientShoppingList } from './ShoppingListContainerComponent'
 
 // temporary workaround, because there are no types for lodash-id
-export type DB = any //low.LowdbSync<DBContents>
+export type DB = low.LowdbSync<DBContents>
 
 export interface DBContents {
   lists: readonly ClientShoppingList[]
