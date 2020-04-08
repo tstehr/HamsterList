@@ -10,7 +10,11 @@
   ],
   "rules": {
     "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
-    "@typescript-eslint/explicit-function-return-type": ["warn", { "allowExpressions": true }]
+    "@typescript-eslint/explicit-function-return-type": ["warn", { "allowExpressions": true }],
+    "@typescript-eslint/array-type": ["warn", { "default": "array-simple" }],
+    "@typescript-eslint/consistent-type-definitions": ["warn", "interface"],
+    "@typescript-eslint/ban-types": ["error"],
+    "@typescript-eslint/no-extra-non-null-assertion": ["error"]
   },
   "overrides": [
     {
