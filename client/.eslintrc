@@ -1,4 +1,5 @@
 {
+  "root": false,
   "env": {
     "node": false
   },
