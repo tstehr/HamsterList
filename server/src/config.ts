@@ -1,4 +1,4 @@
-import camelCase from 'camel-case'
+import { camelCase } from 'camel-case'
 import fs from 'fs-extra'
 import nconf from 'nconf'
 import path from 'path'

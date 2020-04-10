@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { Query } from 'express-serve-static-core'
 import _ from 'lodash'
 import { Change, createUUID, UUID } from 'shoppinglist-shared'
 import { ListidParam } from 'ShoppingListController'
@@ -16,13 +17,13 @@ export default class ChangesController {
     next()
   }
 
-  getUUID(queryParam: string | string[] | void): UUID | undefined | null {
-    if (Array.isArray(queryParam)) {
-      throw new TypeError('Given parameters must be of type string')
-    }
-
+  getUUID(queryParam: Query[string]): UUID | undefined | null {
     if (queryParam == null) {
       return null
+    }
+
+    if (typeof queryParam !== 'string') {
+      throw new TypeError('Given parameters must be of type string')
     }
 
     return createUUID(queryParam)

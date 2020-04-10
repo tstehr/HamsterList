@@ -1,5 +1,6 @@
 import deepFreeze from 'deep-freeze'
 import { NextFunction, Request, Response } from 'express'
+import { Query } from 'express-serve-static-core'
 import _ from 'lodash'
 import {
   addMatchingCategory,
@@ -8,6 +9,7 @@ import {
   CompletionItem,
   createItemFromItemStringRepresentation,
   createSyncRequest,
+  errorMap,
   Item,
   mergeShoppingLists,
   normalizeCompletionName,
@@ -25,6 +27,9 @@ import { updateRecentlyUsed } from './ItemController'
 import { getBaseShoppingList, getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList'
 import TokenCreator from './TokenCreator'
 
+// TODO remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/43823 is merged
+type QueryValueWorkaround = string | Query | Array<string | Query>
+
 export default class SyncController {
   tokenCreator: TokenCreator
 
@@ -33,7 +38,7 @@ export default class SyncController {
   }
 
   handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
-    res.send(this.buildResponse(req.list, req.query['includeInResponse']))
+    res.send(this.buildResponse(req.list, this.makeIncludeInResponse(req.query['includeInResponse'])))
     next()
   }
 
@@ -111,6 +116,21 @@ export default class SyncController {
         error: 'req.updatedList was null',
       })
     }
+  }
+
+  makeIncludeInResponse(includeInResponseQueryParam: QueryValueWorkaround): readonly string[] {
+    if (typeof includeInResponseQueryParam === 'string') {
+      return [includeInResponseQueryParam]
+    }
+    if (Array.isArray(includeInResponseQueryParam)) {
+      return errorMap(includeInResponseQueryParam, (el: string | Query): string => {
+        if (typeof el !== 'string') {
+          throw TypeError('TODO')
+        }
+        return el
+      })
+    }
+    return []
   }
 
   buildResponse(
