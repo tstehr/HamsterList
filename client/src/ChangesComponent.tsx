@@ -1,8 +1,8 @@
 import classNames from 'classnames'
-import differenceInHours from 'date-fns/difference_in_hours'
-import differenceInMinutes from 'date-fns/difference_in_minutes'
-import distanceInWords from 'date-fns/distance_in_words'
+import differenceInHours from 'date-fns/differenceInHours'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 import format from 'date-fns/format'
+import formatDistance from 'date-fns/formatDistance'
 import { DeepReadonly } from 'deep-freeze'
 import _, { isEqual } from 'lodash'
 import memoize from 'memoize-one'
@@ -185,9 +185,9 @@ export class DiffComponent extends Component<DiffProps> {
   getDateString = memoize((readonlyDate: DeepReadonly<Date>) => {
     const date = readonlyDate as Date
     const now = new Date()
-    const absoluteDateString = format(date, 'YYYY-MM-DD HH:mm')
+    const absoluteDateString = format(date, 'yyyy-MM-dd HH:mm')
     const hours = differenceInHours(now, date)
-    const dateString = hours < 12 ? `${distanceInWords(now, date)} ago` : absoluteDateString
+    const dateString = hours < 12 ? `${formatDistance(now, date)} ago` : absoluteDateString
     return [dateString, absoluteDateString, date.toISOString()]
   }, isEqual)
 
