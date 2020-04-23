@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { isEqual } from 'lodash'
-import mathjs from 'mathjs'
+import * as mathjs from 'mathjs'
 import React from 'react'
 import { Amount, BaseItem } from 'shoppinglist-shared'
 import './ItemComponent.css'

@@ -12,7 +12,7 @@
     "lodash-id": "^0.14.0",
     "lowdb": "^1.0.0",
     "material-color-hash": "^0.1.4",
-    "mathjs": "^5.0.2",
+    "mathjs": "^6.6.3",
     "memoize-one": "^5.1.1",
     "react": "^16.8.0",
     "react-autosize-textarea": "^4.0.0",

@@ -27,7 +27,7 @@
     "escape-string-regexp": "^3.0.0",
     "is-uuid": "^1.0.2",
     "lodash": "^4.17.14",
-    "mathjs": "^6.6.2",
+    "mathjs": "^6.6.3",
     "nodemon": "^2.0.3",
     "uuid": "^7.0.3"
   },
