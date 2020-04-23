@@ -1,0 +1,155 @@
+import React, { Component } from 'react'
+import FlipMove from 'react-flip-move'
+import { Link, Redirect } from 'react-router-dom'
+import { createRandomUUID, createShoppingList } from 'shoppinglist-shared'
+import './ChooseListComponent.css'
+import { createDB, DB, getRecentlyUsedLists } from './db'
+import TopBarComponent from './TopBarComponent'
+import { responseToJSON } from './utils'
+
+export interface RecentlyUsedList {
+  id: string
+  uses: number
+  lastUsedTimestamp: number
+  title?: string
+}
+
+interface State {
+  listid: string | undefined | null
+  recentlyUsedLists: readonly RecentlyUsedList[]
+}
+
+export default class ChooseListComponent extends Component<{}, State> {
+  db: DB
+  inputListid: {
+    current: null | HTMLInputElement
+  }
+
+  constructor(props: {}) {
+    super(props)
+    this.db = createDB()
+    this.state = {
+      listid: null,
+      recentlyUsedLists: getRecentlyUsedLists(this.db),
+    }
+    this.inputListid = React.createRef()
+  }
+
+  componentDidMount(): void {
+    if (this.inputListid.current) {
+      this.inputListid.current.focus()
+    }
+
+    window.addEventListener('storage', this.handleStorage)
+  }
+
+  componentWillUnmount(): void {
+    window.removeEventListener('storage', this.handleStorage)
+  }
+
+  handleStorage = (): void => {
+    this.db.read()
+    this.setState({
+      recentlyUsedLists: getRecentlyUsedLists(this.db),
+    })
+  }
+
+  onSubmit = (e: React.SyntheticEvent<HTMLFormElement>): void => {
+    e.preventDefault()
+    if (this.inputListid.current == null) {
+      return
+    }
+    this.setState({
+      listid: this.inputListid.current.value.trim(),
+    })
+  }
+
+  async createRandomList(): Promise<void> {
+    const listid = createRandomUUID()
+    const response = await fetch(`/api/${listid}/`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'PUT',
+      body: JSON.stringify({
+        id: listid,
+        title: `New List (${new Date().toLocaleString()})`,
+      }),
+    })
+    const json = await responseToJSON(response)
+    const shoppingList = createShoppingList(json)
+    this.setState({
+      listid: shoppingList.id,
+    })
+  }
+
+  render(): JSX.Element {
+    return (
+      <div className="ChooseListComponent">
+        {this.state.listid && <Redirect to={this.state.listid} push />}
+        <TopBarComponent responsive={false}>
+          <h1 className="ChooseListComponent__title">ShoppingList</h1>
+        </TopBarComponent>
+        <div className="ChooseListComponent__content">
+          <section>
+            <button type="button" className="ChooseListComponent__randomButton" onClick={this.createRandomList.bind(this)}>
+              Create new List
+            </button>
+          </section>
+
+          <section>
+            Or create/open list with name
+            <form className="ChooseListComponent__openForm" onSubmit={this.onSubmit}>
+              <input type="text" name="listid" ref={this.inputListid} />
+              <button>Go</button>
+            </form>
+          </section>
+
+          {this.state.recentlyUsedLists.length > 0 && (
+            <section>
+              <h2>Recently Used</h2>
+
+              <FlipMove
+                typeName={null}
+                duration="250"
+                staggerDurationBy="10"
+                staggerDelayBy="10"
+                enterAnimation="accordionVertical"
+                leaveAnimation="accordionVertical"
+              >
+                {this.state.recentlyUsedLists.map((rul) => (
+                  <Link className="ChooseListComponent__recentlyUsedLink" key={rul.id} to={'/' + rul.id}>
+                    {rul.title}
+                  </Link>
+                ))}
+              </FlipMove>
+            </section>
+          )}
+
+          <section className="ChooseListComponent__footer">
+            <p>
+              Icons made by{' '}
+              <a href="https://www.flaticon.com/authors/egor-rumyantsev" title="Egor Rumyantsev">
+                Egor Rumyantsev
+              </a>
+              ,{' '}
+              <a href="https://www.flaticon.com/authors/hanan" title="Hanan">
+                Hanan
+              </a>{' '}
+              and{' '}
+              <a href="https://www.flaticon.com/authors/gregor-cresnar" title="Gregor Cresnar">
+                Gregor Cresnar
+              </a>{' '}
+              from{' '}
+              <a href="https://www.flaticon.com/" title="Flaticon">
+                www.flaticon.com
+              </a>
+            </p>
+            <p>Version: {process.env.REACT_APP_GIT_SHA ?? 'No version information found!'}</p>
+          </section>
+        </div>
+      </div>
+    )
+  }
+}

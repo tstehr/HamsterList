@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "lib": ["es6", "dom"],
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "esnext",
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "outDir": "unused-ts-output",
+    "noEmit": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*"]
+}

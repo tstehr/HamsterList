@@ -2,52 +2,73 @@
   "name": "shoppinglist-shared",
   "version": "1.0.0",
   "main": "build/index.js",
+  "types": "build/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "build": "yarn run build:clean && yarn run build:babel && yarn run build:flow",
+    "build": "yarn run build:clean && yarn run build:babel & yarn run build:tsc",
     "build:clean": "rm -rf ./build",
-    "build:babel": "babel src --out-dir build --source-maps",
-    "build:flow": "flow-copy-source -v src build",
-    "watch": "yarn run build:clean && yarn run watch:babel & yarn run watch:flow",
+    "build:babel": "babel src --out-dir build --source-maps --extensions '.ts'",
+    "build:tsc": "tsc --emitDeclarationOnly",
+    "watch": "yarn run build:clean && yarn run watch:babel & yarn run watch:tsc",
     "watch:babel": "yarn run build:babel --watch",
-    "watch:flow": "yarn run build:flow --watch",
+    "watch:tsc": "yarn run build:tsc --watch",
     "test": "jest src",
-    "flow": "flow",
-    "lint": "eslint src"
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "typecheck": "tsc --noEmit",
+    "format": "yarn run format:imports; yarn run format:prettier",
+    "format:imports": "organize-imports-cli tsconfig.json",
+    "format:prettier": "prettier src --write"
   },
   "dependencies": {
-    "@babel/runtime": "^7.5.4",
+    "@babel/runtime": "^7.9.2",
     "color-string": "^1.5.2",
-    "date-fns": "^1.30.1",
+    "date-fns": "^2.12.0",
     "deep-freeze": "^0.0.1",
-    "escape-string-regexp": "^2.0.0",
+    "escape-string-regexp": "^4.0.0",
     "is-uuid": "^1.0.2",
     "lodash": "^4.17.14",
-    "mathjs": "^5.0.2",
-    "uuid": "^3.1.0"
+    "mathjs": "^6.6.3",
+    "nodemon": "^2.0.3",
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.5.0",
-    "@babel/core": "^7.5.4",
-    "@babel/plugin-proposal-class-properties": "^7.5.0",
-    "@babel/plugin-transform-runtime": "^7.5.0",
-    "@babel/preset-env": "^7.5.4",
-    "@babel/preset-flow": "^7.0.0",
-    "babel-eslint": "^10.0.2",
-    "eslint": "^6.0.1",
-    "eslint-plugin-flowtype": "^3.11.1",
-    "flow-bin": "^0.102.0",
-    "flow-copy-source": "^2.0.1",
-    "flow-typed": "^2.5.2",
-    "jest": "^24.8.0",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.9.0",
+    "@babel/plugin-transform-typescript": "^7.9.4",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-typescript": "^7.9.0",
+    "@types/babel__core": "^7.1.7",
+    "@types/babel__plugin-transform-runtime": "^7.9.0",
+    "@types/babel__preset-env": "^7.9.0",
+    "@types/color-string": "^1.5.0",
+    "@types/deep-freeze": "^0.1.2",
+    "@types/is-uuid": "^1.0.0",
+    "@types/jest": "^24.9.0",
+    "@types/lodash": "^4.14.149",
+    "@types/mathjs": "^6.0.4",
+    "@types/mockdate": "^2.0.0",
+    "@types/node": "^13.11.1",
+    "@types/nodemon": "^1.19.0",
+    "@types/prettier": "2.0.0",
+    "@types/uuid": "^7.0.2",
     "mockdate": "^2.0.3",
-    "prettier": "2.0.2"
+    "prettier": "2.0.4"
   },
   "jest": {
     "collectCoverage": true,
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
-      "src/**/*.js"
+      "src/**/*.ts"
+    ],
+    "testPathIgnorePatterns": [
+      "/build/",
+      "/node_modules/"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "ts"
     ]
   }
 }

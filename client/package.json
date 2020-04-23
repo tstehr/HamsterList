@@ -4,35 +4,38 @@
   "private": true,
   "dependencies": {
     "classnames": "^2.2.6",
-    "date-fns": "^1.30.1",
+    "date-fns": "^2.12.0",
     "deep-freeze": "^0.0.1",
     "fuzzy": "^0.1.3",
-    "http-proxy-middleware": "^0.19.1",
+    "http-proxy-middleware": "^1.0.3",
     "lodash": "^4.17.14",
     "lodash-id": "^0.14.0",
     "lowdb": "^1.0.0",
     "material-color-hash": "^0.1.4",
-    "mathjs": "^5.0.2",
-    "memoize-one": "^5.0.4",
+    "mathjs": "^6.6.3",
+    "memoize-one": "^5.1.1",
     "react": "^16.8.0",
     "react-autosize-textarea": "^4.0.0",
     "react-dom": "^16.4.0",
     "react-flip-move": "^3.0.2",
-    "react-router-dom": "^4.3.1",
-    "react-scripts": "3.0.1",
-    "react-sortable-hoc": "^0.8.3",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.4.1",
+    "react-sortable-hoc": "^1.11.0",
     "share-api-polyfill": "^1.0.7",
-    "shoppinglist-shared": "link:../shared",
+    "shoppinglist-shared": "1.0.0",
     "smoothscroll-polyfill": "^0.4.4"
   },
   "scripts": {
     "start": "REACT_APP_GIT_SHA=`env -i git rev-parse --short HEAD` react-scripts start",
     "build": "REACT_APP_GIT_SHA=`env -i git rev-parse --short HEAD` INLINE_RUNTIME_CHUNK=false react-scripts build && npm run build-sw",
     "build-sw": "node ./src/sw-build.js",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom --watchAll=false",
     "eject": "react-scripts eject",
-    "flow": "flow",
-    "lint": "eslint src"
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "typecheck": "tsc --noEmit",
+    "format": "yarn run format:imports; yarn run format:prettier",
+    "format:imports": "organize-imports-cli tsconfig.json",
+    "format:prettier": "prettier src --write"
   },
   "browserslist": {
     "production": [
@@ -47,9 +50,18 @@
     ]
   },
   "devDependencies": {
-    "flow-bin": "^0.102.0",
-    "flow-typed": "^2.5.2",
-    "prettier": "2.0.2",
+    "@types/classnames": "^2.2.10",
+    "@types/deep-freeze": "^0.1.2",
+    "@types/http-proxy-middleware": "^0.19.3",
+    "@types/lodash": "^4.14.149",
+    "@types/lowdb": "^1.0.9",
+    "@types/mathjs": "^6.0.5",
+    "@types/prettier": "2.0.0",
+    "@types/react": "^16.9.32",
+    "@types/react-dom": "^16.9.6",
+    "@types/react-router-dom": "^5.1.3",
+    "@types/smoothscroll-polyfill": "^0.3.1",
+    "@types/workbox-build": "^5.0.0",
     "workbox-build": "^4.3.1"
   }
 }
