@@ -1058,7 +1058,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.2.0", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   version "7.9.2"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.9.2.tgz#d90df0583a3a252f09aaa619665367bae518db06"
   integrity sha512-NE2DtOdufG7R5vnfQUTehdTfNycfUANEtCa9PssN9O/xmTzP4E08UI797ixaei6hBEVL9BI/PsdJS5x7mWoB9Q==
@@ -1648,7 +1648,7 @@
     "@types/http-proxy" "*"
     "@types/node" "*"
 
-"@types/http-proxy@*":
+"@types/http-proxy@*", "@types/http-proxy@^1.17.3":
   version "1.17.4"
   resolved "https://registry.yarnpkg.com/@types/http-proxy/-/http-proxy-1.17.4.tgz#e7c92e3dbe3e13aa799440ff42e6d3a17a9d045b"
   integrity sha512-IrSHl2u6AWXduUaDLqYpt45tLVCtYv7o4Z0s1KghBCDgIIS9oW5K1H8mZG/A2CfeLdEa7rTd1ACOiHBc1EMT2Q==
@@ -2650,7 +2650,7 @@ babel-preset-react-app@^9.1.2:
     babel-plugin-macros "2.8.0"
     babel-plugin-transform-react-remove-prop-types "0.4.24"
 
-babel-runtime@^6.11.6, babel-runtime@^6.26.0:
+babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   integrity sha1-llxwWGaOgrVde/4E/yM3vItWR/4=
@@ -4536,10 +4536,10 @@ escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
 
-escape-string-regexp@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-3.0.0.tgz#1dad9cc28aed682be0de197280f79911a5fccd61"
-  integrity sha512-11dXIUC3umvzEViLP117d0KN6LJzZxh5+9F4E/7WLAAw7GrHk8NpUR+g9iJi/pe9C0py4F8rs0hreyRCwlAuZg==
+escape-string-regexp@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-4.0.0.tgz#14ba83a5d373e3d311e5afca29cf5bfad965bf34"
+  integrity sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==
 
 escodegen@^1.11.0, escodegen@^1.9.1:
   version "1.14.1"
@@ -5914,7 +5914,7 @@ http-errors@~1.7.2:
   resolved "https://registry.yarnpkg.com/http-parser-js/-/http-parser-js-0.4.10.tgz#92c9c1374c35085f75db359ec56cc257cbb93fa4"
   integrity sha1-ksnBN0w1CF912zWexWzCV8u5P6Q=
 
-http-proxy-middleware@0.19.1, http-proxy-middleware@^0.19.1:
+http-proxy-middleware@0.19.1:
   version "0.19.1"
   resolved "https://registry.yarnpkg.com/http-proxy-middleware/-/http-proxy-middleware-0.19.1.tgz#183c7dc4aa1479150306498c210cdaf96080a43a"
   integrity sha512-yHYTgWMQO8VvwNS22eLLloAkvungsKdKTLO8AJlftYIKNfJr3GK3zK0ZCfzDDGUBttdGc8xFy1mCitvNKQtC3Q==
@@ -5924,7 +5924,18 @@ http-proxy-middleware@0.19.1, http-proxy-middleware@^0.19.1:
     lodash "^4.17.11"
     micromatch "^3.1.10"
 
-http-proxy@^1.17.0:
+http-proxy-middleware@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/http-proxy-middleware/-/http-proxy-middleware-1.0.3.tgz#f73daad8dac622d51fe1769960c914b9b1f75a72"
+  integrity sha512-GHvPeBD+A357zS5tHjzj6ISrVOjjCiy0I92bdyTJz0pNmIjFxO0NX/bX+xkGgnclKQE/5hHAB9JEQ7u9Pw4olg==
+  dependencies:
+    "@types/http-proxy" "^1.17.3"
+    http-proxy "^1.18.0"
+    is-glob "^4.0.1"
+    lodash "^4.17.15"
+    micromatch "^4.0.2"
+
+http-proxy@^1.17.0, http-proxy@^1.18.0:
   version "1.18.0"
   resolved "https://registry.yarnpkg.com/http-proxy/-/http-proxy-1.18.0.tgz#dbe55f63e75a347db7f3d99974f2692a314a6a3a"
   integrity sha512-84I2iJM/n1d4Hdgc6y2+qY5mDaz2PUVjlg9znE9byl+q0uC3DeByqBGReQu5tpLK0TAqTIXScRUV+dg7+bUPpQ==
@@ -6154,7 +6165,7 @@ internal-slot@^1.0.2:
     has "^1.0.3"
     side-channel "^1.0.2"
 
-invariant@^2.2.1, invariant@^2.2.2, invariant@^2.2.4:
+invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -9905,13 +9916,13 @@ react-scripts@3.4.1:
   optionalDependencies:
     fsevents "2.1.2"
 
-react-sortable-hoc@^0.8.3:
-  version "0.8.4"
-  resolved "https://registry.yarnpkg.com/react-sortable-hoc/-/react-sortable-hoc-0.8.4.tgz#11aa1f3e07ded79764a8bae9d107990ab9b3954b"
-  integrity sha512-J9AFEQAJ7u2YWdVzkU5E3ewrG82xQ4xF1ZPrZYKliDwlVBDkmjri+iKFAEt6NCDIRiBZ4hiN5vzI8pwy/dGPHw==
+react-sortable-hoc@^1.11.0:
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/react-sortable-hoc/-/react-sortable-hoc-1.11.0.tgz#fe4022362bbafc4b836f5104b9676608a40a278f"
+  integrity sha512-v1CDCvdfoR3zLGNp6qsBa4J1BWMEVH25+UKxF/RvQRh+mrB+emqtVHMgZ+WreUiKJoEaiwYoScaueIKhMVBHUg==
   dependencies:
-    babel-runtime "^6.11.6"
-    invariant "^2.2.1"
+    "@babel/runtime" "^7.2.0"
+    invariant "^2.2.4"
     prop-types "^15.5.7"
 
 react@^16.8.0:

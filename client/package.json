@@ -7,7 +7,7 @@
     "date-fns": "^2.12.0",
     "deep-freeze": "^0.0.1",
     "fuzzy": "^0.1.3",
-    "http-proxy-middleware": "^0.19.1",
+    "http-proxy-middleware": "^1.0.3",
     "lodash": "^4.17.14",
     "lodash-id": "^0.14.0",
     "lowdb": "^1.0.0",
@@ -20,7 +20,7 @@
     "react-flip-move": "^3.0.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
-    "react-sortable-hoc": "^0.8.3",
+    "react-sortable-hoc": "^1.11.0",
     "share-api-polyfill": "^1.0.7",
     "shoppinglist-shared": "1.0.0",
     "smoothscroll-polyfill": "^0.4.4"
