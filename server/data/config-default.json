@@ -2,7 +2,9 @@
   "nodeEnv": "development",
   "http": true,
   "port": 4000,
+  "https": false,
   "httpsPort": 4443,
+  "proxiedHttps": false,
   "databaseFilePath": "state/db.json",
   "logLevel": "info",
   "defaultCategories": [

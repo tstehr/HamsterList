@@ -35,11 +35,12 @@ export function getConfig(): nconf.Provider {
 
   // create config file if it doesn't exist
   if (!fs.existsSync(config.get('configFile'))) {
-    console.info('First run, creating config file with random secret')
+    console.info('First run, creating config file with random secret. You need to edit this file to configure your hostname.')
     fs.outputJSONSync(
       config.get('configFile'),
       {
         secret: TokenCreator.createRandomSecret(),
+        host: 'example.org',
       },
       {
         spaces: 2,

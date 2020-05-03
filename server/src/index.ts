@@ -29,14 +29,19 @@ const log = Logger.createLogger({
 
 const db = new DB(config.get('databaseFilePath'))
 const app = express()
+
+// Ensure that we can connect to the websocket. If websocketHost === host, 'self' should be sufficient (meaning we wouldn't have
+// to configure host at all in this case). But due to Safari not implementing that spec, we need to explicitly handle that case
+// here.
+// TODO refactor once https://bugs.webkit.org/show_bug.cgi?id=201591 is resolved
 const connectSrc = ["'self'"]
 const websocketHost = config.get('websocketHost') || config.get('host')
 
-if (config.get('https')) {
+if (config.get('https') || config.get('proxiedHttps')) {
   connectSrc.push(`https://${websocketHost}`, `wss://${websocketHost}`)
 }
 
-if (config.get('http')) {
+if (config.get('http') && !config.get('proxiedHttps')) {
   connectSrc.push(`http://${websocketHost}`, `ws://${websocketHost}`)
 }
 
