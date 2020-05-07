@@ -169,10 +169,15 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
   }, 500)
 
-  load(callback?: () => void): void {
+  load(): void {
     console.info('LOCALSTORAGE', 'Load')
     this.supressSave = true
-    this.setState(this.getStateFromLocalStorage(), callback)
+    const newState = this.getStateFromLocalStorage()
+    this.setState(newState, () => {
+      if (!newState.loaded) {
+        this.initiateSyncConnection()
+      }
+    })
   }
 
   getStateFromLocalStorage(): State {
@@ -197,9 +202,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
 
     this.db.get('lists').removeById(this.props.listid).write()
-    this.load((): void => {
-      this.initiateSyncConnection()
-    })
+    this.load()
   }
 
   initiateSyncConnection(): void {
@@ -445,7 +448,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     }
 
     try {
-      this.db.get('recentlyUsedLists').upsert(listUsed).write()
+      this.db.get('recentlyUsedLists').upsert(listUsed)
+      this.save()
     } catch (e) {
       console.info('MarkListAsUsed', 'Save failed (probably due to quota)', e)
     }
