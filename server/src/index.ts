@@ -12,6 +12,7 @@ import ChangesController from './ChangesController'
 import CompletionsController from './CompletionsController'
 import { getConfig } from './config'
 import { DB } from './DB'
+import featurePolicy from './featurePolicy'
 import ItemController, { ItemidParam } from './ItemController'
 import OrdersController from './OrdersController'
 import ShoppingListController, { ListidParam } from './ShoppingListController'
@@ -53,6 +54,11 @@ app.use(
         connectSrc,
       },
     },
+    expectCt: {
+      enforce: true,
+      maxAge: 30,
+    },
+    featurePolicy,
   })
 )
 
