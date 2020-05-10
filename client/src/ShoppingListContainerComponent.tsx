@@ -32,12 +32,14 @@ import { createDB, DB, getRecentlyUsedLists } from './db'
 import { Up } from './HistoryTracker'
 import ShoppingListComponent from './ShoppingListComponent'
 import { responseToJSON } from './utils'
+
 export type ConnectionState = 'disconnected' | 'polling' | 'socket'
 export type UpdateListTitle = (newTitle: string) => void
 export type CreateItem = (item: LocalItem) => void
 export type DeleteItem = (id: UUID) => void
 export type UpdateItem = (id: UUID, localItem: LocalItem) => void
 export type SelectOrder = (id?: UUID | null) => void
+export type UpdateCategories = (categories: readonly CategoryDefinition[]) => void
 export type UpdateOrders = (orders: readonly Order[]) => void
 export type SetUsername = (username?: string | null) => void
 export type ApplyDiff = (diff: Diff) => void
@@ -63,6 +65,7 @@ export interface ClientShoppingList {
   dirty: boolean
   syncing: boolean
   lastSyncFailed: boolean
+  categoriesChanged: boolean
   ordersChanged: boolean
   connectionState: ConnectionState
   // ShoppingList
@@ -89,6 +92,7 @@ const initialState: ClientShoppingList = deepFreeze({
   loaded: false,
   dirty: false,
   syncing: false,
+  categoriesChanged: false,
   ordersChanged: false,
   lastSyncFailed: false,
   connectionState: 'disconnected',
@@ -312,7 +316,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
         previousSync: previousSync,
         currentState: preSyncShoppingList,
         includeInResponse: ['changes', 'categories', 'completions', 'orders'],
-        //categories: [],
+        categories: this.state.categoriesChanged ? this.state.categories : undefined,
         orders: this.state.ordersChanged ? this.state.orders : undefined,
         deleteCompletions: this.state.deletedCompletions,
       }
@@ -577,6 +581,18 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     })
   }
 
+  updateCategories = (categories: readonly CategoryDefinition[]): void => {
+    this.markListAsUsed()
+    this.setState(
+      {
+        dirty: true,
+        categoriesChanged: true,
+        categories: categories,
+      },
+      this.requestSync
+    )
+  }
+
   updateOrders = (orders: readonly Order[]): void => {
     this.markListAsUsed()
     this.setState(
@@ -649,6 +665,7 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             createItem={this.createItem}
             updateItem={this.updateItem}
             deleteItem={this.deleteItem}
+            updateCategories={this.updateCategories}
             selectOrder={this.selectOrder}
             updateOrders={this.updateOrders}
             setUsername={this.setUsername}

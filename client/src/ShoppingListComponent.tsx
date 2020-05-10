@@ -28,6 +28,7 @@ import {
   DeleteItem,
   SelectOrder,
   SetUsername,
+  UpdateCategories,
   UpdateItem,
   UpdateListTitle,
   UpdateOrders,
@@ -52,6 +53,7 @@ interface Props {
   createItem: CreateItem
   deleteItem: DeleteItem
   updateItem: UpdateItem
+  updateCategories: UpdateCategories
   selectOrder: SelectOrder
   updateOrders: UpdateOrders
   setUsername: SetUsername
@@ -238,6 +240,7 @@ export default class ShoppingListComponent extends Component<Props> {
               listid={this.props.shoppingList.id}
               orders={this.props.orders}
               categories={this.props.categories}
+              updateCategories={this.props.updateCategories}
               updateOrders={this.props.updateOrders}
               up={this.props.up}
             />

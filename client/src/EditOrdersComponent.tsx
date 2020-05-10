@@ -8,12 +8,13 @@ import { CategoryDefinition, createRandomUUID, Order, sortCategories, UUID } fro
 import CategoryComponent from './CategoryComponent'
 import './EditOrdersComponent.css'
 import { Up } from './HistoryTracker'
-import { UpdateOrders } from './ShoppingListContainerComponent'
+import { UpdateCategories, UpdateOrders } from './ShoppingListContainerComponent'
 
 interface Props {
   listid: string
   orders: readonly Order[]
   categories: readonly CategoryDefinition[]
+  updateCategories: UpdateCategories
   updateOrders: UpdateOrders
   up: Up
 }
@@ -85,6 +86,7 @@ export default class EditOrdersComponent extends Component<Props> {
                           orders={this.props.orders}
                           orderid={match.params['orderid']}
                           categories={this.props.categories}
+                          updateCategories={this.props.updateCategories}
                           updateOrder={this.updateOrder}
                           deleteOrder={this.deleteOrder}
                           up={this.props.up}
@@ -94,6 +96,10 @@ export default class EditOrdersComponent extends Component<Props> {
                   />
 
                   <div className="EditOrdersComponent__orders">
+                    <Link to={`/${this.props.listid}/orders/categories`} className="Button Button--padded">
+                      <i>Default</i>
+                    </Link>
+
                     <SortableOrders
                       orders={this.props.orders}
                       listid={this.props.listid}
@@ -160,6 +166,7 @@ interface NullSafeEditOrderProps {
   orderid: string | undefined | null
   orders: readonly Order[]
   categories: readonly CategoryDefinition[]
+  updateCategories: UpdateCategories
   updateOrder: (a: Order) => void
   deleteOrder: (a: UUID) => void
   up: Up
@@ -170,11 +177,22 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps): JSX.Element 
 
   return (
     <>
-      {order != null ? (
+      {props.orderid === 'categories' ? (
+        <EditOrderComponent
+          listid={props.listid}
+          order={null}
+          categories={props.categories}
+          updateCategories={props.updateCategories}
+          updateOrder={props.updateOrder}
+          deleteOrder={props.deleteOrder}
+          up={props.up}
+        />
+      ) : order != null ? (
         <EditOrderComponent
           listid={props.listid}
           order={order}
           categories={props.categories}
+          updateCategories={props.updateCategories}
           updateOrder={props.updateOrder}
           deleteOrder={props.deleteOrder}
           up={props.up}
@@ -193,8 +211,9 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps): JSX.Element 
 
 interface EditOrderProps {
   listid: string
-  order: Order
+  order: Order | null
   categories: readonly CategoryDefinition[]
+  updateCategories: UpdateCategories
   updateOrder: (a: Order) => void
   deleteOrder: (a: UUID) => void
   up: Up
@@ -208,18 +227,21 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
   constructor(props: EditOrderProps) {
     super(props)
     this.state = {
-      inputValue: props.order.name,
+      inputValue: props.order?.name ?? '',
       hasFocus: false,
     }
   }
 
   componentWillReceiveProps(nextProps: EditOrderProps): void {
     this.setState((oldState) => ({
-      inputValue: oldState.hasFocus ? oldState.inputValue : nextProps.order.name,
+      inputValue: oldState.hasFocus ? oldState.inputValue : nextProps.order?.name ?? '',
     }))
   }
 
   getSortedCategories(): readonly CategoryDefinition[] {
+    if (!this.props.order) {
+      return this.props.categories
+    }
     return sortCategories(this.props.categories, this.props.order.categoryOrder)
   }
 
@@ -239,26 +261,40 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     this.setState({
       hasFocus: false,
     })
-    this.props.updateOrder({ ...this.props.order, name: this.state.inputValue })
+    const order = this.props.order
+    if (order) {
+      this.props.updateOrder({ ...order, name: this.state.inputValue })
+    }
   }
 
   handleSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void => {
-    const categoryOrder = this.getSortedCategories().map((cat) => cat.id)
-    this.props.updateOrder({ ...this.props.order, categoryOrder: arrayMove(categoryOrder, oldIndex, newIndex) })
+    if (this.props.order) {
+      const categoryOrder = this.getSortedCategories().map((cat) => cat.id)
+      this.props.updateOrder({ ...this.props.order, categoryOrder: arrayMove(categoryOrder, oldIndex, newIndex) })
+    } else {
+      this.props.updateCategories(arrayMove([...this.getSortedCategories()], oldIndex, newIndex))
+    }
   }
 
   render(): JSX.Element {
     const sortedCategories = this.getSortedCategories()
+    const order = this.props.order
     return (
       <div>
-        <input
-          type="text"
-          className="EditOrderComponent__name"
-          value={this.state.inputValue}
-          onChange={this.handleChange}
-          onFocus={this.handleFocus}
-          onBlur={this.handleBlur}
-        />
+        {order ? (
+          <input
+            type="text"
+            className="EditOrderComponent__name"
+            value={this.state.inputValue}
+            onChange={this.handleChange}
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}
+          />
+        ) : (
+          <div className="EditOrderComponent__name">
+            <i>Default</i>
+          </div>
+        )}
 
         <SortableCategories
           categories={sortedCategories}
@@ -267,15 +303,15 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
           onSortEnd={this.handleSortEnd}
           useDragHandle={true}
         />
-
-        <button
-          type="button"
-          onClick={() => this.props.deleteOrder(this.props.order.id)}
-          className="EditOrderComponent__delete Button Button--padded"
-        >
-          Delete
-        </button>
-
+        {order && (
+          <button
+            type="button"
+            onClick={() => this.props.deleteOrder(order.id)}
+            className="EditOrderComponent__delete Button Button--padded"
+          >
+            Delete
+          </button>
+        )}
         <button type="button" className="EditOrderComponent__back Button Button--padded" onClick={() => this.props.up(1)}>
           Back
         </button>
