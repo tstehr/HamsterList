@@ -2,6 +2,10 @@ import classNames from 'classnames'
 import * as React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Up } from './HistoryTracker'
+import { ReactComponent as ArrowDownUp } from './icons/arrow-down-up.svg'
+import { ReactComponent as ArrowUp } from './icons/arrow-up.svg'
+import { ReactComponent as Back } from './icons/back.svg'
+import { ReactComponent as Cross } from './icons/cross.svg'
 import { ConnectionState, UpdateListTitle } from './ShoppingListContainerComponent'
 import './TopBarComponent.css'
 
@@ -11,7 +15,6 @@ interface Props {
   children: React.ReactNode
 }
 
-const variantSelector15 = String.fromCharCode(0xfe0e)
 export default function TopBarComponent(props: Props): JSX.Element {
   const className = classNames('TopBarComponent', {
     'TopBarComponent--responsive': props.responsive == null ? true : props.responsive,
@@ -26,7 +29,7 @@ export default function TopBarComponent(props: Props): JSX.Element {
             onClick={() => props.up && props.up('home')}
             aria-label="Back to all lists"
           >
-            {`◀${variantSelector15}`}
+            <Back />
           </button>
         )}
         {props.children}
@@ -92,10 +95,10 @@ interface SyncStatusProps {
   manualSync: () => void
 }
 
-const stateMapping: { [k in ConnectionState]: string } = {
-  disconnected: '✖',
-  polling: `⬆${variantSelector15}`,
-  socket: `⬆${variantSelector15}⬇${variantSelector15}`,
+const stateMapping: { [k in ConnectionState]: React.ReactElement } = {
+  disconnected: <Cross role="image" aria-label="No Network Connection" />,
+  polling: <ArrowUp role="image" aria-label="Degraded Connection" />,
+  socket: <ArrowDownUp role="image" aria-label="Connected" />,
 }
 
 export function SyncStatusComponent(props: SyncStatusProps): JSX.Element {
@@ -131,7 +134,7 @@ export function SyncStatusComponent(props: SyncStatusProps): JSX.Element {
         e.preventDefault()
       }}
     >
-      <span>{stateMapping[props.connectionState]}</span>
+      {stateMapping[props.connectionState]}
     </button>
   )
 }

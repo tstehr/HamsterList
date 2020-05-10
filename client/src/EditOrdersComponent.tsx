@@ -300,4 +300,10 @@ const SortableCategory = SortableElement(({ category }: { category: CategoryDefi
     <DragHandle />
   </div>
 ))
-const DragHandle = SortableHandle(() => <span className="DragHandle">≡</span>)
+const DragHandle = SortableHandle(() => (
+  <div className="DragHandle">
+    <svg version="1.1" width="24" height="24" viewBox="0 0 24 24">
+      <path d="M21 11H3V9H21V11M21 13H3V15H21V13Z" />
+    </svg>
+  </div>
+))

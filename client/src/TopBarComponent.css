@@ -45,11 +45,17 @@
 }
 .TopBarComponent__back {
   width: 3.5rem;
+  padding: 0 0.7rem;
   flex-shrink: 0;
   border: 0;
-  font-size: 1.5rem;
   background: none;
   color: var(--text-on-theme-color);
+}
+.TopBarComponent__back svg {
+  fill: currentColor;
+  height: 100%;
+  width: 80%;
+  display: block;
 }
 @media print {
   .TopBarComponent__back {
@@ -76,20 +82,19 @@
 }
 
 .SyncStatusComponent {
-  width: 3.5rem;
+  width: 4rem;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 0.7rem;
+  padding: 0 0.7rem;
   border: 0;
-  font-size: 2rem;
-  font-family: inherit;
-  letter-spacing: -0.65rem;
   transition: all 200ms ease-in-out;
   background: none;
-  overflow: visible;
   color: var(--text-on-theme-color);
+}
+.SyncStatusComponent svg {
+  fill: currentColor;
+  height: 100%;
+  width: 100%;
+  display: block;
 }
 @media print {
   .SyncStatusComponent {
@@ -108,23 +113,23 @@
 
 @keyframes blink {
   0% {
-    text-shadow: 0 0 0px hsla(var(--text-on-theme-color-hsl-value), 0.6);
+    filter: drop-shadow(0 0 0px hsla(var(--text-on-theme-color-hsl-value), 0.6));
   }
   90% {
-    text-shadow: 0 0 20px hsla(var(--text-on-theme-color-hsl-value), 0.4);
+    filter: drop-shadow(0 0 20px hsla(var(--text-on-theme-color-hsl-value), 0.4));
   }
   100% {
-    text-shadow: 0 0 20px hsla(var(--text-on-theme-color-hsl-value), 0);
+    filter: drop-shadow(0 0 20px hsla(var(--text-on-theme-color-hsl-value), 0));
   }
 }
 @keyframes blinkRed {
   0% {
-    text-shadow: 0 0 0px hsla(var(--failure-color-hsl-value), 0.6);
+    filter: drop-shadow(0 0 0px hsla(var(--failure-color-hsl-value), 0.6));
   }
   90% {
-    text-shadow: 0 0 20px hsla(var(--failure-color-hsl-value), 0.4);
+    filter: drop-shadow(0 0 20px hsla(var(--failure-color-hsl-value), 0.4));
   }
   100% {
-    text-shadow: 0 0 20px hsla(var(--failure-color-hsl-value), 0);
+    filter: drop-shadow(0 0 20px hsla(var(--failure-color-hsl-value), 0));
   }
 }
