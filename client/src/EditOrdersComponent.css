@@ -86,10 +86,43 @@
 .SortableCategory__name {
   flex: 1;
 }
+.SortableCategory__delete,
+.SortableOder__delete {
+  width: 3rem;
+}
 
 .SortableOrder__dragging,
 .SortableCategory__dragging {
   box-shadow: 0 0 10px var(--text-color);
+}
+
+.SortableCategory {
+  position: relative;
+}
+.SortableCategory--colorPickerOpen {
+  z-index: 1001;
+}
+.SortableCategory__icon {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+}
+.SortableCategory__colorPickerContainer {
+  position: absolute;
+  top: -1rem;
+  left: 3rem;
+  z-index: 1001;
+}
+
+.SortableCategory:nth-last-child(1) .SortableCategory__colorPickerContainer,
+.SortableCategory:nth-last-child(2) .SortableCategory__colorPickerContainer {
+  bottom: -1rem;
+  top: auto;
 }
 
 .DragHandle {

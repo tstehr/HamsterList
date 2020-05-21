@@ -1,6 +1,9 @@
+import classNames from 'classnames'
 import { History } from 'history'
+import IconButton from 'IconButton'
 import _ from 'lodash'
-import React, { Component } from 'react'
+import React, { Component, useEffect, useRef, useState } from 'react'
+import { ChromePicker, ColorResult, RGBColor } from 'react-color'
 import ReactDOM from 'react-dom'
 import { Link, Route, RouteComponentProps } from 'react-router-dom'
 import { arrayMove, SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
@@ -18,6 +21,9 @@ interface Props {
   updateOrders: UpdateOrders
   up: Up
 }
+
+type UpdateCategory = (c: CategoryDefinition) => void
+type DeleteCategory = (id: UUID) => void
 
 export default class EditOrdersComponent extends Component<Props> {
   updateOrder = (orderToUpdate: Order): void => {
@@ -157,6 +163,7 @@ const SortableOrders = SortableContainer(({ orders, listid }: { orders: readonly
 const SortableOrder = SortableElement(({ order, listid }: { order: Order; listid: string }) => (
   <Link to={`/${listid}/orders/${order.id}`} className="SortableOrder Button">
     <span className="SortableOrder__name">{order.name}</span>
+    <IconButton onClick={(e) => console.log(e)} icon="DELETE" alt="Delete" className="SortableCategory__delete" />
     <DragHandle />
   </Link>
 ))
@@ -276,6 +283,15 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     }
   }
 
+  updateCategory = (categoryToUpdate: CategoryDefinition): void => {
+    const categories = [...this.props.categories]
+
+    const index = _.findIndex(categories, (category) => category.id === categoryToUpdate.id)
+
+    categories[index] = categoryToUpdate
+    this.props.updateCategories(categories)
+  }
+
   render(): JSX.Element {
     const sortedCategories = this.getSortedCategories()
     const order = this.props.order
@@ -302,6 +318,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
           lockAxis="y"
           onSortEnd={this.handleSortEnd}
           useDragHandle={true}
+          updateCategory={this.updateCategory}
         />
         {order && (
           <button
@@ -320,22 +337,64 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
   }
 }
 
-const SortableCategories = SortableContainer(({ categories }: { categories: readonly CategoryDefinition[] }) => {
-  return (
-    <div>
-      {categories.map((category, index) => (
-        <SortableCategory key={`item-${index}`} index={index} category={category} />
-      ))}
-    </div>
-  )
-})
-const SortableCategory = SortableElement(({ category }: { category: CategoryDefinition }) => (
-  <div className="SortableCategory Button">
-    <CategoryComponent category={category} />
-    <span className="SortableCategory__name">{category.name}</span>
-    <DragHandle />
-  </div>
-))
+const SortableCategories = SortableContainer(
+  ({ categories, updateCategory }: { categories: readonly CategoryDefinition[]; updateCategory: UpdateCategory }) => {
+    return (
+      <div>
+        {categories.map((category, index) => (
+          <SortableCategory key={category.id} index={index} category={category} updateCategory={updateCategory} />
+        ))}
+      </div>
+    )
+  }
+)
+
+const SortableCategory = SortableElement(
+  ({ category, updateCategory }: { category: CategoryDefinition; updateCategory: UpdateCategory }) => {
+    const [showPicker, setShowPicker] = useState(false)
+    const colorPickerRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+      function handleOutsideClick(e: MouseEvent): void {
+        if (showPicker && colorPickerRef.current && !colorPickerRef.current.contains(e.target as Node)) {
+          setShowPicker(false)
+          e.preventDefault()
+        }
+      }
+      if (showPicker) {
+        window.addEventListener('click', handleOutsideClick)
+        return () => {
+          window.removeEventListener('click', handleOutsideClick)
+        }
+      }
+    }, [showPicker])
+
+    function handleColorChange({ hsl, rgb }: ColorResult): void {
+      updateCategory({
+        ...category,
+        color: `hsl(${hsl.h}, ${hsl.s * 100}%, ${hsl.l * 100}%)`,
+        lightText: brightness(rgb) < 0.5,
+      })
+    }
+
+    return (
+      <div className={classNames('SortableCategory', 'Button', { 'SortableCategory--colorPickerOpen': showPicker })}>
+        <button onClick={() => setShowPicker(!showPicker)} className="SortableCategory__icon">
+          <CategoryComponent category={category} />
+        </button>
+        {showPicker && (
+          <div ref={colorPickerRef} className="SortableCategory__colorPickerContainer">
+            <ChromePicker color={category.color} onChange={handleColorChange} />
+          </div>
+        )}
+        <span className="SortableCategory__name">{category.name}</span>
+        <IconButton onClick={(e) => console.log(e)} icon="DELETE" alt="Delete" className="SortableCategory__delete" />
+        <DragHandle />
+      </div>
+    )
+  }
+)
+
 const DragHandle = SortableHandle(() => (
   <div className="DragHandle">
     <svg version="1.1" width="24" height="24" viewBox="0 0 24 24">
@@ -343,3 +402,7 @@ const DragHandle = SortableHandle(() => (
     </svg>
   </div>
 ))
+
+function brightness(c: RGBColor): number {
+  return Math.sqrt(Math.pow(c.r, 2) * 0.241 + Math.pow(c.g, 2) * 0.691 + Math.pow(c.b, 2) * 0.068) / 255
+}
