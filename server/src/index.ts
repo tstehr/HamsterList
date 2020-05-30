@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser'
 import Logger from 'bunyan'
+import cors from 'cors'
 import express, { NextFunction, Request, RequestParamHandler, Response } from 'express'
 import fs from 'fs-extra'
 import helmet from 'helmet'
@@ -61,6 +62,11 @@ app.use(
     featurePolicy,
   })
 )
+
+// enable cors requests
+app.use(cors())
+// allow cors pre-flight for complex queries on all routers
+app.options('*', cors())
 
 db.load()
   .then(() => {
