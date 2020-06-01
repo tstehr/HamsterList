@@ -388,12 +388,12 @@ const SortableCategory = SortableElement(
     updateCategory: UpdateCategory
     deleteCategory: DeleteCategory
   }) => {
-    const [showPicker, setShowPicker] = useState(false)
-    const colorPickerRef = useRef<HTMLDivElement>(null)
+    const categoryComponentRef = useRef<HTMLDivElement>(null)
 
+    const [showPicker, setShowPicker] = useState(false)
     useEffect(() => {
       function handleOutsideClick(e: MouseEvent): void {
-        if (showPicker && colorPickerRef.current && !colorPickerRef.current.contains(e.target as Node)) {
+        if (showPicker && categoryComponentRef.current && !categoryComponentRef.current.contains(e.target as Node)) {
           setShowPicker(false)
           e.preventDefault()
         }
@@ -414,6 +414,13 @@ const SortableCategory = SortableElement(
       })
     }
 
+    function handleShortNameChange(e: React.FormEvent<HTMLInputElement>): void {
+      updateCategory({
+        ...category,
+        shortName: e.currentTarget.value,
+      })
+    }
+
     function handleDelete(): void {
       if (window.confirm(`Really delete category "${category.name}"?`)) {
         deleteCategory(category.id)
@@ -422,14 +429,20 @@ const SortableCategory = SortableElement(
 
     return (
       <div className={classNames('SortableCategory', 'Button', { 'SortableCategory--colorPickerOpen': showPicker })}>
-        <button onClick={() => setShowPicker(!showPicker)} className="SortableCategory__icon">
-          <CategoryComponent category={category} />
-        </button>
-        {showPicker && (
-          <div ref={colorPickerRef} className="SortableCategory__colorPickerContainer">
-            <ChromePicker color={category.color} onChange={handleColorChange} />
-          </div>
-        )}
+        <CategoryComponent category={category} className="SortableCategory__icon" ref={categoryComponentRef}>
+          <input
+            type="text"
+            className="SortableCategory__icon__input"
+            value={category.shortName}
+            onChange={handleShortNameChange}
+            onFocus={() => setShowPicker(true)}
+          />
+          {showPicker && (
+            <div className="SortableCategory__colorPickerContainer">
+              <ChromePicker color={category.color} onChange={handleColorChange} disableAlpha={true} />
+            </div>
+          )}
+        </CategoryComponent>
         <span className="SortableCategory__name">{category.name}</span>
         <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className="SortableCategory__delete" />
         <DragHandle />

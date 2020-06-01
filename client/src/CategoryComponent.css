@@ -14,7 +14,9 @@
   align-items: center;
 }
 .CategoryComponent__circle span {
-  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .CategoryTextComponent {

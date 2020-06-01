@@ -9,8 +9,11 @@
   -webkit-overflow-scrolling: touch;
   background-color: var(--background-color);
   user-select: none;
-  padding-bottom: 3rem;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) 3rem env(safe-area-inset-left);
+}
+.EditOrdersComponent__window {
+  min-height: 100%;
+  margin-bottom: 3rem;
+  margin: env(safe-area-inset-top) env(safe-area-inset-right) 3rem env(safe-area-inset-left);
 }
 .EditOrdersComponent__window__footer {
   display: none;
@@ -68,6 +71,8 @@
   margin-bottom: 0.5rem;
   font-size: 2rem;
   font-weight: bold;
+  background: none;
+  color: inherit;
 }
 
 .SortableOrder,
@@ -99,14 +104,20 @@
   z-index: 1001;
 }
 .SortableCategory__icon {
-  display: flex;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  border: none;
+  width: 3rem;
+  height: 3rem;
+}
+.SortableCategory__icon__input {
+  width: auto;
+  border: 0;
   background: none;
+  text-align: center;
   font: inherit;
   color: inherit;
+  width: 100%;
+  height: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .SortableCategory__colorPickerContainer {
   position: absolute;
