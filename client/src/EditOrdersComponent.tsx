@@ -296,6 +296,30 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     }
   }
 
+  createCategory = (): void => {
+    const id = createRandomUUID()
+    let name = `New Category`
+    let i = 1
+
+    const categoryPredicate = (category: CategoryDefinition): boolean => category.name === name
+
+    while (this.props.categories.find(categoryPredicate) != null) {
+      name = `New Category ${i}`
+      i++
+    }
+
+    this.props.updateCategories([
+      ...this.props.categories,
+      {
+        id: id,
+        name: name,
+        shortName: 'NEW',
+        color: 'hsl(0, 0%, 50%)',
+        lightText: false,
+      },
+    ])
+  }
+
   updateCategory = (categoryToUpdate: CategoryDefinition): void => {
     const categories = [...this.props.categories]
 
@@ -341,7 +365,12 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
           updateCategory={this.updateCategory}
           deleteCategory={this.deleteCategory}
         />
-        <button type="button" className="EditOrdersComponent__new Button Button--padded" aria-label="New Category">
+        <button
+          type="button"
+          className="EditOrdersComponent__new Button Button--padded"
+          aria-label="New Category"
+          onClick={this.createCategory}
+        >
           New
         </button>
         <button type="button" className="EditOrderComponent__back Button Button--padded" onClick={() => this.props.up(1)}>
