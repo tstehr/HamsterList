@@ -51,9 +51,9 @@
   }
 }
 
-.EditOrdersComponent__orders__new {
-  --button-bg-color: var(--small-feature-color);
-  color: var(--text-color);
+.EditOrdersComponent__new {
+  --button-bg-color: var(--small-feature-color) !important;
+  color: var(--text-color) !important;
   position: relative;
   z-index: 998;
 }
@@ -68,11 +68,6 @@
   margin-bottom: 0.5rem;
   font-size: 2rem;
   font-weight: bold;
-}
-.EditOrderComponent__delete {
-  --button-bg-color: #f44336;
-  position: relative;
-  z-index: 998;
 }
 
 .SortableOrder,
@@ -89,6 +84,7 @@
 .SortableCategory__delete,
 .SortableOder__delete {
   width: 3rem;
+  flex-shrink: 0;
 }
 
 .SortableOrder__dragging,
@@ -132,6 +128,7 @@
   align-items: center;
   justify-content: center;
   cursor: move;
+  flex-shrink: 0;
 }
 .DragHandle svg {
   fill: currentColor;

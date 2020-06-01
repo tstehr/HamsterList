@@ -22,6 +22,9 @@ interface Props {
   up: Up
 }
 
+type UpdateOrder = (o: Order) => void
+type DeleteOrder = (id: UUID) => void
+
 type UpdateCategory = (c: CategoryDefinition) => void
 type DeleteCategory = (id: UUID) => void
 
@@ -38,7 +41,6 @@ export default class EditOrdersComponent extends Component<Props> {
   deleteOrder = (id: UUID): void => {
     const orders = this.props.orders.filter((order) => order.id !== id)
     this.props.updateOrders(orders)
-    this.props.up(1)
   }
 
   makeCreateOrder(history: History) {
@@ -113,11 +115,12 @@ export default class EditOrdersComponent extends Component<Props> {
                       lockAxis="y"
                       useDragHandle={true}
                       onSortEnd={this.handleSortEnd}
+                      deleteOrder={this.deleteOrder}
                     />
 
                     <button
                       type="button"
-                      className="EditOrdersComponent__orders__new Button Button--padded"
+                      className="EditOrdersComponent__new Button Button--padded"
                       aria-label="New Order"
                       onClick={this.makeCreateOrder(history)}
                     >
@@ -150,23 +153,36 @@ export default class EditOrdersComponent extends Component<Props> {
   }
 }
 
-const SortableOrders = SortableContainer(({ orders, listid }: { orders: readonly Order[]; listid: string }) => {
-  return (
-    <div>
-      {orders.map((order, index) => (
-        <SortableOrder key={`item-${index}`} index={index} order={order} listid={listid} />
-      ))}
-    </div>
-  )
-})
+const SortableOrders = SortableContainer(
+  ({ orders, listid, deleteOrder }: { orders: readonly Order[]; listid: string; deleteOrder: DeleteOrder }) => {
+    return (
+      <div>
+        {orders.map((order, index) => (
+          <SortableOrder key={`item-${index}`} index={index} order={order} listid={listid} deleteOrder={deleteOrder} />
+        ))}
+      </div>
+    )
+  }
+)
 
-const SortableOrder = SortableElement(({ order, listid }: { order: Order; listid: string }) => (
-  <Link to={`/${listid}/orders/${order.id}`} className="SortableOrder Button">
-    <span className="SortableOrder__name">{order.name}</span>
-    <IconButton onClick={(e) => console.log(e)} icon="DELETE" alt="Delete" className="SortableCategory__delete" />
-    <DragHandle />
-  </Link>
-))
+const SortableOrder = SortableElement(
+  ({ order, listid, deleteOrder }: { order: Order; listid: string; deleteOrder: DeleteOrder }) => {
+    function handleDelete(e: React.SyntheticEvent<HTMLButtonElement>): void {
+      e.preventDefault()
+      if (window.confirm(`Really delete order "${order.name}"?`)) {
+        deleteOrder(order.id)
+      }
+    }
+
+    return (
+      <Link to={`/${listid}/orders/${order.id}`} className="SortableOrder Button">
+        <span className="SortableOrder__name">{order.name}</span>
+        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className="SortableCategory__delete" />
+        <DragHandle />
+      </Link>
+    )
+  }
+)
 
 interface NullSafeEditOrderProps {
   listid: string
@@ -174,8 +190,8 @@ interface NullSafeEditOrderProps {
   orders: readonly Order[]
   categories: readonly CategoryDefinition[]
   updateCategories: UpdateCategories
-  updateOrder: (a: Order) => void
-  deleteOrder: (a: UUID) => void
+  updateOrder: UpdateOrder
+  deleteOrder: DeleteOrder
   up: Up
 }
 
@@ -191,7 +207,6 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps): JSX.Element 
           categories={props.categories}
           updateCategories={props.updateCategories}
           updateOrder={props.updateOrder}
-          deleteOrder={props.deleteOrder}
           up={props.up}
         />
       ) : order != null ? (
@@ -201,7 +216,6 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps): JSX.Element 
           categories={props.categories}
           updateCategories={props.updateCategories}
           updateOrder={props.updateOrder}
-          deleteOrder={props.deleteOrder}
           up={props.up}
         />
       ) : (
@@ -222,7 +236,6 @@ interface EditOrderProps {
   categories: readonly CategoryDefinition[]
   updateCategories: UpdateCategories
   updateOrder: (a: Order) => void
-  deleteOrder: (a: UUID) => void
   up: Up
 }
 interface EditOrderState {
@@ -292,6 +305,13 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     this.props.updateCategories(categories)
   }
 
+  deleteCategory = (id: UUID): void => {
+    const categories = [...this.props.categories]
+    const index = _.findIndex(categories, (category) => category.id === id)
+    categories.splice(index, 1)
+    this.props.updateCategories(categories)
+  }
+
   render(): JSX.Element {
     const sortedCategories = this.getSortedCategories()
     const order = this.props.order
@@ -319,16 +339,11 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
           onSortEnd={this.handleSortEnd}
           useDragHandle={true}
           updateCategory={this.updateCategory}
+          deleteCategory={this.deleteCategory}
         />
-        {order && (
-          <button
-            type="button"
-            onClick={() => this.props.deleteOrder(order.id)}
-            className="EditOrderComponent__delete Button Button--padded"
-          >
-            Delete
-          </button>
-        )}
+        <button type="button" className="EditOrdersComponent__new Button Button--padded" aria-label="New Category">
+          New
+        </button>
         <button type="button" className="EditOrderComponent__back Button Button--padded" onClick={() => this.props.up(1)}>
           Back
         </button>
@@ -338,11 +353,25 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
 }
 
 const SortableCategories = SortableContainer(
-  ({ categories, updateCategory }: { categories: readonly CategoryDefinition[]; updateCategory: UpdateCategory }) => {
+  ({
+    categories,
+    updateCategory,
+    deleteCategory,
+  }: {
+    categories: readonly CategoryDefinition[]
+    updateCategory: UpdateCategory
+    deleteCategory: DeleteCategory
+  }) => {
     return (
       <div>
         {categories.map((category, index) => (
-          <SortableCategory key={category.id} index={index} category={category} updateCategory={updateCategory} />
+          <SortableCategory
+            key={category.id}
+            index={index}
+            category={category}
+            updateCategory={updateCategory}
+            deleteCategory={deleteCategory}
+          />
         ))}
       </div>
     )
@@ -350,7 +379,15 @@ const SortableCategories = SortableContainer(
 )
 
 const SortableCategory = SortableElement(
-  ({ category, updateCategory }: { category: CategoryDefinition; updateCategory: UpdateCategory }) => {
+  ({
+    category,
+    updateCategory,
+    deleteCategory,
+  }: {
+    category: CategoryDefinition
+    updateCategory: UpdateCategory
+    deleteCategory: DeleteCategory
+  }) => {
     const [showPicker, setShowPicker] = useState(false)
     const colorPickerRef = useRef<HTMLDivElement>(null)
 
@@ -377,6 +414,12 @@ const SortableCategory = SortableElement(
       })
     }
 
+    function handleDelete(): void {
+      if (window.confirm(`Really delete category "${category.name}"?`)) {
+        deleteCategory(category.id)
+      }
+    }
+
     return (
       <div className={classNames('SortableCategory', 'Button', { 'SortableCategory--colorPickerOpen': showPicker })}>
         <button onClick={() => setShowPicker(!showPicker)} className="SortableCategory__icon">
@@ -388,7 +431,7 @@ const SortableCategory = SortableElement(
           </div>
         )}
         <span className="SortableCategory__name">{category.name}</span>
-        <IconButton onClick={(e) => console.log(e)} icon="DELETE" alt="Delete" className="SortableCategory__delete" />
+        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className="SortableCategory__delete" />
         <DragHandle />
       </div>
     )
