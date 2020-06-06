@@ -105,3 +105,9 @@ button.PaddedButton {
 #shareAPIPolyfill-container button {
   color: black;
 }
+#shareAPIPolyfill-backdrop {
+  z-index: 101;
+}
+#shareAPIPolyfill-container {
+  z-index: 102;
+}
