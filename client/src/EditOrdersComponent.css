@@ -132,6 +132,15 @@
   top: auto;
 }
 
+.SortableCategory__name {
+  align-self: stretch;
+  display: block;
+  border: none;
+  appearance: none;
+  font: inherit;
+  background: none;
+}
+
 .DragHandle {
   width: 3rem;
   align-self: stretch;

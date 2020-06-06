@@ -450,6 +450,12 @@ const SortableCategory = SortableElement(
       })
     }
 
+    function handleNameChange(e: React.FormEvent<HTMLInputElement>): void {
+      updateCategory({
+        ...category,
+        name: e.currentTarget.value,
+      })
+    }
     function handleDelete(): void {
       if (window.confirm(`Really delete category "${category.name}"?`)) {
         deleteCategory(category.id)
@@ -472,7 +478,7 @@ const SortableCategory = SortableElement(
             </div>
           )}
         </CategoryComponent>
-        <span className="SortableCategory__name">{category.name}</span>
+        <input type="text" className="SortableCategory__name" value={category.name} onChange={handleNameChange} />
         <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className="SortableCategory__delete" />
         <DragHandle />
       </div>
