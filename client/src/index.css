@@ -61,8 +61,8 @@ button {
   border: none;
   font-family: inherit;
   font-size: 0.8rem;
-  border: 1px solid var(--text-color);
-  color: var(--text-color);
+  border: 1px solid currentColor;
+  color: inherit;
 }
 
 :not(select):focus {

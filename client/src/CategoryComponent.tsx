@@ -1,5 +1,5 @@
 import _, { isEqual } from 'lodash'
-import React, { Component } from 'react'
+import React, { Component, ComponentProps, PropsWithChildren } from 'react'
 import { CategoryDefinition, createCategoryDefinition, UUID } from 'shoppinglist-shared'
 import './CategoryComponent.css'
 
@@ -19,27 +19,37 @@ const invalidCategory = createCategoryDefinition({
   lightText: true,
 })
 
-interface Props {
-  category?: CategoryDefinition
-  categories?: readonly CategoryDefinition[]
-  categoryId?: UUID | null
-}
+type Props = PropsWithChildren<
+  {
+    category?: CategoryDefinition
+    categories?: readonly CategoryDefinition[]
+    categoryId?: UUID | null
+  } & ComponentProps<'div'>
+>
 
-const CategoryComponent = React.memo((props: Props) => {
-  const category = getCategory(props)
-  const initials = category.shortName
-  const style = {
-    backgroundColor: category.color,
-    color: category.lightText ? '#fff' : '#000',
-  }
-  return (
-    <div className="CategoryComponent" title={category.name}>
-      <div className="CategoryComponent__circle" style={style}>
-        <span>{initials}</span>
+const CategoryComponent = React.memo(
+  React.forwardRef<HTMLDivElement, Props>((props, ref) => {
+    const category = getCategory(props)
+    const initials = category.shortName
+    const style = {
+      backgroundColor: category.color,
+      color: category.lightText ? '#fff' : '#000',
+    }
+    return (
+      <div
+        className="CategoryComponent"
+        title={category.name}
+        ref={ref}
+        {..._.omit(props, 'category', 'categories', 'categoryId')}
+      >
+        <div className="CategoryComponent__circle" style={style}>
+          {props.children ? props.children : <span>{initials}</span>}
+        </div>
       </div>
-    </div>
-  )
-}, isEqual)
+    )
+  }),
+  isEqual
+)
 
 const CategoryTextComponent = React.memo((props: Props) => {
   const category = getCategory(props)
