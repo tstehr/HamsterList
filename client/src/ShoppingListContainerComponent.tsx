@@ -303,8 +303,11 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
       syncing: true,
     })
 
-    const preSyncUnsyncedChangesLength = this.state.unsyncedChanges.length
+    const preSyncCategories = this.state.categories
+    const preSyncOrders = this.state.orders
     const preSyncDeletedCompletions = this.state.deletedCompletions
+    const preSyncUnsyncedChangesLength = this.state.unsyncedChanges.length
+
     const initialSync = !this.state.loaded
     let syncPromise
     let preSyncShoppingList: ShoppingList | undefined = undefined
@@ -316,9 +319,9 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
         previousSync: previousSync,
         currentState: preSyncShoppingList,
         includeInResponse: ['changes', 'categories', 'completions', 'orders'],
-        categories: this.state.categoriesChanged ? this.state.categories : undefined,
-        orders: this.state.ordersChanged ? this.state.orders : undefined,
-        deleteCompletions: this.state.deletedCompletions,
+        categories: this.state.categoriesChanged ? preSyncCategories : undefined,
+        orders: this.state.ordersChanged ? preSyncOrders : undefined,
+        deleteCompletions: preSyncDeletedCompletions,
       }
       syncPromise = this.fetch(`/api/${this.props.listid}/sync`, {
         headers: {
@@ -338,9 +341,9 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
     try {
       const syncResponse = createSyncResponse(await responseToJSON(await syncPromise))
       const serverSyncedShoppingList = syncResponse.list
-      const newChanges: readonly Change[] = syncResponse.changes ?? []
-      const categories: readonly CategoryDefinition[] = syncResponse.categories ?? []
-      const orders: readonly Order[] = syncResponse.orders ?? []
+      const newServerChanges: readonly Change[] = syncResponse.changes ?? []
+      const serverCategories: readonly CategoryDefinition[] = syncResponse.categories ?? []
+      const serverOrders: readonly Order[] = syncResponse.orders ?? []
       const completions: readonly CompletionItem[] = syncResponse.completions ?? []
       this.setState(
         (prevState) => {
@@ -351,29 +354,52 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
           if (preSyncShoppingList != null) {
             const clientShoppingList = this.getShoppingList(prevState)
             dirty = !_.isEqual(preSyncShoppingList, clientShoppingList)
-            newShoppingList = mergeShoppingLists(preSyncShoppingList, clientShoppingList, serverShoppingList, categories)
+            newShoppingList = mergeShoppingLists(preSyncShoppingList, clientShoppingList, serverShoppingList, serverCategories)
           } else {
             newShoppingList = serverShoppingList
             dirty = false
-          } // retain completion deletions performed during sync
+          }
 
+          // retain completion deletions performed during sync
           const unsyncedDeletedCompletions = prevState.deletedCompletions.filter(
             (name) => !preSyncDeletedCompletions.includes(normalizeCompletionName(name))
           )
           dirty = dirty || unsyncedDeletedCompletions.length > 0 // add newly fetched changes to local changes
 
-          let changes
+          // apply new categories only if no client-side changes
+          let categories, categoriesChanged
+          if (_.isEqual(preSyncCategories, prevState.categories)) {
+            categories = serverCategories
+            categoriesChanged = false
+          } else {
+            categories = prevState.categories
+            categoriesChanged = !_.isEqual(categories, serverCategories)
+            dirty = dirty || categoriesChanged
+          }
 
-          if (newChanges.length === 0) {
+          // apply new orders only if no client-side changes
+          let orders, ordersChanged
+          if (_.isEqual(preSyncOrders, prevState.orders)) {
+            orders = serverOrders
+            ordersChanged = false
+          } else {
+            orders = prevState.orders
+            ordersChanged = !_.isEqual(orders, serverOrders)
+            dirty = dirty || ordersChanged
+          }
+
+          // merge changes
+          let changes
+          if (newServerChanges.length === 0) {
             // no new changes, keep the old ones
             changes = prevState.changes
-          } else if (prevState.changes.length !== 0 && _.first(newChanges)?.id === _.last(prevState.changes)?.id) {
+          } else if (prevState.changes.length !== 0 && _.first(newServerChanges)?.id === _.last(prevState.changes)?.id) {
             // the new changes connect to the local ones (latest of the old is oldest of the new), append
-            changes = getOnlyNewChanges([...prevState.changes, ...newChanges.slice(1)])
+            changes = getOnlyNewChanges([...prevState.changes, ...newServerChanges.slice(1)])
           } else {
             // there are new changes which don't connect up. this means the local changes were quite old, and no longer cached by the server
             // we evict them and replace by the new ones
-            changes = newChanges
+            changes = newServerChanges
           }
 
           const syncState = {
@@ -389,7 +415,8 @@ export default class ShoppingListContainerComponent extends Component<Props, Sta
             syncing: false,
             loaded: true,
             lastSyncFailed: false,
-            ordersChanged: false,
+            categoriesChanged,
+            ordersChanged,
             previousSync: serverSyncedShoppingList,
             ...newShoppingList,
           }
