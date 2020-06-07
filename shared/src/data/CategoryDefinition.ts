@@ -1,5 +1,6 @@
 import colorString from 'color-string'
 import deepFreeze from 'deep-freeze'
+import _ from 'lodash'
 import { createUUID, UUID } from '../util/uuid'
 import { checkAttributeType, checkKeys, endValidation } from '../util/validation'
 
@@ -42,4 +43,48 @@ export function createCategoryDefinition(categoryDefinitionSpec: unknown): Categ
     return deepFreeze(categoryDefinition)
   }
   endValidation()
+}
+
+interface UnsafeDict<V> {
+  [k: string]: V | undefined
+}
+
+export interface CategoryMapping {
+  [k: string]: readonly UUID[]
+}
+
+export function getCategoryMapping(left: readonly CategoryDefinition[], right: readonly CategoryDefinition[]) {
+  const leftByName = _.groupBy(left, (c) => normalizeCategoryDefinitionName(c.name)) as UnsafeDict<CategoryDefinition[]>
+  const rightByName = _.groupBy(right, (c) => normalizeCategoryDefinitionName(c.name)) as UnsafeDict<CategoryDefinition[]>
+  const names = [...Object.keys(leftByName), ...Object.keys(rightByName)]
+
+  const leftToRight: CategoryMapping = {}
+  const rightToLeft: CategoryMapping = {}
+
+  for (const name of names) {
+    const lids = leftByName[name]?.map((c) => c.id) ?? []
+    const rids = rightByName[name]?.map((c) => c.id) ?? []
+
+    for (const lid of lids) {
+      leftToRight[lid] = rids
+    }
+    for (const rid of rids) {
+      rightToLeft[rid] = lids
+    }
+  }
+
+  return {
+    leftToRight,
+    rightToLeft,
+  }
+}
+
+export function mergeCategoryLists(left: readonly CategoryDefinition[], right: readonly CategoryDefinition[]) {
+  const { rightToLeft } = getCategoryMapping(left, right)
+  const unmatched = right.filter((c) => rightToLeft[c.id].length === 0)
+  return [...left, ...unmatched]
+}
+
+export function normalizeCategoryDefinitionName(name: string) {
+  return name.trim().toLowerCase()
 }
