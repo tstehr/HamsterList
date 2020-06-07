@@ -15,7 +15,7 @@ module.exports = {
   ],
   rules: {
     '@typescript-eslint/no-use-before-define': ['error', 'nofunc'],
-    '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true }],
+    '@typescript-eslint/explicit-function-return-type': ['off'],
     '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
     '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
     '@typescript-eslint/ban-types': ['error'],
