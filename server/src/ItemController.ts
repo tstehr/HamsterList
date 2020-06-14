@@ -14,9 +14,9 @@ import {
   normalizeCompletionName,
   UUID,
 } from 'shoppinglist-shared'
+import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
 import { ListidParam } from 'ShoppingListController'
 import { getSortedCompletions } from './CompletionsController'
-import { updateInArray } from './DB'
 import { RecentlyUsedArray } from './ServerShoppingList'
 
 export interface ItemidParam extends ListidParam {

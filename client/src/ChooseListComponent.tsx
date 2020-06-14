@@ -1,9 +1,10 @@
+import _ from 'lodash'
 import React, { Component } from 'react'
 import FlipMove from 'react-flip-move'
 import { Link, Redirect } from 'react-router-dom'
 import { createRandomUUID, createShoppingList } from 'shoppinglist-shared'
 import './ChooseListComponent.css'
-import { createDB, DB, getRecentlyUsedLists } from './db'
+import DB, { getRecentlyUsedLists, Key, RECENTLY_USED_KEY } from './db'
 import TopBarComponent from './TopBarComponent'
 import { responseToJSON } from './utils'
 
@@ -27,7 +28,7 @@ export default class ChooseListComponent extends Component<{}, State> {
 
   constructor(props: {}) {
     super(props)
-    this.db = createDB()
+    this.db = new DB()
     this.state = {
       listid: null,
       recentlyUsedLists: getRecentlyUsedLists(this.db),
@@ -40,18 +41,19 @@ export default class ChooseListComponent extends Component<{}, State> {
       this.inputListid.current.focus()
     }
 
-    window.addEventListener('storage', this.handleStorage)
+    this.db.on('change', this.handleStorage)
   }
 
   componentWillUnmount(): void {
-    window.removeEventListener('storage', this.handleStorage)
+    this.db.off('change', this.handleStorage)
   }
 
-  handleStorage = (): void => {
-    this.db.read()
-    this.setState({
-      recentlyUsedLists: getRecentlyUsedLists(this.db),
-    })
+  handleStorage = ({ key }: { key: Key }): void => {
+    if (_.isEqual(key, RECENTLY_USED_KEY)) {
+      this.setState({
+        recentlyUsedLists: getRecentlyUsedLists(this.db),
+      })
+    }
   }
 
   onSubmit = (e: React.SyntheticEvent<HTMLFormElement>): void => {

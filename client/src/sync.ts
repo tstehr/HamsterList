@@ -27,8 +27,9 @@ import {
   SyncRequest,
   UUID,
 } from 'shoppinglist-shared'
+import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
 import { RecentlyUsedList } from './ChooseListComponent'
-import { createDB, DB, getRecentlyUsedLists } from './db'
+import DB, { getRecentlyUsedLists, RECENTLY_USED_KEY } from './db'
 import { responseToJSON } from './utils'
 
 export type ConnectionState = 'disconnected' | 'polling' | 'socket'
@@ -104,7 +105,7 @@ class SyncingCore {
   requestSyncTimeoutID = -1
 
   constructor(private listid: string) {
-    this.db = createDB()
+    this.db = new DB()
     this.state = this.getStateFromLocalStorage()
 
     if (this.state.username == null) {
@@ -112,7 +113,7 @@ class SyncingCore {
       const otherUsername =
         getRecentlyUsedLists(this.db)
           .map((rul) => {
-            const state = this.db.read().get('lists').getById(rul.id).value()
+            const state = this.db.getList(rul.id)
             return state?.username
           })
           .find((name) => name != null) ?? null
@@ -138,9 +139,10 @@ class SyncingCore {
   }
 
   init(): void {
-    window.addEventListener('storage', this.handleStorage)
+    this.db.on('listChange', this.handleListChange)
     window.addEventListener('online', this.handleOnline)
     window.addEventListener('offline', this.handleOffline)
+
     this.initiateSyncConnection()
 
     if (this.state.loaded) {
@@ -149,7 +151,8 @@ class SyncingCore {
   }
 
   close(): void {
-    window.removeEventListener('storage', this.handleStorage)
+    this.db.off('listChange', this.handleListChange)
+    this.db.close()
     window.removeEventListener('online', this.handleOnline)
     window.removeEventListener('offline', this.handleOffline)
 
@@ -161,12 +164,10 @@ class SyncingCore {
   }
 
   save = _.debounce((): void => {
-    const state = _.cloneDeep(this.state)
-
     console.info('LOCALSTORAGE', 'Save')
 
     try {
-      this.db.get('lists').upsert(state).write()
+      this.db.updateList(this.state)
     } catch (e) {
       console.info('LOCALSTORAGE', 'Save failed (probably due to quota)', e)
     }
@@ -182,7 +183,7 @@ class SyncingCore {
   }
 
   getStateFromLocalStorage(): ClientShoppingList {
-    const dbState = this.db.read().get('lists').getById(this.listid).value()
+    const dbState = this.db.getList(this.listid)
 
     if (dbState) {
       // add default value for any keys not present in db
@@ -202,7 +203,7 @@ class SyncingCore {
       this.socket.close()
     }
 
-    this.db.get('lists').removeById(this.listid).write()
+    this.db.removeList(this.listid)
     this.load()
   }
 
@@ -455,7 +456,9 @@ class SyncingCore {
   }
 
   markListAsUsed(): void {
-    let listUsed: RecentlyUsedList = this.db.get('recentlyUsedLists').getById(this.listid).value() ?? {
+    let recentlyUsedLists = this.db.get<readonly RecentlyUsedList[]>(RECENTLY_USED_KEY) ?? []
+
+    let listUsed = recentlyUsedLists.find((ru) => ru.id === this.listid) ?? {
       id: this.listid,
       uses: 0,
       lastUsedTimestamp: Date.now(),
@@ -468,9 +471,9 @@ class SyncingCore {
       listUsed.title = this.state.title
     }
 
-    this.db.get('recentlyUsedLists').upsert(listUsed).value()
+    recentlyUsedLists = updateInArray(recentlyUsedLists, listUsed, true)
 
-    this.save()
+    this.db.set(RECENTLY_USED_KEY, recentlyUsedLists)
   }
 
   createCompletionsStateUpdate(state: ClientShoppingList, updatedItem: Item): CompletionStateUpdate {
@@ -635,9 +638,10 @@ class SyncingCore {
     }, delay)
   }
 
-  handleStorage = (e: StorageEvent): void => {
-    // TODO filter for list
-    this.load()
+  handleListChange = ({ list: { id } }: { list: ClientShoppingList }): void => {
+    if (id === this.listid) {
+      this.load()
+    }
   }
 
   handleOnline = (): void => {
