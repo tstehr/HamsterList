@@ -238,7 +238,7 @@ class SyncingCore {
     }
 
     this.socket.onmessage = (evt): void => {
-      console.log('SOCKET', 'Receiced change push!')
+      console.log('SOCKET', 'Received change push!')
       clearTimeout(this.changePushSyncTimeoutID)
       this.changePushSyncTimeoutID = window.setTimeout((): void => {
         if (this.state.previousSync != null && evt.data !== this.state.previousSync.token) {
