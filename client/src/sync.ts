@@ -99,7 +99,6 @@ class SyncingCore {
   state: ClientShoppingList
   db: DB
   socket: WebSocket | undefined
-  isInSyncMethod = false
   waitForOnlineTimeoutID = -1
   changePushSyncTimeoutID = -1
   requestSyncTimeoutID = -1
@@ -290,12 +289,11 @@ class SyncingCore {
   async sync(): Promise<void> {
     window.clearTimeout(this.requestSyncTimeoutID)
 
-    if (this.isInSyncMethod) {
+    if (this.state.syncing) {
       console.log('SYNC', 'Sync concurrent entry')
       return
     }
 
-    this.isInSyncMethod = true
     console.log('SYNC', 'Syncing')
     this.setState({
       syncing: true,
@@ -418,15 +416,14 @@ class SyncingCore {
         ...newShoppingList,
       }
       console.log('SYNC', 'deletedCompletions', syncState.deletedCompletions)
-      this.isInSyncMethod = false
       console.log('SYNC', 'done syncing')
+
+      this.setState(syncState)
 
       if (syncState.dirty) {
         console.warn('SYNC', 'dirty after sync, resyncing')
         this.requestSync(0)
       }
-
-      this.setState(syncState)
 
       if (initialSync) {
         this.markListAsUsed()
@@ -437,7 +434,6 @@ class SyncingCore {
         syncing: false,
       }
       this.setState(failedState)
-      this.isInSyncMethod = false
       console.log('SYNC', 'done syncing, failed', e)
     }
   }
