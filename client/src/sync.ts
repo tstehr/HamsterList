@@ -41,18 +41,18 @@ export type UpdateCategories = (categories: readonly CategoryDefinition[]) => vo
 export type UpdateOrders = (orders: readonly Order[]) => void
 export type SetUsername = (username?: string | null) => void
 export type ApplyDiff = (diff: Diff) => void
-export type CreateApplicableDiff = (diff: Diff) => Diff | undefined | null
+export type CreateApplicableDiff = (diff: Diff) => Diff | null
 export type DeleteCompletion = (completionName: string) => void
 
 export interface ClientShoppingList {
-  previousSync: SyncedShoppingList | undefined | null
+  previousSync: SyncedShoppingList | null
   completions: readonly CompletionItem[]
   deletedCompletions: readonly string[]
   categories: readonly CategoryDefinition[]
   orders: readonly Order[]
   changes: readonly Change[]
-  selectedOrder: UUID | undefined | null
-  username: string | undefined | null
+  selectedOrder: UUID | null
+  username: string | null
   unsyncedChanges: readonly Change[]
   loaded: boolean
   dirty: boolean
@@ -98,7 +98,7 @@ interface CompletionStateUpdate {
 class SyncingCore {
   state: ClientShoppingList
   db: DB
-  socket: WebSocket | undefined | null
+  socket: WebSocket | undefined
   isInSyncMethod = false
   waitForOnlineTimeoutID = -1
   changePushSyncTimeoutID = -1
@@ -110,12 +110,13 @@ class SyncingCore {
 
     if (this.state.username == null) {
       // take username from most frecent used list
-      const otherUsername = getRecentlyUsedLists(this.db)
-        .map((rul) => {
-          const state = this.db.read().get('lists').getById(rul.id).value()
-          return state?.username
-        })
-        .find((name) => name != null)
+      const otherUsername =
+        getRecentlyUsedLists(this.db)
+          .map((rul) => {
+            const state = this.db.read().get('lists').getById(rul.id).value()
+            return state?.username
+          })
+          .find((name) => name != null) ?? null
       this.state = { ...this.state, username: otherUsername }
     }
   }
@@ -153,7 +154,7 @@ class SyncingCore {
     window.removeEventListener('online', this.handleOnline)
     window.removeEventListener('offline', this.handleOffline)
 
-    if (this.socket != null) {
+    if (this.socket) {
       this.socket.onclose = null
 
       this.socket.close()
@@ -196,7 +197,7 @@ class SyncingCore {
   }
 
   clearLocalStorage(): void {
-    if (this.socket != null) {
+    if (this.socket) {
       this.socket.onclose = null
 
       this.socket.close()
@@ -528,7 +529,7 @@ class SyncingCore {
     this.requestSync()
   }
 
-  createApplicableDiff(diff: Diff): Diff | undefined | null {
+  createApplicableDiff(diff: Diff): Diff | null {
     return createApplicableDiff(this.getShoppingList(this.state), diff)
   }
 

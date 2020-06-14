@@ -239,7 +239,7 @@ export function createReverseDiff(diff: Diff): Diff {
   exhaustiveCheck(diff, `Diff to be reversed is not of type 'Diff'`)
 }
 
-export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): Diff | undefined | null {
+export function createApplicableDiff(shoppingList: ShoppingList, diff: Diff): Diff | null {
   if (isDiffApplicable(shoppingList, diff)) {
     return diff
   }
