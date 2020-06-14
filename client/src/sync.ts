@@ -133,7 +133,7 @@ class SyncingCore {
 
     // save new state to local storage
     if (!suppressSave && this.state.loaded) {
-      console.info('LOCALSTORAGE', 'Scheduled save')
+      this.info('LOCALSTORAGE', 'Scheduled save')
       this.save()
     }
   }
@@ -164,17 +164,17 @@ class SyncingCore {
   }
 
   save = _.debounce((): void => {
-    console.info('LOCALSTORAGE', 'Save')
+    this.info('LOCALSTORAGE', 'Save')
 
     try {
       this.db.updateList(this.state)
     } catch (e) {
-      console.info('LOCALSTORAGE', 'Save failed (probably due to quota)', e)
+      this.log('error', 'LOCALSTORAGE', 'Save failed (probably due to quota)', e)
     }
   }, 500)
 
   load(): void {
-    console.info('LOCALSTORAGE', 'Load')
+    this.info('LOCALSTORAGE', 'Load')
     const newState = this.getStateFromLocalStorage()
     this.setState(newState, true)
     if (!newState.loaded) {
@@ -231,7 +231,7 @@ class SyncingCore {
 
     this.socket.onopen = (): void => {
       onopenTimeoutID = window.setTimeout((): void => {
-        console.log('SOCKET', 'socket open')
+        this.info('SOCKET', 'socket open')
         this.setState({
           connectionState: 'socket',
         })
@@ -239,35 +239,35 @@ class SyncingCore {
     }
 
     this.socket.onmessage = (evt): void => {
-      console.log('SOCKET', 'Received change push!')
+      this.info('SOCKET', 'Received change push!')
       clearTimeout(this.changePushSyncTimeoutID)
       this.changePushSyncTimeoutID = window.setTimeout((): void => {
         if (this.state.previousSync != null && evt.data !== this.state.previousSync.token) {
-          console.log('SOCKET', "Tokens don't match, syncing!")
+          this.info('SOCKET', "Tokens don't match, syncing!")
           this.sync()
         } else {
-          console.log('SOCKET', 'Token already up to date')
+          this.info('SOCKET', 'Token already up to date')
         }
       }, 300)
     }
 
     this.socket.onerror = (): void => {
-      console.log('SOCKET', 'error')
+      this.info('SOCKET', 'error')
       clearTimeout(onopenTimeoutID)
     }
 
     this.socket.onclose = (): void => {
       clearTimeout(onopenTimeoutID)
-      console.log('SOCKET', 'socket closed')
+      this.info('SOCKET', 'socket closed')
 
       if (window.navigator.onLine) {
-        console.log('SOCKET', 'socket closed, polling')
+        this.info('SOCKET', 'socket closed, polling')
         this.setState({
           connectionState: 'polling',
         })
         window.setTimeout(() => this.initiateSyncConnection(), 2000)
       } else {
-        console.log('SOCKET', 'socket closed, offline')
+        this.info('SOCKET', 'socket closed, offline')
         this.setState({
           connectionState: 'disconnected',
         })
@@ -277,7 +277,7 @@ class SyncingCore {
   }
 
   waitForOnline(): void {
-    console.log('SYNC', 'checking online')
+    this.info('SYNC', 'checking online')
 
     if (window.navigator.onLine) {
       this.initiateSyncConnection()
@@ -291,11 +291,11 @@ class SyncingCore {
     window.clearTimeout(this.requestSyncTimeoutID)
 
     if (this.state.syncing) {
-      console.log('SYNC', 'Sync concurrent entry')
+      this.info('SYNC', 'Sync concurrent entry')
       return
     }
 
-    console.log('SYNC', 'Syncing')
+    this.info('SYNC', 'Syncing')
     this.setState({
       syncing: true,
     })
@@ -329,7 +329,7 @@ class SyncingCore {
         body: JSON.stringify(syncRequest),
       })
     } else {
-      console.log('SYNC', 'initial sync!')
+      this.info('SYNC', 'initial sync!')
       syncPromise = this.fetch(
         `/api/${this.listid}/sync?includeInResponse=changes&includeInResponse=categories&includeInResponse=completions&includeInResponse=orders`
       )
@@ -416,13 +416,13 @@ class SyncingCore {
         previousSync: serverSyncedShoppingList,
         ...newShoppingList,
       }
-      console.log('SYNC', 'deletedCompletions', syncState.deletedCompletions)
-      console.log('SYNC', 'done syncing')
+      this.info('SYNC', 'deletedCompletions', syncState.deletedCompletions)
+      this.info('SYNC', 'done syncing')
 
       this.setState(syncState)
 
       if (syncState.dirty) {
-        console.warn('SYNC', 'dirty after sync, resyncing')
+        this.info('SYNC', 'dirty after sync, resyncing')
         this.requestSync(0)
       }
 
@@ -435,7 +435,7 @@ class SyncingCore {
         syncing: false,
       }
       this.setState(failedState)
-      console.log('SYNC', 'done syncing, failed', e)
+      this.info('SYNC', 'done syncing, failed', e)
     }
   }
 
@@ -523,7 +523,7 @@ class SyncingCore {
         dirty: true,
       })
     } catch (e) {
-      console.error('Error while applying diff', diff, e)
+      this.log('error', 'SYNC', 'Error while applying diff', diff, e)
     }
     this.requestSync()
   }
@@ -638,6 +638,14 @@ class SyncingCore {
     }, delay)
   }
 
+  info(...messages: unknown[]) {
+    this.log('info', ...messages)
+  }
+
+  log(method: keyof typeof console, ...messages: unknown[]) {
+    console[method](`[SyncingCore listid="${this.listid}"]`, ...messages)
+  }
+
   handleListChange = ({ list: { id } }: { list: ClientShoppingList }): void => {
     if (id === this.listid) {
       this.load()
@@ -649,7 +657,7 @@ class SyncingCore {
   }
 
   handleOffline = (): void => {
-    console.log('offline')
+    this.info('offline')
     this.setState({
       connectionState: 'disconnected',
     })
