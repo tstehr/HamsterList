@@ -11,7 +11,7 @@ import FlipMove from 'react-flip-move'
 import { ADD_ITEM, CategoryDefinition, Change, createReverseDiff, DELETE_ITEM, Diff, UPDATE_ITEM } from 'shoppinglist-shared'
 import './ChangesComponent.css'
 import PillItemComponent from './PillItemComponent'
-import { ApplyDiff, CreateApplicableDiff } from './ShoppingListContainerComponent'
+import { ApplyDiff, CreateApplicableDiff } from './sync'
 
 interface Props {
   changes: readonly Change[]

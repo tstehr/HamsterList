@@ -9,8 +9,8 @@ import EditItemComponent from './EditItemComponent'
 import { Up } from './HistoryTracker'
 import KeyFocusComponent from './KeyFocusComponent'
 import OrderSelectComponent from './OrderSelectComponent'
-import { DeleteItem, SelectOrder, UpdateItem } from './ShoppingListContainerComponent'
 import './ShoppingListItemsComponent.css'
+import { DeleteItem, SelectOrder, UpdateItem } from './sync'
 
 interface Props {
   items: readonly Item[]

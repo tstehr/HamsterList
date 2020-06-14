@@ -13,7 +13,7 @@ import CompletionsComponent from './CompletionsComponent'
 import './CreateItemComponent.css'
 import IconButton from './IconButton'
 import KeyFocusComponent from './KeyFocusComponent'
-import { ApplyDiff, CreateApplicableDiff, CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
+import { ApplyDiff, CreateApplicableDiff, CreateItem, DeleteCompletion } from './sync'
 
 export interface ItemInput {
   item: LocalItem

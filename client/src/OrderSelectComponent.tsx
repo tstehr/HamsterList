@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { Component } from 'react'
 import { createUUID, Order, UUID } from 'shoppinglist-shared'
 import './OrderSelectComponent.css'
-import { SelectOrder } from './ShoppingListContainerComponent'
+import { SelectOrder } from './sync'
 
 interface Props {
   orders: readonly Order[]

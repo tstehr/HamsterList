@@ -6,7 +6,7 @@ import { ReactComponent as ArrowDownUp } from './icons/arrow-down-up.svg'
 import { ReactComponent as ArrowUp } from './icons/arrow-up.svg'
 import { ReactComponent as Back } from './icons/back.svg'
 import { ReactComponent as Cross } from './icons/cross.svg'
-import { ConnectionState, UpdateListTitle } from './ShoppingListContainerComponent'
+import { ConnectionState, UpdateListTitle } from './sync'
 import './TopBarComponent.css'
 
 interface Props {

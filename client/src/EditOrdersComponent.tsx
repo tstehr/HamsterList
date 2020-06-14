@@ -11,7 +11,7 @@ import { CategoryDefinition, createRandomUUID, Order, sortCategories, UUID } fro
 import CategoryComponent from './CategoryComponent'
 import './EditOrdersComponent.css'
 import { Up } from './HistoryTracker'
-import { UpdateCategories, UpdateOrders } from './ShoppingListContainerComponent'
+import { UpdateCategories, UpdateOrders } from './sync'
 
 interface Props {
   listid: string

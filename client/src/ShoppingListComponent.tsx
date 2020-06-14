@@ -19,6 +19,7 @@ import CreateItemComponent from './CreateItemComponent'
 import EditOrdersComponent from './EditOrdersComponent'
 import { Up } from './HistoryTracker'
 import './ShoppingListComponent.css'
+import ShoppingListItemsComponent from './ShoppingListItemsComponent'
 import {
   ApplyDiff,
   ConnectionState,
@@ -32,8 +33,7 @@ import {
   UpdateItem,
   UpdateListTitle,
   UpdateOrders,
-} from './ShoppingListContainerComponent'
-import ShoppingListItemsComponent from './ShoppingListItemsComponent'
+} from './sync'
 import TopBarComponent, { EditTitleComponent, SyncStatusComponent } from './TopBarComponent'
 
 interface Props {

@@ -5,7 +5,7 @@ import React, { Component, Fragment } from 'react'
 import { CategoryDefinition, CompletionItem, itemToString, LocalItem } from 'shoppinglist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 import { ItemInput } from './CreateItemComponent'
-import { CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
+import { CreateItem, DeleteCompletion } from './sync'
 
 interface Props {
   focusItemsInCreation: boolean

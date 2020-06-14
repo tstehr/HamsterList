@@ -3,7 +3,7 @@ import lodashId from 'lodash-id'
 import low from 'lowdb'
 import LocalStorage from 'lowdb/adapters/LocalStorage'
 import { frecency } from 'shoppinglist-shared'
-import { ClientShoppingList } from './ShoppingListContainerComponent'
+import { ClientShoppingList } from './sync'
 
 // temporary workaround, because there are no types for lodash-id
 export type DB = low.LowdbSync<DBContents>

@@ -5,7 +5,7 @@ import CategoryComponent from './CategoryComponent'
 import './CreateItemButtonComponent.css'
 import IconButton from './IconButton'
 import ItemComponent from './ItemComponent'
-import { CreateItem, DeleteCompletion } from './ShoppingListContainerComponent'
+import { CreateItem, DeleteCompletion } from './sync'
 
 interface Props {
   item: LocalItem

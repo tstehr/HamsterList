@@ -8,7 +8,7 @@ import './EditItemComponent.css'
 import { Up } from './HistoryTracker'
 import IconButton from './IconButton'
 import ItemComponent from './ItemComponent'
-import { DeleteItem, UpdateItem } from './ShoppingListContainerComponent'
+import { DeleteItem, UpdateItem } from './sync'
 
 interface Props {
   item: Item
