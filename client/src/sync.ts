@@ -121,31 +121,22 @@ class SyncingCore {
     }
   }
 
-  setState(
-    state:
-      | ((prevState: Readonly<ClientShoppingList>) => Partial<ClientShoppingList> | null)
-      | (Partial<ClientShoppingList> | null),
-    callback?: () => void
-  ): void {
-    const newState = typeof state === 'function' ? state(this.state) : state
-    if (newState !== null) {
-      this.state = {
-        ...this.state,
-        ...newState,
-      }
-
-      this.emitter.emit('change', { clientShoppingList: this.state })
-
-      if (!this.supressSave && this.state.loaded) {
-        console.info('LOCALSTORAGE', 'Scheduled save')
-        this.save()
-      }
-
-      this.supressSave = false
+  setState(state: Partial<ClientShoppingList>): void {
+    // update state
+    this.state = {
+      ...this.state,
+      ...state,
     }
-    if (callback) {
-      callback()
+
+    // emit change event
+    this.emitter.emit('change', { clientShoppingList: this.state })
+
+    // save new state to local storage
+    if (!this.supressSave && this.state.loaded) {
+      console.info('LOCALSTORAGE', 'Scheduled save')
+      this.save()
     }
+    this.supressSave = false
   }
 
   init(): void {
@@ -187,11 +178,10 @@ class SyncingCore {
     console.info('LOCALSTORAGE', 'Load')
     this.supressSave = true
     const newState = this.getStateFromLocalStorage()
-    this.setState(newState, () => {
-      if (!newState.loaded) {
-        this.initiateSyncConnection()
-      }
-    })
+    this.setState(newState)
+    if (!newState.loaded) {
+      this.initiateSyncConnection()
+    }
   }
 
   getStateFromLocalStorage(): ClientShoppingList {
@@ -355,98 +345,94 @@ class SyncingCore {
       const serverCategories: readonly CategoryDefinition[] = syncResponse.categories ?? []
       const serverOrders: readonly Order[] = syncResponse.orders ?? []
       const completions: readonly CompletionItem[] = syncResponse.completions ?? []
-      this.setState(
-        (prevState) => {
-          const serverShoppingList: ShoppingList = _.omit(serverSyncedShoppingList, 'token', 'changeId')
 
-          // get new shopping list and determine if there were further local changes while syncing
-          let dirty, newShoppingList
-          if (preSyncShoppingList != null) {
-            const clientShoppingList = this.getShoppingList(prevState)
-            dirty = !_.isEqual(preSyncShoppingList, clientShoppingList)
-            newShoppingList = mergeShoppingLists(preSyncShoppingList, clientShoppingList, serverShoppingList, serverCategories)
-          } else {
-            newShoppingList = serverShoppingList
-            dirty = false
-          }
+      const serverShoppingList: ShoppingList = _.omit(serverSyncedShoppingList, 'token', 'changeId')
 
-          // retain completion deletions performed during sync
-          const unsyncedDeletedCompletions = prevState.deletedCompletions.filter(
-            (name) => !preSyncDeletedCompletions.includes(normalizeCompletionName(name))
-          )
-          dirty = dirty || unsyncedDeletedCompletions.length > 0 // add newly fetched changes to local changes
+      // get new shopping list and determine if there were further local changes while syncing
+      let dirty, newShoppingList
+      if (preSyncShoppingList != null) {
+        const clientShoppingList = this.getShoppingList(this.state)
+        dirty = !_.isEqual(preSyncShoppingList, clientShoppingList)
+        newShoppingList = mergeShoppingLists(preSyncShoppingList, clientShoppingList, serverShoppingList, serverCategories)
+      } else {
+        newShoppingList = serverShoppingList
+        dirty = false
+      }
 
-          // apply new categories only if no client-side changes
-          let categories, categoriesChanged
-          if (_.isEqual(preSyncCategories, prevState.categories)) {
-            categories = serverCategories
-            categoriesChanged = false
-          } else {
-            categories = prevState.categories
-            categoriesChanged = !_.isEqual(categories, serverCategories)
-            dirty = dirty || categoriesChanged
-          }
-
-          // apply new orders only if no client-side changes
-          let orders, ordersChanged
-          if (_.isEqual(preSyncOrders, prevState.orders)) {
-            orders = serverOrders
-            ordersChanged = false
-          } else {
-            orders = prevState.orders
-            ordersChanged = !_.isEqual(orders, serverOrders)
-            dirty = dirty || ordersChanged
-          }
-
-          // merge changes
-          let changes
-          if (newServerChanges.length === 0) {
-            // no new changes, keep the old ones
-            changes = prevState.changes
-          } else if (prevState.changes.length !== 0 && _.first(newServerChanges)?.id === _.last(prevState.changes)?.id) {
-            // the new changes connect to the local ones (latest of the old is oldest of the new), append
-            changes = getOnlyNewChanges([...prevState.changes, ...newServerChanges.slice(1)])
-          } else {
-            // there are new changes which don't connect up. this means the local changes were quite old, and no longer cached by the server
-            // we evict them and replace by the new ones
-            changes = newServerChanges
-          }
-
-          const syncState = {
-            completions: completions.filter(
-              (completionItem) => !unsyncedDeletedCompletions.includes(normalizeCompletionName(completionItem.name))
-            ),
-            categories,
-            orders,
-            changes,
-            dirty,
-            deletedCompletions: unsyncedDeletedCompletions,
-            unsyncedChanges: prevState.unsyncedChanges.slice(preSyncUnsyncedChangesLength),
-            syncing: false,
-            loaded: true,
-            lastSyncFailed: false,
-            categoriesChanged,
-            ordersChanged,
-            previousSync: serverSyncedShoppingList,
-            ...newShoppingList,
-          }
-          console.log('SYNC', 'deletedCompletions', syncState.deletedCompletions)
-          this.isInSyncMethod = false
-          console.log('SYNC', 'done syncing')
-
-          if (syncState.dirty) {
-            console.warn('SYNC', 'dirty after sync, resyncing')
-            this.requestSync(0)
-          }
-
-          return syncState
-        },
-        (): void => {
-          if (initialSync) {
-            this.markListAsUsed()
-          }
-        }
+      // retain completion deletions performed during sync
+      const unsyncedDeletedCompletions = this.state.deletedCompletions.filter(
+        (name) => !preSyncDeletedCompletions.includes(normalizeCompletionName(name))
       )
+      dirty = dirty || unsyncedDeletedCompletions.length > 0 // add newly fetched changes to local changes
+
+      // apply new categories only if no client-side changes
+      let categories, categoriesChanged
+      if (_.isEqual(preSyncCategories, this.state.categories)) {
+        categories = serverCategories
+        categoriesChanged = false
+      } else {
+        categories = this.state.categories
+        categoriesChanged = !_.isEqual(categories, serverCategories)
+        dirty = dirty || categoriesChanged
+      }
+
+      // apply new orders only if no client-side changes
+      let orders, ordersChanged
+      if (_.isEqual(preSyncOrders, this.state.orders)) {
+        orders = serverOrders
+        ordersChanged = false
+      } else {
+        orders = this.state.orders
+        ordersChanged = !_.isEqual(orders, serverOrders)
+        dirty = dirty || ordersChanged
+      }
+
+      // merge changes
+      let changes
+      if (newServerChanges.length === 0) {
+        // no new changes, keep the old ones
+        changes = this.state.changes
+      } else if (this.state.changes.length !== 0 && _.first(newServerChanges)?.id === _.last(this.state.changes)?.id) {
+        // the new changes connect to the local ones (latest of the old is oldest of the new), append
+        changes = getOnlyNewChanges([...this.state.changes, ...newServerChanges.slice(1)])
+      } else {
+        // there are new changes which don't connect up. this means the local changes were quite old, and no longer cached by the server
+        // we evict them and replace by the new ones
+        changes = newServerChanges
+      }
+
+      const syncState = {
+        completions: completions.filter(
+          (completionItem) => !unsyncedDeletedCompletions.includes(normalizeCompletionName(completionItem.name))
+        ),
+        categories,
+        orders,
+        changes,
+        dirty,
+        deletedCompletions: unsyncedDeletedCompletions,
+        unsyncedChanges: this.state.unsyncedChanges.slice(preSyncUnsyncedChangesLength),
+        syncing: false,
+        loaded: true,
+        lastSyncFailed: false,
+        categoriesChanged,
+        ordersChanged,
+        previousSync: serverSyncedShoppingList,
+        ...newShoppingList,
+      }
+      console.log('SYNC', 'deletedCompletions', syncState.deletedCompletions)
+      this.isInSyncMethod = false
+      console.log('SYNC', 'done syncing')
+
+      if (syncState.dirty) {
+        console.warn('SYNC', 'dirty after sync, resyncing')
+        this.requestSync(0)
+      }
+
+      this.setState(syncState)
+
+      if (initialSync) {
+        this.markListAsUsed()
+      }
     } catch (e) {
       const failedState = {
         lastSyncFailed: true,
@@ -519,32 +505,29 @@ class SyncingCore {
 
   applyDiff(diff: Diff): void {
     this.markListAsUsed()
-    this.setState((prevState) => {
-      try {
-        const localChange: Change = {
-          id: createRandomUUID(),
-          username: this.state.username,
-          date: new Date(),
-          diffs: [diff],
-        }
-        const newList = applyDiff(this.getShoppingList(prevState), diff)
-
-        let completionStateUpdate: CompletionStateUpdate = {}
-        if ('item' in diff && diff.item != null) {
-          completionStateUpdate = this.createCompletionsStateUpdate(prevState, diff.item)
-        }
-
-        return {
-          ...newList,
-          unsyncedChanges: [...prevState.unsyncedChanges, localChange],
-          ...completionStateUpdate,
-          dirty: true,
-        }
-      } catch (e) {
-        console.error('Error while applying diff', diff, e)
+    try {
+      const localChange: Change = {
+        id: createRandomUUID(),
+        username: this.state.username,
+        date: new Date(),
+        diffs: [diff],
       }
-      return {}
-    })
+      const newList = applyDiff(this.getShoppingList(this.state), diff)
+
+      let completionStateUpdate: CompletionStateUpdate = {}
+      if ('item' in diff && diff.item != null) {
+        completionStateUpdate = this.createCompletionsStateUpdate(this.state, diff.item)
+      }
+
+      this.setState({
+        ...newList,
+        unsyncedChanges: [...this.state.unsyncedChanges, localChange],
+        ...completionStateUpdate,
+        dirty: true,
+      })
+    } catch (e) {
+      console.error('Error while applying diff', diff, e)
+    }
     this.requestSync()
   }
 
@@ -554,13 +537,13 @@ class SyncingCore {
 
   deleteCompletion(completionName: string): void {
     const normalizedCompletionName = normalizeCompletionName(completionName)
-    this.setState((prevState) => ({
-      deletedCompletions: [...prevState.deletedCompletions, normalizedCompletionName],
-      completions: prevState.completions.filter(
+    this.setState({
+      deletedCompletions: [...this.state.deletedCompletions, normalizedCompletionName],
+      completions: this.state.completions.filter(
         (completion) => normalizeCompletionName(completion.name) !== normalizedCompletionName
       ),
       dirty: true,
-    }))
+    })
     this.requestSync()
   }
 
@@ -645,10 +628,10 @@ class SyncingCore {
       }
     }
 
-    this.setState((prevState) => ({
+    this.setState({
       username,
-      unsyncedChanges: prevState.unsyncedChanges.map((c) => ({ ...c, username })),
-    }))
+      unsyncedChanges: this.state.unsyncedChanges.map((c) => ({ ...c, username })),
+    })
   }
 
   requestSync(delay = 1000): void {
