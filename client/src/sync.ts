@@ -99,7 +99,6 @@ class SyncingCore {
   state: ClientShoppingList
   db: DB
   socket: WebSocket | undefined | null
-  supressSave = false
   isInSyncMethod = false
   waitForOnlineTimeoutID = -1
   changePushSyncTimeoutID = -1
@@ -121,7 +120,7 @@ class SyncingCore {
     }
   }
 
-  setState(state: Partial<ClientShoppingList>): void {
+  setState(state: Partial<ClientShoppingList>, suppressSave = false): void {
     // update state
     this.state = {
       ...this.state,
@@ -132,11 +131,10 @@ class SyncingCore {
     this.emitter.emit('change', { clientShoppingList: this.state })
 
     // save new state to local storage
-    if (!this.supressSave && this.state.loaded) {
+    if (!suppressSave && this.state.loaded) {
       console.info('LOCALSTORAGE', 'Scheduled save')
       this.save()
     }
-    this.supressSave = false
   }
 
   init(): void {
@@ -176,9 +174,8 @@ class SyncingCore {
 
   load(): void {
     console.info('LOCALSTORAGE', 'Load')
-    this.supressSave = true
     const newState = this.getStateFromLocalStorage()
-    this.setState(newState)
+    this.setState(newState, true)
     if (!newState.loaded) {
       this.initiateSyncConnection()
     }
