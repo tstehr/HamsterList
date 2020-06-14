@@ -9,21 +9,7 @@ interface Props {
 }
 
 export default function ShoppingListContainerComponent({ listid, up }: Props) {
-  const [state, setState] = useState<ClientShoppingList>()
-  const [sync, setSync] = useState<SyncingCore>()
-  useEffect(() => {
-    const sync = new SyncingCore(listid)
-    function handleChange({ clientShoppingList }: { clientShoppingList: ClientShoppingList }) {
-      setState(clientShoppingList)
-    }
-    setSync(sync)
-    sync.init()
-    sync.on('change', handleChange)
-    return () => {
-      sync.off('change', handleChange)
-      sync.close()
-    }
-  }, [listid])
+  const [state, sync] = useSync(listid)
 
   return (
     <div>
@@ -59,4 +45,25 @@ export default function ShoppingListContainerComponent({ listid, up }: Props) {
       )}
     </div>
   )
+}
+
+function useSync(listid: string): [ClientShoppingList | undefined, SyncingCore | undefined] {
+  const [state, setState] = useState<ClientShoppingList>()
+  const [sync, setSync] = useState<SyncingCore>()
+
+  useEffect(() => {
+    const sync = new SyncingCore(listid)
+    function handleChange({ clientShoppingList }: { clientShoppingList: ClientShoppingList }) {
+      setState(clientShoppingList)
+    }
+    setSync(sync)
+    sync.init()
+    sync.on('change', handleChange)
+    return () => {
+      sync.off('change', handleChange)
+      sync.close()
+    }
+  }, [listid])
+
+  return [state, sync]
 }
