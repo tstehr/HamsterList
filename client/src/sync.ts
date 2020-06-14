@@ -517,7 +517,7 @@ class SyncingCore {
     }
   }
 
-  applyDiff = (diff: Diff): void => {
+  applyDiff(diff: Diff): void {
     this.markListAsUsed()
     this.setState((prevState) => {
       try {
@@ -544,38 +544,36 @@ class SyncingCore {
         console.error('Error while applying diff', diff, e)
       }
       return {}
-    }, this.requestSync)
+    })
+    this.requestSync()
   }
 
-  createApplicableDiff = (diff: Diff): Diff | undefined | null => {
+  createApplicableDiff(diff: Diff): Diff | undefined | null {
     return createApplicableDiff(this.getShoppingList(this.state), diff)
   }
 
-  deleteCompletion = (completionName: string): void => {
+  deleteCompletion(completionName: string): void {
     const normalizedCompletionName = normalizeCompletionName(completionName)
-    this.setState(
-      (prevState) => ({
-        deletedCompletions: [...prevState.deletedCompletions, normalizedCompletionName],
-        completions: prevState.completions.filter(
-          (completion) => normalizeCompletionName(completion.name) !== normalizedCompletionName
-        ),
-        dirty: true,
-      }),
-      this.requestSync
-    )
+    this.setState((prevState) => ({
+      deletedCompletions: [...prevState.deletedCompletions, normalizedCompletionName],
+      completions: prevState.completions.filter(
+        (completion) => normalizeCompletionName(completion.name) !== normalizedCompletionName
+      ),
+      dirty: true,
+    }))
+    this.requestSync()
   }
 
-  updateListTitle = (newTitle: string): void => {
+  updateListTitle(newTitle: string): void {
     this.markListAsUsed()
-    this.setState((prevState) => {
-      return {
-        title: newTitle,
-        dirty: true,
-      }
-    }, this.requestSync)
+    this.setState({
+      title: newTitle,
+      dirty: true,
+    })
+    this.requestSync()
   }
 
-  createItem = (localItem: LocalItem): void => {
+  createItem(localItem: LocalItem): void {
     const item = { ...localItem, id: createRandomUUID() }
 
     try {
@@ -588,7 +586,7 @@ class SyncingCore {
     }
   }
 
-  deleteItem = (id: UUID): void => {
+  deleteItem(id: UUID): void {
     try {
       const diff = generateDeleteItem(this.getShoppingList(this.state), id)
       this.applyDiff(diff)
@@ -599,7 +597,7 @@ class SyncingCore {
     }
   }
 
-  updateItem = (id: UUID, localItem: LocalItem): void => {
+  updateItem(id: UUID, localItem: LocalItem): void {
     const item = { ...localItem, id: id }
 
     try {
@@ -612,37 +610,33 @@ class SyncingCore {
     }
   }
 
-  selectOrder = (id?: UUID | null): void => {
+  selectOrder(id?: UUID | null): void {
     this.setState({
       selectedOrder: id,
     })
   }
 
-  updateCategories = (categories: readonly CategoryDefinition[]): void => {
+  updateCategories(categories: readonly CategoryDefinition[]): void {
     this.markListAsUsed()
-    this.setState(
-      {
-        dirty: true,
-        categoriesChanged: true,
-        categories: categories,
-      },
-      this.requestSync
-    )
+    this.setState({
+      dirty: true,
+      categoriesChanged: true,
+      categories: categories,
+    })
+    this.requestSync()
   }
 
-  updateOrders = (orders: readonly Order[]): void => {
+  updateOrders(orders: readonly Order[]): void {
     this.markListAsUsed()
-    this.setState(
-      {
-        dirty: true,
-        ordersChanged: true,
-        orders: orders,
-      },
-      this.requestSync
-    )
+    this.setState({
+      dirty: true,
+      ordersChanged: true,
+      orders: orders,
+    })
+    this.requestSync()
   }
 
-  setUsername = (username?: string | null): void => {
+  setUsername(username?: string | null): void {
     if (username != null) {
       username = username.trim()
 
@@ -657,7 +651,7 @@ class SyncingCore {
     }))
   }
 
-  requestSync = (delay = 1000): void => {
+  requestSync(delay = 1000): void {
     window.clearTimeout(this.requestSyncTimeoutID)
     this.requestSyncTimeoutID = window.setTimeout(() => {
       this.sync()
