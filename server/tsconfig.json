@@ -7,12 +7,13 @@
     "jsx": "react",
     "lib": ["es6", "dom"],
     "moduleResolution": "node",
+    "declaration": true,
+    "declarationMap": true,
     "strict": true,
     "target": "esnext",
     "skipLibCheck": true,
     "strictNullChecks": true,
-    "outDir": "unused-ts-output",
-    "noEmit": true
+    "outDir": "build"
   },
   "include": ["src/**/*"]
 }
