@@ -16,6 +16,7 @@ import {
   generateAddItem,
   generateDeleteItem,
   generateUpdateItem,
+  getLiteralKeys,
   getOnlyNewChanges,
   Item,
   LocalItem,
@@ -45,7 +46,7 @@ export type ApplyDiff = (diff: Diff) => void
 export type CreateApplicableDiff = (diff: Diff) => Diff | null
 export type DeleteCompletion = (completionName: string) => void
 
-export interface ClientShoppingList {
+export interface PersistedClientShoppingList {
   previousSync: SyncedShoppingList | null
   completions: readonly CompletionItem[]
   deletedCompletions: readonly string[]
@@ -57,18 +58,23 @@ export interface ClientShoppingList {
   unsyncedChanges: readonly Change[]
   loaded: boolean
   dirty: boolean
-  syncing: boolean
-  lastSyncFailed: boolean
   categoriesChanged: boolean
   ordersChanged: boolean
-  connectionState: ConnectionState
   // ShoppingList
   id: string
   title: string
   items: readonly Item[]
 }
 
-export const initialState: ClientShoppingList = deepFreeze({
+export interface EphemeralClientShoppingList {
+  syncing: boolean
+  lastSyncFailed: boolean
+  connectionState: ConnectionState
+}
+
+export type ClientShoppingList = PersistedClientShoppingList & EphemeralClientShoppingList
+
+export const persistedInitialState: PersistedClientShoppingList = deepFreeze({
   id: '',
   title: '',
   items: [],
@@ -81,14 +87,30 @@ export const initialState: ClientShoppingList = deepFreeze({
   selectedOrder: null,
   username: null,
   unsyncedChanges: [],
-  loaded: false,
   dirty: false,
-  syncing: false,
+  loaded: false,
   categoriesChanged: false,
   ordersChanged: false,
+})
+
+export const ephemeralInitialState: EphemeralClientShoppingList = deepFreeze({
+  syncing: false,
   lastSyncFailed: false,
   connectionState: 'disconnected',
 })
+
+export const initialState: ClientShoppingList = deepFreeze({
+  ...persistedInitialState,
+  ...ephemeralInitialState,
+})
+
+export function getPersistedState(state: ClientShoppingList): PersistedClientShoppingList {
+  return _.pick(state, getLiteralKeys(persistedInitialState))
+}
+
+export function getEpehemralState(state: ClientShoppingList): EphemeralClientShoppingList {
+  return _.pick(state, getLiteralKeys(ephemeralInitialState))
+}
 
 interface CompletionStateUpdate {
   completions?: readonly CompletionItem[]
@@ -106,7 +128,10 @@ class SyncingCore {
 
   constructor(private listid: string) {
     this.db = new DB()
-    this.state = this.getStateFromLocalStorage()
+    this.state = {
+      ...ephemeralInitialState,
+      ...this.getPersistedStateFromLocalStorage(),
+    }
 
     if (this.state.username == null) {
       // take username from most frecent used list
@@ -127,6 +152,8 @@ class SyncingCore {
       ...this.state,
       ...state,
     }
+
+    // this.info('STATE', this.state)
 
     // emit change event
     this.emitter.emit('change', { clientShoppingList: this.state })
@@ -167,7 +194,7 @@ class SyncingCore {
     this.info('LOCALSTORAGE', 'Save')
 
     try {
-      this.db.updateList(this.state)
+      this.db.updateList(getPersistedState(this.state))
     } catch (e) {
       this.log('error', 'LOCALSTORAGE', 'Save failed (probably due to quota)', e)
     }
@@ -175,24 +202,24 @@ class SyncingCore {
 
   load(): void {
     this.info('LOCALSTORAGE', 'Load')
-    const newState = this.getStateFromLocalStorage()
+    const newState = this.getPersistedStateFromLocalStorage()
     this.setState(newState, true)
     if (!newState.loaded) {
       this.initiateSyncConnection()
     }
   }
 
-  getStateFromLocalStorage(): ClientShoppingList {
+  getPersistedStateFromLocalStorage(): PersistedClientShoppingList {
     const dbState = this.db.getList(this.listid)
 
     if (dbState) {
       // add default value for any keys not present in db
-      const state = { ...initialState, ...dbState }
-      state.changes = state.changes.map(createChange)
-      state.unsyncedChanges = state.unsyncedChanges.map(createChange)
-      return state
+      const persistedState = { ...persistedInitialState, ...dbState }
+      persistedState.changes = persistedState.changes.map(createChange)
+      persistedState.unsyncedChanges = persistedState.unsyncedChanges.map(createChange)
+      return persistedState
     } else {
-      return initialState
+      return persistedInitialState
     }
   }
 
@@ -346,21 +373,21 @@ class SyncingCore {
       const serverShoppingList: ShoppingList = _.omit(serverSyncedShoppingList, 'token', 'changeId')
 
       // get new shopping list and determine if there were further local changes while syncing
-      let dirty, newShoppingList
+      let dirtyAfterSync, newShoppingList
       if (preSyncShoppingList != null) {
         const clientShoppingList = this.getShoppingList(this.state)
-        dirty = !_.isEqual(preSyncShoppingList, clientShoppingList)
+        dirtyAfterSync = !_.isEqual(preSyncShoppingList, clientShoppingList)
         newShoppingList = mergeShoppingLists(preSyncShoppingList, clientShoppingList, serverShoppingList, serverCategories)
       } else {
         newShoppingList = serverShoppingList
-        dirty = false
+        dirtyAfterSync = false
       }
 
       // retain completion deletions performed during sync
       const unsyncedDeletedCompletions = this.state.deletedCompletions.filter(
         (name) => !preSyncDeletedCompletions.includes(normalizeCompletionName(name))
       )
-      dirty = dirty || unsyncedDeletedCompletions.length > 0 // add newly fetched changes to local changes
+      dirtyAfterSync = dirtyAfterSync || unsyncedDeletedCompletions.length > 0 // add newly fetched changes to local changes
 
       // apply new categories only if no client-side changes
       let categories, categoriesChanged
@@ -370,7 +397,7 @@ class SyncingCore {
       } else {
         categories = this.state.categories
         categoriesChanged = !_.isEqual(categories, serverCategories)
-        dirty = dirty || categoriesChanged
+        dirtyAfterSync = dirtyAfterSync || categoriesChanged
       }
 
       // apply new orders only if no client-side changes
@@ -381,7 +408,7 @@ class SyncingCore {
       } else {
         orders = this.state.orders
         ordersChanged = !_.isEqual(orders, serverOrders)
-        dirty = dirty || ordersChanged
+        dirtyAfterSync = dirtyAfterSync || ordersChanged
       }
 
       // merge changes
@@ -405,7 +432,7 @@ class SyncingCore {
         categories,
         orders,
         changes,
-        dirty,
+        dirty: dirtyAfterSync,
         deletedCompletions: unsyncedDeletedCompletions,
         unsyncedChanges: this.state.unsyncedChanges.slice(preSyncUnsyncedChangesLength),
         syncing: false,
@@ -421,7 +448,7 @@ class SyncingCore {
 
       this.setState(syncState)
 
-      if (syncState.dirty) {
+      if (dirtyAfterSync) {
         this.info('SYNC', 'dirty after sync, resyncing')
         this.requestSync(0)
       }
@@ -646,7 +673,7 @@ class SyncingCore {
     console[method](`[SyncingCore listid="${this.listid}"]`, ...messages)
   }
 
-  handleListChange = ({ list: { id } }: { list: ClientShoppingList }): void => {
+  handleListChange = ({ list: { id } }: { list: PersistedClientShoppingList }): void => {
     if (id === this.listid) {
       this.load()
     }

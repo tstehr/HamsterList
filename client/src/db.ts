@@ -2,7 +2,7 @@ import { RecentlyUsedList } from 'ChooseListComponent'
 import Emittery from 'emittery'
 import _ from 'lodash'
 import { frecency } from 'shoppinglist-shared'
-import { ClientShoppingList } from 'sync'
+import { PersistedClientShoppingList } from 'sync'
 
 // in case of incompatible changes we increment the number to ensure that old data isn't read by new version
 const keyPrefix = 'SL$$1$$'
@@ -33,10 +33,10 @@ class DB {
   }
 
   public getList(listid: string) {
-    return this.get<ClientShoppingList>({ type: 'list', listid })
+    return this.get<PersistedClientShoppingList>({ type: 'list', listid })
   }
 
-  public updateList(list: ClientShoppingList) {
+  public updateList(list: PersistedClientShoppingList) {
     return this.set({ type: 'list', listid: list.id }, list)
   }
 
@@ -113,7 +113,7 @@ class DB {
 
 type DBEmitter = Emittery.Typed<{
   change: { key: Key; value: Value }
-  listChange: { list: ClientShoppingList }
+  listChange: { list: PersistedClientShoppingList }
 }>
 
 interface DB extends Omit<DBEmitter, 'emit' | 'emitSerial'> {
