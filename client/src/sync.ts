@@ -133,7 +133,7 @@ class SyncingCore {
     this.db = new DB()
     this.state = {
       ...ephemeralInitialState,
-      ...this.getPersistedStateFromLocalStorage(),
+      ...this.getPersistedStateFromDB(),
     }
 
     if (this.state.username == null) {
@@ -163,7 +163,7 @@ class SyncingCore {
 
     // save new state to local storage
     if (!suppressSave && this.state.loaded) {
-      this.info('LOCALSTORAGE', 'Scheduled save')
+      this.info('DB', 'Scheduled save')
       this.save()
     }
   }
@@ -194,25 +194,25 @@ class SyncingCore {
   }
 
   save = _.debounce((): void => {
-    this.info('LOCALSTORAGE', 'Save')
+    this.info('DB', 'Save')
 
     try {
       this.db.updateList(getPersistedState(this.state))
     } catch (e) {
-      this.log('error', 'LOCALSTORAGE', 'Save failed (probably due to quota)', e)
+      this.log('error', 'DB', 'Save failed (probably due to quota)', e)
     }
   }, 500)
 
   load(): void {
-    this.info('LOCALSTORAGE', 'Load')
-    const newState = this.getPersistedStateFromLocalStorage()
+    this.info('DB', 'Load')
+    const newState = this.getPersistedStateFromDB()
     this.setState(newState, true)
     if (!newState.loaded) {
       this.initiateSyncConnection()
     }
   }
 
-  getPersistedStateFromLocalStorage(): PersistedClientShoppingList {
+  getPersistedStateFromDB(): PersistedClientShoppingList {
     const dbState = this.db.getList(this.listid)
 
     if (dbState) {
@@ -226,7 +226,7 @@ class SyncingCore {
     }
   }
 
-  clearLocalStorage(): void {
+  removeListFromDB(): void {
     if (this.socket) {
       this.socket.onclose = null
 

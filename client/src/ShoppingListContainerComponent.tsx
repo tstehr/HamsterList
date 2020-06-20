@@ -41,7 +41,7 @@ export default function ShoppingListContainerComponent({ listid, up }: Props) {
           addCompletion={sync.addCompletion.bind(sync)}
           modifyCompletions={sync.modifyCompletions.bind(sync)}
           manualSync={sync.initiateSyncConnection.bind(sync)}
-          clearLocalStorage={sync.clearLocalStorage.bind(sync)}
+          removeListFromDB={sync.removeListFromDB.bind(sync)}
           up={up}
         />
       )}

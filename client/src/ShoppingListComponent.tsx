@@ -66,16 +66,16 @@ interface Props {
   addCompletion: AddCompletion
   modifyCompletions: ModifyCompletions
   manualSync: () => void
-  clearLocalStorage: () => void
+  removeListFromDB: () => void
   up: Up
 }
 
 export default class ShoppingListComponent extends Component<Props> {
-  clearLocalStorage = (): void => {
+  removeListFromDB = (): void => {
     const performClear = window.confirm('This will delete any unsynced data. Continue?')
 
     if (performClear) {
-      this.props.clearLocalStorage()
+      this.props.removeListFromDB()
     }
   }
 
@@ -190,7 +190,7 @@ export default class ShoppingListComponent extends Component<Props> {
             <button type="button" className="PaddedButton" onClick={this.props.manualSync}>
               Force Sync
             </button>
-            <button type="button" className="PaddedButton" onClick={this.clearLocalStorage}>
+            <button type="button" className="PaddedButton" onClick={this.removeListFromDB}>
               Clear Local Storage
             </button>
           </p>
