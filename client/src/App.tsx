@@ -1,4 +1,5 @@
-import DB, { RESTORATION_ENABLED, RESTORATION_PATH } from 'db'
+import { RESTORATION_ENABLED, RESTORATION_PATH } from 'DB'
+import LocalStorageDB from 'LocalStorageDB'
 import React, { useEffect, useRef } from 'react'
 import { BrowserRouter, Route, RouteComponentProps, Switch, useHistory, useLocation } from 'react-router-dom'
 import ServiceWorkerInstall from 'ServiceWorkerInstall'
@@ -48,7 +49,7 @@ export default function App() {
 }
 
 function RestorePath() {
-  const dbRef = useRef(new DB())
+  const dbRef = useRef(new LocalStorageDB())
 
   // forward on load
   const history = useHistory()

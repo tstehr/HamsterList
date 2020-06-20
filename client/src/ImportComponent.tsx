@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import DB, { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY } from 'db'
+import { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY } from 'DB'
+import LocalStorageDB from 'LocalStorageDB'
 import _ from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -233,7 +234,7 @@ function ImportFromList({
 function useRecentlyUsedLists() {
   const [recentlyUsedLists, setRecentlyUsedLists] = useState<readonly RecentlyUsedList[]>([])
   useEffect(() => {
-    const db = new DB()
+    const db = new LocalStorageDB()
 
     const unsubscribe = db.on('change', ({ key }: { key: Key }) => {
       if (_.isEqual(key, RECENTLY_USED_KEY)) {

@@ -6,7 +6,8 @@ import FlipMove from 'react-flip-move'
 import { Link, Redirect } from 'react-router-dom'
 import { createRandomUUID, createShoppingList } from 'shoppinglist-shared'
 import './ChooseListComponent.css'
-import DB, { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY, RESTORATION_ENABLED } from './db'
+import DB, { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY, RESTORATION_ENABLED } from './DB'
+import LocalStorageDB from './LocalStorageDB'
 import TopBarComponent from './TopBarComponent'
 import { responseToJSON } from './utils'
 
@@ -24,7 +25,7 @@ export default class ChooseListComponent extends Component<{}, State> {
 
   constructor(props: {}) {
     super(props)
-    this.db = new DB()
+    this.db = new LocalStorageDB()
     this.state = {
       listid: null,
       recentlyUsedLists: getRecentlyUsedLists(this.db),

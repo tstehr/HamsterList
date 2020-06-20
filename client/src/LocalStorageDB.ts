@@ -1,30 +1,13 @@
 import Emittery from 'emittery'
-import _ from 'lodash'
-import { frecency } from 'shoppinglist-shared'
-import { PersistedClientShoppingList } from 'sync'
+import DB, { DBEmitter, Key, RECENTLY_USED_KEY, SimplifiedDBEmitter, Value } from './DB'
+import { PersistedClientShoppingList } from './sync'
 
 // in case of incompatible changes we increment the number to ensure that old data isn't read by new version
 const keyPrefix = 'SL$$1$$'
 const listPrefix = `${keyPrefix}LIST$$`
 
-export type Key =
-  | {
-      readonly type: 'simple'
-      readonly identifier: string
-    }
-  | {
-      readonly type: 'list'
-      readonly listid: string
-    }
-
-type Value = unknown
-
-export const RECENTLY_USED_KEY: Key = { type: 'simple', identifier: 'recentlyUsedLists' }
-export const RESTORATION_ENABLED: Key = { type: 'simple', identifier: 'restorationEnabled' }
-export const RESTORATION_PATH: Key = { type: 'simple', identifier: 'restorationPath' }
-
 @Emittery.mixin('emitter')
-class DB {
+class LocalStorageDB implements DB {
   constructor() {
     this.migrateRecentlyUsedLists()
     window.addEventListener('storage', this.handleStorage)
@@ -127,26 +110,8 @@ class DB {
   }
 }
 
-type DBEmitter = Emittery.Typed<{
-  change: { key: Key; value: Value }
-  listChange: { list: PersistedClientShoppingList }
-}>
-
-interface DB extends Omit<DBEmitter, 'emit' | 'emitSerial'> {
+interface LocalStorageDB extends SimplifiedDBEmitter {
   emitter: DBEmitter
 }
 
-export default DB
-
-export interface RecentlyUsedList {
-  id: string
-  uses: number
-  lastUsedTimestamp: number
-  title?: string
-}
-
-export function getRecentlyUsedLists(db: DB): readonly RecentlyUsedList[] {
-  return _.chain(db.get<RecentlyUsedList>(RECENTLY_USED_KEY) ?? [])
-    .orderBy([(entry: RecentlyUsedList) => frecency(entry)], ['desc'])
-    .value()
-}
+export default LocalStorageDB

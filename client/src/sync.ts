@@ -29,7 +29,8 @@ import {
   UUID,
 } from 'shoppinglist-shared'
 import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
-import DB, { getRecentlyUsedLists, RecentlyUsedList, RECENTLY_USED_KEY } from './db'
+import DB, { getRecentlyUsedLists, RecentlyUsedList, RECENTLY_USED_KEY } from './DB'
+import LocalStorageDB from './LocalStorageDB'
 import { responseToJSON } from './utils'
 
 export type ConnectionState = 'disconnected' | 'polling' | 'socket'
@@ -136,7 +137,7 @@ class SyncingCore {
   requestSyncTimeoutID = -1
 
   constructor(private listid: string, baseUrl: string | null = null) {
-    this.db = new DB()
+    this.db = new LocalStorageDB()
     this.baseUrl = baseUrl
     this.state = {
       ...ephemeralInitialState,
