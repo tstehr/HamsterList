@@ -25,6 +25,7 @@ export const RECENTLY_USED_KEY: Key = { type: 'simple', identifier: 'recentlyUse
 @Emittery.mixin('emitter')
 class DB {
   constructor() {
+    this.migrateRecentlyUsedLists()
     window.addEventListener('storage', this.handleStorage)
   }
 
@@ -108,6 +109,20 @@ class DB {
       return identifier ? { type: 'simple', identifier } : null
     }
     return null
+  }
+
+  private migrateRecentlyUsedLists() {
+    try {
+      if (this.get(RECENTLY_USED_KEY) === null) {
+        const oldDB = JSON.parse(localStorage['db'])
+        const oldRecentlyUsedLists = oldDB?.recentlyUsedLists
+        if (oldRecentlyUsedLists) {
+          this.set(RECENTLY_USED_KEY, oldRecentlyUsedLists)
+        }
+      }
+    } catch (e) {
+      console.error(e)
+    }
   }
 }
 
