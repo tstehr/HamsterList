@@ -122,15 +122,18 @@ interface CompletionStateUpdate {
 
 @Emittery.mixin('emitter')
 class SyncingCore {
+  baseUrl: string | null
   state: ClientShoppingList
   db: DB
+
   socket: WebSocket | undefined
   waitForOnlineTimeoutID = -1
   changePushSyncTimeoutID = -1
   requestSyncTimeoutID = -1
 
-  constructor(private listid: string) {
+  constructor(private listid: string, baseUrl: string | null = null) {
     this.db = new DB()
+    this.baseUrl = baseUrl
     this.state = {
       ...ephemeralInitialState,
       ...this.getPersistedStateFromDB(),
@@ -252,8 +255,9 @@ class SyncingCore {
     if (process.env.REACT_APP_SOCKET_URL) {
       base = process.env.REACT_APP_SOCKET_URL
     } else {
-      const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://'
-      base = protocol + window.location.host
+      const url = this.baseUrl ? new URL(this.baseUrl) : window.location
+      const protocol = url.protocol === 'https:' ? 'wss://' : 'ws://'
+      base = protocol + url.host
     }
 
     let onopenTimeoutID: number
@@ -482,7 +486,7 @@ class SyncingCore {
     return createShoppingList(_.pick(clientShoppingList, ['id', 'title', 'items']), this.state.categories)
   }
 
-  fetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
+  fetch(url: string, init?: RequestInit): Promise<Response> {
     init = init ?? {}
 
     _.merge(init, {
@@ -491,7 +495,7 @@ class SyncingCore {
       },
     })
 
-    return fetch(input, init)
+    return fetch((this.baseUrl ?? '') + url, init)
   }
 
   markListAsUsed(): void {
