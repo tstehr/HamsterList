@@ -1,5 +1,6 @@
 import Emittery from 'emittery'
-import DB, { DBEmitter, Key, RECENTLY_USED_KEY, SimplifiedDBEmitter, Value } from './DB'
+import { MixinEmitter } from 'utils'
+import DB, { DBEmitter, Key, RECENTLY_USED_KEY, Value } from './DB'
 import { PersistedClientShoppingList } from './sync'
 
 // in case of incompatible changes we increment the number to ensure that old data isn't read by new version
@@ -110,8 +111,7 @@ class LocalStorageDB implements DB {
   }
 }
 
-interface LocalStorageDB extends SimplifiedDBEmitter {
-  emitter: DBEmitter
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface LocalStorageDB extends MixinEmitter<DBEmitter> {}
 
 export default LocalStorageDB

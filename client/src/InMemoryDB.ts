@@ -1,5 +1,6 @@
 import Emittery from 'emittery'
-import DB, { DBEmitter, Key, SimplifiedDBEmitter, Value } from './DB'
+import { MixinEmitter } from 'utils'
+import DB, { DBEmitter, Key, Value } from './DB'
 import { PersistedClientShoppingList } from './sync'
 
 @Emittery.mixin('emitter')
@@ -55,8 +56,7 @@ class InMemoryDB implements DB {
   }
 }
 
-interface InMemoryDB extends SimplifiedDBEmitter {
-  emitter: DBEmitter
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface InMemoryDB extends MixinEmitter<DBEmitter> {}
 
 export default InMemoryDB

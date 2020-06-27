@@ -31,7 +31,7 @@ import {
 import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
 import DB, { getRecentlyUsedLists, RecentlyUsedList, RECENTLY_USED_KEY } from './DB'
 import LocalStorageDB from './LocalStorageDB'
-import { responseToJSON } from './utils'
+import { MixinEmitter, responseToJSON } from './utils'
 
 export type ConnectionState = 'disconnected' | 'polling' | 'socket'
 export type UpdateListTitle = (newTitle: string) => void
@@ -766,8 +766,7 @@ type SyncingCoreEmitter = Emittery.Typed<{
   change: { clientShoppingList: ClientShoppingList }
 }>
 
-interface SyncingCore extends Omit<SyncingCoreEmitter, 'emit' | 'emitSerial'> {
-  emitter: SyncingCoreEmitter
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface SyncingCore extends MixinEmitter<SyncingCoreEmitter> {}
 
 export default SyncingCore

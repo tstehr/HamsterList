@@ -2,6 +2,7 @@ import Emittery from 'emittery'
 import _ from 'lodash'
 import { frecency } from 'shoppinglist-shared'
 import { PersistedClientShoppingList } from 'sync'
+import { MixinEmitter } from 'utils'
 
 export type Key =
   | {
@@ -25,8 +26,6 @@ export type DBEmitter = Emittery.Typed<{
   listChange: { list: PersistedClientShoppingList }
 }>
 
-export type SimplifiedDBEmitter = Omit<DBEmitter, 'emit' | 'emitSerial' | 'bindMethods' | 'clearListeners'>
-
 type DB = {
   close(): void
   get<T = Value>(key: Key): T | null
@@ -35,7 +34,7 @@ type DB = {
   getList(listid: string): PersistedClientShoppingList | null
   updateList(list: PersistedClientShoppingList): void
   removeList(listid: string): void
-} & Omit<DBEmitter, 'emit' | 'emitSerial' | 'bindMethods' | 'clearListeners'>
+} & MixinEmitter<DBEmitter>
 
 export interface RecentlyUsedList {
   id: string
