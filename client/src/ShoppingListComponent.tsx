@@ -105,14 +105,13 @@ export default class ShoppingListComponent extends Component<Props> {
   }
 
   mergeItems = (): void => {
-    // $FlowFixMe
     const grouped = _.groupBy(this.props.shoppingList.items, (item) => {
       return JSON.stringify({
         category: item.category == null ? null : item.category,
         unit: item.amount == null ? null : getSIUnit(item.amount),
         name: item.name.trim().toLowerCase(),
       })
-    }) // see https://github.com/facebook/flow/issues/2221#issuecomment-366519862
+    })
 
     for (const group of Object.keys(grouped).map((key) => grouped[key])) {
       if (group.length > 1) {
