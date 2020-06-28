@@ -1,47 +1,22 @@
 .EditOrdersComponent {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 999;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  background-color: var(--background-color);
-  user-select: none;
+  /* establish a new stacking context */
+  position: relative;
+  z-index: 0;
 }
-.EditOrdersComponent__window {
-  min-height: 100%;
-  margin-bottom: 3rem;
-  margin: env(safe-area-inset-top) env(safe-area-inset-right) 3rem env(safe-area-inset-left);
-}
-.EditOrdersComponent__window__footer {
-  display: none;
-}
+
 .EditOrdersComponent__order + .EditOrdersComponent__orders {
   display: none;
 }
-@media (min-width: 40rem) and (min-height: 40rem) {
+@media (min-width: 40rem) {
   .EditOrdersComponent {
-    background: hsla(var(--text-color-hsl-value), 0.5);
-  }
-  .EditOrdersComponent__window {
-    padding: 1.5rem;
-    background: var(--background-color);
-    margin: 3rem;
-  }
-  .EditOrdersComponent__window__body {
     display: flex;
-  }
-  .EditOrdersComponent__window__footer {
-    display: block;
-    margin-top: 1.5rem;
   }
   .EditOrdersComponent__order + .EditOrdersComponent__orders {
     display: block;
   }
   .EditOrdersComponent__orders {
-    width: 16rem;
+    width: 33%;
+    min-width: 15rem;
     margin-right: 1rem;
   }
   .EditOrdersComponent__orders__back,
@@ -139,6 +114,7 @@
   appearance: none;
   font: inherit;
   background: none;
+  color: inherit;
 }
 
 .DragHandle {

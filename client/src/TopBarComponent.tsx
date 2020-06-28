@@ -26,7 +26,7 @@ export default function TopBarComponent(props: Props): JSX.Element {
           <button
             type="button"
             className="TopBarComponent__back"
-            onClick={() => props.up && props.up('home')}
+            onClick={() => props.up && props.up(1)}
             aria-label="Back to all lists"
           >
             <Back />

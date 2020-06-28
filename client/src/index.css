@@ -93,7 +93,7 @@ button.PaddedButton {
 .Button--padded {
   padding: 0 0.5rem;
 }
-@media (min-width: 40rem) and (min-height: 40rem) {
+@media (min-width: 30rem) {
   .Button {
     border: 0;
     margin-bottom: 0.5rem;

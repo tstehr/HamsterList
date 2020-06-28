@@ -4,7 +4,6 @@ import IconButton from 'IconButton'
 import _ from 'lodash'
 import React, { Component, useEffect, useRef, useState } from 'react'
 import { ChromePicker, ColorResult, RGBColor } from 'react-color'
-import ReactDOM from 'react-dom'
 import { Link, Route, RouteComponentProps } from 'react-router-dom'
 import { arrayMove, SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
 import { CategoryDefinition, createRandomUUID, Order, sortCategories, UUID } from 'shoppinglist-shared'
@@ -72,84 +71,57 @@ export default class EditOrdersComponent extends Component<Props> {
     this.props.updateOrders(arrayMove(this.props.orders as Order[], oldIndex, newIndex))
   }
 
-  render(): JSX.Element | null {
-    const target = document.querySelector('#modal-root')
-
-    if (target != null) {
-      return ReactDOM.createPortal(
-        <Route
-          render={({ history }: RouteComponentProps) => (
-            <div
-              className="EditOrdersComponent"
-              onClick={(e: React.SyntheticEvent) => e.target === e.currentTarget && this.props.up('list')}
-            >
-              <div className="EditOrdersComponent__window">
-                <div className="EditOrdersComponent__window__body">
-                  <Route
-                    path="/:listid/orders/:orderid"
-                    render={({ history, match }: RouteComponentProps<{ orderid: string }>) => (
-                      <div className="EditOrdersComponent__order">
-                        <NullSafeEditOrderComponent
-                          listid={this.props.listid}
-                          orders={this.props.orders}
-                          orderid={match.params['orderid']}
-                          categories={this.props.categories}
-                          updateCategories={this.props.updateCategories}
-                          updateOrder={this.updateOrder}
-                          deleteOrder={this.deleteOrder}
-                          up={this.props.up}
-                        />
-                      </div>
-                    )}
+  render(): JSX.Element {
+    return (
+      <Route
+        render={({ history }: RouteComponentProps) => (
+          <div className="EditOrdersComponent">
+            <Route
+              path="/:listid/orders/:orderid"
+              render={({ history, match }: RouteComponentProps<{ orderid: string }>) => (
+                <div className="EditOrdersComponent__order">
+                  <NullSafeEditOrderComponent
+                    listid={this.props.listid}
+                    orders={this.props.orders}
+                    orderid={match.params['orderid']}
+                    categories={this.props.categories}
+                    updateCategories={this.props.updateCategories}
+                    updateOrder={this.updateOrder}
+                    deleteOrder={this.deleteOrder}
+                    up={this.props.up}
                   />
-
-                  <div className="EditOrdersComponent__orders">
-                    <Link to={`/${this.props.listid}/orders/categories`} className="Button Button--padded">
-                      <i>Default</i>
-                    </Link>
-
-                    <SortableOrders
-                      orders={this.props.orders}
-                      listid={this.props.listid}
-                      helperClass="SortableOrder__dragging"
-                      lockAxis="y"
-                      useDragHandle={true}
-                      onSortEnd={this.handleSortEnd}
-                      deleteOrder={this.deleteOrder}
-                    />
-
-                    <button
-                      type="button"
-                      className="EditOrdersComponent__new Button Button--padded"
-                      aria-label="New Order"
-                      onClick={this.makeCreateOrder(history)}
-                    >
-                      New
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => this.props.up('list')}
-                      className="EditOrdersComponent__orders__back Button Button--padded"
-                    >
-                      Back
-                    </button>
-                  </div>
                 </div>
+              )}
+            />
 
-                <div className="EditOrdersComponent__window__footer">
-                  <button type="button" className="Button Button--padded" onClick={() => this.props.up('list')}>
-                    Back
-                  </button>
-                </div>
-              </div>
+            <div className="EditOrdersComponent__orders">
+              <Link to={`/${this.props.listid}/orders/categories`} className="Button Button--padded">
+                <i>Default</i>
+              </Link>
+
+              <SortableOrders
+                orders={this.props.orders}
+                listid={this.props.listid}
+                helperClass="SortableOrder__dragging"
+                lockAxis="y"
+                useDragHandle={true}
+                onSortEnd={this.handleSortEnd}
+                deleteOrder={this.deleteOrder}
+              />
+
+              <button
+                type="button"
+                className="EditOrdersComponent__new Button Button--padded"
+                aria-label="New Order"
+                onClick={this.makeCreateOrder(history)}
+              >
+                New
+              </button>
             </div>
-          )}
-        />,
-        target
-      )
-    } else {
-      return null
-    }
+          </div>
+        )}
+      />
+    )
   }
 }
 

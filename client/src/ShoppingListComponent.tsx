@@ -1,6 +1,7 @@
+import EditOrdersComponent from 'EditOrdersComponent'
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Link, Route } from 'react-router-dom'
+import { Link, Route, Switch } from 'react-router-dom'
 import {
   addAmounts,
   CategoryDefinition,
@@ -16,7 +17,6 @@ import {
 } from 'shoppinglist-shared'
 import ChooseCategoryComponent from './ChooseCategoryComponent'
 import CreateItemComponent from './CreateItemComponent'
-import EditOrdersComponent from './EditOrdersComponent'
 import { Up } from './HistoryTracker'
 import './ShoppingListComponent.css'
 import ShoppingListItemsComponent from './ShoppingListItemsComponent'
@@ -164,30 +164,46 @@ export default class ShoppingListComponent extends Component<Props> {
           />
         </TopBarComponent>
         <div className="ShoppingListComponent__body">
-          <section className="ShoppingListComponent__section" role="main">
-            <ShoppingListItemsComponent
-              items={this.props.shoppingList.items}
-              categories={this.props.categories}
-              orders={this.props.orders}
-              selectedOrder={this.props.selectedOrder}
-              updateItem={this.props.updateItem}
-              deleteItem={this.props.deleteItem}
-              selectOrder={this.props.selectOrder}
-              up={this.props.up}
-            />
-          </section>
-          <section className="ShoppingListComponent__section">
-            <CreateItemComponent
-              changes={this.props.changes}
-              unsyncedChanges={this.props.unsyncedChanges}
-              completions={this.props.completions}
-              categories={this.props.categories}
-              createItem={this.props.createItem}
-              deleteCompletion={this.props.deleteCompletion}
-              applyDiff={this.props.applyDiff}
-              createApplicableDiff={this.props.createApplicableDiff}
-            />
-          </section>
+          <Switch>
+            <Route path={`/:listid/orders`}>
+              <section className="ShoppingListComponent__section" role="main">
+                <EditOrdersComponent
+                  listid={this.props.shoppingList.id}
+                  orders={this.props.orders}
+                  categories={this.props.categories}
+                  updateCategories={this.props.updateCategories}
+                  updateOrders={this.props.updateOrders}
+                  up={this.props.up}
+                />
+              </section>
+            </Route>
+            <Route>
+              <section className="ShoppingListComponent__section" role="main">
+                <ShoppingListItemsComponent
+                  items={this.props.shoppingList.items}
+                  categories={this.props.categories}
+                  orders={this.props.orders}
+                  selectedOrder={this.props.selectedOrder}
+                  updateItem={this.props.updateItem}
+                  deleteItem={this.props.deleteItem}
+                  selectOrder={this.props.selectOrder}
+                  up={this.props.up}
+                />
+              </section>
+              <section className="ShoppingListComponent__section">
+                <CreateItemComponent
+                  changes={this.props.changes}
+                  unsyncedChanges={this.props.unsyncedChanges}
+                  completions={this.props.completions}
+                  categories={this.props.categories}
+                  createItem={this.props.createItem}
+                  deleteCompletion={this.props.deleteCompletion}
+                  applyDiff={this.props.applyDiff}
+                  createApplicableDiff={this.props.createApplicableDiff}
+                />
+              </section>
+            </Route>
+          </Switch>
         </div>
         <footer className="ShoppingListComponent__footer">
           <section>
@@ -213,7 +229,7 @@ export default class ShoppingListComponent extends Component<Props> {
               <button type="button" className="PaddedButton" onClick={this.clearList}>
                 Clear List
               </button>
-              <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Sorting</Link>
+              <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Categories and Sorting</Link>
             </p>
           </section>
           <section>
@@ -233,19 +249,6 @@ export default class ShoppingListComponent extends Component<Props> {
           </section>
         </footer>
 
-        <Route
-          path={`/:listid/orders`}
-          render={({ history, match }) => (
-            <EditOrdersComponent
-              listid={this.props.shoppingList.id}
-              orders={this.props.orders}
-              categories={this.props.categories}
-              updateCategories={this.props.updateCategories}
-              updateOrders={this.props.updateOrders}
-              up={this.props.up}
-            />
-          )}
-        />
         <Route
           path={`/:listid/:itemid/category`}
           render={({ history, match }) => {
