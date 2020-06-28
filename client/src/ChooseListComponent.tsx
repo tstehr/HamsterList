@@ -1,3 +1,4 @@
+import Frame from 'Frame'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import FlipMove from 'react-flip-move'
@@ -88,70 +89,84 @@ export default class ChooseListComponent extends Component<{}, State> {
 
   render(): JSX.Element {
     return (
-      <div className="ChooseListComponent">
+      <>
         {this.state.listid && <Redirect to={this.state.listid} push />}
-        <TopBarComponent responsive={false}>
-          <h1 className="ChooseListComponent__title">ShoppingList</h1>
-        </TopBarComponent>
-        <div className="ChooseListComponent__content">
-          <section>
-            <button type="button" className="ChooseListComponent__randomButton" onClick={this.createRandomList.bind(this)}>
-              Create new List
-            </button>
-          </section>
+        <Frame>
+          {{
+            topBar: (
+              <TopBarComponent responsive={true}>
+                <h1 className="ChooseListComponent__title">ShoppingList</h1>
+              </TopBarComponent>
+            ),
+            sections: [
+              <div className="ChooseListComponent__content">
+                <section>
+                  <button
+                    type="button"
+                    className="Button ChooseListComponent__randomButton"
+                    onClick={this.createRandomList.bind(this)}
+                  >
+                    <span>Create new List</span>
+                  </button>
+                </section>
 
-          <section>
-            Or create/open list with name
-            <form className="ChooseListComponent__openForm" onSubmit={this.onSubmit}>
-              <input type="text" name="listid" ref={this.inputListid} />
-              <button>Go</button>
-            </form>
-          </section>
+                <section>
+                  <div className="ChooseListComponent__openFormHeadline">Or create/open list with name</div>
+                  <form className="ChooseListComponent__openForm" onSubmit={this.onSubmit}>
+                    <input type="text" name="listid" ref={this.inputListid} />
+                    <button>Go</button>
+                  </form>
+                </section>
 
-          {this.state.recentlyUsedLists.length > 0 && (
-            <section>
-              <h2>Recently Used</h2>
+                {this.state.recentlyUsedLists.length > 0 && (
+                  <section>
+                    <h2 className="ChooseListComponent__recentlyUsedHeadline">Recently Used</h2>
 
-              <FlipMove
-                typeName={null}
-                duration="250"
-                staggerDurationBy="10"
-                staggerDelayBy="10"
-                enterAnimation="accordionVertical"
-                leaveAnimation="accordionVertical"
-              >
-                {this.state.recentlyUsedLists.map((rul) => (
-                  <Link className="ChooseListComponent__recentlyUsedLink" key={rul.id} to={'/' + rul.id}>
-                    {rul.title}
-                  </Link>
-                ))}
-              </FlipMove>
-            </section>
-          )}
-
-          <section className="ChooseListComponent__footer">
-            <p>
-              Icons made by{' '}
-              <a href="https://www.flaticon.com/authors/egor-rumyantsev" title="Egor Rumyantsev">
-                Egor Rumyantsev
-              </a>
-              ,{' '}
-              <a href="https://www.flaticon.com/authors/hanan" title="Hanan">
-                Hanan
-              </a>{' '}
-              and{' '}
-              <a href="https://www.flaticon.com/authors/gregor-cresnar" title="Gregor Cresnar">
-                Gregor Cresnar
-              </a>{' '}
-              from{' '}
-              <a href="https://www.flaticon.com/" title="Flaticon">
-                www.flaticon.com
-              </a>
-            </p>
-            <p>Version: {process.env.REACT_APP_GIT_SHA ?? 'No version information found!'}</p>
-          </section>
-        </div>
-      </div>
+                    <FlipMove
+                      typeName={null}
+                      duration="250"
+                      staggerDurationBy="10"
+                      staggerDelayBy="10"
+                      enterAnimation="accordionVertical"
+                      leaveAnimation="accordionVertical"
+                    >
+                      {this.state.recentlyUsedLists.map((rul) => (
+                        <Link className="Button ChooseListComponent__recentlyUsedLink" key={rul.id} to={'/' + rul.id}>
+                          {rul.title}
+                        </Link>
+                      ))}
+                    </FlipMove>
+                  </section>
+                )}
+              </div>,
+            ],
+            footer: (
+              <div className="ChooseListComponent__footer">
+                {' '}
+                <p>
+                  Icons made by{' '}
+                  <a href="https://www.flaticon.com/authors/egor-rumyantsev" title="Egor Rumyantsev">
+                    Egor Rumyantsev
+                  </a>
+                  ,{' '}
+                  <a href="https://www.flaticon.com/authors/hanan" title="Hanan">
+                    Hanan
+                  </a>{' '}
+                  and{' '}
+                  <a href="https://www.flaticon.com/authors/gregor-cresnar" title="Gregor Cresnar">
+                    Gregor Cresnar
+                  </a>{' '}
+                  from{' '}
+                  <a href="https://www.flaticon.com/" title="Flaticon">
+                    www.flaticon.com
+                  </a>
+                </p>
+                <p>Version: {process.env.REACT_APP_GIT_SHA ?? 'No version information found!'}</p>
+              </div>
+            ),
+          }}
+        </Frame>
+      </>
     )
   }
 }

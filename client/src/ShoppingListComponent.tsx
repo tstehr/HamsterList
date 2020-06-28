@@ -1,4 +1,5 @@
 import EditOrdersComponent from 'EditOrdersComponent'
+import Frame from 'Frame'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import { Link, Route, Switch } from 'react-router-dom'
@@ -18,7 +19,6 @@ import {
 import ChooseCategoryComponent from './ChooseCategoryComponent'
 import CreateItemComponent from './CreateItemComponent'
 import { Up } from './HistoryTracker'
-import './ShoppingListComponent.css'
 import ShoppingListItemsComponent from './ShoppingListItemsComponent'
 import {
   ApplyDiff,
@@ -149,104 +149,130 @@ export default class ShoppingListComponent extends Component<Props> {
     }
   }
 
+  renderFooter() {
+    return (
+      <>
+        <section>
+          <h2>Tools</h2>
+          <p>
+            <button type="button" className="PaddedButton" onClick={this.shareList}>
+              Share
+            </button>
+          </p>
+          <p>
+            <label>
+              Username:{' '}
+              <input type="text" placeholder="username" defaultValue={this.props.username ?? ''} onBlur={this.editUsername} />
+            </label>
+          </p>
+          <p>
+            <button type="button" className="PaddedButton" onClick={this.convertToCookingAmounts}>
+              Convert to metric units
+            </button>
+            <button type="button" className="PaddedButton" onClick={this.mergeItems}>
+              Merge
+            </button>
+            <button type="button" className="PaddedButton" onClick={this.clearList}>
+              Clear List
+            </button>
+            <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Categories and Sorting</Link>
+          </p>
+        </section>
+        <section>
+          <h2>Debug</h2>
+          <p>
+            <button type="button" className="PaddedButton" onClick={this.props.manualSync}>
+              Force Sync
+            </button>
+            <button type="button" className="PaddedButton" onClick={this.clearLocalStorage}>
+              Clear Local Storage
+            </button>
+          </p>
+          <p>
+            <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
+          </p>
+          <p>Version: {process.env.REACT_APP_GIT_SHA ?? 'No version information found!'}</p>
+        </section>
+      </>
+    )
+  }
+
   render(): JSX.Element {
     return (
-      <div className="ShoppingListComponent">
-        <TopBarComponent up={this.props.up}>
-          <EditTitleComponent title={this.props.shoppingList.title} updateListTitle={this.props.updateListTitle} />
-          <SyncStatusComponent
-            connectionState={this.props.connectionState}
-            syncing={this.props.syncing}
-            lastSyncFailed={this.props.lastSyncFailed}
-            dirty={this.props.dirty}
-            manualSync={this.props.manualSync}
-          />
-        </TopBarComponent>
-        <div className="ShoppingListComponent__body">
-          <Switch>
-            <Route path={`/:listid/orders`}>
-              <section className="ShoppingListComponent__section" role="main">
-                <EditOrdersComponent
-                  listid={this.props.shoppingList.id}
-                  orders={this.props.orders}
-                  categories={this.props.categories}
-                  updateCategories={this.props.updateCategories}
-                  updateOrders={this.props.updateOrders}
-                  up={this.props.up}
-                />
-              </section>
-            </Route>
-            <Route>
-              <section className="ShoppingListComponent__section" role="main">
-                <ShoppingListItemsComponent
-                  items={this.props.shoppingList.items}
-                  categories={this.props.categories}
-                  orders={this.props.orders}
-                  selectedOrder={this.props.selectedOrder}
-                  updateItem={this.props.updateItem}
-                  deleteItem={this.props.deleteItem}
-                  selectOrder={this.props.selectOrder}
-                  up={this.props.up}
-                />
-              </section>
-              <section className="ShoppingListComponent__section">
-                <CreateItemComponent
-                  changes={this.props.changes}
-                  unsyncedChanges={this.props.unsyncedChanges}
-                  completions={this.props.completions}
-                  categories={this.props.categories}
-                  createItem={this.props.createItem}
-                  deleteCompletion={this.props.deleteCompletion}
-                  applyDiff={this.props.applyDiff}
-                  createApplicableDiff={this.props.createApplicableDiff}
-                />
-              </section>
-            </Route>
-          </Switch>
-        </div>
-        <footer className="ShoppingListComponent__footer">
-          <section>
-            <h2>Tools</h2>
-            <p>
-              <button type="button" className="PaddedButton" onClick={this.shareList}>
-                Share
-              </button>
-            </p>
-            <p>
-              <label>
-                Username:{' '}
-                <input type="text" placeholder="username" defaultValue={this.props.username ?? ''} onBlur={this.editUsername} />
-              </label>
-            </p>
-            <p>
-              <button type="button" className="PaddedButton" onClick={this.convertToCookingAmounts}>
-                Convert to metric units
-              </button>
-              <button type="button" className="PaddedButton" onClick={this.mergeItems}>
-                Merge
-              </button>
-              <button type="button" className="PaddedButton" onClick={this.clearList}>
-                Clear List
-              </button>
-              <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Categories and Sorting</Link>
-            </p>
-          </section>
-          <section>
-            <h2>Debug</h2>
-            <p>
-              <button type="button" className="PaddedButton" onClick={this.props.manualSync}>
-                Force Sync
-              </button>
-              <button type="button" className="PaddedButton" onClick={this.clearLocalStorage}>
-                Clear Local Storage
-              </button>
-            </p>
-            <p>
-              <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
-            </p>
-            <p>Version: {process.env.REACT_APP_GIT_SHA ?? 'No version information found!'}</p>
-          </section>
-        </footer>
+      <>
+        <Switch>
+          <Route path={`/:listid/orders`}>
+            <Frame>
+              {{
+                topBar: (
+                  <TopBarComponent back={() => this.props.up(1)}>
+                    <EditTitleComponent title={this.props.shoppingList.title} updateListTitle={this.props.updateListTitle} />
+                    <SyncStatusComponent
+                      connectionState={this.props.connectionState}
+                      syncing={this.props.syncing}
+                      lastSyncFailed={this.props.lastSyncFailed}
+                      dirty={this.props.dirty}
+                      manualSync={this.props.manualSync}
+                    />
+                  </TopBarComponent>
+                ),
+                sections: [
+                  <EditOrdersComponent
+                    listid={this.props.shoppingList.id}
+                    orders={this.props.orders}
+                    categories={this.props.categories}
+                    updateCategories={this.props.updateCategories}
+                    updateOrders={this.props.updateOrders}
+                    up={this.props.up}
+                  />,
+                ],
+                footer: this.renderFooter(),
+              }}
+            </Frame>
+          </Route>
+
+          <Route>
+            <Frame>
+              {{
+                topBar: (
+                  <TopBarComponent back={() => this.props.up('home')}>
+                    <EditTitleComponent title={this.props.shoppingList.title} updateListTitle={this.props.updateListTitle} />
+                    <SyncStatusComponent
+                      connectionState={this.props.connectionState}
+                      syncing={this.props.syncing}
+                      lastSyncFailed={this.props.lastSyncFailed}
+                      dirty={this.props.dirty}
+                      manualSync={this.props.manualSync}
+                    />
+                  </TopBarComponent>
+                ),
+                sections: [
+                  <ShoppingListItemsComponent
+                    items={this.props.shoppingList.items}
+                    categories={this.props.categories}
+                    orders={this.props.orders}
+                    selectedOrder={this.props.selectedOrder}
+                    updateItem={this.props.updateItem}
+                    deleteItem={this.props.deleteItem}
+                    selectOrder={this.props.selectOrder}
+                    up={this.props.up}
+                  />,
+                  <CreateItemComponent
+                    changes={this.props.changes}
+                    unsyncedChanges={this.props.unsyncedChanges}
+                    completions={this.props.completions}
+                    categories={this.props.categories}
+                    createItem={this.props.createItem}
+                    deleteCompletion={this.props.deleteCompletion}
+                    applyDiff={this.props.applyDiff}
+                    createApplicableDiff={this.props.createApplicableDiff}
+                  />,
+                ],
+                footer: this.renderFooter(),
+              }}
+            </Frame>
+          </Route>
+        </Switch>
 
         <Route
           path={`/:listid/:itemid/category`}
@@ -270,7 +296,7 @@ export default class ShoppingListComponent extends Component<Props> {
             )
           }}
         />
-      </div>
+      </>
     )
   }
 }

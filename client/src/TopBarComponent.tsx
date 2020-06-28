@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import * as React from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { Up } from './HistoryTracker'
 import { ReactComponent as ArrowDownUp } from './icons/arrow-down-up.svg'
 import { ReactComponent as ArrowUp } from './icons/arrow-up.svg'
 import { ReactComponent as Back } from './icons/back.svg'
@@ -10,7 +9,7 @@ import { ConnectionState, UpdateListTitle } from './sync'
 import './TopBarComponent.css'
 
 interface Props {
-  up?: Up
+  back?: () => void
   responsive?: boolean
   children: React.ReactNode
 }
@@ -22,13 +21,8 @@ export default function TopBarComponent(props: Props): JSX.Element {
   return (
     <header className={className}>
       <div className="TopBarComponent__content">
-        {props.up && (
-          <button
-            type="button"
-            className="TopBarComponent__back"
-            onClick={() => props.up && props.up(1)}
-            aria-label="Back to all lists"
-          >
+        {props.back && (
+          <button type="button" className="TopBarComponent__back" onClick={props.back} aria-label="Back to all lists">
             <Back />
           </button>
         )}

@@ -1,16 +1,13 @@
-.ChooseListComponent {
-  min-height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .ChooseListComponent__content {
   width: 100%;
   max-width: var(--single-col-max-width);
-  padding: 0.5rem;
-  margin-top: 3rem;
-  margin-top: calc(3rem + env(safe-area-inset-top));
+  margin: 0 auto;
+}
+.ChooseListComponent__content section:first-child {
+  padding-top: 1rem;
+}
+.ChooseListComponent__content section {
+  padding-top: 2rem;
 }
 
 .ChooseListComponent__title {
@@ -21,8 +18,9 @@
   flex: 1;
 }
 
-.ChooseListComponent__content section {
-  margin: 2rem 0;
+.ChooseListComponent__openFormHeadline,
+.ChooseListComponent__recentlyUsedHeadline {
+  margin: 0 1rem 0.5rem;
 }
 
 .ChooseListComponent__recentlyUsed {
@@ -30,24 +28,21 @@
 }
 .ChooseListComponent__randomButton,
 .ChooseListComponent__recentlyUsedLink {
-  display: block;
-  border: 0;
-  background-color: var(--theme-color);
-  line-height: 3rem;
-  color: #fff;
   padding: 0 1rem;
-  font-size: 1rem;
-  text-decoration: none;
-  width: 100%;
 }
-.ChooseListComponent__recentlyUsedLink {
-  margin: 0.5rem 0;
+.ChooseListComponent__randomButton {
+  margin-top: 1rem;
+}
+.ChooseListComponent__randomButton > span {
+  flex: 1;
+  text-align: center;
 }
 
 .ChooseListComponent__openForm {
   display: flex;
   height: 3rem;
-  border: 2px solid var(--theme-color);
+  border: solid var(--theme-color);
+  border-width: 2px 0;
 }
 .ChooseListComponent__openForm > input {
   flex: 1;
@@ -63,9 +58,21 @@
 .ChooseListComponent__footer {
   font-size: 0.6rem;
   color: var(--text-deemphasized-color);
+  max-width: var(--single-col-max-width);
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 .ChooseListComponent__footer a,
 .ChooseListComponent__footer a:link,
 .ChooseListComponent__footer a:visited {
   color: inherit;
+}
+
+@media (min-width: 30rem) {
+  .ChooseListComponent__openForm {
+    border-width: 2px;
+  }
+  .ChooseListComponent__content section:first-child {
+    padding-top: 0;
+  }
 }
