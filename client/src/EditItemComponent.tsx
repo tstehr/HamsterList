@@ -33,7 +33,7 @@ export default class EditItemComponent extends Component<Props, State> {
     this.state = {
       hasFocus: false,
       isEditing: false,
-      inputValue: '',
+      inputValue: itemToString(this.props.item),
     }
   }
 
@@ -51,7 +51,6 @@ export default class EditItemComponent extends Component<Props, State> {
     this.setState((prevState) => ({
       hasFocus: true,
       isEditing: prevState.hasFocus ? false : true,
-      inputValue: itemToString(this.props.item),
     }))
   }
 
