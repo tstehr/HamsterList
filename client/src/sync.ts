@@ -45,11 +45,13 @@ export type SetUsername = (username?: string | null) => void
 export type ApplyDiff = (diff: Diff) => void
 export type CreateApplicableDiff = (diff: Diff) => Diff | null
 export type DeleteCompletion = (completionName: string) => void
+export type AddCompletion = (completion: CompletionItem) => void
 
 export interface PersistedClientShoppingList {
   previousSync: SyncedShoppingList | null
   completions: readonly CompletionItem[]
   deletedCompletions: readonly string[]
+  addedCompletions: readonly string[]
   categories: readonly CategoryDefinition[]
   orders: readonly Order[]
   changes: readonly Change[]
@@ -81,6 +83,7 @@ export const persistedInitialState: PersistedClientShoppingList = deepFreeze({
   previousSync: null,
   completions: [],
   deletedCompletions: [],
+  addedCompletions: [],
   categories: [],
   orders: [],
   changes: [],
@@ -329,6 +332,7 @@ class SyncingCore {
 
     const preSyncCategories = this.state.categories
     const preSyncOrders = this.state.orders
+    const preSyncAddedCompletions = this.state.addedCompletions
     const preSyncDeletedCompletions = this.state.deletedCompletions
     const preSyncUnsyncedChangesLength = this.state.unsyncedChanges.length
 
@@ -346,6 +350,7 @@ class SyncingCore {
         categories: this.state.categoriesChanged ? preSyncCategories : undefined,
         orders: this.state.ordersChanged ? preSyncOrders : undefined,
         deleteCompletions: preSyncDeletedCompletions,
+        addCompletions: this.state.completions.filter((c) => preSyncAddedCompletions.includes(normalizeCompletionName(c.name))),
       }
       syncPromise = this.fetch(`/api/${this.listid}/sync`, {
         headers: {
@@ -388,6 +393,12 @@ class SyncingCore {
         (name) => !preSyncDeletedCompletions.includes(normalizeCompletionName(name))
       )
       dirtyAfterSync = dirtyAfterSync || unsyncedDeletedCompletions.length > 0 // add newly fetched changes to local changes
+
+      // retain completion deletions performed during sync
+      const unsyncedAddedCompletions = this.state.addedCompletions.filter(
+        (name) => !preSyncAddedCompletions.includes(normalizeCompletionName(name))
+      )
+      dirtyAfterSync = dirtyAfterSync || unsyncedAddedCompletions.length > 0 // add newly fetched changes to local changes
 
       // apply new categories only if no client-side changes
       let categories, categoriesChanged
@@ -434,6 +445,7 @@ class SyncingCore {
         changes,
         dirty: dirtyAfterSync,
         deletedCompletions: unsyncedDeletedCompletions,
+        addedCompletions: unsyncedAddedCompletions,
         unsyncedChanges: this.state.unsyncedChanges.slice(preSyncUnsyncedChangesLength),
         syncing: false,
         loaded: true,
@@ -507,24 +519,30 @@ class SyncingCore {
     const completionItem = createCompletionItem(_.pick(updatedItem, 'name', 'category'))
     const completionName = normalizeCompletionName(completionItem.name)
 
-    if (completionName.length === 0) {
-      return {}
-    }
-
-    const entryIdx = _.findIndex(state.completions, (i) => normalizeCompletionName(i.name) === completionName)
-
-    const completions = [...state.completions]
-
-    if (entryIdx === -1) {
-      completions.push(completionItem)
-    } else {
-      completions.splice(entryIdx, 1, completionItem)
-    }
-
+    const completions = this.getCompletionsWithAdded(state.completions, completionItem)
     return {
       completions,
       deletedCompletions: state.deletedCompletions.filter((name) => normalizeCompletionName(name) !== completionName),
     }
+  }
+
+  private getCompletionsWithAdded(completions: readonly CompletionItem[], completionItem: CompletionItem) {
+    const completionName = normalizeCompletionName(completionItem.name)
+
+    if (completionName.length === 0) {
+      return completions
+    }
+
+    const entryIdx = _.findIndex(completions, (i) => normalizeCompletionName(i.name) === completionName)
+
+    const newCompletions = [...completions]
+
+    if (entryIdx === -1) {
+      newCompletions.push(completionItem)
+    } else {
+      newCompletions.splice(entryIdx, 1, completionItem)
+    }
+    return newCompletions
   }
 
   applyDiff(diff: Diff): void {
@@ -563,9 +581,22 @@ class SyncingCore {
     const normalizedCompletionName = normalizeCompletionName(completionName)
     this.setState({
       deletedCompletions: [...this.state.deletedCompletions, normalizedCompletionName],
+      addedCompletions: this.state.addedCompletions.filter((c) => c !== normalizedCompletionName),
       completions: this.state.completions.filter(
         (completion) => normalizeCompletionName(completion.name) !== normalizedCompletionName
       ),
+      dirty: true,
+    })
+    this.requestSync()
+  }
+
+  addCompletion(completion: CompletionItem): void {
+    const normalizedCompletionName = normalizeCompletionName(completion.name)
+    this.setState({
+      deletedCompletions: this.state.deletedCompletions.filter((c) => c !== normalizedCompletionName),
+      addedCompletions: [...this.state.addedCompletions, normalizedCompletionName],
+      completions: this.getCompletionsWithAdded(this.state.completions, completion),
+
       dirty: true,
     })
     this.requestSync()

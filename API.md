@@ -312,6 +312,7 @@ Clients can request the inclusion of additional data when syncing to save additi
 | categories        | Array of [CategoryDefinition] | *Optional.* The categories as set by the client. Should only be sent if categories were changed by user |
 | orders            | Array of [Order]              | *Optional.* The orders as set by the client. Should only be sent if orders were changed by user |
 | deleteCompletions | Array of string               | *Optional.* Names of completions deleted by client. Names are case insensitive and leading and trailing whitespace is removed |
+| addCompletions    | Array of [CompletionItem]     | *Optional.* Completions added by client.                                          |
 
 ### SyncedShoppingList
 

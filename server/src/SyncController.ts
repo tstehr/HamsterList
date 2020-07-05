@@ -22,7 +22,7 @@ import {
 } from 'shoppinglist-shared'
 import { ListidParam } from 'ShoppingListController'
 import { getChangesBetween } from './ChangesController'
-import { getSortedCompletions } from './CompletionsController'
+import { addCompletion, getSortedCompletions } from './CompletionsController'
 import { updateRecentlyUsed } from './ItemController'
 import { getBaseShoppingList, getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList'
 import TokenCreator from './TokenCreator'
@@ -85,6 +85,7 @@ export default class SyncController {
 
     const client = syncRequest.currentState
     const merged = mergeShoppingLists(base, client, server, req.list.categories)
+
     let recentlyUsed = getUpdatedItems(server, merged).reduce((ru, item) => {
       return updateRecentlyUsed(ru, item)
     }, req.list.recentlyUsed)
@@ -92,6 +93,12 @@ export default class SyncController {
     if (syncRequest.deleteCompletions != null) {
       const normalizedNames = syncRequest.deleteCompletions.map((name) => normalizeCompletionName(name))
       recentlyUsed = recentlyUsed.filter((entry) => !normalizedNames.includes(normalizeCompletionName(entry.item.name)))
+    }
+
+    if (syncRequest.addCompletions != null) {
+      recentlyUsed = syncRequest.addCompletions.reduce((ru, c) => {
+        return addCompletion(ru, c)
+      }, recentlyUsed)
     }
 
     req.updatedList = {
