@@ -36,6 +36,7 @@ The username is specified as a HTTP header `X-ShoppingList-Username`, where the 
 | `/:listid/items/:itemid`               | PUT    | [Item]           | [Item]                                 |
 | `/:listid/items/:itemid`               | DELETE | -                | -                                      |
 | `/:listid/completions`                 | GET    | -                | Array of [CompletionItem]              |
+| `/:listid/completions/:completionname` | PUT    | [CompletionItem] | [CompletionItem]                       |
 | `/:listid/completions/:completionname` | DELETE | -                | -                                      |
 | `/:listid/categories `                 | GET    | -                | Array of [CategoryDefinition]          |
 | `/:listid/categories `                 | PUT    | Array of [CategoryDefinition] | Array of [CategoryDefinition] |
@@ -82,6 +83,10 @@ On success, returns *204 No Content*
 ### GET    /:listid/completions
 
 Returns a list of frequently used items in descending order of use. The items contain `name` and optionally a `category`. This list is kept by the server and updated over time. Clients may use this list to implement completion when inserting new items.
+
+### PUT    /:listid/completions/:completionname
+
+Creates or updates the completion with the given name. `completionname` is case insensitive and leading and trailing whitespace is removed.
 
 ### DELETE /:listid/completions/:completionname
 

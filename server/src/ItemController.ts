@@ -11,12 +11,11 @@ import {
   createUUID,
   Item,
   LocalItem,
-  normalizeCompletionName,
   UUID,
 } from 'shoppinglist-shared'
 import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
 import { ListidParam } from 'ShoppingListController'
-import { getSortedCompletions } from './CompletionsController'
+import { addCompletion, getSortedCompletions } from './CompletionsController'
 import { RecentlyUsedArray } from './ServerShoppingList'
 
 export interface ItemidParam extends ListidParam {
@@ -136,28 +135,5 @@ export default class ItemController {
 
 export function updateRecentlyUsed(recentlyUsed: RecentlyUsedArray, item: Item): RecentlyUsedArray {
   const completionItem = createCompletionItem(_.pick(item, 'name', 'category'))
-  const completionName = normalizeCompletionName(completionItem.name)
-
-  if (completionName.length === 0) {
-    return recentlyUsed
-  }
-
-  const entryIdx = _.findIndex(recentlyUsed, (entry) => normalizeCompletionName(entry.item.name) === completionName)
-  const result = [...recentlyUsed]
-  if (entryIdx === -1) {
-    result.push({
-      lastUsedTimestamp: Date.now(),
-      uses: 1,
-      item: completionItem,
-    })
-  } else {
-    const entry = recentlyUsed[entryIdx]
-    result.splice(entryIdx, 1, {
-      lastUsedTimestamp: Date.now(),
-      uses: entry.uses + 1,
-      item: completionItem,
-    })
-  }
-
-  return result
+  return addCompletion(recentlyUsed, completionItem)
 }
