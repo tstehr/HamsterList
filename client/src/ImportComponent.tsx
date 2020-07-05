@@ -11,7 +11,7 @@ import {
   transformItemsToCategories,
   transformOrderToCategories,
 } from 'shoppinglist-shared'
-import { AddCompletion, CreateItem, DeleteCompletion, DeleteItem, UpdateCategories, UpdateOrders } from 'sync'
+import { CreateItem, DeleteItem, ModifyCompletions, UpdateCategories, UpdateOrders } from 'sync'
 import useSync from 'useSync'
 import styles from './ImportComponent.module.css'
 
@@ -25,8 +25,8 @@ interface Props {
   deleteItem: DeleteItem
   updateCategories: UpdateCategories
   updateOrders: UpdateOrders
-  deleteCompletion: DeleteCompletion
-  addCompletion: AddCompletion
+  modifyCompletions: ModifyCompletions
+  close: () => void
 }
 
 export default function ImportComponent(props: Props) {
@@ -87,10 +87,10 @@ function ImportFromList({
   deleteItem,
   updateCategories,
   updateOrders,
-  deleteCompletion,
-  addCompletion,
+  modifyCompletions,
   sourceListid,
   cancel,
+  close,
 }: { sourceListid: string; cancel: () => void } & Props) {
   const [state] = useSync(sourceListid)
 
@@ -99,6 +99,8 @@ function ImportFromList({
   const [importCompletions, setImportCompletions] = useState(false)
   const [importOrders, setImportOrders] = useState<string[]>([])
   const [importItems, setImportItems] = useState(false)
+
+  const [inProgress, setInProgress] = useState(false)
 
   const performImport = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -111,47 +113,52 @@ function ImportFromList({
         return
       }
 
-      let newCategories = categories
-      if (importCategories) {
-        newCategories = mergeCategoryLists(categories, state.categories, { dropUnmatched: replace })
-        updateCategories(newCategories)
-      }
+      setInProgress(true)
 
-      if (importOrders.length) {
-        const ordersToAdd = state.orders
-          .filter((o) => importOrders.includes(o.id))
-          .map((o) => transformOrderToCategories(o, state.categories, newCategories))
-        const newOrders = replace ? ordersToAdd : [...orders, ...ordersToAdd]
-        updateOrders(newOrders)
-      }
-
-      if (importCompletions) {
-        const completionsToDelete = replace ? completions.map((c) => c.name) : []
-        const completionsToAdd = transformItemsToCategories(state.completions, state.categories, newCategories)
-        completionsToDelete.forEach((n) => deleteCompletion(n))
-        completionsToAdd.forEach((c) => addCompletion(c))
-      }
-
-      if (importItems) {
-        const itemsToAdd = transformItemsToCategories(state.items, state.categories, newCategories)
-        if (replace) {
-          items.forEach((i) => deleteItem(i.id))
+      setImmediate(() => {
+        let newCategories = categories
+        if (importCategories) {
+          newCategories = mergeCategoryLists(categories, state.categories, { dropUnmatched: replace })
+          updateCategories(newCategories)
         }
-        itemsToAdd.forEach((i) => createItem(i))
-      }
+
+        if (importOrders.length) {
+          const ordersToAdd = state.orders
+            .filter((o) => importOrders.includes(o.id))
+            .map((o) => transformOrderToCategories(o, state.categories, newCategories))
+          const newOrders = replace ? ordersToAdd : [...orders, ...ordersToAdd]
+          updateOrders(newOrders)
+        }
+
+        if (importCompletions) {
+          const completionsToDelete = replace ? completions.map((c) => c.name) : []
+          const completionsToAdd = transformItemsToCategories(state.completions, state.categories, newCategories)
+          modifyCompletions(completionsToDelete, completionsToAdd)
+        }
+
+        if (importItems) {
+          const itemsToAdd = transformItemsToCategories(state.items, state.categories, newCategories)
+          if (replace) {
+            items.forEach((i) => deleteItem(i.id))
+          }
+          itemsToAdd.forEach((i) => createItem(i))
+        }
+
+        close()
+      })
     },
     [
-      addCompletion,
       categories,
+      close,
       completions,
       createItem,
-      deleteCompletion,
       deleteItem,
       importCategories,
       importCompletions,
       importItems,
       importOrders,
       items,
+      modifyCompletions,
       orders,
       replace,
       state,
@@ -162,11 +169,13 @@ function ImportFromList({
 
   return (
     <form onSubmit={performImport}>
+      <h2>Importing {!!state?.title && `from ${state.title}`}</h2>
       {!state?.loaded ? (
-        'loading'
+        <p className={styles.FormRow}>loading…</p>
+      ) : inProgress ? (
+        <p className={styles.FormRow}>importing, please wait…</p>
       ) : (
         <>
-          <h2>Importing from {state.title}</h2>
           <label className={styles.FormRow}>
             <strong>Replace</strong>
             <input type="checkbox" onChange={() => setReplace(!replace)} checked={replace} />

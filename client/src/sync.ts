@@ -45,6 +45,7 @@ export type ApplyDiff = (diff: Diff) => void
 export type CreateApplicableDiff = (diff: Diff) => Diff | null
 export type DeleteCompletion = (completionName: string) => void
 export type AddCompletion = (completion: CompletionItem) => void
+export type ModifyCompletions = (deletedCompletionNames: readonly string[], addedCompletions: readonly CompletionItem[]) => void
 
 export interface PersistedClientShoppingList {
   previousSync: SyncedShoppingList | null
@@ -595,7 +596,20 @@ class SyncingCore {
       deletedCompletions: this.state.deletedCompletions.filter((c) => c !== normalizedCompletionName),
       addedCompletions: [...this.state.addedCompletions, normalizedCompletionName],
       completions: this.getCompletionsWithAdded(this.state.completions, completion),
+      dirty: true,
+    })
+    this.requestSync()
+  }
 
+  modifyCompletions(deletedCompletionNames: readonly string[], addedCompletions: readonly CompletionItem[]) {
+    const normalizedAddedCompletionNames = addedCompletions.map((c) => normalizeCompletionName(c.name))
+    const normalizedDeletedCompletionNames = deletedCompletionNames
+      .map(normalizeCompletionName)
+      .filter((n) => !normalizedAddedCompletionNames.includes(n))
+    this.setState({
+      deletedCompletions: [...this.state.deletedCompletions, ...normalizedDeletedCompletionNames],
+      addedCompletions: [...this.state.addedCompletions, ...normalizedAddedCompletionNames],
+      completions: addedCompletions.reduce((cs, c) => this.getCompletionsWithAdded(cs, c), this.state.completions),
       dirty: true,
     })
     this.requestSync()

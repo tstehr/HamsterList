@@ -29,6 +29,7 @@ import {
   CreateItem,
   DeleteCompletion,
   DeleteItem,
+  ModifyCompletions,
   SelectOrder,
   SetUsername,
   UpdateCategories,
@@ -63,6 +64,7 @@ interface Props {
   createApplicableDiff: CreateApplicableDiff
   deleteCompletion: DeleteCompletion
   addCompletion: AddCompletion
+  modifyCompletions: ModifyCompletions
   manualSync: () => void
   clearLocalStorage: () => void
   up: Up
@@ -239,7 +241,7 @@ export default class ShoppingListComponent extends Component<Props> {
             <Frame>
               {{
                 topBar: (
-                  <TopBarComponent back={() => this.props.up(1)}>
+                  <TopBarComponent back={() => this.props.up('list')}>
                     <EditTitleComponent title={this.props.shoppingList.title} updateListTitle={this.props.updateListTitle} />
                     <SyncStatusComponent
                       connectionState={this.props.connectionState}
@@ -261,8 +263,8 @@ export default class ShoppingListComponent extends Component<Props> {
                     deleteItem={this.props.deleteItem}
                     updateCategories={this.props.updateCategories}
                     updateOrders={this.props.updateOrders}
-                    deleteCompletion={this.props.deleteCompletion}
-                    addCompletion={this.props.addCompletion}
+                    modifyCompletions={this.props.modifyCompletions}
+                    close={() => this.props.up('list')}
                   />,
                 ],
                 footer: this.renderFooter(),

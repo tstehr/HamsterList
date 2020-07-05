@@ -39,6 +39,7 @@ export default function ShoppingListContainerComponent({ listid, up }: Props) {
           createApplicableDiff={sync.createApplicableDiff.bind(sync)}
           deleteCompletion={sync.deleteCompletion.bind(sync)}
           addCompletion={sync.addCompletion.bind(sync)}
+          modifyCompletions={sync.modifyCompletions.bind(sync)}
           manualSync={sync.initiateSyncConnection.bind(sync)}
           clearLocalStorage={sync.clearLocalStorage.bind(sync)}
           up={up}
