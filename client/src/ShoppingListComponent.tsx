@@ -178,7 +178,8 @@ export default class ShoppingListComponent extends Component<Props> {
             <button type="button" className="PaddedButton" onClick={this.clearList}>
               Clear List
             </button>
-            <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Categories and Sorting</Link>
+            <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Categories and Sorting</Link>{' '}
+            <Link to={`/${this.props.shoppingList.id}/import/`}>Import</Link>
           </p>
         </section>
         <section>

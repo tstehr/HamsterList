@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import DB, { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY } from 'db'
 import _ from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -12,6 +13,7 @@ import {
 } from 'shoppinglist-shared'
 import { AddCompletion, CreateItem, DeleteCompletion, DeleteItem, UpdateCategories, UpdateOrders } from 'sync'
 import useSync from 'useSync'
+import styles from './ImportComponent.module.css'
 
 interface Props {
   listid: string
@@ -31,13 +33,13 @@ export default function ImportComponent(props: Props) {
   const [sourceListid, setSourceListid] = useState<string>()
 
   return (
-    <>
+    <div className={styles.ImportComponent}>
       {sourceListid === undefined ? (
         <ChooseList setSourceListid={setSourceListid} listid={props.listid} />
       ) : (
         <ImportFromList {...props} sourceListid={sourceListid} cancel={() => setSourceListid(undefined)} />
       )}
-    </>
+    </div>
   )
 }
 
@@ -69,7 +71,9 @@ function ChooseList({
             </option>
           ))}
       </datalist>
-      <button type="submit">Load</button>
+      <button type="submit" className="PaddedButton">
+        Load
+      </button>
     </form>
   )
 }
@@ -91,16 +95,10 @@ function ImportFromList({
   const [state] = useSync(sourceListid)
 
   const [replace, setReplace] = useState(false)
-  const [importCategories, setImportCategories] = useState(true)
-  const [importCompletions, setImportCompletions] = useState(true)
-  const [importOrders, setImportOrders] = useState<string[]>()
-  const [importItems, setImportItems] = useState(true)
-
-  useEffect(() => {
-    if (importOrders === undefined && state?.loaded) {
-      setImportOrders(state.orders.map((o) => o.id))
-    }
-  }, [importOrders, state])
+  const [importCategories, setImportCategories] = useState(false)
+  const [importCompletions, setImportCompletions] = useState(false)
+  const [importOrders, setImportOrders] = useState<string[]>([])
+  const [importItems, setImportItems] = useState(false)
 
   const performImport = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -119,7 +117,7 @@ function ImportFromList({
         updateCategories(newCategories)
       }
 
-      if (importOrders?.length) {
+      if (importOrders.length) {
         const ordersToAdd = state.orders
           .filter((o) => importOrders.includes(o.id))
           .map((o) => transformOrderToCategories(o, state.categories, newCategories))
@@ -169,47 +167,51 @@ function ImportFromList({
       ) : (
         <>
           <h2>Importing from {state.title}</h2>
-          <p>
-            <label>
-              <input type="checkbox" onChange={() => setReplace(!replace)} checked={replace} /> Replace
-            </label>
-          </p>
-          <p>
-            <label>
-              <input type="checkbox" onChange={() => setImportCategories(!importCategories)} checked={importCategories} />{' '}
-              Categories
-            </label>
-          </p>
-          <p>
-            <label>
-              <input type="checkbox" onChange={() => setImportCompletions(!importCompletions)} checked={importCompletions} />{' '}
-              Category Assignments
-            </label>
-          </p>
-          <p>
-            <select
-              value={importOrders}
-              multiple={true}
-              onChange={(e) => {
-                setImportOrders(Array.from(e.currentTarget.selectedOptions).map((o) => o.value))
-              }}
-            >
-              {state.orders.map((o) => (
-                <option value={o.id} key={o.id}>
-                  {o.name}
-                </option>
-              ))}
-            </select>
-          </p>
-          <p>
-            <label>
-              <input type="checkbox" onChange={() => setImportItems(!importItems)} checked={importItems} /> Items
-            </label>
-          </p>
+          <label className={styles.FormRow}>
+            <strong>Replace</strong>
+            <input type="checkbox" onChange={() => setReplace(!replace)} checked={replace} />
+          </label>
+          <label className={styles.FormRow}>
+            <strong>Categories</strong>
+            <input type="checkbox" onChange={() => setImportCategories(!importCategories)} checked={importCategories} />{' '}
+          </label>
+          <label className={styles.FormRow}>
+            <strong>Category Assignments</strong>
+            <input type="checkbox" onChange={() => setImportCompletions(!importCompletions)} checked={importCompletions} />{' '}
+          </label>
+          {!state.orders.length ? (
+            <p className={styles.FormRow}>
+              <strong>Orders:</strong>
+              <em>No orders to imports</em>
+            </p>
+          ) : (
+            <p className={classNames(styles.FormRow, styles.orders)}>
+              <strong>Orders:</strong>
+              <select
+                value={importOrders}
+                multiple={true}
+                onChange={(e) => {
+                  setImportOrders(Array.from(e.currentTarget.selectedOptions).map((o) => o.value))
+                }}
+              >
+                {state.orders.map((o) => (
+                  <option value={o.id} key={o.id}>
+                    {o.name}
+                  </option>
+                ))}
+              </select>
+            </p>
+          )}
+          <label className={styles.FormRow}>
+            <strong>Items</strong>
+            <input type="checkbox" onChange={() => setImportItems(!importItems)} checked={importItems} />
+          </label>
         </>
       )}
-      <button type="submit">Import</button>
-      <button type="button" onClick={cancel}>
+      <button type="submit" className="PaddedButton">
+        Import
+      </button>
+      <button type="button" onClick={cancel} className="PaddedButton">
         Cancel
       </button>
     </form>
