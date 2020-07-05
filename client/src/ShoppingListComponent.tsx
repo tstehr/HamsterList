@@ -19,8 +19,10 @@ import {
 import ChooseCategoryComponent from './ChooseCategoryComponent'
 import CreateItemComponent from './CreateItemComponent'
 import { Up } from './HistoryTracker'
+import ImportComponent from './ImportComponent'
 import ShoppingListItemsComponent from './ShoppingListItemsComponent'
 import {
+  AddCompletion,
   ApplyDiff,
   ConnectionState,
   CreateApplicableDiff,
@@ -60,6 +62,7 @@ interface Props {
   applyDiff: ApplyDiff
   createApplicableDiff: CreateApplicableDiff
   deleteCompletion: DeleteCompletion
+  addCompletion: AddCompletion
   manualSync: () => void
   clearLocalStorage: () => void
   up: Up
@@ -224,6 +227,41 @@ export default class ShoppingListComponent extends Component<Props> {
                     updateCategories={this.props.updateCategories}
                     updateOrders={this.props.updateOrders}
                     up={this.props.up}
+                  />,
+                ],
+                footer: this.renderFooter(),
+              }}
+            </Frame>
+          </Route>
+
+          <Route path={`/:listid/import`}>
+            <Frame>
+              {{
+                topBar: (
+                  <TopBarComponent back={() => this.props.up(1)}>
+                    <EditTitleComponent title={this.props.shoppingList.title} updateListTitle={this.props.updateListTitle} />
+                    <SyncStatusComponent
+                      connectionState={this.props.connectionState}
+                      syncing={this.props.syncing}
+                      lastSyncFailed={this.props.lastSyncFailed}
+                      dirty={this.props.dirty}
+                      manualSync={this.props.manualSync}
+                    />
+                  </TopBarComponent>
+                ),
+                sections: [
+                  <ImportComponent
+                    listid={this.props.shoppingList.id}
+                    items={this.props.shoppingList.items}
+                    completions={this.props.completions}
+                    categories={this.props.categories}
+                    orders={this.props.orders}
+                    createItem={this.props.createItem}
+                    deleteItem={this.props.deleteItem}
+                    updateCategories={this.props.updateCategories}
+                    updateOrders={this.props.updateOrders}
+                    deleteCompletion={this.props.deleteCompletion}
+                    addCompletion={this.props.addCompletion}
                   />,
                 ],
                 footer: this.renderFooter(),

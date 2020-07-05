@@ -4,7 +4,7 @@ import * as mathjs from 'mathjs'
 import { createUUID, UUID } from '../util/uuid'
 import { checkAttributeType, checkKeys, endValidation, isIndexable, nullSafe } from '../util/validation'
 import { Amount, createAmount, createAmountFromString, mergeAmounts, mergeAmountsTwoWay } from './Amount'
-import { CategoryDefinition } from './CategoryDefinition'
+import { CategoryDefinition, getCategoryMapping } from './CategoryDefinition'
 
 export interface CompletionItem {
   readonly name: string
@@ -247,4 +247,22 @@ export function addMatchingCategory<T extends LocalItem>(item: T, completions: r
 
 export function normalizeCompletionName(name: string): string {
   return name.trim().toLowerCase()
+}
+
+export function transformItemsToCategories<T extends { category?: UUID | null | undefined }>(
+  sourceItems: readonly T[],
+  sourceCategories: readonly CategoryDefinition[],
+  targetCategories: readonly CategoryDefinition[]
+): readonly T[] {
+  const { leftToRight: sourceToTarget } = getCategoryMapping(sourceCategories, targetCategories)
+  return sourceItems.map((i) => {
+    if (!i.category) {
+      return i
+    }
+    const mapped = sourceToTarget[i.category]
+    return {
+      ...i,
+      category: _.head(mapped) ?? i.category,
+    }
+  })
 }
