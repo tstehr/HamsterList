@@ -79,10 +79,32 @@ export function getCategoryMapping(left: readonly CategoryDefinition[], right: r
   }
 }
 
-export function mergeCategoryLists(left: readonly CategoryDefinition[], right: readonly CategoryDefinition[]) {
-  const { rightToLeft } = getCategoryMapping(left, right)
-  const unmatched = right.filter((c) => rightToLeft[c.id].length === 0)
-  return [...left, ...unmatched]
+export function mergeCategoryLists(
+  base: readonly CategoryDefinition[],
+  patch: readonly CategoryDefinition[],
+  { preferBase, dropUnmatched }: { preferBase: boolean; dropUnmatched: boolean }
+): readonly CategoryDefinition[] {
+  const { leftToRight: baseToPatch, rightToLeft: patchToBase } = getCategoryMapping(base, patch)
+
+  const newBase = base
+    .map((b) => {
+      const pid = _.head(baseToPatch[b.id])
+      const p = pid ? patch.find((c) => c.id === pid) : undefined
+      if (p) {
+        return preferBase
+          ? b
+          : {
+              ...p,
+              id: b.id,
+            }
+      }
+      return dropUnmatched ? null : b
+    })
+    .filter((b: CategoryDefinition | null): b is CategoryDefinition => b !== null)
+
+  const unmatchedPatch = patch.filter((c) => patchToBase[c.id].length === 0)
+
+  return [...newBase, ...unmatchedPatch]
 }
 
 export function normalizeCategoryDefinitionName(name: string) {

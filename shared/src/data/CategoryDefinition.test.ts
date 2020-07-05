@@ -54,7 +54,7 @@ describe('getCategoryMapping', () => {
 })
 
 describe('mergeCategoryLists', () => {
-  const left = [
+  const base = [
     createCategoryDefinition({
       id: '9b98222d-55bc-46c8-934a-eef059ff5b20',
       name: 'Milchprodukte',
@@ -71,7 +71,7 @@ describe('mergeCategoryLists', () => {
     }),
   ]
 
-  const right = [
+  const patch = [
     createCategoryDefinition({
       id: '3232d55e-ad9c-4e8c-b6e5-d5c4ee967d01',
       name: 'Milchprodukte',
@@ -89,9 +89,30 @@ describe('mergeCategoryLists', () => {
   ]
 
   it('Merges category lists, ignoring matching entries already present', () => {
-    const merged = mergeCategoryLists(left, right)
+    const merged = mergeCategoryLists(base, patch, { preferBase: true, dropUnmatched: false })
 
     expect(merged).toHaveLength(3)
-    expect(merged).toEqual(expect.arrayContaining([...left, right[1]]))
+    expect(merged).toEqual(expect.arrayContaining([...base, patch[1]]))
+  })
+
+  it('Merges category lists, dropping unmatched', () => {
+    const merged = mergeCategoryLists(base, patch, { preferBase: true, dropUnmatched: true })
+
+    expect(merged).toHaveLength(2)
+    expect(merged).toEqual(expect.arrayContaining([base[0], patch[1]]))
+  })
+
+  it('Merges category lists, preferring patch', () => {
+    const merged = mergeCategoryLists(base, patch, { preferBase: false, dropUnmatched: false })
+
+    expect(merged).toHaveLength(3)
+    expect(merged).toEqual(expect.arrayContaining([{ ...patch[0], id: base[0].id }, base[1], patch[1]]))
+  })
+
+  it('Merges category lists, preferring patch and dropping unmatched', () => {
+    const merged = mergeCategoryLists(base, patch, { preferBase: false, dropUnmatched: true })
+
+    expect(merged).toHaveLength(2)
+    expect(merged).toEqual(expect.arrayContaining([{ ...patch[0], id: base[0].id }, patch[1]]))
   })
 })
