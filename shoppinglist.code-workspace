@@ -19,6 +19,7 @@
     "editor.formatOnType": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
+      "source.fixAll": true,
       "source.organizeImports": true
     },
     "jest.disabledWorkspaceFolders": ["shoppinglist"]
