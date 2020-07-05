@@ -113,7 +113,7 @@ function ImportFromList({
 
       let newCategories = categories
       if (importCategories) {
-        newCategories = mergeCategoryLists(categories, state.categories, { preferBase: false, dropUnmatched: replace })
+        newCategories = mergeCategoryLists(categories, state.categories, { dropUnmatched: replace })
         updateCategories(newCategories)
       }
 

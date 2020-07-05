@@ -82,29 +82,27 @@ export function getCategoryMapping(left: readonly CategoryDefinition[], right: r
 export function mergeCategoryLists(
   base: readonly CategoryDefinition[],
   patch: readonly CategoryDefinition[],
-  { preferBase, dropUnmatched }: { preferBase: boolean; dropUnmatched: boolean }
+  { dropUnmatched }: { dropUnmatched: boolean }
 ): readonly CategoryDefinition[] {
   const { leftToRight: baseToPatch, rightToLeft: patchToBase } = getCategoryMapping(base, patch)
 
-  const newBase = base
-    .map((b) => {
-      const pid = _.head(baseToPatch[b.id])
-      const p = pid ? patch.find((c) => c.id === pid) : undefined
-      if (p) {
-        return preferBase
-          ? b
-          : {
-              ...p,
-              id: b.id,
-            }
+  const transformedPatch = patch
+    .map((p) => {
+      const bid = _.head(patchToBase[p.id])
+      const b = bid ? base.find((c) => c.id === bid) : undefined
+      if (b) {
+        return {
+          ...p,
+          id: b.id,
+        }
       }
-      return dropUnmatched ? null : b
+      return p
     })
-    .filter((b: CategoryDefinition | null): b is CategoryDefinition => b !== null)
+    .filter((p: CategoryDefinition | null): p is CategoryDefinition => p !== null)
 
-  const unmatchedPatch = patch.filter((c) => patchToBase[c.id].length === 0)
+  const unmatchedBase = dropUnmatched ? [] : base.filter((c) => baseToPatch[c.id].length === 0)
 
-  return [...newBase, ...unmatchedPatch]
+  return [...transformedPatch, ...unmatchedBase]
 }
 
 export function normalizeCategoryDefinitionName(name: string) {
