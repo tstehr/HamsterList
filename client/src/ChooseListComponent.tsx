@@ -5,16 +5,9 @@ import FlipMove from 'react-flip-move'
 import { Link, Redirect } from 'react-router-dom'
 import { createRandomUUID, createShoppingList } from 'shoppinglist-shared'
 import './ChooseListComponent.css'
-import DB, { getRecentlyUsedLists, Key, RECENTLY_USED_KEY } from './db'
+import DB, { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY } from './db'
 import TopBarComponent from './TopBarComponent'
 import { responseToJSON } from './utils'
-
-export interface RecentlyUsedList {
-  id: string
-  uses: number
-  lastUsedTimestamp: number
-  title?: string
-}
 
 interface State {
   listid: string | undefined | null

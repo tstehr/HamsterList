@@ -29,8 +29,7 @@ import {
   UUID,
 } from 'shoppinglist-shared'
 import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
-import { RecentlyUsedList } from './ChooseListComponent'
-import DB, { getRecentlyUsedLists, RECENTLY_USED_KEY } from './db'
+import DB, { getRecentlyUsedLists, RecentlyUsedList, RECENTLY_USED_KEY } from './db'
 import { responseToJSON } from './utils'
 
 export type ConnectionState = 'disconnected' | 'polling' | 'socket'

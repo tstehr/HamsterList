@@ -1,4 +1,3 @@
-import { RecentlyUsedList } from 'ChooseListComponent'
 import Emittery from 'emittery'
 import _ from 'lodash'
 import { frecency } from 'shoppinglist-shared'
@@ -136,6 +135,13 @@ interface DB extends Omit<DBEmitter, 'emit' | 'emitSerial'> {
 }
 
 export default DB
+
+export interface RecentlyUsedList {
+  id: string
+  uses: number
+  lastUsedTimestamp: number
+  title?: string
+}
 
 export function getRecentlyUsedLists(db: DB): readonly RecentlyUsedList[] {
   return _.chain(db.get(RECENTLY_USED_KEY) ?? [])
