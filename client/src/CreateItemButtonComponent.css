@@ -26,6 +26,12 @@
   transition: opacity 100ms 50ms;
 }
 
+.CreateItemButtonComponent__categoryButton {
+  background: none;
+  font: inherit;
+  border: none;
+}
+
 .CreateItemButtonComponent__button {
   display: block;
   flex: 1;

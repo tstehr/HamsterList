@@ -2,10 +2,10 @@ import fuzzy from 'fuzzy'
 import _ from 'lodash'
 import React, { Component, Fragment } from 'react'
 // import FlipMove from 'react-flip-move'
-import { CategoryDefinition, CompletionItem, itemToString, LocalItem } from 'shoppinglist-shared'
+import { CategoryDefinition, CompletionItem, itemToString, LocalItem, UUID } from 'shoppinglist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 import { ItemInput } from './CreateItemComponent'
-import { CreateItem, DeleteCompletion } from './sync'
+import { AddCompletion, CreateItem, DeleteCompletion } from './sync'
 
 interface Props {
   focusItemsInCreation: boolean
@@ -13,7 +13,9 @@ interface Props {
   completions: readonly CompletionItem[]
   categories: readonly CategoryDefinition[]
   createItem: CreateItem
+  updateItemCategory: (item: LocalItem, categoryId: UUID | null | undefined) => void
   deleteCompletion: DeleteCompletion
+  addCompletion: AddCompletion
   focusInput: () => void
 }
 export default class CompletionsComponent extends Component<Props> {
@@ -79,6 +81,7 @@ export default class CompletionsComponent extends Component<Props> {
             noArrowFocus
             focused={this.props.focusItemsInCreation}
             deleteCompletion={ii.categoryAdded ? this.props.deleteCompletion : null}
+            updateCategory={(categoryId) => this.props.updateItemCategory(ii.item, categoryId)}
           />
         ))}
         {this.getCompletionItems().map((item) => (
@@ -89,6 +92,7 @@ export default class CompletionsComponent extends Component<Props> {
             createItem={this.props.createItem}
             deleteCompletion={this.props.deleteCompletion}
             focusInput={this.props.focusInput}
+            updateCategory={(categoryId) => this.props.addCompletion({ name: item.name, category: categoryId })}
           />
         ))}
       </Fragment>

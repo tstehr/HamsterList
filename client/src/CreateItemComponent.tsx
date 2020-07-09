@@ -6,14 +6,16 @@ import {
   Change,
   CompletionItem,
   createLocalItemFromString,
+  itemToString,
   LocalItem,
+  UUID,
 } from 'shoppinglist-shared'
 import ChangesComponent from './ChangesComponent'
 import CompletionsComponent from './CompletionsComponent'
 import './CreateItemComponent.css'
 import IconButton from './IconButton'
 import KeyFocusComponent from './KeyFocusComponent'
-import { ApplyDiff, CreateApplicableDiff, CreateItem, DeleteCompletion } from './sync'
+import { AddCompletion, ApplyDiff, CreateApplicableDiff, CreateItem, DeleteCompletion } from './sync'
 
 export interface ItemInput {
   item: LocalItem
@@ -27,6 +29,7 @@ interface Props {
   categories: readonly CategoryDefinition[]
   createItem: CreateItem
   deleteCompletion: DeleteCompletion
+  addCompletion: AddCompletion
   applyDiff: ApplyDiff
   createApplicableDiff: CreateApplicableDiff
 }
@@ -199,6 +202,23 @@ export default class CreateItemComponent extends Component<Props, State> {
     this.props.createItem(item)
   }
 
+  updateItemCategory = (item: LocalItem, categoryId: UUID | null | undefined): void => {
+    const lineIndex = this.state.itemsForInputLines.findIndex((ii) => ii && ii.item === item)
+
+    if (lineIndex !== -1) {
+      const itemString = itemToString(item)
+      const category = this.props.categories.find((c) => c.id === categoryId)
+      const categoryPrefix =
+        categoryId === null || category === null ? '(?) ' : categoryId === undefined ? '' : `(${category?.shortName}) `
+      const newLine = categoryPrefix + itemString
+
+      const lines = this.state.inputValue.split('\n')
+      lines.splice(lineIndex, 1, newLine)
+      const newInputValue = lines.join('\n')
+      this.setState(this.createInputValueUpdate(newInputValue))
+    }
+  }
+
   focusInput = (): void => {
     if (this.input != null) {
       this.input.focus()
@@ -281,7 +301,9 @@ export default class CreateItemComponent extends Component<Props, State> {
                 categories={this.props.categories}
                 itemsInCreation={itemsInCreation}
                 createItem={this.createItem}
+                updateItemCategory={this.updateItemCategory}
                 deleteCompletion={this.props.deleteCompletion}
+                addCompletion={this.props.addCompletion}
                 focusInput={this.focusInput}
               />
             )}

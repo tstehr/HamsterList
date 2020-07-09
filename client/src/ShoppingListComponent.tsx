@@ -305,6 +305,7 @@ export default class ShoppingListComponent extends Component<Props> {
                     categories={this.props.categories}
                     createItem={this.props.createItem}
                     deleteCompletion={this.props.deleteCompletion}
+                    addCompletion={this.props.addCompletion}
                     applyDiff={this.props.applyDiff}
                     createApplicableDiff={this.props.createApplicableDiff}
                   />,
