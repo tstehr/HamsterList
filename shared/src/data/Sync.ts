@@ -23,6 +23,7 @@ export interface SyncRequest {
   readonly categories?: readonly CategoryDefinition[]
   readonly orders?: readonly Order[]
   readonly deleteCompletions?: readonly string[]
+  readonly addCompletions?: readonly CompletionItem[]
 }
 
 export interface SyncResponse {
@@ -65,13 +66,15 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
       'categories',
       'orders',
       'deleteCompletions',
+      'addCompletions',
     ]) &&
     checkAttributeType(syncRequestSpec, 'previousSync', 'object') &&
     checkAttributeType(syncRequestSpec, 'currentState', 'object') &&
     checkAttributeType(syncRequestSpec, 'includeInResponse', 'array', true) &&
     checkAttributeType(syncRequestSpec, 'categories', 'array', true) &&
     checkAttributeType(syncRequestSpec, 'orders', 'array', true) &&
-    checkAttributeType(syncRequestSpec, 'deleteCompletions', 'array', true)
+    checkAttributeType(syncRequestSpec, 'deleteCompletions', 'array', true) &&
+    checkAttributeType(syncRequestSpec, 'addCompletions', 'array', true)
   ) {
     let previousSync: SyncedShoppingList
     try {
@@ -130,6 +133,15 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
       }
     }
 
+    let addCompletions: readonly CompletionItem[] | undefined = undefined
+    if (syncRequestSpec.addCompletions != null) {
+      try {
+        addCompletions = errorMap(syncRequestSpec.addCompletions, createCompletionItem)
+      } catch (e) {
+        throw new TypeError(`Error in addCompletions: ${e.message}`)
+      }
+    }
+
     return {
       previousSync,
       currentState,
@@ -137,6 +149,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
       categories,
       orders,
       deleteCompletions,
+      addCompletions,
     }
   }
   endValidation()

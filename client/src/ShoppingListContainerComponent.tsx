@@ -1,7 +1,7 @@
 import { Up } from 'HistoryTracker'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import ShoppingListComponent from 'ShoppingListComponent'
-import SyncingCore, { ClientShoppingList } from 'sync'
+import useSync from 'useSync'
 
 interface Props {
   listid: string
@@ -38,6 +38,8 @@ export default function ShoppingListContainerComponent({ listid, up }: Props) {
           applyDiff={sync.applyDiff.bind(sync)}
           createApplicableDiff={sync.createApplicableDiff.bind(sync)}
           deleteCompletion={sync.deleteCompletion.bind(sync)}
+          addCompletion={sync.addCompletion.bind(sync)}
+          modifyCompletions={sync.modifyCompletions.bind(sync)}
           manualSync={sync.initiateSyncConnection.bind(sync)}
           clearLocalStorage={sync.clearLocalStorage.bind(sync)}
           up={up}
@@ -45,25 +47,4 @@ export default function ShoppingListContainerComponent({ listid, up }: Props) {
       )}
     </div>
   )
-}
-
-function useSync(listid: string): [ClientShoppingList | undefined, SyncingCore | undefined] {
-  const [state, setState] = useState<ClientShoppingList>()
-  const [sync, setSync] = useState<SyncingCore>()
-
-  useEffect(() => {
-    const sync = new SyncingCore(listid)
-    function handleChange({ clientShoppingList }: { clientShoppingList: ClientShoppingList }) {
-      setState(clientShoppingList)
-    }
-    setSync(sync)
-    sync.init()
-    sync.on('change', handleChange)
-    return () => {
-      sync.off('change', handleChange)
-      sync.close()
-    }
-  }, [listid])
-
-  return [state, sync]
 }

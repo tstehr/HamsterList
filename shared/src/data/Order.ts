@@ -1,11 +1,11 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
 import { createUUID, createUUIDFromUnknown, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, endValidation, errorMap } from '../util/validation'
-import { CategoryDefinition } from './CategoryDefinition'
+import { checkAttributeType, checkKeys, endValidation, errorMap, nullSafe } from '../util/validation'
+import { CategoryDefinition, getCategoryMapping } from './CategoryDefinition'
 import { Item } from './Item'
 
-export type CategoryOrder = ReadonlyArray<UUID | undefined | null>
+export type CategoryOrder = ReadonlyArray<UUID | null>
 
 export interface Order {
   readonly id: UUID
@@ -23,7 +23,7 @@ export function createOrder(orderSpec: unknown): Order {
     const order = {
       id: createUUID(orderSpec.id),
       name: orderSpec.name.trim(),
-      categoryOrder: errorMap(orderSpec.categoryOrder, createUUIDFromUnknown),
+      categoryOrder: errorMap(orderSpec.categoryOrder, resultNotUndefined(nullSafe(createUUIDFromUnknown))),
     }
 
     return deepFreeze(order)
@@ -47,10 +47,26 @@ export function sortCategories(
 }
 
 export function completeCategoryOrder(categoryOrder: CategoryOrder, categories: readonly CategoryDefinition[]): CategoryOrder {
-  return sortCategories(categories, categoryOrder).map((cat) => cat.id)
+  const unknownRemovedCategoryOrder = categoryOrder.filter((cid) => cid === null || categories.some((c) => c.id === cid))
+  const missingCategoryIds = categories.map((c) => c.id).filter((cid) => !unknownRemovedCategoryOrder.includes(cid))
+  return [...unknownRemovedCategoryOrder, ...missingCategoryIds]
 }
 
-function undefinedToNull<T>(input?: T | null): T | undefined | null {
+export function transformOrderToCategories(
+  sourceOrder: Order,
+  sourceCategories: readonly CategoryDefinition[],
+  targetCategories: readonly CategoryDefinition[]
+) {
+  const { leftToRight: sourceToTarget } = getCategoryMapping(sourceCategories, targetCategories)
+  const mappedCategoryOrder = sourceOrder.categoryOrder
+    .map((cid) => (cid === null ? cid : sourceToTarget[cid]))
+    .filter((v) => !Array.isArray(v) || Array.length > 0)
+    .map((v) => (v === null ? v : v[0]))
+  const categoryOrder = completeCategoryOrder(mappedCategoryOrder, targetCategories)
+  return { ...sourceOrder, categoryOrder }
+}
+
+function undefinedToNull<T>(input?: T | null): T | null {
   if (input === undefined) {
     return null
   }
@@ -60,6 +76,16 @@ function undefinedToNull<T>(input?: T | null): T | undefined | null {
 
 function convertSmallerZeroToInf(index: number): number {
   return index < 0 ? Infinity : index
+}
+
+function resultNotUndefined<T, R>(func: (a: T) => R | undefined): (a: T) => R {
+  return (a) => {
+    const result = func(a)
+    if (result === undefined) {
+      throw new TypeError('The value may not be "undefined"!')
+    }
+    return result
+  }
 }
 
 function getNameLowerCase(named: { name: string }): string {

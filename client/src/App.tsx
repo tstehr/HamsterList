@@ -26,6 +26,7 @@ export default class App extends Component {
               <Route path="/:listid/orders" exact render={createShoppingListContainerComponentRender(up)} />
               <Route path="/:listid/orders/:orderid" exact render={createShoppingListContainerComponentRender(up)} />
               <Route path="/:listid/:itemid/category" exact render={createShoppingListContainerComponentRender(up)} />
+              <Route path="/:listid/import" exact render={createShoppingListContainerComponentRender(up)} />
               <Route component={Error404} />
             </Switch>
           )}
