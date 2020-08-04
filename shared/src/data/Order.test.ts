@@ -187,7 +187,7 @@ describe('completeCategories', () => {
 })
 
 describe('transformOrderToCategories', () => {
-  function makeCategory(name: string) {
+  function makeCategory(name: string): CategoryDefinition {
     return {
       name,
       id: createRandomUUID(),
@@ -224,6 +224,19 @@ describe('transformOrderToCategories', () => {
     ).toEqual({
       ...expectedTargetOrder,
       categoryOrder: [...expectedTargetOrder.categoryOrder, null],
+    })
+  })
+
+  it('Handles order containing id not categories', () => {
+    expect(
+      transformOrderToCategories(
+        { ...sourceOrder, categoryOrder: [...sourceOrder.categoryOrder, createRandomUUID()] },
+        sourceCategories,
+        targetCategories
+      )
+    ).toEqual({
+      ...expectedTargetOrder,
+      categoryOrder: [...expectedTargetOrder.categoryOrder],
     })
   })
 

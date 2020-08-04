@@ -60,7 +60,7 @@ export function transformOrderToCategories(
   const { leftToRight: sourceToTarget } = getCategoryMapping(sourceCategories, targetCategories)
   const mappedCategoryOrder = sourceOrder.categoryOrder
     .map((cid) => (cid === null ? cid : sourceToTarget[cid]))
-    .filter((v) => !Array.isArray(v) || Array.length > 0)
+    .filter((v): v is string[] | null => v === null || (Array.isArray(v) && v.length > 0))
     .map((v) => (v === null ? v : v[0]))
   const categoryOrder = completeCategoryOrder(mappedCategoryOrder, targetCategories)
   return { ...sourceOrder, categoryOrder }

@@ -50,7 +50,7 @@ interface UnsafeDict<V> {
 }
 
 export interface CategoryMapping {
-  [k: string]: readonly UUID[]
+  [k: string]: readonly UUID[] | undefined
 }
 
 export function getCategoryMapping(left: readonly CategoryDefinition[], right: readonly CategoryDefinition[]) {
@@ -100,7 +100,9 @@ export function mergeCategoryLists(
     })
     .filter((p: CategoryDefinition | null): p is CategoryDefinition => p !== null)
 
-  const unmatchedBase = dropUnmatched ? [] : base.filter((c) => baseToPatch[c.id].length === 0)
+  const unmatchedBase = dropUnmatched
+    ? []
+    : base.filter((c) => baseToPatch[c.id] === undefined || baseToPatch[c.id]?.length === 0)
 
   return [...transformedPatch, ...unmatchedBase]
 }
