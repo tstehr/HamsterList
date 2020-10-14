@@ -39,8 +39,14 @@ export default class SocketController {
           return
         }
 
-        ws.isAlive = false
-        ws.ping('', false)
+        try {
+          ws.isAlive = false
+          ws.ping('', false)
+        } catch (e) {
+          ws.log.error(e, {
+            message: 'Failed to ping websocket',
+          })
+        }
       })
     }, 30000)
   }
@@ -102,7 +108,14 @@ export default class SocketController {
   notifiyChanged: ShoppingListChangeCallback = (list: ServerShoppingList) => {
     if (this.registeredWebSockets[list.id] != null) {
       for (const ws of this.registeredWebSockets[list.id]) {
-        ws.send(this.tokenCreator.createToken(getSyncedShoppingList(list)))
+        try {
+          ws.send(this.tokenCreator.createToken(getSyncedShoppingList(list)))
+        } catch (e) {
+          ws.log.error(e, {
+            message: 'Failed to send message to websocket',
+          })
+          ws.isAlive = false
+        }
       }
     }
   }
