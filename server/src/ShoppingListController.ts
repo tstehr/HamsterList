@@ -116,7 +116,9 @@ export default class ShoppingListController {
 
       this.changeCallback(newList)
       this.db.set({ ...this.db.get(), lists: updateInArray(this.db.get().lists, newList, true) })
-      this.db.write().catch(req.log.error)
+      this.db.write().catch((e) => {
+        req.log.error(e)
+      })
     }
 
     next()

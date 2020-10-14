@@ -29,7 +29,7 @@ const log = Logger.createLogger({
   level: config.get('logLevel'),
 })
 
-const db = new DB(config.get('databaseFilePath'))
+const db = new DB(config.get('databaseFilePath'), log)
 const app = express()
 
 // Ensure that we can connect to the websocket. If websocketHost === host, 'self' should be sufficient (meaning we wouldn't have
@@ -182,7 +182,6 @@ db.load()
       } catch (e) {
         log.fatal(`File "${e.path}" couldn't be found`)
         process.exit(1)
-        return
       }
 
       const server = https.createServer(options, app)

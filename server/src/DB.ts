@@ -1,5 +1,7 @@
+import Logger from 'bunyan'
 import deepFreeze from 'deep-freeze'
 import fs from 'fs-extra'
+import writeJsonFile from 'write-json-file'
 import { createServerShoppingList, ServerShoppingList } from './ServerShoppingList'
 
 export interface DBContents {
@@ -7,12 +9,9 @@ export interface DBContents {
 }
 
 export class DB {
-  path: string
   contents: DBContents | undefined | null
 
-  constructor(path: string) {
-    this.path = path
-  }
+  constructor(public path: string, public log: Logger) {}
 
   async load(): Promise<DBContents> {
     if (this.contents != null) {
@@ -34,10 +33,12 @@ export class DB {
     return this.contents
   }
 
-  write(): Promise<void> {
-    return fs.outputJSON(this.path, this.contents, {
-      spaces: 2,
+  async write(): Promise<void> {
+    this.log.info('Saving DB')
+    await writeJsonFile(this.path, this.contents, {
+      indent: 2,
     })
+    this.log.info('DB save finished')
   }
 
   get(): DBContents {
