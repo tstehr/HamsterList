@@ -20,6 +20,8 @@ export type Key =
 type Value = any
 
 export const RECENTLY_USED_KEY: Key = { type: 'simple', identifier: 'recentlyUsedLists' }
+export const RESTORATION_ENABLED: Key = { type: 'simple', identifier: 'restorationEnabled' }
+export const RESTORATION_PATH: Key = { type: 'simple', identifier: 'restorationPath' }
 
 @Emittery.mixin('emitter')
 class DB {

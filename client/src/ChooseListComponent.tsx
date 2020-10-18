@@ -5,13 +5,14 @@ import FlipMove from 'react-flip-move'
 import { Link, Redirect } from 'react-router-dom'
 import { createRandomUUID, createShoppingList } from 'shoppinglist-shared'
 import './ChooseListComponent.css'
-import DB, { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY } from './db'
+import DB, { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY, RESTORATION_ENABLED } from './db'
 import TopBarComponent from './TopBarComponent'
 import { responseToJSON } from './utils'
 
 interface State {
   listid: string | undefined | null
   recentlyUsedLists: readonly RecentlyUsedList[]
+  restorationEnabled: boolean
 }
 
 export default class ChooseListComponent extends Component<{}, State> {
@@ -26,6 +27,7 @@ export default class ChooseListComponent extends Component<{}, State> {
     this.state = {
       listid: null,
       recentlyUsedLists: getRecentlyUsedLists(this.db),
+      restorationEnabled: this.db.get(RESTORATION_ENABLED) ?? false,
     }
     this.inputListid = React.createRef()
   }
@@ -47,6 +49,10 @@ export default class ChooseListComponent extends Component<{}, State> {
       this.setState({
         recentlyUsedLists: getRecentlyUsedLists(this.db),
       })
+    } else if (_.isEqual(key, RESTORATION_ENABLED)) {
+      this.setState({
+        restorationEnabled: this.db.get(RESTORATION_ENABLED) ?? false,
+      })
     }
   }
 
@@ -57,6 +63,14 @@ export default class ChooseListComponent extends Component<{}, State> {
     }
     this.setState({
       listid: this.inputListid.current.value.trim(),
+    })
+  }
+
+  onRestorationEnabledChange = (e: React.SyntheticEvent<HTMLInputElement>): void => {
+    const restorationEnabled = e.currentTarget.checked
+    this.db.set(RESTORATION_ENABLED, restorationEnabled)
+    this.setState({
+      restorationEnabled,
     })
   }
 
@@ -131,11 +145,19 @@ export default class ChooseListComponent extends Component<{}, State> {
                     </FlipMove>
                   </section>
                 )}
+
+                <section>
+                  <p>
+                    <label>
+                      <input type="checkbox" checked={this.state.restorationEnabled} onChange={this.onRestorationEnabledChange} />{' '}
+                      Return to last used list on open
+                    </label>
+                  </p>
+                </section>
               </div>,
             ],
             footer: (
               <div className="ChooseListComponent__footer">
-                {' '}
                 <p>
                   Icons made by{' '}
                   <a href="https://www.flaticon.com/authors/egor-rumyantsev" title="Egor Rumyantsev">
