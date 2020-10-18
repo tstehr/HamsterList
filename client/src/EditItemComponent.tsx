@@ -51,6 +51,7 @@ export default class EditItemComponent extends Component<Props, State> {
     this.setState((prevState) => ({
       hasFocus: true,
       isEditing: prevState.hasFocus ? false : true,
+      inputValue: prevState.hasFocus ? prevState.inputValue : itemToString(this.props.item),
     }))
   }
 
