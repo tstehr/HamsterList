@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import {
   CategoryDefinition,
   CompletionItem,
+  createRandomUUID,
   Item,
   mergeCategoryLists,
   Order,
@@ -126,6 +127,8 @@ function ImportFromList({
           const ordersToAdd = state.orders
             .filter((o) => importOrders.includes(o.id))
             .map((o) => transformOrderToCategories(o, state.categories, newCategories))
+            // replace ids to prevent duplicating ids on repeated import
+            .map((o) => ({ ...o, id: createRandomUUID() }))
           const newOrders = replace ? ordersToAdd : [...orders, ...ordersToAdd]
           updateOrders(newOrders)
         }
