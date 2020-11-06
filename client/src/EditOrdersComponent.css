@@ -35,6 +35,12 @@
   position: relative;
   z-index: 998;
 }
+.EditOrdersComponent__delete {
+  --button-bg-color: var(--failure-color) !important;
+  color: var(--text-color) !important;
+  position: relative;
+  z-index: 998;
+}
 
 .EditOrderComponent__name {
   display: block;

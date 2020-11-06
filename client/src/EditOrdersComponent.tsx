@@ -268,6 +268,12 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     }
   }
 
+  handleDeleteAll = (): void => {
+    if (window.confirm(`Really delete category all categories? This can not be undone!`)) {
+      this.deleteAllCategories();
+    }
+  }
+
   createCategory = (): void => {
     const id = createRandomUUID()
     let name = `New Category`
@@ -308,6 +314,10 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     this.props.updateCategories(categories)
   }
 
+  deleteAllCategories = (): void => {
+    this.props.updateCategories([])
+  }
+
   render(): JSX.Element {
     const sortedCategories = this.getSortedCategories()
     const order = this.props.order
@@ -344,6 +354,14 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
           onClick={this.createCategory}
         >
           New
+        </button>
+        <button
+          type="button"
+          className="EditOrdersComponent__delete Button Button--padded"
+          aria-label="Delete all categories"
+          onClick={this.handleDeleteAll}
+        >
+          Delete all categories
         </button>
         <button type="button" className="EditOrderComponent__back Button Button--padded" onClick={() => this.props.up(1)}>
           Back
