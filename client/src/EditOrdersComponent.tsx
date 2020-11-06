@@ -395,14 +395,15 @@ const SortableCategory = SortableElement(
     useEffect(() => {
       function handleOutsideClick(e: MouseEvent): void {
         if (showPicker && categoryComponentRef.current && !categoryComponentRef.current.contains(e.target as Node)) {
-          setShowPicker(false)
           e.preventDefault()
+          e.stopImmediatePropagation()
+          setShowPicker(false)
         }
       }
       if (showPicker) {
-        window.addEventListener('click', handleOutsideClick)
+        window.addEventListener('click', handleOutsideClick, true)
         return () => {
-          window.removeEventListener('click', handleOutsideClick)
+          window.removeEventListener('click', handleOutsideClick, true)
         }
       }
     }, [showPicker])
