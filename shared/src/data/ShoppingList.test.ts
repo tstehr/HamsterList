@@ -286,43 +286,10 @@ describe('mergeShoppingLists', () => {
       title: 'Unterwegs',
       items: [
         {
-          name: 'Dosen Kichererbsen',
-          category: 'bef7bffc-6f54-450a-804e-799d1da5b976',
-          amount: {
-            value: 2,
-            unit: undefined,
-          },
-          id: 'c14ef9de-3075-445e-9225-6a50e0c0adca',
-        },
-        {
-          name: 'Frischkäse',
-          category: '7ca893d0-bc4f-4a79-bdc1-3853cec70001',
-          amount: undefined,
-          id: '0ac3c795-1341-4838-b729-5053720e80ef',
-        },
-        {
-          name: 'Gemüse',
-          category: '6ca0f054-209c-46c9-b337-6088f7a530ab',
-          amount: undefined,
-          id: 'cee268a4-7506-4000-a740-5c98e50809c6',
-        },
-        {
           name: 'Kaffeebohnen',
           category: '1508d447-3e0d-4b50-bcae-ae4a9c85a3ea',
           amount: undefined,
           id: '69fab191-4a93-41a5-a7c0-2a1b2ae2dcbd',
-        },
-        {
-          name: 'Knoblauch',
-          category: '6ca0f054-209c-46c9-b337-6088f7a530ab',
-          amount: undefined,
-          id: '5d0d6c63-67d4-4f3f-8c00-540823e0476c',
-        },
-        {
-          name: 'Käse',
-          category: '7ca893d0-bc4f-4a79-bdc1-3853cec70001',
-          amount: undefined,
-          id: '31005250-595c-4fc9-b27a-d4ec33b85271',
         },
         {
           name: 'loser Pfefferminztee',
@@ -331,16 +298,49 @@ describe('mergeShoppingLists', () => {
           id: 'cbda3946-f136-4c94-8280-4931100576b4',
         },
         {
-          name: 'MiniMilk',
-          category: 'b68d25e8-5fa0-4f83-9408-6c306ddb8c21',
+          name: 'Gemüse',
+          category: '6ca0f054-209c-46c9-b337-6088f7a530ab',
           amount: undefined,
-          id: '1ccf57f6-5452-4de4-8e04-b908a4144158',
+          id: 'cee268a4-7506-4000-a740-5c98e50809c6',
+        },
+        {
+          name: 'Knoblauch',
+          category: '6ca0f054-209c-46c9-b337-6088f7a530ab',
+          amount: undefined,
+          id: '5d0d6c63-67d4-4f3f-8c00-540823e0476c',
         },
         {
           name: 'Petersilie',
           category: '6ca0f054-209c-46c9-b337-6088f7a530ab',
           amount: undefined,
           id: '5b8f0e0e-6663-4f0a-abe8-dbb7f9784579',
+        },
+        {
+          name: 'Frischkäse',
+          category: '7ca893d0-bc4f-4a79-bdc1-3853cec70001',
+          amount: undefined,
+          id: '0ac3c795-1341-4838-b729-5053720e80ef',
+        },
+        {
+          name: 'Käse',
+          category: '7ca893d0-bc4f-4a79-bdc1-3853cec70001',
+          amount: undefined,
+          id: '31005250-595c-4fc9-b27a-d4ec33b85271',
+        },
+        {
+          name: 'MiniMilk',
+          category: 'b68d25e8-5fa0-4f83-9408-6c306ddb8c21',
+          amount: undefined,
+          id: '1ccf57f6-5452-4de4-8e04-b908a4144158',
+        },
+        {
+          name: 'Dosen Kichererbsen',
+          category: 'bef7bffc-6f54-450a-804e-799d1da5b976',
+          amount: {
+            value: 2,
+            unit: undefined,
+          },
+          id: 'c14ef9de-3075-445e-9225-6a50e0c0adca',
         },
       ],
     })

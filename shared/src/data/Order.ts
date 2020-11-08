@@ -32,9 +32,19 @@ export function createOrder(orderSpec: unknown): Order {
 }
 
 export function sortItems(items: readonly Item[], categoryOrder: CategoryOrder): readonly Item[] {
-  const categoryIteratee = (item: Item): number => convertSmallerZeroToInf(categoryOrder.indexOf(undefinedToNull(item.category)))
+  const categoriesPresent = _.chain(items)
+    .map((i) => i.category)
+    .filter((id): id is string => typeof id === 'string')
+    .sort()
+    .sortedUniq()
+    .value()
 
-  return _.sortBy(items, [categoryIteratee, getNameLowerCase, 'id'])
+  return _.sortBy(items, [
+    (item) => convertSmallerZeroToInf(categoryOrder.indexOf(undefinedToNull(item.category))),
+    (item) => (item.category ? categoriesPresent.indexOf(item.category) : Infinity),
+    getNameLowerCase,
+    'id',
+  ])
 }
 
 export function sortCategories(

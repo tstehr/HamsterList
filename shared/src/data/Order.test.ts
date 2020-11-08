@@ -50,6 +50,10 @@ describe('sortItems', () => {
       name: 'Unbekanntes Zeug',
     }),
     createItem({
+      id: '17a638c6-6452-409d-acbe-de10665f91de',
+      name: 'Unbekannter Stuff',
+    }),
+    createItem({
       id: '94d9ff44-721d-4125-ba76-a4a095f922d3',
       name: 'Käse',
       category: '6301d82f-0e69-4d57-9473-ab7633089b2c',
@@ -65,19 +69,25 @@ describe('sortItems', () => {
       category: '8178a592-7783-4755-9202-8e463ab23234',
     }),
   ]
-  const order = createOrder({
-    id: '579562a4-8be6-464c-9011-e87042b6241b',
-    name: 'real',
-    categoryOrder: ['8178a592-7783-4755-9202-8e463ab23234', '6301d82f-0e69-4d57-9473-ab7633089b2c'],
-  })
 
   it('Sorts items', () => {
-    const sortedItems = sortItems(items, order.categoryOrder)
-    expect(sortedItems).toHaveLength(4)
+    const sortedItems = sortItems(items, ['8178a592-7783-4755-9202-8e463ab23234', '6301d82f-0e69-4d57-9473-ab7633089b2c'])
+    expect(sortedItems).toHaveLength(5)
     expect(sortedItems[0].name).toEqual('Steak')
     expect(sortedItems[1].name).toEqual('Eier')
     expect(sortedItems[2].name).toEqual('Käse')
-    expect(sortedItems[3].name).toEqual('Unbekanntes Zeug')
+    expect(sortedItems[3].name).toEqual('Unbekannter Stuff')
+    expect(sortedItems[4].name).toEqual('Unbekanntes Zeug')
+  })
+
+  it('Sorts items with the same category together even if the categories are not in the order', () => {
+    const sortedItems = sortItems(items, [])
+    expect(sortedItems).toHaveLength(5)
+    expect(sortedItems[0].name).toEqual('Eier')
+    expect(sortedItems[1].name).toEqual('Käse')
+    expect(sortedItems[2].name).toEqual('Steak')
+    expect(sortedItems[3].name).toEqual('Unbekannter Stuff')
+    expect(sortedItems[4].name).toEqual('Unbekanntes Zeug')
   })
 })
 
