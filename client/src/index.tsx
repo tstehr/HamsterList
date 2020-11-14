@@ -4,7 +4,7 @@ import shareApiPolyfill from 'share-api-polyfill'
 import smoothscroll from 'smoothscroll-polyfill'
 import App from './App'
 import './index.css'
-import * as serviceWorker from './serviceWorker'
+import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
 // kick off the polyfill!
 smoothscroll.polyfill()
@@ -18,4 +18,4 @@ ReactDOM.render(<App />, document.getElementById('root'))
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.register()
+serviceWorkerRegistration.register()
