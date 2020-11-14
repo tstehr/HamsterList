@@ -33,11 +33,13 @@ export default function ChangesComponent(props: Props): JSX.Element {
   }>({
     change: null,
     diffIndex: NaN,
-  }) // changes chronologically
+  })
 
-  const allChanges = [...props.changes, ...props.unsyncedChanges] // if the expanded change doesn't exist anymore, search for a recent change containing the same diffs
+  // changes chronologically
+  const allChanges = useMemo(() => [...props.changes, ...props.unsyncedChanges], [props.changes, props.unsyncedChanges])
+
+  // if the expanded change doesn't exist anymore, search for a recent change containing the same diffs
   // this will in most cases be the equivalent to the unsynced change that was removed during sync
-
   const expandedChange = useMemo((): Change | undefined | null => {
     const originalExpandedChange = detailsExpandedDiff.change
 

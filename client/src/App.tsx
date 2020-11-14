@@ -45,7 +45,7 @@ function RestorePath() {
     if (!dbRef.current.get(RESTORATION_ENABLED)) {
       return
     }
-    const restorationPath = dbRef.current.get(RESTORATION_PATH)
+    const restorationPath = dbRef.current.get<string>(RESTORATION_PATH)
     if (restorationPath && window.location.pathname === '/' && restorationPath !== '/') {
       history.replace(restorationPath)
     }

@@ -162,7 +162,7 @@ class SyncingCore {
     // this.info('STATE', this.state)
 
     // emit change event
-    this.emitter.emit('change', { clientShoppingList: this.state })
+    void this.emitter.emit('change', { clientShoppingList: this.state })
 
     // save new state to local storage
     if (!suppressSave && this.state.loaded) {
@@ -241,7 +241,7 @@ class SyncingCore {
   }
 
   initiateSyncConnection(): void {
-    this.sync()
+    void this.sync()
 
     if (this.socket != null && this.socket.readyState === WebSocket.OPEN) {
       this.setState({
@@ -278,7 +278,7 @@ class SyncingCore {
       this.changePushSyncTimeoutID = window.setTimeout((): void => {
         if (this.state.previousSync != null && evt.data !== this.state.previousSync.token) {
           this.info('SOCKET', "Tokens don't match, syncing!")
-          this.sync()
+          void this.sync()
         } else {
           this.info('SOCKET', 'Token already up to date')
         }
@@ -709,7 +709,7 @@ class SyncingCore {
   requestSync(delay = 1000): void {
     window.clearTimeout(this.requestSyncTimeoutID)
     this.requestSyncTimeoutID = window.setTimeout(() => {
-      this.sync()
+      void this.sync()
     }, delay)
   }
 
