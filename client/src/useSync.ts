@@ -6,7 +6,7 @@ export default function useSync(listid: string): [ClientShoppingList | undefined
   const [sync, setSync] = useState<SyncingCore>()
 
   useEffect(() => {
-    const sync = new SyncingCore(listid)
+    const sync = new SyncingCore(listid, process.env.REACT_APP_BACKEND_URL)
     function handleChange({ clientShoppingList }: { clientShoppingList: ClientShoppingList }) {
       setState(clientShoppingList)
     }
