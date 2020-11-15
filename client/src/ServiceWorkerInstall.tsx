@@ -46,5 +46,17 @@ export default function ServiceWorkerInstall() {
     window.location.reload(true)
   }
 
-  return showReload ? <button onClick={reloadPage}>Reload</button> : null
+  return showReload ? (
+    <div className="ServiceWorkerInstall">
+      <h3>Update available</h3>
+      <div>
+        <button onClick={() => setShowReload(false)} className="PaddedButton">
+          Ignore
+        </button>
+        <button onClick={reloadPage} className="PaddedButton">
+          Update
+        </button>
+      </div>
+    </div>
+  ) : null
 }
