@@ -1,6 +1,7 @@
 import DB, { RESTORATION_ENABLED, RESTORATION_PATH } from 'db'
 import React, { useEffect, useRef } from 'react'
 import { BrowserRouter, Route, RouteComponentProps, Switch, useHistory, useLocation } from 'react-router-dom'
+import ServiceWorkerInstall from 'ServiceWorkerInstall'
 import ChooseListComponent from './ChooseListComponent'
 import HistoryTracker, { Up } from './HistoryTracker'
 import ShoppingListContainerComponent from './ShoppingListContainerComponent'
@@ -17,22 +18,25 @@ function createShoppingListContainerComponentRender(up: Up) {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <RestorePath />
-      <HistoryTracker
-        render={(up: Up) => (
-          <Switch>
-            <Route exact path="/" component={ChooseListComponent} />
-            <Route path="/:listid" exact render={createShoppingListContainerComponentRender(up)} />
-            <Route path="/:listid/orders" exact render={createShoppingListContainerComponentRender(up)} />
-            <Route path="/:listid/orders/:orderid" exact render={createShoppingListContainerComponentRender(up)} />
-            <Route path="/:listid/:itemid/category" exact render={createShoppingListContainerComponentRender(up)} />
-            <Route path="/:listid/import" exact render={createShoppingListContainerComponentRender(up)} />
-            <Route component={Error404} />
-          </Switch>
-        )}
-      ></HistoryTracker>
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <RestorePath />
+        <HistoryTracker
+          render={(up: Up) => (
+            <Switch>
+              <Route exact path="/" component={ChooseListComponent} />
+              <Route path="/:listid" exact render={createShoppingListContainerComponentRender(up)} />
+              <Route path="/:listid/orders" exact render={createShoppingListContainerComponentRender(up)} />
+              <Route path="/:listid/orders/:orderid" exact render={createShoppingListContainerComponentRender(up)} />
+              <Route path="/:listid/:itemid/category" exact render={createShoppingListContainerComponentRender(up)} />
+              <Route path="/:listid/import" exact render={createShoppingListContainerComponentRender(up)} />
+              <Route component={Error404} />
+            </Switch>
+          )}
+        ></HistoryTracker>
+      </BrowserRouter>
+      <ServiceWorkerInstall />
+    </>
   )
 }
 
@@ -45,7 +49,7 @@ function RestorePath() {
     if (!dbRef.current.get(RESTORATION_ENABLED)) {
       return
     }
-    const restorationPath = dbRef.current.get(RESTORATION_PATH)
+    const restorationPath = dbRef.current.get<string>(RESTORATION_PATH)
     if (restorationPath && window.location.pathname === '/' && restorationPath !== '/') {
       history.replace(restorationPath)
     }

@@ -122,15 +122,18 @@ interface CompletionStateUpdate {
 
 @Emittery.mixin('emitter')
 class SyncingCore {
+  baseUrl: string | null
   state: ClientShoppingList
   db: DB
+
   socket: WebSocket | undefined
   waitForOnlineTimeoutID = -1
   changePushSyncTimeoutID = -1
   requestSyncTimeoutID = -1
 
-  constructor(private listid: string) {
+  constructor(private listid: string, baseUrl: string | null = null) {
     this.db = new DB()
+    this.baseUrl = baseUrl
     this.state = {
       ...ephemeralInitialState,
       ...this.getPersistedStateFromDB(),
@@ -159,7 +162,7 @@ class SyncingCore {
     // this.info('STATE', this.state)
 
     // emit change event
-    this.emitter.emit('change', { clientShoppingList: this.state })
+    void this.emitter.emit('change', { clientShoppingList: this.state })
 
     // save new state to local storage
     if (!suppressSave && this.state.loaded) {
@@ -238,7 +241,7 @@ class SyncingCore {
   }
 
   initiateSyncConnection(): void {
-    this.sync()
+    void this.sync()
 
     if (this.socket != null && this.socket.readyState === WebSocket.OPEN) {
       this.setState({
@@ -252,8 +255,9 @@ class SyncingCore {
     if (process.env.REACT_APP_SOCKET_URL) {
       base = process.env.REACT_APP_SOCKET_URL
     } else {
-      const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://'
-      base = protocol + window.location.host
+      const url = this.baseUrl ? new URL(this.baseUrl) : window.location
+      const protocol = url.protocol === 'https:' ? 'wss://' : 'ws://'
+      base = protocol + url.host
     }
 
     let onopenTimeoutID: number
@@ -274,7 +278,7 @@ class SyncingCore {
       this.changePushSyncTimeoutID = window.setTimeout((): void => {
         if (this.state.previousSync != null && evt.data !== this.state.previousSync.token) {
           this.info('SOCKET', "Tokens don't match, syncing!")
-          this.sync()
+          void this.sync()
         } else {
           this.info('SOCKET', 'Token already up to date')
         }
@@ -482,7 +486,7 @@ class SyncingCore {
     return createShoppingList(_.pick(clientShoppingList, ['id', 'title', 'items']), this.state.categories)
   }
 
-  fetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
+  fetch(url: string, init?: RequestInit): Promise<Response> {
     init = init ?? {}
 
     _.merge(init, {
@@ -491,7 +495,7 @@ class SyncingCore {
       },
     })
 
-    return fetch(input, init)
+    return fetch((this.baseUrl ?? '') + url, init)
   }
 
   markListAsUsed(): void {
@@ -705,7 +709,7 @@ class SyncingCore {
   requestSync(delay = 1000): void {
     window.clearTimeout(this.requestSyncTimeoutID)
     this.requestSyncTimeoutID = window.setTimeout(() => {
-      this.sync()
+      void this.sync()
     }, delay)
   }
 

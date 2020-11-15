@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 interface TypeMap {
   // can also be a type
-  object: object
+  object: Record<string, unknown>
   string: string
   number: number
   boolean: boolean

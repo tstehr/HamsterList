@@ -17,7 +17,7 @@ export type Key =
       readonly listid: string
     }
 
-type Value = any
+type Value = unknown
 
 export const RECENTLY_USED_KEY: Key = { type: 'simple', identifier: 'recentlyUsedLists' }
 export const RESTORATION_ENABLED: Key = { type: 'simple', identifier: 'restorationEnabled' }
@@ -81,11 +81,11 @@ class DB {
     }
     const key = this.unmangleKey(e.key)
     if (key) {
-      this.emitter.emit('change', { key, value: this.get(key) })
+      void this.emitter.emit('change', { key, value: this.get(key) })
       if (key.type === 'list') {
         const list = this.getList(key.listid)
         if (list) {
-          this.emitter.emit('listChange', { list })
+          void this.emitter.emit('listChange', { list })
         }
       }
     }
@@ -146,7 +146,7 @@ export interface RecentlyUsedList {
 }
 
 export function getRecentlyUsedLists(db: DB): readonly RecentlyUsedList[] {
-  return _.chain(db.get(RECENTLY_USED_KEY) ?? [])
+  return _.chain(db.get<RecentlyUsedList>(RECENTLY_USED_KEY) ?? [])
     .orderBy([(entry: RecentlyUsedList) => frecency(entry)], ['desc'])
     .value()
 }

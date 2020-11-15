@@ -106,7 +106,7 @@ export default class KeyFocusComponent extends Component<Props> {
       <Component
         onKeyDown={this.handleKeyDown}
         // ts-ignore is needed as ts chokes on the typing for ref in combination with keyof jsx.Element
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         ref={(root: HTMLElment): void => {
           this.root = root

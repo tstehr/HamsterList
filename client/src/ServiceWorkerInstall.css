@@ -1,0 +1,28 @@
+.ServiceWorkerInstall {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+
+  width: 100vw;
+  padding: 0.5rem;
+  border-top: 2px solid var(--theme-color);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  white-space: nowrap;
+  flex-wrap: wrap;
+
+  background-color: var(--background-color);
+}
+
+@media (min-width: 30rem) {
+  .ServiceWorkerInstall {
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 25rem;
+    border: 2px solid var(--theme-color);
+  }
+}

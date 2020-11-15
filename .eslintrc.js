@@ -11,31 +11,38 @@ module.exports = {
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'prettier',
     'prettier/@typescript-eslint',
   ],
   rules: {
-    '@typescript-eslint/no-use-before-define': ['error', 'nofunc'],
-    '@typescript-eslint/explicit-function-return-type': ['off'],
-    '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
-    '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
-    '@typescript-eslint/ban-types': ['error'],
-    '@typescript-eslint/no-extra-non-null-assertion': ['error'],
-    '@typescript-eslint/no-implied-eval': ['error'],
-    '@typescript-eslint/no-throw-literal': ['error'],
-    '@typescript-eslint/no-unnecessary-condition': ['warn', { ignoreRhs: true }],
-    '@typescript-eslint/no-unnecessary-qualifier': ['warn'],
-    '@typescript-eslint/no-unnecessary-type-arguments': ['warn'],
-    '@typescript-eslint/prefer-nullish-coalescing': ['warn'],
-    '@typescript-eslint/prefer-optional-chain': ['warn'],
-    '@typescript-eslint/restrict-plus-operands': ['error'],
-    '@typescript-eslint/switch-exhaustiveness-check': ['error'],
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-unsafe-assignment': 'off',
+    '@typescript-eslint/no-unsafe-call': 'off',
+    '@typescript-eslint/no-unsafe-member-access': 'off',
+    '@typescript-eslint/no-unsafe-return': 'off',
+    '@typescript-eslint/restrict-template-expressions': 'off',
   },
   overrides: [
     {
       files: ['*.test.ts'],
       rules: {
-        '@typescript-eslint/ban-ts-ignore': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
       },
     },
+    {
+      files: ['*.tsx'],
+      rules: {
+        // https://github.com/typescript-eslint/typescript-eslint/issues/2063#issuecomment-675156492
+        "@typescript-eslint/ban-types": [
+          "error",
+          {
+            "extendDefaults": true,
+            "types": {
+              "{}": false
+            }
+          }
+        ]
+      }
+    }
   ],
 }
