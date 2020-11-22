@@ -147,7 +147,7 @@ export default class ChooseListComponent extends Component<{}, State> {
                 )}
 
                 <section>
-                  <p>
+                  <p className="ChooseListComponent__restorationCheckbox">
                     <label>
                       <input type="checkbox" checked={this.state.restorationEnabled} onChange={this.onRestorationEnabledChange} />{' '}
                       Return to last used list on open

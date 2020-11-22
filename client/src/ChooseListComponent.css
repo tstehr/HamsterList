@@ -19,7 +19,8 @@
 }
 
 .ChooseListComponent__openFormHeadline,
-.ChooseListComponent__recentlyUsedHeadline {
+.ChooseListComponent__recentlyUsedHeadline,
+.ChooseListComponent__restorationCheckbox {
   margin: 0 1rem 0.5rem;
 }
 
