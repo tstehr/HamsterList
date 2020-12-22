@@ -76,7 +76,7 @@ export default class ChooseListComponent extends Component<{}, State> {
 
   async createRandomList(): Promise<void> {
     const listid = createRandomUUID()
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/${listid}/`, {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL ?? ''}/api/${listid}/`, {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
