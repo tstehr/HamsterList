@@ -172,6 +172,15 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
 
   router.use<ListidParam>('/:listid', shoppingListController.saveUpdatedList)
 
+  router.use('*', (err: Error, _req: Request<ListidParam>, res: Response, next: NextFunction) => {
+    if (err) {
+      res.status(500).json({
+        error: err.message,
+      })
+    }
+    next()
+  })
+
   app.use('/api', router)
 
   if (config.get('nodeEnv') === 'production') {
