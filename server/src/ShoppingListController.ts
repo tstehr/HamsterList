@@ -88,7 +88,7 @@ export default class ShoppingListController {
       return
     }
 
-    const updatedList = createServerShoppingList({ ...req.list, title: bodyList.title })
+    const updatedList: ServerShoppingList = { ...req.list, title: bodyList.title }
     req.updatedList = updatedList
     res.json(getBaseShoppingList(updatedList))
     next()
