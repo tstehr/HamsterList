@@ -434,14 +434,18 @@ const SortableCategory = SortableElement(
       })
     }
 
+    const [shortNameInputValue, setShortNameInputValue] = useState<string>()
     function handleShortNameChange(e: React.FormEvent<HTMLInputElement>): void {
+      setShortNameInputValue(e.currentTarget.value)
       updateCategory({
         ...category,
         shortName: e.currentTarget.value,
       })
     }
 
+    const [nameInputValue, setNameInputValue] = useState<string>()
     function handleNameChange(e: React.FormEvent<HTMLInputElement>): void {
+      setNameInputValue(e.currentTarget.value)
       updateCategory({
         ...category,
         name: e.currentTarget.value,
@@ -459,9 +463,10 @@ const SortableCategory = SortableElement(
           <input
             type="text"
             className="SortableCategory__icon__input"
-            value={category.shortName}
+            value={shortNameInputValue ?? category.shortName}
             onChange={handleShortNameChange}
             onFocus={() => setShowPicker(true)}
+            onBlur={() => setShortNameInputValue(undefined)}
           />
           {showPicker && (
             <div className="SortableCategory__colorPickerContainer">
@@ -469,7 +474,13 @@ const SortableCategory = SortableElement(
             </div>
           )}
         </CategoryComponent>
-        <input type="text" className="SortableCategory__name" value={category.name} onChange={handleNameChange} />
+        <input
+          type="text"
+          className="SortableCategory__name"
+          value={nameInputValue ?? category.name}
+          onChange={handleNameChange}
+          onBlur={() => setNameInputValue(undefined)}
+        />
         <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className="SortableCategory__delete" />
         <DragHandle />
       </div>
