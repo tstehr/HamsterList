@@ -270,7 +270,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
 
   handleDeleteAll = (): void => {
     if (window.confirm(`Really delete category all categories? This can not be undone!`)) {
-      this.deleteAllCategories();
+      this.deleteAllCategories()
     }
   }
 
