@@ -1,4 +1,5 @@
 import Frame from 'Frame'
+import IconButton from 'IconButton'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import FlipMove from 'react-flip-move'
@@ -94,6 +95,18 @@ export default class ChooseListComponent extends Component<{}, State> {
     })
   }
 
+  removeRecentlyUsedList(listid: string) {
+    const recentlyUsedLists = this.db.get<RecentlyUsedList[]>(RECENTLY_USED_KEY)
+    if (!recentlyUsedLists) {
+      return
+    }
+    this.db.set(
+      RECENTLY_USED_KEY,
+      recentlyUsedLists.filter(({ id }) => id !== listid)
+    )
+    this.setState({ recentlyUsedLists: getRecentlyUsedLists(this.db) })
+  }
+
   render(): JSX.Element {
     return (
       <>
@@ -138,9 +151,15 @@ export default class ChooseListComponent extends Component<{}, State> {
                       leaveAnimation="accordionVertical"
                     >
                       {this.state.recentlyUsedLists.map((rul) => (
-                        <Link className="Button ChooseListComponent__recentlyUsedLink" key={rul.id} to={'/' + rul.id}>
-                          {rul.title}
-                        </Link>
+                        <div className="Button ChooseListComponent__recentlyUsedLink" key={rul.id}>
+                          <Link to={'/' + rul.id}>{rul.title}</Link>
+                          <IconButton
+                            onClick={(e) => this.removeRecentlyUsedList(rul.id)}
+                            icon="DELETE"
+                            alt="Remove from recently used"
+                            className="KeyFocusComponent--noFocus"
+                          />
+                        </div>
                       ))}
                     </FlipMove>
                   </section>

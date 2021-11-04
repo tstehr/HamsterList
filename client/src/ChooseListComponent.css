@@ -27,8 +27,7 @@
 .ChooseListComponent__recentlyUsed {
   list-style: none;
 }
-.ChooseListComponent__randomButton,
-.ChooseListComponent__recentlyUsedLink {
+.ChooseListComponent__randomButton {
   padding: 0 1rem;
 }
 .ChooseListComponent__randomButton {
@@ -37,6 +36,20 @@
 .ChooseListComponent__randomButton > span {
   flex: 1;
   text-align: center;
+}
+
+.ChooseListComponent__recentlyUsedLink a {
+  color: inherit;
+  flex-grow: 1;
+  text-decoration: none;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding-left: 1rem;
+}
+.ChooseListComponent__recentlyUsedLink button {
+  width: 3rem;
+  align-self: stretch;
 }
 
 .ChooseListComponent__openForm {
