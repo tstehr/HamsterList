@@ -110,21 +110,23 @@ export default class ShoppingListComponent extends Component<Props> {
   }
 
   mergeItems = (): void => {
-    const grouped = _.groupBy(this.props.shoppingList.items, (item) => {
-      return JSON.stringify({
-        category: item.category == null ? null : item.category,
-        unit: item.amount == null ? null : getSIUnit(item.amount),
-        name: item.name.trim().toLowerCase(),
+    this.props.performTransaction(() => {
+      const grouped = _.groupBy(this.props.shoppingList.items, (item) => {
+        return JSON.stringify({
+          category: item.category == null ? null : item.category,
+          unit: item.amount == null ? null : getSIUnit(item.amount),
+          name: item.name.trim().toLowerCase(),
+        })
       })
-    })
 
-    for (const group of Object.keys(grouped).map((key) => grouped[key])) {
-      if (group.length > 1) {
-        const newItem = { ...group[0], amount: group.map((item) => item.amount).reduce(addAmounts) }
-        this.props.updateItem(newItem.id, newItem)
-        group.slice(1).forEach((item) => this.props.deleteItem(item.id))
+      for (const group of Object.keys(grouped).map((key) => grouped[key])) {
+        if (group.length > 1) {
+          const newItem = { ...group[0], amount: group.map((item) => item.amount).reduce(addAmounts) }
+          this.props.updateItem(newItem.id, newItem)
+          group.slice(1).forEach((item) => this.props.deleteItem(item.id))
+        }
       }
-    }
+    })
   }
 
   clearList = (): void => {

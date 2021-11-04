@@ -46,6 +46,7 @@ export type CreateApplicableDiff = (diff: Diff) => Diff | null
 export type DeleteCompletion = (completionName: string) => void
 export type AddCompletion = (completion: CompletionItem) => void
 export type ModifyCompletions = (deletedCompletionNames: readonly string[], addedCompletions: readonly CompletionItem[]) => void
+export type PerformTransaction = (cb: () => void) => void
 
 export interface PersistedClientShoppingList {
   previousSync: SyncedShoppingList | null
@@ -126,6 +127,9 @@ class SyncingCore {
   state: ClientShoppingList
   db: DB
 
+  isInTransaction = false
+  changeInTransaction = false
+
   socket: WebSocket | undefined
   waitForOnlineTimeoutID = -1
   changePushSyncTimeoutID = -1
@@ -162,12 +166,29 @@ class SyncingCore {
     // this.info('STATE', this.state)
 
     // emit change event
-    void this.emitter.emit('change', { clientShoppingList: this.state })
+    if (this.isInTransaction) {
+      this.changeInTransaction = true
+    } else {
+      void this.emitter.emit('change', { clientShoppingList: this.state })
+    }
 
     // save new state to local storage
     if (!suppressSave && this.state.loaded) {
       this.info('DB', 'Scheduled save')
       this.save()
+    }
+  }
+
+  performTransaction(cb: () => void) {
+    try {
+      this.isInTransaction = true
+      cb()
+      if (this.changeInTransaction) {
+        void this.emitter.emit('change', { clientShoppingList: this.state })
+      }
+    } finally {
+      this.isInTransaction = false
+      this.changeInTransaction = false
     }
   }
 
