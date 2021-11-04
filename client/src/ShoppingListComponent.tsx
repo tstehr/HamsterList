@@ -30,6 +30,7 @@ import {
   DeleteCompletion,
   DeleteItem,
   ModifyCompletions,
+  PerformTransaction,
   SelectOrder,
   SetUsername,
   UpdateCategories,
@@ -67,6 +68,7 @@ interface Props {
   modifyCompletions: ModifyCompletions
   manualSync: () => void
   removeListFromDB: () => void
+  performTransaction: PerformTransaction
   up: Up
 }
 
@@ -129,6 +131,13 @@ export default class ShoppingListComponent extends Component<Props> {
     })
   }
 
+  deleteNegativeAmountItems = (): void => {
+    this.props.performTransaction(() => {
+      const negativeItems = this.props.shoppingList.items.filter((item) => item.amount && item.amount.value < 0)
+      negativeItems.forEach((item) => this.props.deleteItem(item.id))
+    })
+  }
+
   clearList = (): void => {
     if (!window.confirm('Delete all items?')) {
       return
@@ -182,6 +191,8 @@ export default class ShoppingListComponent extends Component<Props> {
             <button type="button" className="PaddedButton" onClick={this.clearList}>
               Clear List
             </button>
+          </p>
+          <p>
             <Link to={`/${this.props.shoppingList.id}/orders/`}>Edit Categories and Sorting</Link>{' '}
             <Link to={`/${this.props.shoppingList.id}/import/`}>Import</Link>
           </p>
@@ -194,6 +205,9 @@ export default class ShoppingListComponent extends Component<Props> {
             </button>
             <button type="button" className="PaddedButton" onClick={this.removeListFromDB}>
               Clear Local Storage
+            </button>
+            <button type="button" className="PaddedButton" onClick={this.deleteNegativeAmountItems}>
+              Delete items with negative amounts
             </button>
           </p>
           <p>
