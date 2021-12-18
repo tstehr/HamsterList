@@ -27,6 +27,8 @@ env.sh
 .env.test.local
 .env.production.local
 
+.node-version
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
