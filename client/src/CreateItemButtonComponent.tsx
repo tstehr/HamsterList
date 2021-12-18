@@ -121,18 +121,26 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
             />
           )}
         </div>
-        <Route path={`/:listid/newItem/${this.props.itemRepr}/category`}>
-          <ChooseCategoryComponent
-            categories={this.props.categories}
-            categoryId={props.item.category}
-            updateCategory={(categoryId) => {
-              if (categoryId !== this.props.item.category) {
-                this.props.updateCategory(categoryId)
-              }
-              this.props.up('list')
-            }}
-          />
-        </Route>
+        <Route
+          path={`/:listid/newItem/:itemRepr/category`}
+          render={({ match }) => {
+            if (match.params['itemRepr'] !== this.props.itemRepr) {
+              return null
+            }
+            return (
+              <ChooseCategoryComponent
+                categories={this.props.categories}
+                categoryId={props.item.category}
+                updateCategory={(categoryId) => {
+                  if (categoryId !== this.props.item.category) {
+                    this.props.updateCategory(categoryId)
+                  }
+                  this.props.up('list')
+                }}
+              />
+            )
+          }}
+        />
       </>
     )
   }
