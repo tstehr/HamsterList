@@ -1,4 +1,5 @@
 import fuzzy from 'fuzzy'
+import { Up } from 'HistoryTracker'
 import _ from 'lodash'
 import React, { Component, Fragment } from 'react'
 // import FlipMove from 'react-flip-move'
@@ -17,6 +18,7 @@ interface Props {
   deleteCompletion: DeleteCompletion
   addCompletion: AddCompletion
   focusInput: () => void
+  up: Up
 }
 export default class CompletionsComponent extends Component<Props> {
   getCompletionItems(): readonly LocalItem[] {
@@ -51,21 +53,16 @@ export default class CompletionsComponent extends Component<Props> {
 
   render(): JSX.Element {
     const itemsInCreation = this.props.itemsInCreation.map((ii) => ii.item)
-    const itemToKey = new Map()
+    const completionItems = this.getCompletionItems()
 
-    const itemsByRepr = _.groupBy(itemsInCreation, itemToString)
+    const itemToUniqueRepr = new Map<LocalItem, string>()
+    const itemsByRepr = _.groupBy([...itemsInCreation, ...completionItems], itemToString)
 
-    const entries: Array<[string, LocalItem[]]> = Object.entries(itemsByRepr)
-
-    for (const [repr, items] of entries) {
+    for (const [repr, items] of Object.entries(itemsByRepr)) {
       for (const [iStr, item] of Object.entries(items)) {
         const i: number = +iStr
-
-        if (i === 0) {
-          itemToKey.set(item, repr)
-        } else {
-          itemToKey.set(item, `${repr}${i - 1}`)
-        }
+        const uniqueRepr = i === 0 ? repr : `${repr}${i - 1}`
+        itemToUniqueRepr.set(item, uniqueRepr)
       }
     }
 
@@ -73,7 +70,9 @@ export default class CompletionsComponent extends Component<Props> {
       <Fragment>
         {this.props.itemsInCreation.map((ii) => (
           <CreateItemButtonComponent
-            key={itemToKey.get(ii.item)}
+            key={itemToUniqueRepr.get(ii.item)}
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            itemRepr={itemToUniqueRepr.get(ii.item)!}
             item={ii.item}
             categories={this.props.categories}
             createItem={this.props.createItem}
@@ -82,17 +81,21 @@ export default class CompletionsComponent extends Component<Props> {
             focused={this.props.focusItemsInCreation}
             deleteCompletion={ii.categoryAdded ? this.props.deleteCompletion : null}
             updateCategory={(categoryId) => this.props.updateItemCategory(ii.item, categoryId)}
+            up={this.props.up}
           />
         ))}
-        {this.getCompletionItems().map((item) => (
+        {completionItems.map((item) => (
           <CreateItemButtonComponent
-            key={itemToString(item)}
+            key={itemToUniqueRepr.get(item)}
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            itemRepr={itemToUniqueRepr.get(item)!}
             item={item}
             categories={this.props.categories}
             createItem={this.props.createItem}
             deleteCompletion={this.props.deleteCompletion}
             focusInput={this.props.focusInput}
             updateCategory={(categoryId) => this.props.addCompletion({ name: item.name, category: categoryId })}
+            up={this.props.up}
           />
         ))}
       </Fragment>

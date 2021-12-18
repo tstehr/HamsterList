@@ -1,6 +1,8 @@
 import ChooseCategoryComponent from 'ChooseCategoryComponent'
 import classNames from 'classnames'
+import { Up } from 'HistoryTracker'
 import React, { Component } from 'react'
+import { Route } from 'react-router-dom'
 import { CategoryDefinition, LocalItem, UUID } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
 import './CreateItemButtonComponent.css'
@@ -10,6 +12,7 @@ import { CreateItem, DeleteCompletion } from './sync'
 
 interface Props {
   item: LocalItem
+  itemRepr: string
   categories: readonly CategoryDefinition[]
   createItem: CreateItem
   deleteCompletion: DeleteCompletion | null
@@ -17,10 +20,10 @@ interface Props {
   focusInput: () => void
   focused?: boolean
   noArrowFocus?: boolean
+  up: Up
 }
 
 interface State {
-  choosingCategory: boolean
   enterPressed: boolean
   altPressed: boolean
   createButtonFocused: boolean
@@ -30,7 +33,6 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      choosingCategory: false,
       enterPressed: false,
       altPressed: false,
       createButtonFocused: false,
@@ -90,12 +92,16 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
     return (
       <>
         <div className={className}>
-          <button
-            className="CreateItemButtonComponent__categoryButton KeyFocusComponent--noFocus"
-            onClick={() => this.setState({ choosingCategory: true })}
-          >
-            <CategoryComponent categoryId={props.item.category} categories={props.categories} />
-          </button>
+          <Route
+            render={({ history, location, match }) => (
+              <button
+                className="CreateItemButtonComponent__categoryButton KeyFocusComponent--noFocus"
+                onClick={() => history.push(`/${match.params['listid'] || ''}/newItem/${this.props.itemRepr}/category`)}
+              >
+                <CategoryComponent categoryId={props.item.category} categories={props.categories} />
+              </button>
+            )}
+          />
           <button
             className={buttonClassName}
             onClick={this.handleClick}
@@ -115,7 +121,7 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
             />
           )}
         </div>
-        {this.state.choosingCategory && (
+        <Route path={`/:listid/newItem/${this.props.itemRepr}/category`}>
           <ChooseCategoryComponent
             categories={this.props.categories}
             categoryId={props.item.category}
@@ -123,10 +129,10 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
               if (categoryId !== this.props.item.category) {
                 this.props.updateCategory(categoryId)
               }
-              this.setState({ choosingCategory: false })
+              this.props.up('list')
             }}
           />
-        )}
+        </Route>
       </>
     )
   }

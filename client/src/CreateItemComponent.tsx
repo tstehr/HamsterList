@@ -1,5 +1,7 @@
+import { Up } from 'HistoryTracker'
 import React, { Component } from 'react'
 import AutosizeTextarea from 'react-autosize-textarea'
+import { Route } from 'react-router-dom'
 import {
   addMatchingCategory,
   CategoryDefinition,
@@ -32,6 +34,7 @@ interface Props {
   addCompletion: AddCompletion
   applyDiff: ApplyDiff
   createApplicableDiff: CreateApplicableDiff
+  up: Up
 }
 
 interface State {
@@ -294,7 +297,7 @@ export default class CreateItemComponent extends Component<Props, State> {
               position: 'relative',
             }}
           >
-            {isCreatingItem && (
+            {isCreatingItem ? (
               <CompletionsComponent
                 focusItemsInCreation={this.state.formHasFocus}
                 completions={this.props.completions}
@@ -305,6 +308,15 @@ export default class CreateItemComponent extends Component<Props, State> {
                 deleteCompletion={this.props.deleteCompletion}
                 addCompletion={this.props.addCompletion}
                 focusInput={this.focusInput}
+                up={this.props.up}
+              />
+            ) : (
+              <Route
+                path={`/:listid/newItem/:itemRepr/category`}
+                render={({ history, match }) => {
+                  history.replace(`/${match.params['listid'] || ''}`)
+                  return null
+                }}
               />
             )}
             {!isCreatingItem && (

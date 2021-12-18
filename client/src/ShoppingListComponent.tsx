@@ -324,6 +324,7 @@ export default class ShoppingListComponent extends Component<Props> {
                     addCompletion={this.props.addCompletion}
                     applyDiff={this.props.applyDiff}
                     createApplicableDiff={this.props.createApplicableDiff}
+                    up={this.props.up}
                   />,
                 ],
                 footer: this.renderFooter(),

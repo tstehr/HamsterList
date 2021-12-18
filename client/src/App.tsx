@@ -25,11 +25,18 @@ export default function App() {
           render={(up: Up) => (
             <Switch>
               <Route exact path="/" component={ChooseListComponent} />
-              <Route path="/:listid" exact render={createShoppingListContainerComponentRender(up)} />
-              <Route path="/:listid/orders" exact render={createShoppingListContainerComponentRender(up)} />
-              <Route path="/:listid/orders/:orderid" exact render={createShoppingListContainerComponentRender(up)} />
-              <Route path="/:listid/:itemid/category" exact render={createShoppingListContainerComponentRender(up)} />
-              <Route path="/:listid/import" exact render={createShoppingListContainerComponentRender(up)} />
+              <Route
+                path={[
+                  '/:listid',
+                  '/:listid/orders',
+                  '/:listid/orders/:orderid',
+                  '/:listid/:itemid/category',
+                  '/:listid/import',
+                  '/:listid/newItem/:itemrepr/category',
+                ]}
+                exact
+                render={createShoppingListContainerComponentRender(up)}
+              />
               <Route component={Error404} />
             </Switch>
           )}
