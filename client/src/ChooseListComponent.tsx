@@ -62,9 +62,10 @@ export default class ChooseListComponent extends Component<{}, State> {
     if (this.inputListid.current == null) {
       return
     }
-    this.setState({
-      listid: this.inputListid.current.value.trim(),
-    })
+    const listidInputValue = this.inputListid.current.value.trim()
+    const href = window.location.href
+    const listid = listidInputValue.startsWith(href) ? listidInputValue.substring(href.length) : listidInputValue
+    this.setState({ listid })
   }
 
   onRestorationEnabledChange = (e: React.SyntheticEvent<HTMLInputElement>): void => {
