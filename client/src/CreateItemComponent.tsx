@@ -17,7 +17,7 @@ import CompletionsComponent from './CompletionsComponent'
 import './CreateItemComponent.css'
 import IconButton from './IconButton'
 import KeyFocusComponent from './KeyFocusComponent'
-import { AddCompletion, ApplyDiff, CreateApplicableDiff, CreateItem, DeleteCompletion } from './sync'
+import { AddCompletion, ApplyDiff, CreateApplicableDiff, CreateItem, DeleteCompletion, PerformTransaction } from './sync'
 
 export interface ItemInput {
   item: LocalItem
@@ -35,6 +35,7 @@ interface Props {
   applyDiff: ApplyDiff
   createApplicableDiff: CreateApplicableDiff
   up: Up
+  performTransaction: PerformTransaction
 }
 
 interface State {
@@ -92,7 +93,9 @@ export default class CreateItemComponent extends Component<Props, State> {
   }
 
   saveItems(): void {
-    this.state.itemsInCreation.forEach((ii) => this.props.createItem(ii.item))
+    this.props.performTransaction(() => {
+      this.state.itemsInCreation.forEach((ii) => this.props.createItem(ii.item))
+    })
     this.setState(this.createInputValueUpdate(''))
 
     if (this.input != null) {

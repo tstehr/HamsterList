@@ -143,9 +143,11 @@ export default class ShoppingListComponent extends Component<Props> {
       return
     }
 
-    for (const item of this.props.shoppingList.items) {
-      this.props.deleteItem(item.id)
-    }
+    this.props.performTransaction(() => {
+      for (const item of this.props.shoppingList.items) {
+        this.props.deleteItem(item.id)
+      }
+    })
   }
 
   shareList = async (): Promise<void> => {
@@ -325,6 +327,7 @@ export default class ShoppingListComponent extends Component<Props> {
                     applyDiff={this.props.applyDiff}
                     createApplicableDiff={this.props.createApplicableDiff}
                     up={this.props.up}
+                    performTransaction={this.props.performTransaction}
                   />,
                 ],
                 footer: this.renderFooter(),
