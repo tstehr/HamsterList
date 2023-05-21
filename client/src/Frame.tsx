@@ -14,8 +14,8 @@ export default function Frame({ children }: Props) {
     <div className={styles.Frame}>
       {children?.topBar}
       <div className={styles.Body}>
-        {children?.sections?.map((sec) => (
-          <section className={styles.Section} role="main">
+        {children?.sections?.map((sec, i) => (
+          <section className={styles.Section} role="main" key={i}>
             {sec}
           </section>
         ))}
