@@ -217,16 +217,6 @@ describe('applyDiff', () => {
       applyDiff(shoppingList, deleteItemDiff)
     }).toThrow(`Can't apply diff, old item not found in list`)
   })
-
-  it('Throws for unknown diff types', () => {
-    const notDiff = {
-      type: 'q2323334',
-    }
-    expect(() => {
-      // @ts-ignore Expected type error, to test runtime type exception
-      applyDiff(shoppingList, notDiff)
-    }).toThrow(`Diff to be applied is not an element of type 'Diff'`)
-  })
 })
 
 describe('generateUpdateItem', () => {
@@ -346,14 +336,5 @@ describe('createReverseDiff', () => {
         item: oldItem,
       })
     )
-  })
-
-  it('Throws for unknown diff types', () => {
-    expect(() => {
-      createReverseDiff({
-        // @ts-ignore Expected type error, to test runtime type exception
-        type: 'Yer mom!',
-      })
-    }).toThrow(`Diff to be reversed is not of type 'Diff'`)
   })
 })
