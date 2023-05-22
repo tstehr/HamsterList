@@ -217,32 +217,46 @@ export function mergeItemsTwoWay(client: Item, server: Item): Item {
 export function addMatchingCategory<T extends LocalItem>(item: T, completions: readonly CompletionItem[]): T {
   const exactMatchingCompletion = completions.find(
     (completionItem) =>
-      completionItem.name === item.name && (item.category === undefined || item.category === completionItem.category)
+      item.name === completionItem.name && (item.category === undefined || item.category === completionItem.category)
   )
-
   if (exactMatchingCompletion != null) {
-    return Object.assign(
-      {},
-      item,
-      _.omitBy(exactMatchingCompletion, (val) => val == null)
-    )
+    return addCompletionToItem<T>(item, exactMatchingCompletion)
   }
 
+  const normalizedItemName = normalizeCompletionName(item.name)
   const matchingCompletion = completions.find(
     (completionItem) =>
-      normalizeCompletionName(completionItem.name) === normalizeCompletionName(item.name) &&
+      normalizedItemName === normalizeCompletionName(completionItem.name) &&
       (item.category === undefined || item.category === completionItem.category)
   )
-
   if (matchingCompletion != null) {
-    return Object.assign(
-      {},
-      item,
-      _.omitBy(matchingCompletion, (val) => val == null)
+    return addCompletionToItem<T>(item, matchingCompletion)
+  }
+
+  // Match ignoring everything after the first "(", to allow items like "Eggs (large)" to get the completions for "Eggs"
+  const [head, ...rest] = normalizedItemName.split(/(?=\s*\()/)
+  const tail = rest.join('')
+  if (head && tail) {
+    const normalizedHead = normalizeCompletionName(head)
+    const looseMatchingCompletion = completions.find(
+      (completionItem) =>
+        normalizedHead === normalizeCompletionName(completionItem.name) &&
+        (item.category === undefined || item.category === completionItem.category)
     )
+    if (looseMatchingCompletion != null) {
+      return { ...addCompletionToItem<T>(item, looseMatchingCompletion), name: looseMatchingCompletion.name + tail }
+    }
   }
 
   return item
+}
+
+function addCompletionToItem<T extends LocalItem>(item: T, matchingCompletion: CompletionItem): T {
+  return Object.assign(
+    {},
+    item,
+    _.omitBy(matchingCompletion, (val) => val == null)
+  )
 }
 
 export function normalizeCompletionName(name: string): string {

@@ -3,13 +3,13 @@ import { createUUID } from '../util/uuid'
 import { createAmountValue, createUnit } from './Amount'
 import { createCategoryDefinition } from './CategoryDefinition'
 import {
+  Item,
   addMatchingCategory,
   createCompletionItem,
   createItem,
   createItemFromItemStringRepresentation,
   createLocalItemFromItemStringRepresentation,
   createLocalItemFromString,
-  Item,
   itemToString,
   mergeItems,
   mergeItemsTwoWay,
@@ -346,6 +346,10 @@ describe('addMatchingCategory', () => {
       name: 'Tomaten',
       category: '6ca0f054-209c-46c9-b337-6088f7a530ab',
     }),
+    createCompletionItem({
+      name: 'Tomaten (Konserve)',
+      category: '1c7f575f-a34f-4a8e-9aa4-41fc40a85d52',
+    }),
   ]
   it('Adds a matching category', () => {
     const item = createLocalItemFromString('2 Tomaten', categories)
@@ -366,7 +370,23 @@ describe('addMatchingCategory', () => {
 
   it(`Uses case insensitive match if no correct case is found`, () => {
     const item = createLocalItemFromString('50 tomaten', categories)
-    expect(addMatchingCategory(item, completions).category).toBe('6ca0f054-209c-46c9-b337-6088f7a530ab')
+    const result = addMatchingCategory(item, completions)
+    expect(result.name).toBe('Tomaten')
+    expect(result.category).toBe('6ca0f054-209c-46c9-b337-6088f7a530ab')
+  })
+
+  it(`Uses completions without parenthesized suffix if necessary`, () => {
+    const item = createLocalItemFromString('50 tomaten (groß)', categories)
+    const result = addMatchingCategory(item, completions)
+    expect(result.name).toBe('Tomaten (groß)')
+    expect(result.category).toBe('6ca0f054-209c-46c9-b337-6088f7a530ab')
+  })
+
+  it(`Prefers match with parenthesized suffix if available`, () => {
+    const item = createLocalItemFromString('50 tomaten (konserve)', categories)
+    const result = addMatchingCategory(item, completions)
+    expect(result.name).toBe('Tomaten (Konserve)')
+    expect(result.category).toBe('1c7f575f-a34f-4a8e-9aa4-41fc40a85d52')
   })
 
   it(`Leaves items with no match unchanged`, () => {
