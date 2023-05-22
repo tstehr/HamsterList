@@ -318,13 +318,13 @@ Clients can request the inclusion of additional data when syncing to save additi
 
 This object is returned by the server after a finished sync. It is very similar to [ShoppingList] but contains a token for sync in addition.
 
-| Field    | Type            | Description                                           |
-|----------|-----------------|-------------------------------------------------------|
-| id       | String          | Unique identifier of the shopping list                |
-| title    | String          | Name of the shopping list                             |
-| token    | String          | A token for synchronization                           |
-| changeId | String, UUID-v4 | Id of the latest change included in the shopping list |
-| items    | Array of [Item] | Items of the list                                     |
+| Field    | Type            | Description                                                       |
+|----------|-----------------|-------------------------------------------------------------------|
+| id       | String          | Unique identifier of the shopping list                            |
+| title    | String          | Name of the shopping list                                         |
+| token    | String          | A token for synchronization                                       |
+| changeId | String, UUID-v4 | *Optional.* Id of the latest change included in the shopping list |
+| items    | Array of [Item] | Items of the list                                                 |
 
 ### SyncResponse
 
