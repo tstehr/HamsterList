@@ -376,9 +376,9 @@ describe('addMatchingCategory', () => {
   })
 
   it(`Uses completions without parenthesized suffix if necessary`, () => {
-    const item = createLocalItemFromString('50 tomaten (groß)', categories)
+    const item = createLocalItemFromString('50 tomaten (Groß)', categories)
     const result = addMatchingCategory(item, completions)
-    expect(result.name).toBe('Tomaten (groß)')
+    expect(result.name).toBe('Tomaten (Groß)')
     expect(result.category).toBe('6ca0f054-209c-46c9-b337-6088f7a530ab')
   })
 

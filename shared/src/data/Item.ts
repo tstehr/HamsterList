@@ -234,7 +234,7 @@ export function addMatchingCategory<T extends LocalItem>(item: T, completions: r
   }
 
   // Match ignoring everything after the first "(", to allow items like "Eggs (large)" to get the completions for "Eggs"
-  const [head, ...rest] = normalizedItemName.split(/(?=\s*\()/)
+  const [head, ...rest] = item.name.split(/(?=\s*\()/)
   const tail = rest.join('')
   if (head && tail) {
     const normalizedHead = normalizeCompletionName(head)
