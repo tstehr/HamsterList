@@ -96,7 +96,7 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
             render={({ history, location, match }) => (
               <button
                 className="CreateItemButtonComponent__categoryButton KeyFocusComponent--noFocus"
-                onClick={() => history.push(`/${match.params['listid'] || ''}/newItem/${this.props.itemRepr}/category`)}
+                onClick={() => history.push(`/${match.params['listid'] || ''}/newItem/${encodeURIComponent(this.props.itemRepr)}/category`)}
               >
                 <CategoryComponent categoryId={props.item.category} categories={props.categories} />
               </button>
@@ -124,7 +124,7 @@ export default class CreateItemButtonComponent extends Component<Props, State> {
         <Route
           path={`/:listid/newItem/:itemRepr/category`}
           render={({ match }) => {
-            if (match.params['itemRepr'] !== this.props.itemRepr) {
+            if (decodeURIComponent(match.params['itemRepr']) !== this.props.itemRepr) {
               return null
             }
             return (
