@@ -5,9 +5,10 @@ import React, { useState } from 'react'
 import { Route } from 'react-router-dom'
 import { CategoryDefinition, LocalItem, UUID } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
-import './CreateItemButtonComponent.css'
+import styles from './CreateItemButtonComponent.module.css'
 import IconButton from './IconButton'
 import ItemComponent from './ItemComponent'
+import globalStyles from './index.module.css'
 import { CreateItem, DeleteCompletion } from './sync'
 
 interface Props {
@@ -27,11 +28,11 @@ export default function CreateItemButtonComponent(props: Props) {
   const [enterPressed, setEnterPressed] = useState(false)
   const [createButtonFocused, setCreateButtonFocused] = useState(false)
 
-  const className = classNames('Button', 'CreateItemButtonComponent', {
-    focused: props.focused ?? createButtonFocused,
+  const className = classNames(globalStyles['Button'], styles['CreateItemButtonComponent'], {
+    [styles['focused']]: props.focused ?? createButtonFocused,
   })
-  const buttonClassName = classNames('CreateItemButtonComponent__button', {
-    'KeyFocusComponent--noFocus': props.noArrowFocus,
+  const buttonClassName = classNames(styles['CreateItemButtonComponent__button'], {
+    [styles['KeyFocusComponent--noFocus']]: props.noArrowFocus,
   })
 
   return (
@@ -40,7 +41,7 @@ export default function CreateItemButtonComponent(props: Props) {
         <Route
           render={({ history, location, match }) => (
             <button
-              className="CreateItemButtonComponent__categoryButton KeyFocusComponent--noFocus"
+              className={classNames(styles['CreateItemButtonComponent__categoryButton'], styles['KeyFocusComponent--noFocus'])}
               onClick={() =>
                 history.push(`/${match.params['listid'] || ''}/newItem/${encodeURIComponent(props.itemRepr)}/category`)
               }
@@ -88,7 +89,7 @@ export default function CreateItemButtonComponent(props: Props) {
             onClick={() => (props.deleteCompletion ? props.deleteCompletion(props.item.name) : undefined)}
             icon="DELETE"
             alt="Delete completion"
-            className="KeyFocusComponent--noFocus"
+            className={styles['KeyFocusComponent--noFocus']}
           />
         )}
       </div>

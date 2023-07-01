@@ -1,7 +1,7 @@
 import _, { isEqual } from 'lodash'
 import React, { Component, ComponentProps, PropsWithChildren } from 'react'
-import { CategoryDefinition, createCategoryDefinition, UUID } from 'shoppinglist-shared'
-import './CategoryComponent.css'
+import { CategoryDefinition, UUID, createCategoryDefinition } from 'shoppinglist-shared'
+import styles from './CategoryComponent.module.css'
 
 const unknownCategory = createCategoryDefinition({
   id: 'ffffffff-ffff-4fff-bfff-ffffffffffff',
@@ -37,12 +37,12 @@ const CategoryComponent = React.memo(
     }
     return (
       <div
-        className="CategoryComponent"
+        className={styles['CategoryComponent']}
         title={category.name}
         ref={ref}
         {..._.omit(props, 'category', 'categories', 'categoryId')}
       >
-        <div className="CategoryComponent__circle" style={style}>
+        <div className={styles['CategoryComponent__circle']} style={style}>
           {props.children ? props.children : <span>{initials}</span>}
         </div>
       </div>
@@ -64,7 +64,7 @@ const CategoryTextComponent = React.memo((props: Props) => {
     color: category.lightText ? '#fff' : '#000',
   }
   return (
-    <span className="CategoryTextComponent" title={category.name} style={style}>
+    <span className={styles['CategoryTextComponent']} title={category.name} style={style}>
       {initials}
     </span>
   )
@@ -79,7 +79,7 @@ class CategoryListItemComponent extends Component<Props> {
       color: category.lightText ? '#fff' : '#000',
     }
     return (
-      <li className="CategoryListItemComponent" style={style}>
+      <li className={styles['CategoryListItemComponent']} style={style}>
         {category.name}
       </li>
     )
@@ -105,4 +105,4 @@ function getCategory(props: Props): CategoryDefinition {
 }
 
 export default CategoryComponent
-export { CategoryTextComponent, CategoryListItemComponent }
+export { CategoryListItemComponent, CategoryTextComponent }

@@ -8,9 +8,10 @@ import _, { isEqual } from 'lodash'
 import memoize from 'memoize-one'
 import React, { Component, useMemo, useState } from 'react'
 import FlipMove from 'react-flip-move'
-import { ADD_ITEM, CategoryDefinition, Change, createReverseDiff, DELETE_ITEM, Diff, UPDATE_ITEM } from 'shoppinglist-shared'
-import './ChangesComponent.css'
+import { ADD_ITEM, CategoryDefinition, Change, DELETE_ITEM, Diff, UPDATE_ITEM, createReverseDiff } from 'shoppinglist-shared'
+import styles from './ChangesComponent.module.css'
 import PillItemComponent from './PillItemComponent'
+import globalStyles from './index.module.css'
 import { ApplyDiff, CreateApplicableDiff } from './sync'
 
 interface Props {
@@ -115,21 +116,21 @@ export default function ChangesComponent(props: Props): JSX.Element {
 
   const diffs = allDiffs.slice(start, end)
   return (
-    <div className="ChangesComponent">
+    <div className={styles['ChangesComponent']}>
       {start > 0 && (
-        <button type="button" className="PaddedButton" onClick={loadNewer}>
+        <button type="button" className={globalStyles['PaddedButton']} onClick={loadNewer}>
           Show newer changes
         </button>
       )}
       <FlipMove
         typeName="ul"
-        className="ChangesComponent__list"
+        className={styles['ChangesComponent__list']}
         duration="250"
         staggerDelayBy="10"
         enterAnimation="accordionVertical"
         leaveAnimation="accordionVertical"
       >
-        {/* <ul className="ChangesComponent__list"> */}
+        {/* <ul className={styles['ChangesComponent__list']}> */}
         {diffs.map(({ change, changeIndex, unsynced, diff, diffIndex }, absoluteDiffIndex) => {
           const detailsExpanded =
             expandedChange != null && expandedChange.id === change.id && detailsExpandedDiff.diffIndex === diffIndex
@@ -157,12 +158,12 @@ export default function ChangesComponent(props: Props): JSX.Element {
         {/* </ul> */}
       </FlipMove>
       {end < allDiffs.length && (
-        <button type="button" className="PaddedButton" onClick={loadOlder}>
+        <button type="button" className={globalStyles['PaddedButton']} onClick={loadOlder}>
           Show older changes
         </button>
       )}
       {(end !== defaultDiffLength || start !== 0) && (
-        <button type="button" className="PaddedButton" onClick={reset}>
+        <button type="button" className={globalStyles['PaddedButton']} onClick={reset}>
           Reset
         </button>
       )}
@@ -203,9 +204,9 @@ export class DiffComponent extends Component<DiffProps> {
   }
 
   render(): JSX.Element {
-    const elClasses = classNames('DiffComponent', {
-      'DiffComponent--unsynced': this.props.unsynced,
-      'DiffComponent--expanded': this.props.detailsExpanded,
+    const elClasses = classNames(styles['DiffComponent'], {
+      [styles['DiffComponent--unsynced']]: this.props.unsynced,
+      [styles['DiffComponent--expanded']]: this.props.detailsExpanded,
     })
     const [dateString, absoluteDateString, isoDateString] = this.getDateString(this.props.change.date)
     const [applicableDiff, reverseEqualApplicable] = this.getApplicableDiff(this.props.diff)
@@ -235,7 +236,7 @@ export class DiffComponent extends Component<DiffProps> {
     return (
       <li className={elClasses}>
         <header>
-          <button type="button" onClick={this.props.onHeaderClick} className="DiffComponent__headerButton">
+          <button type="button" onClick={this.props.onHeaderClick} className={styles['DiffComponent__headerButton']}>
             {this.props.change.username != null && this.props.change.username.trim() !== '' ? (
               this.props.change.username
             ) : (
@@ -245,7 +246,7 @@ export class DiffComponent extends Component<DiffProps> {
             {this.createDiffElement(this.props.diff, 'PAST')}
           </button>
         </header>
-        <ul className="DiffComponent__details">
+        <ul className={styles['DiffComponent__details']}>
           <li>
             <time dateTime={isoDateString} title={absoluteDateString}>
               {dateString}
@@ -262,8 +263,8 @@ export class DiffComponent extends Component<DiffProps> {
               onClick={undo}
               tabIndex={this.props.detailsExpanded ? 0 : -1}
               role="button"
-              className={classNames('DiffComponent__UndoLink', {
-                'DiffComponent__UndoLink--disabled': applicableDiff == null,
+              className={classNames(styles['DiffComponent__UndoLink'], {
+                [styles['DiffComponent__UndoLink--disabled']]: applicableDiff == null,
               })}
             >
               {applicableDiff != null ? (
@@ -287,8 +288,8 @@ export class DiffComponent extends Component<DiffProps> {
               onClick={undoNewer}
               tabIndex={this.props.detailsExpanded ? 0 : -1}
               role="button"
-              className={classNames('DiffComponent__UndoLink', {
-                'DiffComponent__UndoLink--disabled': this.props.isNewest,
+              className={classNames(styles['DiffComponent__UndoLink'], {
+                [styles['DiffComponent__UndoLink--disabled']]: this.props.isNewest,
               })}
             >
               Undo all newer changes

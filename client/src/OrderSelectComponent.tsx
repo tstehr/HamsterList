@@ -1,7 +1,8 @@
+import classNames from 'classnames'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import { createUUID, Order, UUID } from 'shoppinglist-shared'
-import './OrderSelectComponent.css'
+import styles from './OrderSelectComponent.module.css'
 import { SelectOrder } from './sync'
 
 interface Props {
@@ -25,10 +26,10 @@ export default class OrderSelectComponent extends Component<Props> {
     const order = _.find(this.props.orders, _.matchesProperty('id', this.props.selectedOrder))
 
     return (
-      <label className="OrderSelectComponent">
-        <span className="OrderSelectComponent__text">Sorting:</span>
+      <label className={styles['OrderSelectComponent']}>
+        <span className={styles['OrderSelectComponent__text']}>Sorting:</span>
         <select
-          className="OrderSelectComponent__select KeyFocusComponent--noFocus"
+          className={classNames(styles['OrderSelectComponent__select'], styles['KeyFocusComponent--noFocus'])}
           value={order != null ? order.id : 'default'}
           onChange={this.handleChange}
         >

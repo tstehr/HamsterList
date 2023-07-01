@@ -3,7 +3,7 @@ import { isEqual } from 'lodash'
 import * as mathjs from 'mathjs'
 import React from 'react'
 import { Amount, BaseItem } from 'shoppinglist-shared'
-import './ItemComponent.css'
+import styles from './ItemComponent.module.css'
 
 interface AmountProps {
   amount: Amount | undefined | null
@@ -30,7 +30,7 @@ interface Props {
 
 const ItemComponent = React.memo(
   (props: Props) => (
-    <span className={classNames('ItemComponent', props.className)}>
+    <span className={classNames(styles['ItemComponent'], props.className)}>
       <AmountComponent amount={props.item.amount} /> {props.item.name}
     </span>
   ),

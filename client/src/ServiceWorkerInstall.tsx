@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import './ServiceWorkerInstall.css'
+import styles from './ServiceWorkerInstall.module.css'
+import globalStyles from './index.module.css'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
 export default function ServiceWorkerInstall() {
@@ -25,13 +26,13 @@ export default function ServiceWorkerInstall() {
   useCheckForUpdateOnVisible()
 
   return showReload ? (
-    <div className="ServiceWorkerInstall">
+    <div className={styles['ServiceWorkerInstall']}>
       <h3>Update available</h3>
       <div>
-        <button onClick={() => setShowReload(false)} className="PaddedButton">
+        <button onClick={() => setShowReload(false)} className={globalStyles['PaddedButton']}>
           Ignore
         </button>
-        <button onClick={reloadPage} className="PaddedButton">
+        <button onClick={reloadPage} className={globalStyles['PaddedButton']}>
           Update
         </button>
       </div>

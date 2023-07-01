@@ -4,23 +4,25 @@ import _ from 'lodash'
 import React, { Component } from 'react'
 import { Link, Route, Switch } from 'react-router-dom'
 import {
-  addAmounts,
   CategoryDefinition,
   Change,
   CompletionItem,
-  createCookingAmount,
-  getSIUnit,
   Item,
   LocalItem,
   Order,
   ShoppingList,
   UUID,
+  addAmounts,
+  createCookingAmount,
+  getSIUnit,
 } from 'shoppinglist-shared'
 import ChooseCategoryComponent from './ChooseCategoryComponent'
 import CreateItemComponent from './CreateItemComponent'
 import { Up } from './HistoryTracker'
 import ImportComponent from './ImportComponent'
 import ShoppingListItemsComponent from './ShoppingListItemsComponent'
+import TopBarComponent, { EditTitleComponent, SyncStatusComponent } from './TopBarComponent'
+import globalStyles from './index.module.css'
 import {
   AddCompletion,
   ApplyDiff,
@@ -38,7 +40,6 @@ import {
   UpdateListTitle,
   UpdateOrders,
 } from './sync'
-import TopBarComponent, { EditTitleComponent, SyncStatusComponent } from './TopBarComponent'
 
 interface Props {
   shoppingList: ShoppingList
@@ -173,7 +174,7 @@ export default class ShoppingListComponent extends Component<Props> {
         <section>
           <h2>Tools</h2>
           <p>
-            <button type="button" className="PaddedButton" onClick={this.shareList}>
+            <button type="button" className={globalStyles['PaddedButton']} onClick={this.shareList}>
               Share
             </button>
           </p>
@@ -184,13 +185,13 @@ export default class ShoppingListComponent extends Component<Props> {
             </label>
           </p>
           <p>
-            <button type="button" className="PaddedButton" onClick={this.convertToCookingAmounts}>
+            <button type="button" className={globalStyles['PaddedButton']} onClick={this.convertToCookingAmounts}>
               Convert to metric units
             </button>
-            <button type="button" className="PaddedButton" onClick={this.mergeItems}>
+            <button type="button" className={globalStyles['PaddedButton']} onClick={this.mergeItems}>
               Merge
             </button>
-            <button type="button" className="PaddedButton" onClick={this.clearList}>
+            <button type="button" className={globalStyles['PaddedButton']} onClick={this.clearList}>
               Clear List
             </button>
           </p>
@@ -202,13 +203,13 @@ export default class ShoppingListComponent extends Component<Props> {
         <section>
           <h2>Debug</h2>
           <p>
-            <button type="button" className="PaddedButton" onClick={this.props.manualSync}>
+            <button type="button" className={globalStyles['PaddedButton']} onClick={this.props.manualSync}>
               Force Sync
             </button>
-            <button type="button" className="PaddedButton" onClick={this.removeListFromDB}>
+            <button type="button" className={globalStyles['PaddedButton']} onClick={this.removeListFromDB}>
               Clear Local Storage
             </button>
-            <button type="button" className="PaddedButton" onClick={this.deleteNegativeAmountItems}>
+            <button type="button" className={globalStyles['PaddedButton']} onClick={this.deleteNegativeAmountItems}>
               Delete items with negative amounts
             </button>
           </p>

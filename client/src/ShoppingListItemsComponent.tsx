@@ -4,12 +4,11 @@ import React from 'react'
 import FlipMove from 'react-flip-move'
 import { CategoryDefinition, CategoryOrder, completeCategoryOrder, Item, Order, sortItems, UUID } from 'shoppinglist-shared'
 import { CategoryListItemComponent } from './CategoryComponent'
-import './CategoryComponent.css'
+import styles from './ShoppingListItemsComponent.module.css'
 import EditItemComponent from './EditItemComponent'
 import { Up } from './HistoryTracker'
 import KeyFocusComponent from './KeyFocusComponent'
 import OrderSelectComponent from './OrderSelectComponent'
-import './ShoppingListItemsComponent.css'
 import { DeleteItem, SelectOrder, UpdateItem } from './sync'
 
 interface Props {
@@ -66,7 +65,7 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
     <KeyFocusComponent
       direction="vertical"
       rootTagName="ul"
-      className=" ShoppingListItemsComponent"
+      className={styles['ShoppingListItemsComponent']}
       style={{
         minHeight: `${Math.max(3 * props.items.length + 6, 11)}rem`,
       }}
@@ -106,14 +105,14 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
           )
         )}
         {!props.items.length && (
-          <div className="ShoppingListItemsComponent__emptyList">
+          <div className={styles['ShoppingListItemsComponent__emptyList']}>
             <p>
               Empty list, nothing needed{' '}
               <span role="img" aria-label="Party Popper">
                 🎉
               </span>
             </p>
-            <p className="ShoppingListItemsComponent__emptyList__addCallout--singleCol">
+            <p className={styles['ShoppingListItemsComponent__emptyList__addCallout--singleCol']}>
               <span role="img" aria-label="Arrow to entry form">
                 ⬇️{' '}
               </span>
@@ -123,7 +122,7 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
                 ⬇️
               </span>
             </p>
-            <p className="ShoppingListItemsComponent__emptyList__addCallout--twoCol">
+            <p className={styles['ShoppingListItemsComponent__emptyList__addCallout--twoCol']}>
               <span role="img" aria-label="Arrow to entry form">
                 ➡️{' '}
               </span>

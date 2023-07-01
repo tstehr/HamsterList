@@ -1,10 +1,11 @@
+import classNames from 'classnames'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import AutosizeTextarea from 'react-autosize-textarea'
 import { Route } from 'react-router-dom'
 import { CategoryDefinition, createLocalItemFromString, Item, itemToString, LocalItem } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
-import './EditItemComponent.css'
+import styles from './EditItemComponent.module.css'
 import { Up } from './HistoryTracker'
 import IconButton from './IconButton'
 import ItemComponent from './ItemComponent'
@@ -119,12 +120,12 @@ export default class EditItemComponent extends Component<Props, State> {
 
   render(): JSX.Element {
     return (
-      <li className="EditItemComponent">
+      <li className={styles['EditItemComponent']}>
         <Route
           render={({ history, location, match }) => (
             <button
               type="button"
-              className="EditItemComponent__category KeyFocusComponent--noFocus"
+              className={classNames(styles['EditItemComponent__category'], styles['KeyFocusComponent--noFocus'])}
               onClick={() => history.push(`/${match.params['listid'] || ''}/${this.props.item.id}/category`)}
             >
               <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories} />
@@ -133,7 +134,7 @@ export default class EditItemComponent extends Component<Props, State> {
         />
 
         {this.state.isEditing ? (
-          <form onSubmit={this.handleSumbit} className="EditItemComponent__name">
+          <form onSubmit={this.handleSumbit} className={styles['EditItemComponent__name']}>
             <AutosizeTextarea
               type="text"
               value={this.state.inputValue}
@@ -147,7 +148,7 @@ export default class EditItemComponent extends Component<Props, State> {
           </form>
         ) : (
           <div
-            className="EditItemComponent__name"
+            className={styles['EditItemComponent__name']}
             tabIndex={0}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
@@ -162,7 +163,7 @@ export default class EditItemComponent extends Component<Props, State> {
           onClick={(e) => this.props.deleteItem(this.props.item.id)}
           icon="DELETE"
           alt="Delete"
-          className="EditItemComponent__delete KeyFocusComponent--noFocus"
+          className={classNames(styles['EditItemComponent__delete'], styles['KeyFocusComponent--noFocus'])}
         />
       </li>
     )

@@ -107,12 +107,12 @@ button.PaddedButton {
   }
 }
 
-#shareAPIPolyfill-container button {
+:global(#shareAPIPolyfill-container) button {
   color: black;
 }
-#shareAPIPolyfill-backdrop {
+:global(#shareAPIPolyfill-backdrop) {
   z-index: 101;
 }
-#shareAPIPolyfill-container {
+:global(#shareAPIPolyfill-container) {
   z-index: 102;
 }

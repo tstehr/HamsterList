@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { CategoryDefinition, UUID } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
-import './ChooseCategoryComponent.css'
+import styles from './ChooseCategoryComponent.module.css'
 import KeyFocusComponent from './KeyFocusComponent'
 
 interface Props {
@@ -26,8 +26,12 @@ export default class ChooseCategoryComponent extends Component<Props> {
     if (target != null) {
       const count = Math.ceil((this.props.categories.length + 1) / 10) * 10
       return ReactDOM.createPortal(
-        <div className="ChooseCategoryComponent" onClick={this.createOnClick(this.props.categoryId)} data-categorycount={count}>
-          <KeyFocusComponent direction="vertical" rootTagName="div" className="ChooseCategoryComponent__window">
+        <div
+          className={styles['ChooseCategoryComponent']}
+          onClick={this.createOnClick(this.props.categoryId)}
+          data-categorycount={count}
+        >
+          <KeyFocusComponent direction="vertical" rootTagName="div" className={styles['ChooseCategoryComponent__window']}>
             {this.props.categories.map((category) => (
               <button type="button" key={category.id} onClick={this.createOnClick(category.id)}>
                 <CategoryComponent category={category} />
@@ -38,7 +42,7 @@ export default class ChooseCategoryComponent extends Component<Props> {
               <CategoryComponent categoryId={null} />
               <div>Remove category</div>
             </button>
-            <button onClick={this.createOnClick(this.props.categoryId)} className="ChooseCategoryComponent__cancel">
+            <button onClick={this.createOnClick(this.props.categoryId)} className={styles['ChooseCategoryComponent__cancel']}>
               Cancel
             </button>
           </KeyFocusComponent>

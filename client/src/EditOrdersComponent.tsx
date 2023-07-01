@@ -1,15 +1,16 @@
+import IconButton from 'IconButton'
 import classNames from 'classnames'
 import { History } from 'history'
-import IconButton from 'IconButton'
 import _ from 'lodash'
 import React, { Component, useEffect, useRef, useState } from 'react'
 import { ChromePicker, ColorResult, RGBColor } from 'react-color'
 import { Link, Route, RouteComponentProps } from 'react-router-dom'
-import { arrayMove, SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
-import { CategoryDefinition, createRandomUUID, Order, sortCategories, UUID } from 'shoppinglist-shared'
+import { SortableContainer, SortableElement, SortableHandle, arrayMove } from 'react-sortable-hoc'
+import { CategoryDefinition, Order, UUID, createRandomUUID, sortCategories } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
-import './EditOrdersComponent.css'
+import styles from './EditOrdersComponent.module.css'
 import { Up } from './HistoryTracker'
+import globalStyles from './index.module.css'
 import { UpdateCategories, UpdateOrders } from './sync'
 
 interface Props {
@@ -75,11 +76,11 @@ export default class EditOrdersComponent extends Component<Props> {
     return (
       <Route
         render={({ history }: RouteComponentProps) => (
-          <div className="EditOrdersComponent">
+          <div className={styles['EditOrdersComponent']}>
             <Route
               path="/:listid/orders/:orderid"
               render={({ history, match }: RouteComponentProps<{ orderid: string }>) => (
-                <div className="EditOrdersComponent__order">
+                <div className={styles['EditOrdersComponent__order']}>
                   <NullSafeEditOrderComponent
                     listid={this.props.listid}
                     orders={this.props.orders}
@@ -94,8 +95,11 @@ export default class EditOrdersComponent extends Component<Props> {
               )}
             />
 
-            <div className="EditOrdersComponent__orders">
-              <Link to={`/${this.props.listid}/orders/categories`} className="Button Button--padded">
+            <div className={styles['EditOrdersComponent__orders']}>
+              <Link
+                to={`/${this.props.listid}/orders/categories`}
+                className={classNames(globalStyles['Button'], globalStyles['Button--padded'])}
+              >
                 <i>Default</i>
               </Link>
 
@@ -111,7 +115,7 @@ export default class EditOrdersComponent extends Component<Props> {
 
               <button
                 type="button"
-                className="EditOrdersComponent__new Button Button--padded"
+                className={classNames(styles['EditOrdersComponent__new'], globalStyles['Button'], globalStyles['Button--padded'])}
                 aria-label="New Order"
                 onClick={this.makeCreateOrder(history)}
               >
@@ -147,9 +151,9 @@ const SortableOrder = SortableElement(
     }
 
     return (
-      <Link to={`/${listid}/orders/${order.id}`} className="SortableOrder Button">
-        <span className="SortableOrder__name">{order.name}</span>
-        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className="SortableCategory__delete" />
+      <Link to={`/${listid}/orders/${order.id}`} className={classNames(styles['SortableOrder'], globalStyles['Button'])}>
+        <span className={styles['SortableOrder__name']}>{order.name}</span>
+        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles['SortableCategory__delete']} />
         <DragHandle />
       </Link>
     )
@@ -193,7 +197,11 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps): JSX.Element 
       ) : (
         <>
           <p>Not found :(</p>
-          <button type="button" className="Button Button--padded" onClick={() => props.up(1)}>
+          <button
+            type="button"
+            className={classNames(globalStyles['Button'], globalStyles['Button--padded'])}
+            onClick={() => props.up(1)}
+          >
             Back
           </button>
         </>
@@ -326,14 +334,14 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         {order ? (
           <input
             type="text"
-            className="EditOrderComponent__name"
+            className={styles['EditOrderComponent__name']}
             value={this.state.inputValue}
             onChange={this.handleChange}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
           />
         ) : (
-          <div className="EditOrderComponent__name">
+          <div className={styles['EditOrderComponent__name']}>
             <i>Default</i>
           </div>
         )}
@@ -349,7 +357,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         />
         <button
           type="button"
-          className="EditOrdersComponent__new Button Button--padded"
+          className={classNames(styles['EditOrdersComponent__new'], globalStyles['Button'], globalStyles['Button--padded'])}
           aria-label="New Category"
           onClick={this.createCategory}
         >
@@ -357,13 +365,17 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         </button>
         <button
           type="button"
-          className="EditOrdersComponent__delete Button Button--padded"
+          className={classNames(styles['EditOrdersComponent__delete'], globalStyles['Button'], globalStyles['Button--padded'])}
           aria-label="Delete all categories"
           onClick={this.handleDeleteAll}
         >
           Delete all categories
         </button>
-        <button type="button" className="EditOrderComponent__back Button Button--padded" onClick={() => this.props.up(1)}>
+        <button
+          type="button"
+          className={classNames(styles['EditOrderComponent__back'], globalStyles['Button'], globalStyles['Button--padded'])}
+          onClick={() => this.props.up(1)}
+        >
           Back
         </button>
       </div>
@@ -458,30 +470,34 @@ const SortableCategory = SortableElement(
     }
 
     return (
-      <div className={classNames('SortableCategory', 'Button', { 'SortableCategory--colorPickerOpen': showPicker })}>
-        <CategoryComponent category={category} className="SortableCategory__icon" ref={categoryComponentRef}>
+      <div
+        className={classNames(styles['SortableCategory'], globalStyles['Button'], {
+          [styles['SortableCategory--colorPickerOpen']]: showPicker,
+        })}
+      >
+        <CategoryComponent category={category} className={styles['SortableCategory__icon']} ref={categoryComponentRef}>
           <input
             type="text"
-            className="SortableCategory__icon__input"
+            className={styles['SortableCategory__icon__input']}
             value={shortNameInputValue ?? category.shortName}
             onChange={handleShortNameChange}
             onFocus={() => setShowPicker(true)}
             onBlur={() => setShortNameInputValue(undefined)}
           />
           {showPicker && (
-            <div className="SortableCategory__colorPickerContainer">
+            <div className={styles['SortableCategory__colorPickerContainer']}>
               <ChromePicker color={category.color} onChange={handleColorChange} disableAlpha={true} />
             </div>
           )}
         </CategoryComponent>
         <input
           type="text"
-          className="SortableCategory__name"
+          className={styles['SortableCategory__name']}
           value={nameInputValue ?? category.name}
           onChange={handleNameChange}
           onBlur={() => setNameInputValue(undefined)}
         />
-        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className="SortableCategory__delete" />
+        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles['SortableCategory__delete']} />
         <DragHandle />
       </div>
     )
@@ -489,7 +505,7 @@ const SortableCategory = SortableElement(
 )
 
 const DragHandle = SortableHandle(() => (
-  <div className="DragHandle">
+  <div className={styles['DragHandle']}>
     <svg version="1.1" width="24" height="24" viewBox="0 0 24 24">
       <path d="M21 11H3V9H21V11M21 13H3V15H21V13Z" />
     </svg>
