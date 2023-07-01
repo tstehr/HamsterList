@@ -1,5 +1,6 @@
 import Frame from 'Frame'
 import IconButton from 'IconButton'
+import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
 import classNames from 'classnames'
 import _ from 'lodash'
 import React, { Component } from 'react'
@@ -164,7 +165,7 @@ export default class ChooseListComponent extends Component<{}, State> {
                             onClick={(e) => this.removeRecentlyUsedList(rul.id)}
                             icon="DELETE"
                             alt="Remove from recently used"
-                            className={styles['KeyFocusComponent--noFocus']}
+                            className={KEY_FOCUS_COMPONENT_NO_FOCUS}
                           />
                         </div>
                       ))}

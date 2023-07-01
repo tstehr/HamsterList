@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import { createUUID, Order, UUID } from 'shoppinglist-shared'
@@ -29,7 +30,7 @@ export default class OrderSelectComponent extends Component<Props> {
       <label className={styles['OrderSelectComponent']}>
         <span className={styles['OrderSelectComponent__text']}>Sorting:</span>
         <select
-          className={classNames(styles['OrderSelectComponent__select'], styles['KeyFocusComponent--noFocus'])}
+          className={classNames(styles['OrderSelectComponent__select'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
           value={order != null ? order.id : 'default'}
           onChange={this.handleChange}
         >

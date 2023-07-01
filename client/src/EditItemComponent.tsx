@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import AutosizeTextarea from 'react-autosize-textarea'
@@ -125,7 +126,7 @@ export default class EditItemComponent extends Component<Props, State> {
           render={({ history, location, match }) => (
             <button
               type="button"
-              className={classNames(styles['EditItemComponent__category'], styles['KeyFocusComponent--noFocus'])}
+              className={classNames(styles['EditItemComponent__category'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
               onClick={() => history.push(`/${match.params['listid'] || ''}/${this.props.item.id}/category`)}
             >
               <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories} />
@@ -163,7 +164,7 @@ export default class EditItemComponent extends Component<Props, State> {
           onClick={(e) => this.props.deleteItem(this.props.item.id)}
           icon="DELETE"
           alt="Delete"
-          className={classNames(styles['EditItemComponent__delete'], styles['KeyFocusComponent--noFocus'])}
+          className={classNames(styles['EditItemComponent__delete'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
         />
       </li>
     )

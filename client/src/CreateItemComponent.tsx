@@ -17,7 +17,7 @@ import ChangesComponent from './ChangesComponent'
 import CompletionsComponent from './CompletionsComponent'
 import styles from './CreateItemComponent.module.css'
 import IconButton from './IconButton'
-import KeyFocusComponent from './KeyFocusComponent'
+import KeyFocusComponent, { KEY_FOCUS_COMPONENT_NO_FOCUS } from './KeyFocusComponent'
 import { AddCompletion, ApplyDiff, CreateApplicableDiff, CreateItem, DeleteCompletion, PerformTransaction } from './sync'
 
 export interface ItemInput {
@@ -287,13 +287,13 @@ export default class CreateItemComponent extends Component<Props, State> {
             </div>
             <button
               type="button"
-              className={classNames(styles['CreateItemComponent__form__toggleMultiline'], styles['KeyFocusComponent--noFocus'])}
+              className={classNames(styles['CreateItemComponent__form__toggleMultiline'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
               onClick={this.handleToggleMultiline}
             >
               {isMultiline ? '▲' : '▼'}
             </button>
             <IconButton
-              className={classNames(styles['CreateItemComponent__form__save'], styles['KeyFocusComponent--noFocus'])}
+              className={classNames(styles['CreateItemComponent__form__save'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
               icon="ADD"
               alt="Add new item
             "

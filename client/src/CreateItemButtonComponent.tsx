@@ -1,5 +1,6 @@
 import ChooseCategoryComponent from 'ChooseCategoryComponent'
 import { Up } from 'HistoryTracker'
+import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 import { Route } from 'react-router-dom'
@@ -32,7 +33,7 @@ export default function CreateItemButtonComponent(props: Props) {
     [styles['focused']]: props.focused ?? createButtonFocused,
   })
   const buttonClassName = classNames(styles['CreateItemButtonComponent__button'], {
-    [styles['KeyFocusComponent--noFocus']]: props.noArrowFocus,
+    [KEY_FOCUS_COMPONENT_NO_FOCUS]: props.noArrowFocus,
   })
 
   return (
@@ -41,7 +42,7 @@ export default function CreateItemButtonComponent(props: Props) {
         <Route
           render={({ history, location, match }) => (
             <button
-              className={classNames(styles['CreateItemButtonComponent__categoryButton'], styles['KeyFocusComponent--noFocus'])}
+              className={classNames(styles['CreateItemButtonComponent__categoryButton'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
               onClick={() =>
                 history.push(`/${match.params['listid'] || ''}/newItem/${encodeURIComponent(props.itemRepr)}/category`)
               }
@@ -89,7 +90,7 @@ export default function CreateItemButtonComponent(props: Props) {
             onClick={() => (props.deleteCompletion ? props.deleteCompletion(props.item.name) : undefined)}
             icon="DELETE"
             alt="Delete completion"
-            className={styles['KeyFocusComponent--noFocus']}
+            className={KEY_FOCUS_COMPONENT_NO_FOCUS}
           />
         )}
       </div>
