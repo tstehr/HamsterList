@@ -73,15 +73,15 @@
   flex-shrink: 0;
 }
 
-.SortableOrder__dragging,
-.SortableCategory__dragging {
+.SortableOrder.dragging,
+.SortableCategory.dragging {
   box-shadow: 0 0 10px var(--text-color);
 }
 
 .SortableCategory {
   position: relative;
 }
-.SortableCategory--colorPickerOpen {
+.SortableCategory.colorPickerOpen {
   z-index: 1001;
 }
 .SortableCategory__icon {

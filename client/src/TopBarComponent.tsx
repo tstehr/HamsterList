@@ -16,7 +16,7 @@ interface Props {
 
 export default function TopBarComponent(props: Props): JSX.Element {
   const className = classNames(styles['TopBarComponent'], {
-    [styles['TopBarComponent--responsive']]: props.responsive == null ? true : props.responsive,
+    [styles['responsive']]: props.responsive == null ? true : props.responsive,
   })
   return (
     <header className={className}>
@@ -114,9 +114,9 @@ export function SyncStatusComponent(props: SyncStatusProps): JSX.Element {
   const showSyncing = props.syncing || fakeSyncing
   const showFailure = props.lastSyncFailed || props.connectionState === 'disconnected'
   const statusClasses = classNames(styles['SyncStatusComponent'], {
-    [styles['SyncStatusComponent--syncing']]: showSyncing,
-    [styles['SyncStatusComponent--failure']]: showFailure,
-    [styles['SyncStatusComponent--synced']]: !showFailure && !props.dirty && !showSyncing,
+    [styles['syncing']]: showSyncing,
+    [styles['failure']]: showFailure,
+    [styles['synced']]: !showFailure && !props.dirty && !showSyncing,
   })
 
   return (

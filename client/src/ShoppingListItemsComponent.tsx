@@ -10,6 +10,7 @@ import { Up } from './HistoryTracker'
 import KeyFocusComponent from './KeyFocusComponent'
 import OrderSelectComponent from './OrderSelectComponent'
 import { DeleteItem, SelectOrder, UpdateItem } from './sync'
+import classNames from 'classnames'
 
 interface Props {
   items: readonly Item[]
@@ -112,7 +113,7 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
                 🎉
               </span>
             </p>
-            <p className={styles['ShoppingListItemsComponent__emptyList__addCallout--singleCol']}>
+            <p className={classNames(styles['ShoppingListItemsComponent__emptyList__addCallout'], styles['singleCol'])}>
               <span role="img" aria-label="Arrow to entry form">
                 ⬇️{' '}
               </span>
@@ -122,7 +123,7 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
                 ⬇️
               </span>
             </p>
-            <p className={styles['ShoppingListItemsComponent__emptyList__addCallout--twoCol']}>
+            <p className={classNames(styles['ShoppingListItemsComponent__emptyList__addCallout'], styles['twoCol'])}>
               <span role="img" aria-label="Arrow to entry form">
                 ➡️{' '}
               </span>

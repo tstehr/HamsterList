@@ -30,7 +30,7 @@
   align-items: stretch;
 }
 @media (min-width: 40rem) {
-  .TopBarComponent--responsive .TopBarComponent__content {
+  .TopBarComponent.responsive .TopBarComponent__content {
     max-width: var(--two-col-max-width);
     --top-bar-side-padding: 1rem;
     padding: 0 var(--top-bar-side-padding);
@@ -39,7 +39,7 @@
   }
 }
 @media (min-width: 50rem) {
-  .TopBarComponent--responsive .TopBarComponent__content {
+  .TopBarComponent.responsive .TopBarComponent__content {
     --top-bar-side-padding: 2rem;
   }
 }
@@ -101,13 +101,13 @@
     display: none;
   }
 }
-.SyncStatusComponent--syncing {
+.SyncStatusComponent.syncing {
   animation: 1s ease-in infinite blink;
 }
-.SyncStatusComponent--failure {
+.SyncStatusComponent.failure {
   color: var(--failure-color);
 }
-.SyncStatusComponent--failure.SyncStatusComponent--syncing {
+.SyncStatusComponent.failure.SyncStatusComponent.syncing {
   animation: 1s ease-in infinite blinkRed;
 }
 

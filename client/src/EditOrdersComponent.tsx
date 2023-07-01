@@ -98,7 +98,7 @@ export default class EditOrdersComponent extends Component<Props> {
             <div className={styles['EditOrdersComponent__orders']}>
               <Link
                 to={`/${this.props.listid}/orders/categories`}
-                className={classNames(globalStyles['Button'], globalStyles['Button--padded'])}
+                className={classNames(globalStyles['Button'], globalStyles['padded'])}
               >
                 <i>Default</i>
               </Link>
@@ -106,7 +106,7 @@ export default class EditOrdersComponent extends Component<Props> {
               <SortableOrders
                 orders={this.props.orders}
                 listid={this.props.listid}
-                helperClass="SortableOrder__dragging"
+                helperClass={classNames(styles['SortableOrder'], styles['dragging'])}
                 lockAxis="y"
                 useDragHandle={true}
                 onSortEnd={this.handleSortEnd}
@@ -115,7 +115,7 @@ export default class EditOrdersComponent extends Component<Props> {
 
               <button
                 type="button"
-                className={classNames(styles['EditOrdersComponent__new'], globalStyles['Button'], globalStyles['Button--padded'])}
+                className={classNames(styles['EditOrdersComponent__new'], globalStyles['Button'], globalStyles['padded'])}
                 aria-label="New Order"
                 onClick={this.makeCreateOrder(history)}
               >
@@ -199,7 +199,7 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps): JSX.Element 
           <p>Not found :(</p>
           <button
             type="button"
-            className={classNames(globalStyles['Button'], globalStyles['Button--padded'])}
+            className={classNames(globalStyles['Button'], globalStyles['padded'])}
             onClick={() => props.up(1)}
           >
             Back
@@ -348,7 +348,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
 
         <SortableCategories
           categories={sortedCategories}
-          helperClass="SortableCategory__dragging"
+          helperClass={classNames(styles['SortableCategory'], styles['dragging'])}
           lockAxis="y"
           onSortEnd={this.handleSortEnd}
           useDragHandle={true}
@@ -357,7 +357,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         />
         <button
           type="button"
-          className={classNames(styles['EditOrdersComponent__new'], globalStyles['Button'], globalStyles['Button--padded'])}
+          className={classNames(styles['EditOrdersComponent__new'], globalStyles['Button'], globalStyles['padded'])}
           aria-label="New Category"
           onClick={this.createCategory}
         >
@@ -365,7 +365,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         </button>
         <button
           type="button"
-          className={classNames(styles['EditOrdersComponent__delete'], globalStyles['Button'], globalStyles['Button--padded'])}
+          className={classNames(styles['EditOrdersComponent__delete'], globalStyles['Button'], globalStyles['padded'])}
           aria-label="Delete all categories"
           onClick={this.handleDeleteAll}
         >
@@ -373,7 +373,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         </button>
         <button
           type="button"
-          className={classNames(styles['EditOrderComponent__back'], globalStyles['Button'], globalStyles['Button--padded'])}
+          className={classNames(styles['EditOrderComponent__back'], globalStyles['Button'], globalStyles['padded'])}
           onClick={() => this.props.up(1)}
         >
           Back
@@ -472,7 +472,7 @@ const SortableCategory = SortableElement(
     return (
       <div
         className={classNames(styles['SortableCategory'], globalStyles['Button'], {
-          [styles['SortableCategory--colorPickerOpen']]: showPicker,
+          [styles['colorPickerOpen']]: showPicker,
         })}
       >
         <CategoryComponent category={category} className={styles['SortableCategory__icon']} ref={categoryComponentRef}>

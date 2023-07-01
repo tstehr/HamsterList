@@ -246,7 +246,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     const itemsInCreation = this.state.itemsInCreation
     return (
       <div
-        className={classNames(styles['CreateItemComponent'], isCreatingItem && styles['CreateItemComponent--creatingItem'])}
+        className={classNames(styles['CreateItemComponent'], isCreatingItem && styles['creatingItem'])}
         onKeyDown={this.handleKeyDown}
         ref={(root) => {
           this.root = root
@@ -254,10 +254,7 @@ export default class CreateItemComponent extends Component<Props, State> {
       >
         <KeyFocusComponent direction="vertical" rootTagName="div">
           <form
-            className={classNames(
-              styles['CreateItemComponent__form'],
-              isMultiline && styles['CreateItemComponent__form--multiline']
-            )}
+            className={classNames(styles['CreateItemComponent__form'], isMultiline && styles['multiline'])}
             onSubmit={this.handleSubmit}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}

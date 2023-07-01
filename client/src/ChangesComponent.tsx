@@ -205,8 +205,8 @@ export class DiffComponent extends Component<DiffProps> {
 
   render(): JSX.Element {
     const elClasses = classNames(styles['DiffComponent'], {
-      [styles['DiffComponent--unsynced']]: this.props.unsynced,
-      [styles['DiffComponent--expanded']]: this.props.detailsExpanded,
+      [styles['unsynced']]: this.props.unsynced,
+      [styles['expanded']]: this.props.detailsExpanded,
     })
     const [dateString, absoluteDateString, isoDateString] = this.getDateString(this.props.change.date)
     const [applicableDiff, reverseEqualApplicable] = this.getApplicableDiff(this.props.diff)
@@ -264,7 +264,7 @@ export class DiffComponent extends Component<DiffProps> {
               tabIndex={this.props.detailsExpanded ? 0 : -1}
               role="button"
               className={classNames(styles['DiffComponent__UndoLink'], {
-                [styles['DiffComponent__UndoLink--disabled']]: applicableDiff == null,
+                [styles['disabled']]: applicableDiff == null,
               })}
             >
               {applicableDiff != null ? (
@@ -289,7 +289,7 @@ export class DiffComponent extends Component<DiffProps> {
               tabIndex={this.props.detailsExpanded ? 0 : -1}
               role="button"
               className={classNames(styles['DiffComponent__UndoLink'], {
-                [styles['DiffComponent__UndoLink--disabled']]: this.props.isNewest,
+                [styles['disabled']]: this.props.isNewest,
               })}
             >
               Undo all newer changes

@@ -14,8 +14,8 @@
   width: 100%;
   text-align: left;
 }
-.DiffComponent--unsynced .DiffComponent__headerButton,
-.DiffComponent--unsynced .DiffComponent__headerButton:focus {
+.DiffComponent.unsynced .DiffComponent__headerButton,
+.DiffComponent.unsynced .DiffComponent__headerButton:focus {
   color: var(--text-deemphasized-color);
 }
 .DiffComponent__headerButton:focus,
@@ -41,7 +41,7 @@
 .DiffComponent__details li:not(:first-child)::before {
   content: '\00a0|\00a0';
 }
-.DiffComponent--expanded .DiffComponent__details {
+.DiffComponent.expanded .DiffComponent__details {
   max-height: 5em;
   opacity: 1;
   pointer-events: initial;
@@ -50,6 +50,6 @@
   position: relative;
   padding: 0.2em;
 }
-.DiffComponent__UndoLink--disabled {
+.DiffComponent__UndoLink.disabled {
   color: var(--text-deemphasized-color);
 }

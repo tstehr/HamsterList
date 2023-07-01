@@ -15,14 +15,14 @@
     background-color: var(--box-color);
   }
 }
-.ShoppingListItemsComponent__emptyList__addCallout--twoCol {
+.ShoppingListItemsComponent__emptyList__addCallout.twoCol {
   display: none;
 }
 @media (min-width: 40rem) {
-  .ShoppingListItemsComponent__emptyList__addCallout--twoCol {
+  .ShoppingListItemsComponent__emptyList__addCallout.twoCol {
     display: block;
   }
-  .ShoppingListItemsComponent__emptyList__addCallout--singleCol {
+  .ShoppingListItemsComponent__emptyList__addCallout.singleCol {
     display: none;
   }
 }

@@ -7,7 +7,7 @@
     display: none;
   }
 }
-.CreateItemComponent--creatingItem {
+.CreateItemComponent.creatingItem {
   min-height: calc(12 * 3rem);
 }
 .CreateItemComponent__form {
@@ -28,7 +28,7 @@
 .CreateItemComponent__form__inputWrapper:focus-within {
   box-shadow: 0 0 5px var(--focus-color), inset 0 0 5px var(--focus-color);
 }
-.CreateItemComponent__form--multiline .CreateItemComponent__form__inputWrapper {
+.CreateItemComponent__form.multiline .CreateItemComponent__form__inputWrapper {
   min-height: 10rem;
   max-height: 25rem;
 }
@@ -76,7 +76,7 @@
   .CreateItemComponent {
     min-height: 3.5rem;
   }
-  .CreateItemComponent--creatingItem {
+  .CreateItemComponent.creatingItem {
     min-height: calc(12 * 3.5rem);
   }
   .CreateItemComponent__form {

@@ -95,7 +95,7 @@ button.PaddedButton {
   text-decoration: none;
   color: var(--text-color);
 }
-.Button--padded {
+.Button.padded {
   padding: 0 0.5rem;
 }
 @media (min-width: 30rem) {
