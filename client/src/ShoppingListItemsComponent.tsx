@@ -106,14 +106,14 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
           )
         )}
         {!props.items.length && (
-          <div className={styles['ShoppingListItemsComponent__emptyList']}>
+          <div className={styles['EmptyList']}>
             <p>
               Empty list, nothing needed{' '}
               <span role="img" aria-label="Party Popper">
                 🎉
               </span>
             </p>
-            <p className={classNames(styles['ShoppingListItemsComponent__emptyList__addCallout'], styles['singleCol'])}>
+            <p className={classNames(styles['AddCallout'], styles['singleCol'])}>
               <span role="img" aria-label="Arrow to entry form">
                 ⬇️{' '}
               </span>
@@ -123,7 +123,7 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
                 ⬇️
               </span>
             </p>
-            <p className={classNames(styles['ShoppingListItemsComponent__emptyList__addCallout'], styles['twoCol'])}>
+            <p className={classNames(styles['AddCallout'], styles['twoCol'])}>
               <span role="img" aria-label="Arrow to entry form">
                 ➡️{' '}
               </span>

@@ -1,16 +1,16 @@
-.ChooseListComponent__content {
+.Content {
   width: 100%;
   max-width: var(--single-col-max-width);
   margin: 0 auto;
 }
-.ChooseListComponent__content section:first-child {
+.Content section:first-child {
   padding-top: 1rem;
 }
-.ChooseListComponent__content section {
+.Content section {
   padding-top: 2rem;
 }
 
-.ChooseListComponent__title {
+.Title {
   font-weight: bold;
   font-size: 2rem;
   text-align: center;
@@ -18,27 +18,27 @@
   flex: 1;
 }
 
-.ChooseListComponent__openFormHeadline,
-.ChooseListComponent__recentlyUsedHeadline,
-.ChooseListComponent__restorationCheckbox {
+.OpenFormHeadline,
+.RecentlyUsedHeadline,
+.RestorationCheckbox {
   margin: 0 1rem 0.5rem;
 }
 
-.ChooseListComponent__recentlyUsed {
+.RecentlyUsed {
   list-style: none;
 }
-.ChooseListComponent__randomButton {
+.RandomButton {
   padding: 0 1rem;
 }
-.ChooseListComponent__randomButton {
+.RandomButton {
   margin-top: 1rem;
 }
-.ChooseListComponent__randomButton > span {
+.RandomButton > span {
   flex: 1;
   text-align: center;
 }
 
-.ChooseListComponent__recentlyUsedLink a {
+.RecentlyUsedLink a {
   color: inherit;
   flex-grow: 1;
   text-decoration: none;
@@ -47,46 +47,46 @@
   align-items: center;
   padding-left: 1rem;
 }
-.ChooseListComponent__recentlyUsedLink button {
+.RecentlyUsedLink button {
   width: 3rem;
   align-self: stretch;
 }
 
-.ChooseListComponent__openForm {
+.OpenForm {
   display: flex;
   height: 3rem;
   border: solid var(--theme-color);
   border-width: 2px 0;
 }
-.ChooseListComponent__openForm > input {
+.OpenForm > input {
   flex: 1;
   border: 0;
   padding: 0.5rem;
   font-size: 1rem;
   font-family: inherit;
 }
-.ChooseListComponent__openForm > button {
+.OpenForm > button {
   width: 3rem;
 }
 
-.ChooseListComponent__footer {
+.Footer {
   font-size: 0.6rem;
   color: var(--text-deemphasized-color);
   max-width: var(--single-col-max-width);
   margin: 0 auto;
   padding: 0 1rem;
 }
-.ChooseListComponent__footer a,
-.ChooseListComponent__footer a:link,
-.ChooseListComponent__footer a:visited {
+.Footer a,
+.Footer a:link,
+.Footer a:visited {
   color: inherit;
 }
 
 @media (min-width: 30rem) {
-  .ChooseListComponent__openForm {
+  .OpenForm {
     border-width: 2px;
   }
-  .ChooseListComponent__content section:first-child {
+  .Content section:first-child {
     padding-top: 0;
   }
 }

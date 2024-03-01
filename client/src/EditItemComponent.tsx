@@ -126,7 +126,7 @@ export default class EditItemComponent extends Component<Props, State> {
           render={({ history, location, match }) => (
             <button
               type="button"
-              className={classNames(styles['EditItemComponent__category'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
+              className={classNames(styles['Category'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
               onClick={() => history.push(`/${match.params['listid'] || ''}/${this.props.item.id}/category`)}
             >
               <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories} />
@@ -135,7 +135,7 @@ export default class EditItemComponent extends Component<Props, State> {
         />
 
         {this.state.isEditing ? (
-          <form onSubmit={this.handleSumbit} className={styles['EditItemComponent__name']}>
+          <form onSubmit={this.handleSumbit} className={styles['Name']}>
             <AutosizeTextarea
               type="text"
               value={this.state.inputValue}
@@ -149,7 +149,7 @@ export default class EditItemComponent extends Component<Props, State> {
           </form>
         ) : (
           <div
-            className={styles['EditItemComponent__name']}
+            className={styles['Name']}
             tabIndex={0}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
@@ -164,7 +164,7 @@ export default class EditItemComponent extends Component<Props, State> {
           onClick={(e) => this.props.deleteItem(this.props.item.id)}
           icon="DELETE"
           alt="Delete"
-          className={classNames(styles['EditItemComponent__delete'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
+          className={classNames(styles['Delete'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
         />
       </li>
     )

@@ -32,7 +32,7 @@ export default function CreateItemButtonComponent(props: Props) {
   const className = classNames(globalStyles['Button'], styles['CreateItemButtonComponent'], {
     [styles['focused']]: props.focused ?? createButtonFocused,
   })
-  const buttonClassName = classNames(styles['CreateItemButtonComponent__button'], {
+  const buttonClassName = classNames(styles['Button'], {
     [KEY_FOCUS_COMPONENT_NO_FOCUS]: props.noArrowFocus,
   })
 
@@ -42,7 +42,7 @@ export default function CreateItemButtonComponent(props: Props) {
         <Route
           render={({ history, location, match }) => (
             <button
-              className={classNames(styles['CreateItemButtonComponent__categoryButton'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
+              className={classNames(styles['CategoryButton'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
               onClick={() =>
                 history.push(`/${match.params['listid'] || ''}/newItem/${encodeURIComponent(props.itemRepr)}/category`)
               }

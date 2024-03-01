@@ -1,11 +1,11 @@
 .ChangesComponent {
   margin: 0.5rem;
 }
-.ChangesComponent__list {
+.List {
   list-style: none;
 }
 
-.DiffComponent__headerButton {
+.HeaderButton {
   margin-top: 0.3rem;
   line-height: 1.5em;
   font-size: 1em;
@@ -14,15 +14,15 @@
   width: 100%;
   text-align: left;
 }
-.DiffComponent.unsynced .DiffComponent__headerButton,
-.DiffComponent.unsynced .DiffComponent__headerButton:focus {
+.DiffComponent.unsynced .HeaderButton,
+.DiffComponent.unsynced .HeaderButton:focus {
   color: var(--text-deemphasized-color);
 }
-.DiffComponent__headerButton:focus,
-.DiffComponent__headerButton:active {
+.HeaderButton:focus,
+.HeaderButton:active {
   color: var(--text-color);
 }
-.DiffComponent__details {
+.Details {
   padding-top: 0.2rem;
   overflow: hidden;
   font-size: 0.9em;
@@ -35,21 +35,21 @@
   transition-property: max-height, opacity;
   pointer-events: none;
 }
-.DiffComponent__details li {
+.Details li {
   display: inline;
 }
-.DiffComponent__details li:not(:first-child)::before {
+.Details li:not(:first-child)::before {
   content: '\00a0|\00a0';
 }
-.DiffComponent.expanded .DiffComponent__details {
+.DiffComponent.expanded .Details {
   max-height: 5em;
   opacity: 1;
   pointer-events: initial;
 }
-.DiffComponent__UndoLink {
+.UndoLink {
   position: relative;
   padding: 0.2em;
 }
-.DiffComponent__UndoLink.disabled {
+.UndoLink.disabled {
   color: var(--text-deemphasized-color);
 }

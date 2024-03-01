@@ -26,13 +26,13 @@
   transition: opacity 100ms 50ms;
 }
 
-.CreateItemButtonComponent__categoryButton {
+.CategoryButton {
   background: none;
   font: inherit;
   border: none;
 }
 
-.CreateItemButtonComponent__button {
+.Button {
   display: block;
   flex: 1;
   padding-left: 0.5rem;

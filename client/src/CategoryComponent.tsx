@@ -42,7 +42,7 @@ const CategoryComponent = React.memo(
         ref={ref}
         {..._.omit(props, 'category', 'categories', 'categoryId')}
       >
-        <div className={styles['CategoryComponent__circle']} style={style}>
+        <div className={styles['Circle']} style={style}>
           {props.children ? props.children : <span>{initials}</span>}
         </div>
       </div>

@@ -10,13 +10,13 @@
 .CreateItemComponent.creatingItem {
   min-height: calc(12 * 3rem);
 }
-.CreateItemComponent__form {
+.Form {
   position: relative;
   display: flex;
   border: solid var(--theme-color);
   border-width: 2px 0;
 }
-.CreateItemComponent__form__inputWrapper {
+.InputWrapper {
   position: relative;
   min-height: calc(3rem - 4px);
   cursor: text;
@@ -25,15 +25,15 @@
   transition-duration: 100ms;
   transition-timing-function: ease-out;
 }
-.CreateItemComponent__form__inputWrapper:focus-within {
+.InputWrapper:focus-within {
   box-shadow: 0 0 5px var(--focus-color), inset 0 0 5px var(--focus-color);
 }
-.CreateItemComponent__form.multiline .CreateItemComponent__form__inputWrapper {
+.Form.multiline .InputWrapper {
   min-height: 10rem;
   max-height: 25rem;
 }
-.CreateItemComponent__form__inputWrapper > textarea,
-.CreateItemComponent__form__inputWrapper__placeholder {
+.InputWrapper > textarea,
+.Placeholder {
   display: block;
   border: 0;
   padding: calc(1rem - 2px) 0.5rem;
@@ -44,24 +44,24 @@
   width: 100%;
   color: var(--text-color);
 }
-.CreateItemComponent__form__inputWrapper > textarea {
+.InputWrapper > textarea {
   position: relative;
   z-index: 1;
   min-height: calc(3rem - 4px);
   max-height: 25rem;
   background: transparent;
 }
-.CreateItemComponent__form__inputWrapper > textarea:focus {
+.InputWrapper > textarea:focus {
   box-shadow: none;
 }
-.CreateItemComponent__form__inputWrapper__placeholder {
+.Placeholder {
   position: absolute;
   top: 0;
   left: 0;
   color: var(--text-deemphasized-color);
   user-select: none;
 }
-.CreateItemComponent__form__toggleMultiline {
+.ToggleMultiline {
   width: 3rem;
   height: calc(3rem - 4px);
   font-size: 1.5rem;
@@ -69,7 +69,7 @@
   background: transparent;
   color: var(--text-deemphasized-color);
 }
-.CreateItemComponent__form__save {
+.Save {
   width: 3rem;
 }
 @media (min-width: 30rem) {
@@ -79,7 +79,7 @@
   .CreateItemComponent.creatingItem {
     min-height: calc(12 * 3.5rem);
   }
-  .CreateItemComponent__form {
+  .Form {
     border-width: 2px;
     margin-bottom: 0.5rem;
   }

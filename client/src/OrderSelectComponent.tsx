@@ -28,9 +28,9 @@ export default class OrderSelectComponent extends Component<Props> {
 
     return (
       <label className={styles['OrderSelectComponent']}>
-        <span className={styles['OrderSelectComponent__text']}>Sorting:</span>
+        <span className={styles['Text']}>Sorting:</span>
         <select
-          className={classNames(styles['OrderSelectComponent__select'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
+          className={classNames(styles['Select'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
           value={order != null ? order.id : 'default'}
           onChange={this.handleChange}
         >

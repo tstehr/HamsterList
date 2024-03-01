@@ -124,13 +124,13 @@ export default function ChangesComponent(props: Props): JSX.Element {
       )}
       <FlipMove
         typeName="ul"
-        className={styles['ChangesComponent__list']}
+        className={styles['List']}
         duration="250"
         staggerDelayBy="10"
         enterAnimation="accordionVertical"
         leaveAnimation="accordionVertical"
       >
-        {/* <ul className={styles['ChangesComponent__list']}> */}
+        {/* <ul className={styles['List']}> */}
         {diffs.map(({ change, changeIndex, unsynced, diff, diffIndex }, absoluteDiffIndex) => {
           const detailsExpanded =
             expandedChange != null && expandedChange.id === change.id && detailsExpandedDiff.diffIndex === diffIndex
@@ -236,7 +236,7 @@ export class DiffComponent extends Component<DiffProps> {
     return (
       <li className={elClasses}>
         <header>
-          <button type="button" onClick={this.props.onHeaderClick} className={styles['DiffComponent__headerButton']}>
+          <button type="button" onClick={this.props.onHeaderClick} className={styles['HeaderButton']}>
             {this.props.change.username != null && this.props.change.username.trim() !== '' ? (
               this.props.change.username
             ) : (
@@ -246,7 +246,7 @@ export class DiffComponent extends Component<DiffProps> {
             {this.createDiffElement(this.props.diff, 'PAST')}
           </button>
         </header>
-        <ul className={styles['DiffComponent__details']}>
+        <ul className={styles['Details']}>
           <li>
             <time dateTime={isoDateString} title={absoluteDateString}>
               {dateString}
@@ -263,7 +263,7 @@ export class DiffComponent extends Component<DiffProps> {
               onClick={undo}
               tabIndex={this.props.detailsExpanded ? 0 : -1}
               role="button"
-              className={classNames(styles['DiffComponent__UndoLink'], {
+              className={classNames(styles['UndoLink'], {
                 [styles['disabled']]: applicableDiff == null,
               })}
             >
@@ -288,7 +288,7 @@ export class DiffComponent extends Component<DiffProps> {
               onClick={undoNewer}
               tabIndex={this.props.detailsExpanded ? 0 : -1}
               role="button"
-              className={classNames(styles['DiffComponent__UndoLink'], {
+              className={classNames(styles['UndoLink'], {
                 [styles['disabled']]: this.props.isNewest,
               })}
             >

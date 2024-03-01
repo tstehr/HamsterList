@@ -20,9 +20,9 @@ export default function TopBarComponent(props: Props): JSX.Element {
   })
   return (
     <header className={className}>
-      <div className={styles['TopBarComponent__content']}>
+      <div className={styles['Content']}>
         {props.back && (
-          <button type="button" className={styles['TopBarComponent__back']} onClick={props.back} aria-label="Back to all lists">
+          <button type="button" className={styles['Back']} onClick={props.back} aria-label="Back to all lists">
             <Back />
           </button>
         )}

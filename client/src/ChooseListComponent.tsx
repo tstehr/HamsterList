@@ -120,15 +120,15 @@ export default class ChooseListComponent extends Component<{}, State> {
           {{
             topBar: (
               <TopBarComponent responsive={true}>
-                <h1 className={styles['ChooseListComponent__title']}>ShoppingList</h1>
+                <h1 className={styles['Title']}>ShoppingList</h1>
               </TopBarComponent>
             ),
             sections: [
-              <div className={styles['ChooseListComponent__content']}>
+              <div className={styles['Content']}>
                 <section>
                   <button
                     type="button"
-                    className={classNames(globalStyles['Button'], styles['ChooseListComponent__randomButton'])}
+                    className={classNames(globalStyles['Button'], styles['RandomButton'])}
                     onClick={this.createRandomList.bind(this)}
                   >
                     <span>Create new List</span>
@@ -136,8 +136,8 @@ export default class ChooseListComponent extends Component<{}, State> {
                 </section>
 
                 <section>
-                  <div className={styles['ChooseListComponent__openFormHeadline']}>Or create/open list with name</div>
-                  <form className={styles['ChooseListComponent__openForm']} onSubmit={this.onSubmit}>
+                  <div className={styles['OpenFormHeadline']}>Or create/open list with name</div>
+                  <form className={styles['OpenForm']} onSubmit={this.onSubmit}>
                     <input type="text" name="listid" ref={this.inputListid} />
                     <button>Go</button>
                   </form>
@@ -145,7 +145,7 @@ export default class ChooseListComponent extends Component<{}, State> {
 
                 {this.state.recentlyUsedLists.length > 0 && (
                   <section>
-                    <h2 className={styles['ChooseListComponent__recentlyUsedHeadline']}>Recently Used</h2>
+                    <h2 className={styles['RecentlyUsedHeadline']}>Recently Used</h2>
 
                     <FlipMove
                       typeName={null}
@@ -157,7 +157,7 @@ export default class ChooseListComponent extends Component<{}, State> {
                     >
                       {this.state.recentlyUsedLists.map((rul) => (
                         <div
-                          className={classNames(globalStyles['Button'], styles['ChooseListComponent__recentlyUsedLink'])}
+                          className={classNames(globalStyles['Button'], styles['RecentlyUsedLink'])}
                           key={rul.id}
                         >
                           <Link to={'/' + rul.id}>{rul.title}</Link>
@@ -174,7 +174,7 @@ export default class ChooseListComponent extends Component<{}, State> {
                 )}
 
                 <section>
-                  <p className={styles['ChooseListComponent__restorationCheckbox']}>
+                  <p className={styles['RestorationCheckbox']}>
                     <label>
                       <input type="checkbox" checked={this.state.restorationEnabled} onChange={this.onRestorationEnabledChange} />{' '}
                       Return to last used list on open
@@ -184,7 +184,7 @@ export default class ChooseListComponent extends Component<{}, State> {
               </div>,
             ],
             footer: (
-              <div className={styles['ChooseListComponent__footer']}>
+              <div className={styles['Footer']}>
                 <p>
                   Icons made by{' '}
                   <a href="https://www.flaticon.com/authors/egor-rumyantsev" title="Egor Rumyantsev">

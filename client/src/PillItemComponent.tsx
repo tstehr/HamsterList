@@ -14,7 +14,7 @@ const PillItemComponent = React.memo(
   (props: Props) => (
     <div className={styles['PillItemComponent']}>
       <CategoryTextComponent categoryId={props.item.category} categories={props.categories} />{' '}
-      <ItemComponent item={props.item} className={styles['PillItemComponent__item']} />
+      <ItemComponent item={props.item} className={styles['Item']} />
     </div>
   ),
   isEqual

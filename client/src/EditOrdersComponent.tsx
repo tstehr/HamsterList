@@ -80,7 +80,7 @@ export default class EditOrdersComponent extends Component<Props> {
             <Route
               path="/:listid/orders/:orderid"
               render={({ history, match }: RouteComponentProps<{ orderid: string }>) => (
-                <div className={styles['EditOrdersComponent__order']}>
+                <div className={styles['Order']}>
                   <NullSafeEditOrderComponent
                     listid={this.props.listid}
                     orders={this.props.orders}
@@ -95,7 +95,7 @@ export default class EditOrdersComponent extends Component<Props> {
               )}
             />
 
-            <div className={styles['EditOrdersComponent__orders']}>
+            <div className={styles['Orders']}>
               <Link
                 to={`/${this.props.listid}/orders/categories`}
                 className={classNames(globalStyles['Button'], globalStyles['padded'])}
@@ -115,7 +115,7 @@ export default class EditOrdersComponent extends Component<Props> {
 
               <button
                 type="button"
-                className={classNames(styles['EditOrdersComponent__new'], globalStyles['Button'], globalStyles['padded'])}
+                className={classNames(styles['New'], globalStyles['Button'], globalStyles['padded'])}
                 aria-label="New Order"
                 onClick={this.makeCreateOrder(history)}
               >
@@ -152,8 +152,8 @@ const SortableOrder = SortableElement(
 
     return (
       <Link to={`/${listid}/orders/${order.id}`} className={classNames(styles['SortableOrder'], globalStyles['Button'])}>
-        <span className={styles['SortableOrder__name']}>{order.name}</span>
-        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles['SortableCategory__delete']} />
+        <span className={styles['Name']}>{order.name}</span>
+        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles['Delete']} />
         <DragHandle />
       </Link>
     )
@@ -334,14 +334,14 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         {order ? (
           <input
             type="text"
-            className={styles['EditOrderComponent__name']}
+            className={styles['Name']}
             value={this.state.inputValue}
             onChange={this.handleChange}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
           />
         ) : (
-          <div className={styles['EditOrderComponent__name']}>
+          <div className={styles['Name']}>
             <i>Default</i>
           </div>
         )}
@@ -357,7 +357,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         />
         <button
           type="button"
-          className={classNames(styles['EditOrdersComponent__new'], globalStyles['Button'], globalStyles['padded'])}
+          className={classNames(styles['New'], globalStyles['Button'], globalStyles['padded'])}
           aria-label="New Category"
           onClick={this.createCategory}
         >
@@ -365,7 +365,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         </button>
         <button
           type="button"
-          className={classNames(styles['EditOrdersComponent__delete'], globalStyles['Button'], globalStyles['padded'])}
+          className={classNames(styles['Delete'], globalStyles['Button'], globalStyles['padded'])}
           aria-label="Delete all categories"
           onClick={this.handleDeleteAll}
         >
@@ -373,7 +373,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         </button>
         <button
           type="button"
-          className={classNames(styles['EditOrderComponent__back'], globalStyles['Button'], globalStyles['padded'])}
+          className={classNames(styles['Back'], globalStyles['Button'], globalStyles['padded'])}
           onClick={() => this.props.up(1)}
         >
           Back
@@ -475,29 +475,29 @@ const SortableCategory = SortableElement(
           [styles['colorPickerOpen']]: showPicker,
         })}
       >
-        <CategoryComponent category={category} className={styles['SortableCategory__icon']} ref={categoryComponentRef}>
+        <CategoryComponent category={category} className={styles['Icon']} ref={categoryComponentRef}>
           <input
             type="text"
-            className={styles['SortableCategory__icon__input']}
+            className={styles['Input']}
             value={shortNameInputValue ?? category.shortName}
             onChange={handleShortNameChange}
             onFocus={() => setShowPicker(true)}
             onBlur={() => setShortNameInputValue(undefined)}
           />
           {showPicker && (
-            <div className={styles['SortableCategory__colorPickerContainer']}>
+            <div className={styles['ColorPickerContainer']}>
               <ChromePicker color={category.color} onChange={handleColorChange} disableAlpha={true} />
             </div>
           )}
         </CategoryComponent>
         <input
           type="text"
-          className={styles['SortableCategory__name']}
+          className={styles['Name']}
           value={nameInputValue ?? category.name}
           onChange={handleNameChange}
           onBlur={() => setNameInputValue(undefined)}
         />
-        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles['SortableCategory__delete']} />
+        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles['Delete']} />
         <DragHandle />
       </div>
     )

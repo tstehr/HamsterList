@@ -254,14 +254,14 @@ export default class CreateItemComponent extends Component<Props, State> {
       >
         <KeyFocusComponent direction="vertical" rootTagName="div">
           <form
-            className={classNames(styles['CreateItemComponent__form'], isMultiline && styles['multiline'])}
+            className={classNames(styles['Form'], isMultiline && styles['multiline'])}
             onSubmit={this.handleSubmit}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
           >
-            <div className={styles['CreateItemComponent__form__inputWrapper']} onClick={() => this.input && this.input.focus()}>
+            <div className={styles['InputWrapper']} onClick={() => this.input && this.input.focus()}>
               {!isCreatingItem && (
-                <div className={styles['CreateItemComponent__form__inputWrapper__placeholder']}>
+                <div className={styles['Placeholder']}>
                   {isMultiline ? (
                     <span>
                       New Item 1<br />
@@ -284,13 +284,13 @@ export default class CreateItemComponent extends Component<Props, State> {
             </div>
             <button
               type="button"
-              className={classNames(styles['CreateItemComponent__form__toggleMultiline'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
+              className={classNames(styles['ToggleMultiline'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
               onClick={this.handleToggleMultiline}
             >
               {isMultiline ? '▲' : '▼'}
             </button>
             <IconButton
-              className={classNames(styles['CreateItemComponent__form__save'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
+              className={classNames(styles['Save'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
               icon="ADD"
               alt="Add new item
             "

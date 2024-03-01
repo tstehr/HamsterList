@@ -4,45 +4,45 @@
   z-index: 0;
 }
 
-.EditOrdersComponent__order + .EditOrdersComponent__orders {
+.Order + .Orders {
   display: none;
 }
 @media (min-width: 40rem) {
   .EditOrdersComponent {
     display: flex;
   }
-  .EditOrdersComponent__order + .EditOrdersComponent__orders {
+  .Order + .Orders {
     display: block;
   }
-  .EditOrdersComponent__orders {
+  .Orders {
     width: 33%;
     min-width: 15rem;
     margin-right: 1rem;
   }
-  .EditOrdersComponent__orders__back,
-  .EditOrderComponent__back {
+  .Back,
+  .Back {
     display: none !important;
   }
-  .EditOrdersComponent__order {
+  .Order {
     flex: 1;
     order: 1;
   }
 }
 
-.EditOrdersComponent__new {
+.New {
   --button-bg-color: var(--small-feature-color) !important;
   color: var(--text-color) !important;
   position: relative;
   z-index: 998;
 }
-.EditOrdersComponent__delete {
+.Delete {
   --button-bg-color: var(--failure-color) !important;
   color: var(--text-color) !important;
   position: relative;
   z-index: 998;
 }
 
-.EditOrderComponent__name {
+.Name {
   display: block;
   width: 100%;
   border: 0;
@@ -63,12 +63,12 @@
 .SortableOrder {
   padding-left: 0.5rem;
 }
-.SortableOrder__name,
-.SortableCategory__name {
+.Name,
+.Name {
   flex: 1;
 }
-.SortableCategory__delete,
-.SortableOder__delete {
+.Delete,
+.Delete {
   width: 3rem;
   flex-shrink: 0;
 }
@@ -84,11 +84,11 @@
 .SortableCategory.colorPickerOpen {
   z-index: 1001;
 }
-.SortableCategory__icon {
+.Icon {
   width: 3rem;
   height: 3rem;
 }
-.SortableCategory__icon__input {
+.Input {
   width: auto;
   border: 0;
   background: none;
@@ -100,20 +100,20 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.SortableCategory__colorPickerContainer {
+.ColorPickerContainer {
   position: absolute;
   top: -1rem;
   left: 3rem;
   z-index: 1001;
 }
 
-.SortableCategory:nth-child(4) ~ .SortableCategory:nth-last-child(1) .SortableCategory__colorPickerContainer,
-.SortableCategory:nth-child(4) ~ .SortableCategory:nth-last-child(2) .SortableCategory__colorPickerContainer {
+.SortableCategory:nth-child(4) ~ .SortableCategory:nth-last-child(1) .ColorPickerContainer,
+.SortableCategory:nth-child(4) ~ .SortableCategory:nth-last-child(2) .ColorPickerContainer {
   top: auto;
   bottom: -1rem;
 }
 
-.SortableCategory__name {
+.Name {
   align-self: stretch;
   display: block;
   border: none;
