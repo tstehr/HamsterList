@@ -90,7 +90,7 @@ export default function CreateItemButtonComponent(props: Props) {
             onClick={() => (props.deleteCompletion ? props.deleteCompletion(props.item.name) : undefined)}
             icon="DELETE"
             alt="Delete completion"
-            className={KEY_FOCUS_COMPONENT_NO_FOCUS}
+            className={classNames(styles.IconButton, KEY_FOCUS_COMPONENT_NO_FOCUS)}
           />
         )}
       </div>
