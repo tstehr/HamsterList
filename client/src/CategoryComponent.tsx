@@ -37,12 +37,12 @@ const CategoryComponent = React.memo(
     }
     return (
       <div
-        className={styles['CategoryComponent']}
+        className={styles.CategoryComponent}
         title={category.name}
         ref={ref}
         {..._.omit(props, 'category', 'categories', 'categoryId')}
       >
-        <div className={styles['Circle']} style={style}>
+        <div className={styles.Circle} style={style}>
           {props.children ? props.children : <span>{initials}</span>}
         </div>
       </div>
@@ -64,7 +64,7 @@ const CategoryTextComponent = React.memo((props: Props) => {
     color: category.lightText ? '#fff' : '#000',
   }
   return (
-    <span className={styles['CategoryTextComponent']} title={category.name} style={style}>
+    <span className={styles.CategoryTextComponent} title={category.name} style={style}>
       {initials}
     </span>
   )
@@ -79,7 +79,7 @@ class CategoryListItemComponent extends Component<Props> {
       color: category.lightText ? '#fff' : '#000',
     }
     return (
-      <li className={styles['CategoryListItemComponent']} style={style}>
+      <li className={styles.CategoryListItemComponent} style={style}>
         {category.name}
       </li>
     )

@@ -74,7 +74,7 @@ function ChooseList({
             </option>
           ))}
       </datalist>
-      <button type="submit" className={globalStyles['PaddedButton']}>
+      <button type="submit" className={globalStyles.PaddedButton}>
         Load
       </button>
     </form>
@@ -222,10 +222,10 @@ function ImportFromList({
           </label>
         </>
       )}
-      <button type="submit" className={globalStyles['PaddedButton']}>
+      <button type="submit" className={globalStyles.PaddedButton}>
         Import
       </button>
-      <button type="button" onClick={cancel} className={globalStyles['PaddedButton']}>
+      <button type="button" onClick={cancel} className={globalStyles.PaddedButton}>
         Cancel
       </button>
     </form>

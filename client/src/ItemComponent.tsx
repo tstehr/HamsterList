@@ -30,7 +30,7 @@ interface Props {
 
 const ItemComponent = React.memo(
   (props: Props) => (
-    <span className={classNames(styles['ItemComponent'], props.className)}>
+    <span className={classNames(styles.ItemComponent, props.className)}>
       <AmountComponent amount={props.item.amount} /> {props.item.name}
     </span>
   ),

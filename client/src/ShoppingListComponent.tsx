@@ -174,7 +174,7 @@ export default class ShoppingListComponent extends Component<Props> {
         <section>
           <h2>Tools</h2>
           <p>
-            <button type="button" className={globalStyles['PaddedButton']} onClick={this.shareList}>
+            <button type="button" className={globalStyles.PaddedButton} onClick={this.shareList}>
               Share
             </button>
           </p>
@@ -185,13 +185,13 @@ export default class ShoppingListComponent extends Component<Props> {
             </label>
           </p>
           <p>
-            <button type="button" className={globalStyles['PaddedButton']} onClick={this.convertToCookingAmounts}>
+            <button type="button" className={globalStyles.PaddedButton} onClick={this.convertToCookingAmounts}>
               Convert to metric units
             </button>
-            <button type="button" className={globalStyles['PaddedButton']} onClick={this.mergeItems}>
+            <button type="button" className={globalStyles.PaddedButton} onClick={this.mergeItems}>
               Merge
             </button>
-            <button type="button" className={globalStyles['PaddedButton']} onClick={this.clearList}>
+            <button type="button" className={globalStyles.PaddedButton} onClick={this.clearList}>
               Clear List
             </button>
           </p>
@@ -203,13 +203,13 @@ export default class ShoppingListComponent extends Component<Props> {
         <section>
           <h2>Debug</h2>
           <p>
-            <button type="button" className={globalStyles['PaddedButton']} onClick={this.props.manualSync}>
+            <button type="button" className={globalStyles.PaddedButton} onClick={this.props.manualSync}>
               Force Sync
             </button>
-            <button type="button" className={globalStyles['PaddedButton']} onClick={this.removeListFromDB}>
+            <button type="button" className={globalStyles.PaddedButton} onClick={this.removeListFromDB}>
               Clear Local Storage
             </button>
-            <button type="button" className={globalStyles['PaddedButton']} onClick={this.deleteNegativeAmountItems}>
+            <button type="button" className={globalStyles.PaddedButton} onClick={this.deleteNegativeAmountItems}>
               Delete items with negative amounts
             </button>
           </p>

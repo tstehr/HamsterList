@@ -15,14 +15,14 @@ interface Props {
 }
 
 export default function TopBarComponent(props: Props): JSX.Element {
-  const className = classNames(styles['TopBarComponent'], {
-    [styles['responsive']]: props.responsive == null ? true : props.responsive,
+  const className = classNames(styles.TopBarComponent, {
+    [styles.responsive]: props.responsive == null ? true : props.responsive,
   })
   return (
     <header className={className}>
-      <div className={styles['Content']}>
+      <div className={styles.Content}>
         {props.back && (
-          <button type="button" className={styles['Back']} onClick={props.back} aria-label="Back to all lists">
+          <button type="button" className={styles.Back} onClick={props.back} aria-label="Back to all lists">
             <Back />
           </button>
         )}
@@ -59,7 +59,7 @@ export function EditTitleComponent(props: EditTitleProps): JSX.Element {
 
     return (
       <input
-        className={styles['EditTitleComponent']}
+        className={styles.EditTitleComponent}
         type="text"
         value={inputValue}
         onBlur={handleBlur}
@@ -74,7 +74,7 @@ export function EditTitleComponent(props: EditTitleProps): JSX.Element {
     }
 
     return (
-      <h1 tabIndex={0} className={styles['EditTitleComponent']} onFocus={handleFocus}>
+      <h1 tabIndex={0} className={styles.EditTitleComponent} onFocus={handleFocus}>
         <span>{props.title}</span>
       </h1>
     )
@@ -113,10 +113,10 @@ export function SyncStatusComponent(props: SyncStatusProps): JSX.Element {
 
   const showSyncing = props.syncing || fakeSyncing
   const showFailure = props.lastSyncFailed || props.connectionState === 'disconnected'
-  const statusClasses = classNames(styles['SyncStatusComponent'], {
-    [styles['syncing']]: showSyncing,
-    [styles['failure']]: showFailure,
-    [styles['synced']]: !showFailure && !props.dirty && !showSyncing,
+  const statusClasses = classNames(styles.SyncStatusComponent, {
+    [styles.syncing]: showSyncing,
+    [styles.failure]: showFailure,
+    [styles.synced]: !showFailure && !props.dirty && !showSyncing,
   })
 
   return (

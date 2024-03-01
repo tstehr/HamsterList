@@ -76,11 +76,11 @@ export default class EditOrdersComponent extends Component<Props> {
     return (
       <Route
         render={({ history }: RouteComponentProps) => (
-          <div className={styles['EditOrdersComponent']}>
+          <div className={styles.EditOrdersComponent}>
             <Route
               path="/:listid/orders/:orderid"
               render={({ history, match }: RouteComponentProps<{ orderid: string }>) => (
-                <div className={styles['Order']}>
+                <div className={styles.Order}>
                   <NullSafeEditOrderComponent
                     listid={this.props.listid}
                     orders={this.props.orders}
@@ -95,10 +95,10 @@ export default class EditOrdersComponent extends Component<Props> {
               )}
             />
 
-            <div className={styles['Orders']}>
+            <div className={styles.Orders}>
               <Link
                 to={`/${this.props.listid}/orders/categories`}
-                className={classNames(globalStyles['Button'], globalStyles['padded'])}
+                className={classNames(globalStyles.Button, globalStyles.padded)}
               >
                 <i>Default</i>
               </Link>
@@ -106,7 +106,7 @@ export default class EditOrdersComponent extends Component<Props> {
               <SortableOrders
                 orders={this.props.orders}
                 listid={this.props.listid}
-                helperClass={classNames(styles['SortableOrder'], styles['dragging'])}
+                helperClass={classNames(styles.SortableOrder, styles.dragging)}
                 lockAxis="y"
                 useDragHandle={true}
                 onSortEnd={this.handleSortEnd}
@@ -115,7 +115,7 @@ export default class EditOrdersComponent extends Component<Props> {
 
               <button
                 type="button"
-                className={classNames(styles['New'], globalStyles['Button'], globalStyles['padded'])}
+                className={classNames(styles.New, globalStyles.Button, globalStyles.padded)}
                 aria-label="New Order"
                 onClick={this.makeCreateOrder(history)}
               >
@@ -151,9 +151,9 @@ const SortableOrder = SortableElement(
     }
 
     return (
-      <Link to={`/${listid}/orders/${order.id}`} className={classNames(styles['SortableOrder'], globalStyles['Button'])}>
-        <span className={styles['Name']}>{order.name}</span>
-        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles['Delete']} />
+      <Link to={`/${listid}/orders/${order.id}`} className={classNames(styles.SortableOrder, globalStyles.Button)}>
+        <span className={styles.Name}>{order.name}</span>
+        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles.Delete} />
         <DragHandle />
       </Link>
     )
@@ -199,7 +199,7 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps): JSX.Element 
           <p>Not found :(</p>
           <button
             type="button"
-            className={classNames(globalStyles['Button'], globalStyles['padded'])}
+            className={classNames(globalStyles.Button, globalStyles.padded)}
             onClick={() => props.up(1)}
           >
             Back
@@ -334,21 +334,21 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         {order ? (
           <input
             type="text"
-            className={styles['Name']}
+            className={styles.Name}
             value={this.state.inputValue}
             onChange={this.handleChange}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
           />
         ) : (
-          <div className={styles['Name']}>
+          <div className={styles.Name}>
             <i>Default</i>
           </div>
         )}
 
         <SortableCategories
           categories={sortedCategories}
-          helperClass={classNames(styles['SortableCategory'], styles['dragging'])}
+          helperClass={classNames(styles.SortableCategory, styles.dragging)}
           lockAxis="y"
           onSortEnd={this.handleSortEnd}
           useDragHandle={true}
@@ -357,7 +357,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         />
         <button
           type="button"
-          className={classNames(styles['New'], globalStyles['Button'], globalStyles['padded'])}
+          className={classNames(styles.New, globalStyles.Button, globalStyles.padded)}
           aria-label="New Category"
           onClick={this.createCategory}
         >
@@ -365,7 +365,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         </button>
         <button
           type="button"
-          className={classNames(styles['Delete'], globalStyles['Button'], globalStyles['padded'])}
+          className={classNames(styles.Delete, globalStyles.Button, globalStyles.padded)}
           aria-label="Delete all categories"
           onClick={this.handleDeleteAll}
         >
@@ -373,7 +373,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
         </button>
         <button
           type="button"
-          className={classNames(styles['Back'], globalStyles['Button'], globalStyles['padded'])}
+          className={classNames(styles.Back, globalStyles.Button, globalStyles.padded)}
           onClick={() => this.props.up(1)}
         >
           Back
@@ -471,33 +471,33 @@ const SortableCategory = SortableElement(
 
     return (
       <div
-        className={classNames(styles['SortableCategory'], globalStyles['Button'], {
-          [styles['colorPickerOpen']]: showPicker,
+        className={classNames(styles.SortableCategory, globalStyles.Button, {
+          [styles.colorPickerOpen]: showPicker,
         })}
       >
-        <CategoryComponent category={category} className={styles['Icon']} ref={categoryComponentRef}>
+        <CategoryComponent category={category} className={styles.Icon} ref={categoryComponentRef}>
           <input
             type="text"
-            className={styles['Input']}
+            className={styles.Input}
             value={shortNameInputValue ?? category.shortName}
             onChange={handleShortNameChange}
             onFocus={() => setShowPicker(true)}
             onBlur={() => setShortNameInputValue(undefined)}
           />
           {showPicker && (
-            <div className={styles['ColorPickerContainer']}>
+            <div className={styles.ColorPickerContainer}>
               <ChromePicker color={category.color} onChange={handleColorChange} disableAlpha={true} />
             </div>
           )}
         </CategoryComponent>
         <input
           type="text"
-          className={styles['Name']}
+          className={styles.Name}
           value={nameInputValue ?? category.name}
           onChange={handleNameChange}
           onBlur={() => setNameInputValue(undefined)}
         />
-        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles['Delete']} />
+        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles.Delete} />
         <DragHandle />
       </div>
     )
@@ -505,7 +505,7 @@ const SortableCategory = SortableElement(
 )
 
 const DragHandle = SortableHandle(() => (
-  <div className={styles['DragHandle']}>
+  <div className={styles.DragHandle}>
     <svg version="1.1" width="24" height="24" viewBox="0 0 24 24">
       <path d="M21 11H3V9H21V11M21 13H3V15H21V13Z" />
     </svg>

@@ -27,11 +27,11 @@ export default class ChooseCategoryComponent extends Component<Props> {
       const count = Math.ceil((this.props.categories.length + 1) / 10) * 10
       return ReactDOM.createPortal(
         <div
-          className={styles['ChooseCategoryComponent']}
+          className={styles.ChooseCategoryComponent}
           onClick={this.createOnClick(this.props.categoryId)}
           data-categorycount={count}
         >
-          <KeyFocusComponent direction="vertical" rootTagName="div" className={styles['Window']}>
+          <KeyFocusComponent direction="vertical" rootTagName="div" className={styles.Window}>
             {this.props.categories.map((category) => (
               <button type="button" key={category.id} onClick={this.createOnClick(category.id)}>
                 <CategoryComponent category={category} />
@@ -42,7 +42,7 @@ export default class ChooseCategoryComponent extends Component<Props> {
               <CategoryComponent categoryId={null} />
               <div>Remove category</div>
             </button>
-            <button onClick={this.createOnClick(this.props.categoryId)} className={styles['Cancel']}>
+            <button onClick={this.createOnClick(this.props.categoryId)} className={styles.Cancel}>
               Cancel
             </button>
           </KeyFocusComponent>

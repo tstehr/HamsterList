@@ -27,10 +27,10 @@ export default class OrderSelectComponent extends Component<Props> {
     const order = _.find(this.props.orders, _.matchesProperty('id', this.props.selectedOrder))
 
     return (
-      <label className={styles['OrderSelectComponent']}>
-        <span className={styles['Text']}>Sorting:</span>
+      <label className={styles.OrderSelectComponent}>
+        <span className={styles.Text}>Sorting:</span>
         <select
-          className={classNames(styles['Select'], KEY_FOCUS_COMPONENT_NO_FOCUS)}
+          className={classNames(styles.Select, KEY_FOCUS_COMPONENT_NO_FOCUS)}
           value={order != null ? order.id : 'default'}
           onChange={this.handleChange}
         >

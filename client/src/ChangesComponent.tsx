@@ -116,21 +116,21 @@ export default function ChangesComponent(props: Props): JSX.Element {
 
   const diffs = allDiffs.slice(start, end)
   return (
-    <div className={styles['ChangesComponent']}>
+    <div className={styles.ChangesComponent}>
       {start > 0 && (
-        <button type="button" className={globalStyles['PaddedButton']} onClick={loadNewer}>
+        <button type="button" className={globalStyles.PaddedButton} onClick={loadNewer}>
           Show newer changes
         </button>
       )}
       <FlipMove
         typeName="ul"
-        className={styles['List']}
+        className={styles.List}
         duration="250"
         staggerDelayBy="10"
         enterAnimation="accordionVertical"
         leaveAnimation="accordionVertical"
       >
-        {/* <ul className={styles['List']}> */}
+        {/* <ul className={styles.List}> */}
         {diffs.map(({ change, changeIndex, unsynced, diff, diffIndex }, absoluteDiffIndex) => {
           const detailsExpanded =
             expandedChange != null && expandedChange.id === change.id && detailsExpandedDiff.diffIndex === diffIndex
@@ -158,12 +158,12 @@ export default function ChangesComponent(props: Props): JSX.Element {
         {/* </ul> */}
       </FlipMove>
       {end < allDiffs.length && (
-        <button type="button" className={globalStyles['PaddedButton']} onClick={loadOlder}>
+        <button type="button" className={globalStyles.PaddedButton} onClick={loadOlder}>
           Show older changes
         </button>
       )}
       {(end !== defaultDiffLength || start !== 0) && (
-        <button type="button" className={globalStyles['PaddedButton']} onClick={reset}>
+        <button type="button" className={globalStyles.PaddedButton} onClick={reset}>
           Reset
         </button>
       )}
@@ -204,9 +204,9 @@ export class DiffComponent extends Component<DiffProps> {
   }
 
   render(): JSX.Element {
-    const elClasses = classNames(styles['DiffComponent'], {
-      [styles['unsynced']]: this.props.unsynced,
-      [styles['expanded']]: this.props.detailsExpanded,
+    const elClasses = classNames(styles.DiffComponent, {
+      [styles.unsynced]: this.props.unsynced,
+      [styles.expanded]: this.props.detailsExpanded,
     })
     const [dateString, absoluteDateString, isoDateString] = this.getDateString(this.props.change.date)
     const [applicableDiff, reverseEqualApplicable] = this.getApplicableDiff(this.props.diff)
@@ -236,7 +236,7 @@ export class DiffComponent extends Component<DiffProps> {
     return (
       <li className={elClasses}>
         <header>
-          <button type="button" onClick={this.props.onHeaderClick} className={styles['HeaderButton']}>
+          <button type="button" onClick={this.props.onHeaderClick} className={styles.HeaderButton}>
             {this.props.change.username != null && this.props.change.username.trim() !== '' ? (
               this.props.change.username
             ) : (
@@ -246,7 +246,7 @@ export class DiffComponent extends Component<DiffProps> {
             {this.createDiffElement(this.props.diff, 'PAST')}
           </button>
         </header>
-        <ul className={styles['Details']}>
+        <ul className={styles.Details}>
           <li>
             <time dateTime={isoDateString} title={absoluteDateString}>
               {dateString}
@@ -263,8 +263,8 @@ export class DiffComponent extends Component<DiffProps> {
               onClick={undo}
               tabIndex={this.props.detailsExpanded ? 0 : -1}
               role="button"
-              className={classNames(styles['UndoLink'], {
-                [styles['disabled']]: applicableDiff == null,
+              className={classNames(styles.UndoLink, {
+                [styles.disabled]: applicableDiff == null,
               })}
             >
               {applicableDiff != null ? (
@@ -288,8 +288,8 @@ export class DiffComponent extends Component<DiffProps> {
               onClick={undoNewer}
               tabIndex={this.props.detailsExpanded ? 0 : -1}
               role="button"
-              className={classNames(styles['UndoLink'], {
-                [styles['disabled']]: this.props.isNewest,
+              className={classNames(styles.UndoLink, {
+                [styles.disabled]: this.props.isNewest,
               })}
             >
               Undo all newer changes

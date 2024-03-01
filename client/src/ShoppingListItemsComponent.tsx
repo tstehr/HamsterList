@@ -66,7 +66,7 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
     <KeyFocusComponent
       direction="vertical"
       rootTagName="ul"
-      className={styles['ShoppingListItemsComponent']}
+      className={styles.ShoppingListItemsComponent}
       style={{
         minHeight: `${Math.max(3 * props.items.length + 6, 11)}rem`,
       }}
@@ -106,14 +106,14 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
           )
         )}
         {!props.items.length && (
-          <div className={styles['EmptyList']}>
+          <div className={styles.EmptyList}>
             <p>
               Empty list, nothing needed{' '}
               <span role="img" aria-label="Party Popper">
                 🎉
               </span>
             </p>
-            <p className={classNames(styles['AddCallout'], styles['singleCol'])}>
+            <p className={classNames(styles.AddCallout, styles.singleCol)}>
               <span role="img" aria-label="Arrow to entry form">
                 ⬇️{' '}
               </span>
@@ -123,7 +123,7 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
                 ⬇️
               </span>
             </p>
-            <p className={classNames(styles['AddCallout'], styles['twoCol'])}>
+            <p className={classNames(styles.AddCallout, styles.twoCol)}>
               <span role="img" aria-label="Arrow to entry form">
                 ➡️{' '}
               </span>

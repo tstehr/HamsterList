@@ -26,13 +26,13 @@ export default function ServiceWorkerInstall() {
   useCheckForUpdateOnVisible()
 
   return showReload ? (
-    <div className={styles['ServiceWorkerInstall']}>
+    <div className={styles.ServiceWorkerInstall}>
       <h3>Update available</h3>
       <div>
-        <button onClick={() => setShowReload(false)} className={globalStyles['PaddedButton']}>
+        <button onClick={() => setShowReload(false)} className={globalStyles.PaddedButton}>
           Ignore
         </button>
-        <button onClick={reloadPage} className={globalStyles['PaddedButton']}>
+        <button onClick={reloadPage} className={globalStyles.PaddedButton}>
           Update
         </button>
       </div>
