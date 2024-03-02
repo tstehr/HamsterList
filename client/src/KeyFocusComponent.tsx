@@ -10,6 +10,8 @@ type Props = {
   direction: Direction
 } & React.HTMLAttributes<HTMLOrSVGElement>
 
+export const KEY_FOCUS_COMPONENT_NO_FOCUS = 'KEY_FOCUS_COMPONENT_NO_FOCUS'
+
 export default class KeyFocusComponent extends Component<Props> {
   root: HTMLElement | undefined | null
   back: ArrowKey
@@ -89,7 +91,7 @@ export default class KeyFocusComponent extends Component<Props> {
   }
 
   canReceiveFocus(el: HTMLElement): boolean {
-    if (el.classList.contains('KeyFocusComponent--noFocus')) {
+    if (el.classList.contains(KEY_FOCUS_COMPONENT_NO_FOCUS)) {
       return false
     }
 

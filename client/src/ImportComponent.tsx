@@ -1,21 +1,22 @@
-import classNames from 'classnames'
-import { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY } from 'DB'
+import { Key, RECENTLY_USED_KEY, RecentlyUsedList, getRecentlyUsedLists } from 'DB'
 import LocalStorageDB from 'LocalStorageDB'
+import classNames from 'classnames'
 import _ from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   CategoryDefinition,
   CompletionItem,
-  createRandomUUID,
   Item,
-  mergeCategoryLists,
   Order,
+  createRandomUUID,
+  mergeCategoryLists,
   transformItemsToCategories,
   transformOrderToCategories,
 } from 'shoppinglist-shared'
 import { CreateItem, DeleteItem, ModifyCompletions, UpdateCategories, UpdateOrders } from 'sync'
 import useSync from 'useSync'
 import styles from './ImportComponent.module.css'
+import globalStyles from './index.module.css'
 
 interface Props {
   listid: string
@@ -73,7 +74,7 @@ function ChooseList({
             </option>
           ))}
       </datalist>
-      <button type="submit" className="PaddedButton">
+      <button type="submit" className={globalStyles.PaddedButton}>
         Load
       </button>
     </form>
@@ -221,10 +222,10 @@ function ImportFromList({
           </label>
         </>
       )}
-      <button type="submit" className="PaddedButton">
+      <button type="submit" className={globalStyles.PaddedButton}>
         Import
       </button>
-      <button type="button" onClick={cancel} className="PaddedButton">
+      <button type="button" onClick={cancel} className={globalStyles.PaddedButton}>
         Cancel
       </button>
     </form>

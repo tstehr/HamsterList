@@ -5,10 +5,10 @@
   height: 2.5rem;
   align-items: center;
 }
-.OrderSelectComponent__text {
+.Text {
   padding-right: 0.5rem;
 }
-.OrderSelectComponent__select {
+.Select {
   flex: 1;
 }
 @media (min-width: 30rem) {

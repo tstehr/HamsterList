@@ -7,24 +7,24 @@
   user-select: none;
 }
 
-.EditItemComponent__category {
+.Category {
   font-size: 1rem;
   font-family: inherit;
   border: 0;
   background: transparent;
 }
 
-.EditItemComponent__name {
+.Name {
   flex: 1;
   display: flex;
   align-items: center;
   padding-left: 0.5rem;
 }
-.EditItemComponent__name:focus-within {
+.Name:focus-within {
   box-shadow: 0 0 3px var(--focus-color), inset 0 0 3px var(--focus-color);
   background: var(--background-color);
 }
-.EditItemComponent__name > * {
+.Name > * {
   flex: 1;
   font-size: 1rem;
   font-family: inherit;
@@ -38,11 +38,11 @@
   background: transparent;
   resize: none;
 }
-.EditItemComponent__name > textarea {
+.Name > textarea {
   background: transparent;
   color: var(--text-color);
 }
-.EditItemComponent__name > textarea:focus {
+.Name > textarea:focus {
   box-shadow: none;
 }
 
@@ -66,8 +66,8 @@
     break-inside: avoid;
     margin-bottom: 0.1rem;
   }
-  .EditItemComponent__category,
-  .EditItemComponent__delete {
+  .Category,
+  .Delete {
     display: none;
   }
 }

@@ -1,5 +1,7 @@
+import classNames from 'classnames'
 import React from 'react'
-import './IconButton.css'
+import styles from './IconButton.module.css'
+
 type IconType = 'DELETE' | 'ADD'
 interface Props {
   icon: IconType
@@ -9,7 +11,7 @@ interface Props {
 }
 export default function IconButton(props: Props): JSX.Element {
   return (
-    <button onClick={props.onClick} className={'IconButton ' + (props.className ? props.className : '')}>
+    <button onClick={props.onClick} className={classNames(styles.IconButton, props.className)}>
       {getSvg(props.icon, props.alt)}
     </button>
   )

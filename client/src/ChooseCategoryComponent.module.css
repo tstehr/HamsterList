@@ -22,7 +22,7 @@
   text-align: left;
   height: 3rem;
 }
-.ChooseCategoryComponent button.ChooseCategoryComponent__cancel {
+.ChooseCategoryComponent button.Cancel {
   border-width: 2px 0;
   padding: 0 0.5rem;
 }
@@ -31,7 +31,7 @@
     background: hsla(var(--text-color-hsl-value), 0.5);
     padding: 0;
   }
-  .ChooseCategoryComponent__window {
+  .Window {
     columns: 10em;
     column-gap: 1rem;
     padding: 1.5rem 2rem;
@@ -46,14 +46,14 @@
     margin: 0.5rem 0;
     padding-right: 0.5rem;
   }
-  .ChooseCategoryComponent button.ChooseCategoryComponent__cancel {
+  .ChooseCategoryComponent button.Cancel {
     border: 0;
     background: var(--small-feature-color);
     color: var(--text-color);
   }
 }
 @media (min-width: 60rem) and (min-height: 40rem) {
-  .ChooseCategoryComponent__window {
+  .Window {
     columns: 13rem;
   }
 }

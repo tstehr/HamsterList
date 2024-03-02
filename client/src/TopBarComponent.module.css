@@ -21,7 +21,7 @@
     margin-bottom: -3rem;
   }
 }
-.TopBarComponent__content {
+.Content {
   max-width: var(--single-col-max-width);
   height: 3rem;
   margin: 0 auto;
@@ -30,7 +30,7 @@
   align-items: stretch;
 }
 @media (min-width: 40rem) {
-  .TopBarComponent--responsive .TopBarComponent__content {
+  .TopBarComponent.responsive .Content {
     max-width: var(--two-col-max-width);
     --top-bar-side-padding: 1rem;
     padding: 0 var(--top-bar-side-padding);
@@ -39,11 +39,11 @@
   }
 }
 @media (min-width: 50rem) {
-  .TopBarComponent--responsive .TopBarComponent__content {
+  .TopBarComponent.responsive .Content {
     --top-bar-side-padding: 2rem;
   }
 }
-.TopBarComponent__back {
+.Back {
   width: 3.5rem;
   padding: 0 0.7rem;
   flex-shrink: 0;
@@ -51,14 +51,14 @@
   background: none;
   color: var(--text-on-theme-color);
 }
-.TopBarComponent__back svg {
+.Back svg {
   fill: currentColor;
   height: 100%;
   width: 80%;
   display: block;
 }
 @media print {
-  .TopBarComponent__back {
+  .Back {
     display: none;
   }
 }
@@ -101,13 +101,13 @@
     display: none;
   }
 }
-.SyncStatusComponent--syncing {
+.SyncStatusComponent.syncing {
   animation: 1s ease-in infinite blink;
 }
-.SyncStatusComponent--failure {
+.SyncStatusComponent.failure {
   color: var(--failure-color);
 }
-.SyncStatusComponent--failure.SyncStatusComponent--syncing {
+.SyncStatusComponent.failure.SyncStatusComponent.syncing {
   animation: 1s ease-in infinite blinkRed;
 }
 

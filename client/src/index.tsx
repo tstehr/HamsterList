@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 import shareApiPolyfill from 'share-api-polyfill'
 import smoothscroll from 'smoothscroll-polyfill'
 import App from './App'
-import './index.css'
 
 // kick off the polyfill!
 smoothscroll.polyfill()

@@ -2,27 +2,27 @@
   transition: min-height 200ms ease-in-out;
 }
 
-.ShoppingListItemsComponent__emptyList {
+.EmptyList {
   text-align: center;
   padding: 2rem 0 0;
 }
-.ShoppingListItemsComponent__emptyList p {
+.EmptyList p {
   margin-bottom: 0.2rem;
 }
 @media (min-width: 30rem) {
-  .ShoppingListItemsComponent__emptyList {
+  .EmptyList {
     padding: 0.5rem;
     background-color: var(--box-color);
   }
 }
-.ShoppingListItemsComponent__emptyList__addCallout--twoCol {
+.AddCallout.twoCol {
   display: none;
 }
 @media (min-width: 40rem) {
-  .ShoppingListItemsComponent__emptyList__addCallout--twoCol {
+  .AddCallout.twoCol {
     display: block;
   }
-  .ShoppingListItemsComponent__emptyList__addCallout--singleCol {
+  .AddCallout.singleCol {
     display: none;
   }
 }

@@ -70,7 +70,7 @@ button {
   color: inherit;
 }
 
-:not(select):focus {
+:not(select):focus-visible {
   outline: none;
   box-shadow: 0 0 3px var(--focus-color), inset 0 0 3px var(--focus-color);
 }
@@ -95,7 +95,7 @@ button.PaddedButton {
   text-decoration: none;
   color: var(--text-color);
 }
-.Button--padded {
+.Button.padded {
   padding: 0 0.5rem;
 }
 @media (min-width: 30rem) {
@@ -107,12 +107,12 @@ button.PaddedButton {
   }
 }
 
-#shareAPIPolyfill-container button {
+:global(#shareAPIPolyfill-container) button {
   color: black;
 }
-#shareAPIPolyfill-backdrop {
+:global(#shareAPIPolyfill-backdrop) {
   z-index: 101;
 }
-#shareAPIPolyfill-container {
+:global(#shareAPIPolyfill-container) {
   z-index: 102;
 }

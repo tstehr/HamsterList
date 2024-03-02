@@ -1,14 +1,17 @@
 import Frame from 'Frame'
 import IconButton from 'IconButton'
+import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
+import classNames from 'classnames'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import FlipMove from 'react-flip-move'
 import { Link, Redirect } from 'react-router-dom'
 import { createRandomUUID, createShoppingList } from 'shoppinglist-shared'
-import './ChooseListComponent.css'
-import DB, { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY, RESTORATION_ENABLED } from './DB'
+import styles from './ChooseListComponent.module.css'
+import DB, { Key, RECENTLY_USED_KEY, RESTORATION_ENABLED, RecentlyUsedList, getRecentlyUsedLists } from './DB'
 import LocalStorageDB from './LocalStorageDB'
 import TopBarComponent from './TopBarComponent'
+import globalStyles from './index.module.css'
 import { responseToJSON } from './utils'
 
 interface State {
@@ -117,15 +120,15 @@ export default class ChooseListComponent extends Component<{}, State> {
           {{
             topBar: (
               <TopBarComponent responsive={true}>
-                <h1 className="ChooseListComponent__title">ShoppingList</h1>
+                <h1 className={styles.Title}>ShoppingList</h1>
               </TopBarComponent>
             ),
             sections: [
-              <div className="ChooseListComponent__content">
+              <div className={styles.Content}>
                 <section>
                   <button
                     type="button"
-                    className="Button ChooseListComponent__randomButton"
+                    className={classNames(globalStyles.Button, styles.RandomButton)}
                     onClick={this.createRandomList.bind(this)}
                   >
                     <span>Create new List</span>
@@ -133,8 +136,8 @@ export default class ChooseListComponent extends Component<{}, State> {
                 </section>
 
                 <section>
-                  <div className="ChooseListComponent__openFormHeadline">Or create/open list with name</div>
-                  <form className="ChooseListComponent__openForm" onSubmit={this.onSubmit}>
+                  <div className={styles.OpenFormHeadline}>Or create/open list with name</div>
+                  <form className={styles.OpenForm} onSubmit={this.onSubmit}>
                     <input type="text" name="listid" ref={this.inputListid} />
                     <button>Go</button>
                   </form>
@@ -142,7 +145,7 @@ export default class ChooseListComponent extends Component<{}, State> {
 
                 {this.state.recentlyUsedLists.length > 0 && (
                   <section>
-                    <h2 className="ChooseListComponent__recentlyUsedHeadline">Recently Used</h2>
+                    <h2 className={styles.RecentlyUsedHeadline}>Recently Used</h2>
 
                     <FlipMove
                       typeName={null}
@@ -153,13 +156,16 @@ export default class ChooseListComponent extends Component<{}, State> {
                       leaveAnimation="accordionVertical"
                     >
                       {this.state.recentlyUsedLists.map((rul) => (
-                        <div className="Button ChooseListComponent__recentlyUsedLink" key={rul.id}>
+                        <div
+                          className={classNames(globalStyles.Button, styles.RecentlyUsedLink)}
+                          key={rul.id}
+                        >
                           <Link to={'/' + rul.id}>{rul.title}</Link>
                           <IconButton
                             onClick={(e) => this.removeRecentlyUsedList(rul.id)}
                             icon="DELETE"
                             alt="Remove from recently used"
-                            className="KeyFocusComponent--noFocus"
+                            className={KEY_FOCUS_COMPONENT_NO_FOCUS}
                           />
                         </div>
                       ))}
@@ -168,7 +174,7 @@ export default class ChooseListComponent extends Component<{}, State> {
                 )}
 
                 <section>
-                  <p className="ChooseListComponent__restorationCheckbox">
+                  <p className={styles.RestorationCheckbox}>
                     <label>
                       <input type="checkbox" checked={this.state.restorationEnabled} onChange={this.onRestorationEnabledChange} />{' '}
                       Return to last used list on open
@@ -178,7 +184,7 @@ export default class ChooseListComponent extends Component<{}, State> {
               </div>,
             ],
             footer: (
-              <div className="ChooseListComponent__footer">
+              <div className={styles.Footer}>
                 <p>
                   Icons made by{' '}
                   <a href="https://www.flaticon.com/authors/egor-rumyantsev" title="Egor Rumyantsev">
