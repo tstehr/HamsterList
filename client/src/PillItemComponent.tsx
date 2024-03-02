@@ -13,7 +13,11 @@ interface Props {
 const PillItemComponent = React.memo(
   (props: Props) => (
     <div className={styles.PillItemComponent}>
-      <CategoryTextComponent categoryId={props.item.category} categories={props.categories} />{' '}
+      <CategoryTextComponent
+        categoryId={props.item.category}
+        categories={props.categories}
+        className={styles.CategoryTextComponent}
+      />{' '}
       <ItemComponent item={props.item} className={styles.Item} />
     </div>
   ),

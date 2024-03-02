@@ -2,6 +2,7 @@ import _, { isEqual } from 'lodash'
 import React, { Component, ComponentProps, PropsWithChildren } from 'react'
 import { CategoryDefinition, UUID, createCategoryDefinition } from 'shoppinglist-shared'
 import styles from './CategoryComponent.module.css'
+import classNames from 'classnames'
 
 const unknownCategory = createCategoryDefinition({
   id: 'ffffffff-ffff-4fff-bfff-ffffffffffff',
@@ -19,16 +20,14 @@ const invalidCategory = createCategoryDefinition({
   lightText: true,
 })
 
-type Props = PropsWithChildren<
-  {
-    category?: CategoryDefinition
-    categories?: readonly CategoryDefinition[]
-    categoryId?: UUID | null
-  } & ComponentProps<'div'>
->
+type Props = PropsWithChildren<{
+  category?: CategoryDefinition
+  categories?: readonly CategoryDefinition[]
+  categoryId?: UUID | null
+}>
 
 const CategoryComponent = React.memo(
-  React.forwardRef<HTMLDivElement, Props>((props, ref) => {
+  React.forwardRef<HTMLDivElement, Props & ComponentProps<'div'>>((props, ref) => {
     const category = getCategory(props)
     const initials = category.shortName
     const style = {
@@ -37,10 +36,10 @@ const CategoryComponent = React.memo(
     }
     return (
       <div
-        className={styles.CategoryComponent}
+        className={classNames(styles.CategoryComponent, props.className)}
         title={category.name}
         ref={ref}
-        {..._.omit(props, 'category', 'categories', 'categoryId')}
+        {..._.omit(props, 'className', 'category', 'categories', 'categoryId')}
       >
         <div className={styles.Circle} style={style}>
           {props.children ? props.children : <span>{initials}</span>}
@@ -51,7 +50,7 @@ const CategoryComponent = React.memo(
   isEqual
 )
 
-const CategoryTextComponent = React.memo((props: Props) => {
+const CategoryTextComponent = React.memo((props: Props & ComponentProps<'span'>) => {
   const category = getCategory(props)
 
   if (category === unknownCategory) {
@@ -64,7 +63,12 @@ const CategoryTextComponent = React.memo((props: Props) => {
     color: category.lightText ? '#fff' : '#000',
   }
   return (
-    <span className={styles.CategoryTextComponent} title={category.name} style={style}>
+    <span
+      className={classNames(styles.CategoryTextComponent, props.className)}
+      title={category.name}
+      style={style}
+      {..._.omit(props, 'className', 'category', 'categories', 'categoryId')}
+    >
       {initials}
     </span>
   )
