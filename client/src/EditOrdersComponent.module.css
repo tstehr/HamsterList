@@ -63,12 +63,12 @@
 .SortableOrder {
   padding-left: 0.5rem;
 }
-.Name,
-.Name {
+.SortableOrderName,
+.SortableCategoryName {
   flex: 1;
 }
-.Delete,
-.Delete {
+.SortableOrderDelete,
+.SortableCategoryDelete {
   width: 3rem;
   flex-shrink: 0;
 }
@@ -84,11 +84,11 @@
 .SortableCategory.colorPickerOpen {
   z-index: 1001;
 }
-.Icon {
+.SortableCategoryIcon {
   width: 3rem;
   height: 3rem;
 }
-.Input {
+.SortableCategoryIconInput {
   width: auto;
   border: 0;
   background: none;
@@ -113,7 +113,7 @@
   bottom: -1rem;
 }
 
-.Name {
+.SortableCategoryName {
   align-self: stretch;
   display: block;
   border: none;

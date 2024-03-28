@@ -152,8 +152,8 @@ const SortableOrder = SortableElement(
 
     return (
       <Link to={`/${listid}/orders/${order.id}`} className={classNames(styles.SortableOrder, globalStyles.Button)}>
-        <span className={styles.Name}>{order.name}</span>
-        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles.Delete} />
+        <span className={styles.SortableOrderName}>{order.name}</span>
+        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles.SortableOrderDelete} />
         <DragHandle />
       </Link>
     )
@@ -475,10 +475,10 @@ const SortableCategory = SortableElement(
           [styles.colorPickerOpen]: showPicker,
         })}
       >
-        <CategoryComponent category={category} className={styles.Icon} ref={categoryComponentRef}>
+        <CategoryComponent category={category} className={styles.SortableCategoryIcon} ref={categoryComponentRef}>
           <input
             type="text"
-            className={styles.Input}
+            className={styles.SortableCategoryIconInput}
             value={shortNameInputValue ?? category.shortName}
             onChange={handleShortNameChange}
             onFocus={() => setShowPicker(true)}
@@ -492,12 +492,12 @@ const SortableCategory = SortableElement(
         </CategoryComponent>
         <input
           type="text"
-          className={styles.Name}
+          className={styles.SortableCategoryName}
           value={nameInputValue ?? category.name}
           onChange={handleNameChange}
           onBlur={() => setNameInputValue(undefined)}
         />
-        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles.Delete} />
+        <IconButton onClick={handleDelete} icon="DELETE" alt="Delete" className={styles.SortableCategoryDelete} />
         <DragHandle />
       </div>
     )
