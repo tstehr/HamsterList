@@ -1,15 +1,33 @@
 import { Up } from 'HistoryTracker'
-import React from 'react'
+import React, { useCallback, useEffect } from 'react'
+import { generatePath, match, useHistory } from 'react-router-dom'
 import ShoppingListComponent from 'ShoppingListComponent'
 import useSync from 'useSync'
 
 interface Props {
   listid: string
+  match: match<Record<string, string>>
   up: Up
 }
 
-export default function ShoppingListContainerComponent({ listid, up }: Props) {
+export default function ShoppingListContainerComponent({ listid, match, up }: Props) {
   const [state, sync] = useSync(listid)
+
+  const history = useHistory()
+  const updateListid = useCallback(
+    (newListid: string) => {
+      const newParams = { ...match.params, listid: newListid }
+      const newPath = generatePath(match.path, newParams)
+      history.replace(newPath)
+    },
+    [history, match.params, match.path]
+  )
+
+  useEffect(() => {
+    if (state && listid !== state.id) {
+      updateListid(state.id)
+    }
+  }, [listid, state, updateListid])
 
   return (
     <div>

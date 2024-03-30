@@ -521,10 +521,13 @@ class SyncingCore {
   }
 
   markListAsUsed(): void {
+    if (!this.state.id) {
+      return
+    }
     let recentlyUsedLists = this.db.get<readonly RecentlyUsedList[]>(RECENTLY_USED_KEY) ?? []
 
-    let listUsed = recentlyUsedLists.find((ru) => ru.id === this.listid) ?? {
-      id: this.listid,
+    let listUsed = recentlyUsedLists.find((ru) => ru.id === this.state.id) ?? {
+      id: this.state.id,
       uses: 0,
       lastUsedTimestamp: Date.now(),
     }
