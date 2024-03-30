@@ -16,6 +16,12 @@ Requests to non-existing resources will result in a *404 Not Found* status.
 
 Endpoint-specific errors are described below.
 
+## List id normalization
+
+List ids passed to endpoints are normalized by the server to a canonical form, which is then used to return the list. The normalization method is an implementation detail, clients should not perform normalization on their side. The list ids returned from the server are always in the form that is considered canonical for the list.
+
+Note that previously no list id normalization was performed. Therefore lists with an un-normalized canonical ids may exist in servers updated from pervious versions. When receiving a list from the user clients should always pass it verbatim to the server and let it handle returning the appropriate list.
+
 ## Username
 
 Clients should include a username to specify the name of the user that is performing the change. This name will be used in the [Changes](#Change) caused by the user.
