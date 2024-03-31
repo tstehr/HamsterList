@@ -6,7 +6,6 @@ export class HTTPErrorStatusError extends Error {
   constructor(msg: string, code: number) {
     super(msg)
     this.code = code
-    Error.captureStackTrace(this, HTTPErrorStatusError)
   }
 }
 
