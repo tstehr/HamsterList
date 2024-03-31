@@ -6,6 +6,7 @@ import { createRandomUUID } from 'shoppinglist-shared'
 import WebSocket from 'ws'
 import { getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList'
 import TokenCreator from './TokenCreator'
+import normalizeListid from './util/normalizeListid'
 
 export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 
@@ -63,7 +64,7 @@ export default class SocketController {
         return
       }
 
-      const listid = match[1]
+      const listid = normalizeListid(match[1])
       this.handleWs(ws, req, listid)
     })
   }
