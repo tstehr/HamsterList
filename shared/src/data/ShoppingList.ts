@@ -105,7 +105,8 @@ export function mergeShoppingLists(
 
   return createShoppingList(
     {
-      id: base.id,
+      // prefer id from the server to account for the fact that it may normalize the id (while clients will never change it)
+      id: server.id,
       items,
       title,
     },
