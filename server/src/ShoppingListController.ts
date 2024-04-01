@@ -41,11 +41,11 @@ export default class ShoppingListController {
     const listidParam = req.params.listid
     const { list, shouldPersist } = this.getList(listidParam)
     req.list = list
-    req.log.warn(listidParam, list.id, listidParam === list.id)
     if (shouldPersist) {
       req.updatedList = list
     }
     req.listid = list.id
+    req.unnormalizedListid = listidParam
 
     req.log = req.log.child({
       operation: req.url.substring(req.listid.length + 1),
@@ -79,7 +79,7 @@ export default class ShoppingListController {
       return sendErrorResponse(res, e)
     }
 
-    if (bodyList.id !== req.listid) {
+    if (bodyList.id !== req.unnormalizedListid && bodyList.id !== req.listid)  {
       res.status(400).json({
         error: "List ids don't match",
       })

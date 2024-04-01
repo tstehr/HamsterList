@@ -11,6 +11,7 @@ declare module 'express-serve-static-core' {
     username: string | undefined | null
     log: Logger
     listid: P extends ListidParam ? string : null
+    unnormalizedListid: P extends ListidParam ? string : null
     list: P extends ListidParam ? ServerShoppingList : null
     updatedList?: P extends ListidParam ? ServerShoppingList : null
     itemid: P extends ItemidParam ? UUID : null
