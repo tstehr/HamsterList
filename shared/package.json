@@ -51,10 +51,8 @@
     "@types/mockdate": "^2.0.0",
     "@types/node": "^13.11.1",
     "@types/nodemon": "^1.19.0",
-    "@types/prettier": "2.0.0",
     "@types/uuid": "^7.0.2",
-    "mockdate": "^2.0.3",
-    "prettier": "2.0.4"
+    "mockdate": "^2.0.3"
   },
   "jest": {
     "collectCoverage": true,
