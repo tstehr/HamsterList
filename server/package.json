@@ -69,7 +69,6 @@
     "@types/prettier": "2.0.0",
     "@types/ws": "^7.2.3",
     "jest": "^24.9.0",
-    "nodemon": "^2.0.3",
-    "tsx": "^4.7.1"
+    "nodemon": "^2.0.3"
   }
 }
