@@ -20,12 +20,12 @@ export async function responseToJSON(res: Response): Promise<unknown> {
   return json
 }
 
-export type MixinEmitter<T> = T extends Emittery.Typed<infer P, infer Q>
-  ? PublicEmitter<T> & {
-      emitter: T
-    }
-  : never
+export type MixinEmitter<T> =
+  T extends Emittery.Typed<infer P, infer Q>
+    ? PublicEmitter<T> & {
+        emitter: T
+      }
+    : never
 
-export type PublicEmitter<T> = T extends Emittery.Typed<infer P, infer Q>
-  ? Omit<T, 'emit' | 'emitSerial' | 'bindMethods' | 'clearListeners'>
-  : never
+export type PublicEmitter<T> =
+  T extends Emittery.Typed<infer P, infer Q> ? Omit<T, 'emit' | 'emitSerial' | 'bindMethods' | 'clearListeners'> : never

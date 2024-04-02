@@ -11,7 +11,10 @@ export interface DBContents {
 export class DB {
   contents: DBContents | undefined | null
 
-  constructor(public path: string, public log: Logger) {}
+  constructor(
+    public path: string,
+    public log: Logger,
+  ) {}
 
   async load(): Promise<DBContents> {
     if (this.contents != null) {

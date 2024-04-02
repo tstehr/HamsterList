@@ -49,7 +49,7 @@ export function sortItems(items: readonly Item[], categoryOrder: CategoryOrder):
 
 export function sortCategories(
   categories: readonly CategoryDefinition[],
-  categoryOrder: CategoryOrder
+  categoryOrder: CategoryOrder,
 ): readonly CategoryDefinition[] {
   const categoryIteratee = (cat: CategoryDefinition): number => convertSmallerZeroToInf(categoryOrder.indexOf(cat.id))
 
@@ -65,7 +65,7 @@ export function completeCategoryOrder(categoryOrder: CategoryOrder, categories: 
 export function transformOrderToCategories(
   sourceOrder: Order,
   sourceCategories: readonly CategoryDefinition[],
-  targetCategories: readonly CategoryDefinition[]
+  targetCategories: readonly CategoryDefinition[],
 ) {
   const { leftToRight: sourceToTarget } = getCategoryMapping(sourceCategories, targetCategories)
   const mappedCategoryOrder = sourceOrder.categoryOrder

@@ -49,19 +49,17 @@ export function createServerShoppingList(serverShoppingListSpec: unknown): Serve
       checkAttributeType(serverShoppingListSpec, 'orders', 'array') &&
       checkAttributeType(serverShoppingListSpec, 'changes', 'array')
     ) {
-      const recentlyUsed = serverShoppingListSpec.recentlyUsed.map(
-        (used: unknown): RecentlyUsed => {
-          if (
-            checkKeys(used, ['lastUsedTimestamp', 'uses', 'item']) &&
-            checkAttributeType(used, 'lastUsedTimestamp', 'number') &&
-            checkAttributeType(used, 'uses', 'number') &&
-            checkAttributeType(used, 'item', 'object')
-          ) {
-            return { ...used, item: createCompletionItem(used.item) }
-          }
-          endValidation()
+      const recentlyUsed = serverShoppingListSpec.recentlyUsed.map((used: unknown): RecentlyUsed => {
+        if (
+          checkKeys(used, ['lastUsedTimestamp', 'uses', 'item']) &&
+          checkAttributeType(used, 'lastUsedTimestamp', 'number') &&
+          checkAttributeType(used, 'uses', 'number') &&
+          checkAttributeType(used, 'item', 'object')
+        ) {
+          return { ...used, item: createCompletionItem(used.item) }
         }
-      )
+        endValidation()
+      })
 
       const categories = serverShoppingListSpec.categories.map(createCategoryDefinition)
       const orders = serverShoppingListSpec.orders.map(createOrder)
@@ -71,7 +69,7 @@ export function createServerShoppingList(serverShoppingListSpec: unknown): Serve
         ...shoppingList,
         items: sortItems(
           shoppingList.items,
-          categories.map((cat) => cat.id)
+          categories.map((cat) => cat.id),
         ),
         recentlyUsed: recentlyUsed,
         categories: categories,

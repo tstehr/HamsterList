@@ -3,7 +3,7 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { CategoryDefinition, Change, createShoppingList, diffShoppingLists, getOnlyNewChanges } from 'shoppinglist-shared'
 import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
 import { DB } from './DB'
-import { ServerShoppingList, createServerShoppingList, getBaseShoppingList } from './ServerShoppingList'
+import { createServerShoppingList, getBaseShoppingList, ServerShoppingList } from './ServerShoppingList'
 import { ShoppingListChangeCallback } from './SocketController'
 import TokenCreator from './TokenCreator'
 import normalizeListid from './util/normalizeListid'
@@ -22,7 +22,7 @@ export default class ShoppingListController {
     db: DB,
     defaultCategories: readonly CategoryDefinition[],
     tokenCreator: TokenCreator,
-    changeCallback: ShoppingListChangeCallback
+    changeCallback: ShoppingListChangeCallback,
   ) {
     this.db = db
     this.defaultCategories = defaultCategories
@@ -66,7 +66,7 @@ export default class ShoppingListController {
           items: [],
           ...req.body,
         },
-        req.list.categories
+        req.list.categories,
       )
     } catch (e) {
       res.status(400).json({
@@ -152,4 +152,3 @@ export default class ShoppingListController {
     }
   }
 }
-

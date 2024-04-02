@@ -232,7 +232,7 @@ export function mapReplace(
   str: string,
   replacements: {
     [x: string]: string
-  }
+  },
 ): string {
   const regexpStr = Object.keys(replacements)
     .map((r) => escapeStringRegexp(r))

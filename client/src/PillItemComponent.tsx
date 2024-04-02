@@ -21,7 +21,7 @@ const PillItemComponent = React.memo(
       <ItemComponent item={props.item} className={styles.Item} />
     </div>
   ),
-  isEqual
+  isEqual,
 )
 
 export default PillItemComponent

@@ -38,7 +38,7 @@ export function createShoppingList(shoppingListSpec: unknown, categories?: reado
     if (categories != null) {
       items = sortItems(
         items,
-        categories.map((cat) => cat.id)
+        categories.map((cat) => cat.id),
       )
     }
 
@@ -57,7 +57,7 @@ export function mergeShoppingLists(
   base: ShoppingList,
   client: ShoppingList,
   server: ShoppingList,
-  categories?: readonly CategoryDefinition[] | null
+  categories?: readonly CategoryDefinition[] | null,
 ): ShoppingList {
   let title: string
   if (base.title != client.title) {
@@ -105,7 +105,7 @@ export function mergeShoppingLists(
       items,
       title,
     },
-    categories
+    categories,
   )
 }
 

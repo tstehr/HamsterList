@@ -82,7 +82,7 @@ export function getCategoryMapping(left: readonly CategoryDefinition[], right: r
 export function mergeCategoryLists(
   base: readonly CategoryDefinition[],
   patch: readonly CategoryDefinition[],
-  { dropUnmatched }: { dropUnmatched: boolean }
+  { dropUnmatched }: { dropUnmatched: boolean },
 ): readonly CategoryDefinition[] {
   const { leftToRight: baseToPatch, rightToLeft: patchToBase } = getCategoryMapping(base, patch)
 

@@ -12,7 +12,7 @@ describe('createShoppingList', () => {
         title: 'Aquarium',
         items: [],
       },
-      []
+      [],
     )
   })
 
@@ -33,7 +33,7 @@ describe('createShoppingList', () => {
             },
           ],
         },
-        []
+        [],
       )
     }).toThrow(`ShoppingList "Aquarium" has duplicated ids: ${id}`)
   })
@@ -170,7 +170,7 @@ describe('mergeShoppingLists', () => {
           },
         ],
       },
-      []
+      [],
     )
     const server = createShoppingList(
       {
@@ -221,7 +221,7 @@ describe('mergeShoppingLists', () => {
           },
         ],
       },
-      []
+      [],
     )
     const client = createShoppingList(
       {
@@ -278,7 +278,7 @@ describe('mergeShoppingLists', () => {
           },
         ],
       },
-      []
+      [],
     )
     const result = mergeShoppingLists(base, client, server, [])
     expect(result).toEqual({

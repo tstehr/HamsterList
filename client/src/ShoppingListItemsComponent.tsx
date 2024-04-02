@@ -1,16 +1,16 @@
+import classNames from 'classnames'
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
 import React from 'react'
 import FlipMove from 'react-flip-move'
 import { CategoryDefinition, CategoryOrder, completeCategoryOrder, Item, Order, sortItems, UUID } from 'shoppinglist-shared'
 import { CategoryListItemComponent } from './CategoryComponent'
-import styles from './ShoppingListItemsComponent.module.css'
 import EditItemComponent from './EditItemComponent'
 import { Up } from './HistoryTracker'
 import KeyFocusComponent from './KeyFocusComponent'
 import OrderSelectComponent from './OrderSelectComponent'
+import styles from './ShoppingListItemsComponent.module.css'
 import { DeleteItem, SelectOrder, UpdateItem } from './sync'
-import classNames from 'classnames'
 
 interface Props {
   items: readonly Item[]
@@ -103,7 +103,7 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
               categoryId={itemOrCategory.categoryId}
               categories={props.categories}
             />
-          )
+          ),
         )}
         {!props.items.length && (
           <div className={styles.EmptyList}>

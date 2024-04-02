@@ -20,7 +20,7 @@ export default function ShoppingListContainerComponent({ listid, match, up }: Pr
       const newPath = generatePath(match.path, newParams)
       history.replace(newPath)
     },
-    [history, match.params, match.path]
+    [history, match.params, match.path],
   )
 
   useEffect(() => {

@@ -13,7 +13,7 @@ it('Calculates a frecency', () => {
     frecency({
       lastUsedTimestamp: new Date('2019-06-01T11:59:00.000Z').getTime(),
       uses: 1,
-    })
+    }),
   ).toEqual(1)
 })
 
@@ -22,6 +22,6 @@ it('Calculates a frecency with longer timespan', () => {
     frecency({
       lastUsedTimestamp: new Date('2019-06-01T11:50:00.000Z').getTime(),
       uses: 100,
-    })
+    }),
   ).toEqual(10)
 })

@@ -34,7 +34,7 @@ const ItemComponent = React.memo(
       <AmountComponent amount={props.item.amount} /> {props.item.name}
     </span>
   ),
-  isEqual
+  isEqual,
 )
 
 export default ItemComponent

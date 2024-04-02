@@ -3,13 +3,13 @@ import { createUUID } from '../util/uuid'
 import { createAmountValue, createUnit } from './Amount'
 import { createCategoryDefinition } from './CategoryDefinition'
 import {
-  Item,
   addMatchingCategory,
   createCompletionItem,
   createItem,
   createItemFromItemStringRepresentation,
   createLocalItemFromItemStringRepresentation,
   createLocalItemFromString,
+  Item,
   itemToString,
   mergeItems,
   mergeItemsTwoWay,
@@ -152,8 +152,8 @@ describe('createLocalItemFromStringRepresentation', () => {
         {
           stringRepresentation: '500g Käse',
         },
-        categories
-      )
+        categories,
+      ),
     ).toEqual({
       name: 'Käse',
       amount: {
@@ -173,8 +173,8 @@ describe('createlItemFromStringRepresentation', () => {
           stringRepresentation: '(M) 500g Käse',
           id: id,
         },
-        categories
-      )
+        categories,
+      ),
     ).toEqual({
       id: id,
       name: 'Käse',
@@ -195,7 +195,7 @@ describe('itemToString', () => {
         name: 'Gemüse',
         amount: undefined,
         category: undefined,
-      } as Item)
+      } as Item),
     ).toEqual('Gemüse')
   })
 
@@ -206,7 +206,7 @@ describe('itemToString', () => {
         name: 'Gemüse\t\n\n',
         amount: undefined,
         category: undefined,
-      } as Item)
+      } as Item),
     ).toEqual('Gemüse')
   })
 
@@ -218,7 +218,7 @@ describe('itemToString', () => {
         name: undefined,
         amount: undefined,
         category: undefined,
-      })
+      }),
     ).toEqual('')
   })
 
@@ -232,7 +232,7 @@ describe('itemToString', () => {
           unit: undefined,
         },
         category: undefined,
-      } as Item)
+      } as Item),
     ).toEqual('1.11 Gemüse')
   })
 
@@ -246,7 +246,7 @@ describe('itemToString', () => {
           unit: createUnit('kg'),
         },
         category: undefined,
-      } as Item)
+      } as Item),
     ).toEqual('1.11 kg Gemüse')
   })
 })

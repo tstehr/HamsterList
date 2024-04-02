@@ -1,15 +1,15 @@
 import ChooseCategoryComponent from 'ChooseCategoryComponent'
+import classNames from 'classnames'
 import { Up } from 'HistoryTracker'
 import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
-import classNames from 'classnames'
 import React, { useState } from 'react'
 import { Route } from 'react-router-dom'
 import { CategoryDefinition, LocalItem, UUID } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
 import styles from './CreateItemButtonComponent.module.css'
 import IconButton from './IconButton'
-import ItemComponent from './ItemComponent'
 import globalStyles from './index.module.css'
+import ItemComponent from './ItemComponent'
 import { CreateItem, DeleteCompletion } from './sync'
 
 interface Props {

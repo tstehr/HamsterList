@@ -1,8 +1,8 @@
+import classNames from 'classnames'
 import _, { isEqual } from 'lodash'
 import React, { Component, ComponentProps, PropsWithChildren } from 'react'
-import { CategoryDefinition, UUID, createCategoryDefinition } from 'shoppinglist-shared'
+import { CategoryDefinition, createCategoryDefinition, UUID } from 'shoppinglist-shared'
 import styles from './CategoryComponent.module.css'
-import classNames from 'classnames'
 
 const unknownCategory = createCategoryDefinition({
   id: 'ffffffff-ffff-4fff-bfff-ffffffffffff',
@@ -47,7 +47,7 @@ const CategoryComponent = React.memo(
       </div>
     )
   }),
-  isEqual
+  isEqual,
 )
 
 const CategoryTextComponent = React.memo((props: Props & ComponentProps<'span'>) => {

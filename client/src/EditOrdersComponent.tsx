@@ -1,12 +1,12 @@
-import IconButton from 'IconButton'
 import classNames from 'classnames'
 import { History } from 'history'
+import IconButton from 'IconButton'
 import _ from 'lodash'
 import React, { Component, useEffect, useRef, useState } from 'react'
 import { ChromePicker, ColorResult, RGBColor } from 'react-color'
 import { Link, Route, RouteComponentProps } from 'react-router-dom'
-import { SortableContainer, SortableElement, SortableHandle, arrayMove } from 'react-sortable-hoc'
-import { CategoryDefinition, Order, UUID, createRandomUUID, sortCategories } from 'shoppinglist-shared'
+import { arrayMove, SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
+import { CategoryDefinition, createRandomUUID, Order, sortCategories, UUID } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
 import styles from './EditOrdersComponent.module.css'
 import { Up } from './HistoryTracker'
@@ -138,7 +138,7 @@ const SortableOrders = SortableContainer(
         ))}
       </div>
     )
-  }
+  },
 )
 
 const SortableOrder = SortableElement(
@@ -157,7 +157,7 @@ const SortableOrder = SortableElement(
         <DragHandle />
       </Link>
     )
-  }
+  },
 )
 
 interface NullSafeEditOrderProps {
@@ -197,11 +197,7 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps): JSX.Element 
       ) : (
         <>
           <p>Not found :(</p>
-          <button
-            type="button"
-            className={classNames(globalStyles.Button, globalStyles.padded)}
-            onClick={() => props.up(1)}
-          >
+          <button type="button" className={classNames(globalStyles.Button, globalStyles.padded)} onClick={() => props.up(1)}>
             Back
           </button>
         </>
@@ -406,7 +402,7 @@ const SortableCategories = SortableContainer(
         ))}
       </div>
     )
-  }
+  },
 )
 
 const SortableCategory = SortableElement(
@@ -501,7 +497,7 @@ const SortableCategory = SortableElement(
         <DragHandle />
       </div>
     )
-  }
+  },
 )
 
 const DragHandle = SortableHandle(() => (

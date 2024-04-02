@@ -135,9 +135,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     this.setState({ ...this.createInputValueUpdate(e.currentTarget.value), changingQuickly: changingQuickly })
   }
 
-  createInputValueUpdate(
-    newInputValue: string
-  ): {
+  createInputValueUpdate(newInputValue: string): {
     inputValue: string
     itemsForInputLines: ReadonlyArray<ItemInput | null>
     itemsInCreation: readonly ItemInput[]

@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 import * as React from 'react'
 import { useEffect, useRef, useState } from 'react'
-import styles from './TopBarComponent.module.css'
 import { ReactComponent as ArrowDownUp } from './icons/arrow-down-up.svg'
 import { ReactComponent as ArrowUp } from './icons/arrow-up.svg'
 import { ReactComponent as Back } from './icons/back.svg'
 import { ReactComponent as Cross } from './icons/cross.svg'
 import { ConnectionState, UpdateListTitle } from './sync'
+import styles from './TopBarComponent.module.css'
 
 interface Props {
   back?: () => void

@@ -72,7 +72,7 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
         maxAge: 30,
       },
       featurePolicy,
-    })
+    }),
   )
 
   // enable cors requests
@@ -85,7 +85,7 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
     bodyParser.json({
       strict: false,
       limit: '2mb',
-    })
+    }),
   )
 
   const tokenCreator = new TokenCreator(config.get('secret'))
@@ -96,7 +96,7 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
     db,
     config.get('defaultCategories'),
     tokenCreator,
-    socketController.notifiyChanged
+    socketController.notifiyChanged,
   )
   const itemController = new ItemController()
   const syncController = new SyncController(tokenCreator)
@@ -105,8 +105,8 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
   const completionsController = new CompletionsController()
   const changesController = new ChangesController()
 
-  router.param('listid', (shoppingListController.handleParamListid as unknown) as RequestParamHandler)
-  router.param('itemid', (itemController.handleParamItemid as unknown) as RequestParamHandler)
+  router.param('listid', shoppingListController.handleParamListid as unknown as RequestParamHandler)
+  router.param('itemid', itemController.handleParamItemid as unknown as RequestParamHandler)
 
   router.use('*', (req: Request, res: Response, next: NextFunction) => {
     req.id = createRandomUUID()

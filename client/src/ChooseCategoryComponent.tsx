@@ -47,7 +47,7 @@ export default class ChooseCategoryComponent extends Component<Props> {
             </button>
           </KeyFocusComponent>
         </div>,
-        target
+        target,
       )
     } else {
       return null

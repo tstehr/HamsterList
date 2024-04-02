@@ -31,7 +31,7 @@ export default class SocketController {
 
       this.log.trace(
         sockets.map((ws) => ws.log.fields),
-        'All connected'
+        'All connected',
       )
       sockets.forEach((ws) => {
         if (ws.isAlive === false) {

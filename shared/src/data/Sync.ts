@@ -36,7 +36,7 @@ export interface SyncResponse {
 
 export function createSyncedShoppingList(
   syncedShoppingListSpec: unknown,
-  categories?: readonly CategoryDefinition[] | null
+  categories?: readonly CategoryDefinition[] | null,
 ): SyncedShoppingList {
   if (isIndexable(syncedShoppingListSpec)) {
     const shoppingList = createShoppingList(_.omit(syncedShoppingListSpec, ['token', 'changeId']), categories)

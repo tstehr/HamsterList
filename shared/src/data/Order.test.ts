@@ -229,8 +229,8 @@ describe('transformOrderToCategories', () => {
       transformOrderToCategories(
         { ...sourceOrder, categoryOrder: [...sourceOrder.categoryOrder, null] },
         sourceCategories,
-        targetCategories
-      )
+        targetCategories,
+      ),
     ).toEqual({
       ...expectedTargetOrder,
       categoryOrder: [...expectedTargetOrder.categoryOrder, null],
@@ -242,8 +242,8 @@ describe('transformOrderToCategories', () => {
       transformOrderToCategories(
         { ...sourceOrder, categoryOrder: [...sourceOrder.categoryOrder, createRandomUUID()] },
         sourceCategories,
-        targetCategories
-      )
+        targetCategories,
+      ),
     ).toEqual({
       ...expectedTargetOrder,
       categoryOrder: [...expectedTargetOrder.categoryOrder],

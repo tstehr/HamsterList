@@ -143,7 +143,7 @@ export default class SyncController {
   buildResponse(
     serverList: ServerShoppingList,
     includeInResponse: string | readonly string[] | void,
-    previousSyncChangeId?: UUID | null
+    previousSyncChangeId?: UUID | null,
   ): SyncedShoppingList | SyncResponse {
     const list = this.tokenCreator.setToken(getSyncedShoppingList(serverList))
 

@@ -4,25 +4,24 @@ import _ from 'lodash'
 import React, { Component } from 'react'
 import { Link, Route, Switch } from 'react-router-dom'
 import {
+  addAmounts,
   CategoryDefinition,
   Change,
   CompletionItem,
+  createCookingAmount,
+  getSIUnit,
   Item,
   LocalItem,
   Order,
   ShoppingList,
   UUID,
-  addAmounts,
-  createCookingAmount,
-  getSIUnit,
 } from 'shoppinglist-shared'
 import ChooseCategoryComponent from './ChooseCategoryComponent'
 import CreateItemComponent from './CreateItemComponent'
 import { Up } from './HistoryTracker'
 import ImportComponent from './ImportComponent'
-import ShoppingListItemsComponent from './ShoppingListItemsComponent'
-import TopBarComponent, { EditTitleComponent, SyncStatusComponent } from './TopBarComponent'
 import globalStyles from './index.module.css'
+import ShoppingListItemsComponent from './ShoppingListItemsComponent'
 import {
   AddCompletion,
   ApplyDiff,
@@ -40,6 +39,7 @@ import {
   UpdateListTitle,
   UpdateOrders,
 } from './sync'
+import TopBarComponent, { EditTitleComponent, SyncStatusComponent } from './TopBarComponent'
 
 interface Props {
   shoppingList: ShoppingList

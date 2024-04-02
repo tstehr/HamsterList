@@ -1,15 +1,15 @@
-import { Key, RECENTLY_USED_KEY, RecentlyUsedList, getRecentlyUsedLists } from 'DB'
-import LocalStorageDB from 'LocalStorageDB'
 import classNames from 'classnames'
+import { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY } from 'DB'
+import LocalStorageDB from 'LocalStorageDB'
 import _ from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   CategoryDefinition,
   CompletionItem,
-  Item,
-  Order,
   createRandomUUID,
+  Item,
   mergeCategoryLists,
+  Order,
   transformItemsToCategories,
   transformOrderToCategories,
 } from 'shoppinglist-shared'
@@ -169,7 +169,7 @@ function ImportFromList({
       state,
       updateCategories,
       updateOrders,
-    ]
+    ],
   )
 
   return (

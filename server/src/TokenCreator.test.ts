@@ -31,7 +31,7 @@ it('returns true for correct token', () => {
       token: '22a67e2d2d0a223882c2c04b0fd55e61afa903f455800d3bf1ef51e87d9d6b25',
       changeId,
       items: [],
-    })
+    }),
   ).toBe(true)
 })
 
@@ -43,6 +43,6 @@ it('returns false for incorrect token', () => {
       token: '22a67e2d2d0a223882c2c04b0fd55e61afa903f455800d3bf1ef51e87d9d6b25',
       changeId,
       items: [],
-    })
+    }),
   ).toBe(false)
 })

@@ -136,7 +136,10 @@ class SyncingCore {
   changePushSyncTimeoutID = -1
   requestSyncTimeoutID = -1
 
-  constructor(private listid: string, baseUrl: string | null = null) {
+  constructor(
+    private listid: string,
+    baseUrl: string | null = null,
+  ) {
     this.db = new LocalStorageDB()
     this.baseUrl = baseUrl
     this.state = {
@@ -389,7 +392,7 @@ class SyncingCore {
     } else {
       this.info('SYNC', 'initial sync!')
       syncPromise = this.fetch(
-        `/api/${this.listid}/sync?includeInResponse=changes&includeInResponse=categories&includeInResponse=completions&includeInResponse=orders`
+        `/api/${this.listid}/sync?includeInResponse=changes&includeInResponse=categories&includeInResponse=completions&includeInResponse=orders`,
       )
     }
 
@@ -416,13 +419,13 @@ class SyncingCore {
 
       // retain completion deletions performed during sync
       const unsyncedDeletedCompletions = this.state.deletedCompletions.filter(
-        (name) => !preSyncDeletedCompletions.includes(normalizeCompletionName(name))
+        (name) => !preSyncDeletedCompletions.includes(normalizeCompletionName(name)),
       )
       dirtyAfterSync = dirtyAfterSync || unsyncedDeletedCompletions.length > 0 // add newly fetched changes to local changes
 
       // retain completion deletions performed during sync
       const unsyncedAddedCompletions = this.state.addedCompletions.filter(
-        (name) => !preSyncAddedCompletions.includes(normalizeCompletionName(name))
+        (name) => !preSyncAddedCompletions.includes(normalizeCompletionName(name)),
       )
       dirtyAfterSync = dirtyAfterSync || unsyncedAddedCompletions.length > 0 // add newly fetched changes to local changes
 
@@ -464,7 +467,7 @@ class SyncingCore {
 
       const syncState = {
         completions: completions.filter(
-          (completionItem) => !unsyncedDeletedCompletions.includes(normalizeCompletionName(completionItem.name))
+          (completionItem) => !unsyncedDeletedCompletions.includes(normalizeCompletionName(completionItem.name)),
         ),
         categories,
         orders,
@@ -612,7 +615,7 @@ class SyncingCore {
       deletedCompletions: [...this.state.deletedCompletions, normalizedCompletionName],
       addedCompletions: this.state.addedCompletions.filter((c) => c !== normalizedCompletionName),
       completions: this.state.completions.filter(
-        (completion) => normalizeCompletionName(completion.name) !== normalizedCompletionName
+        (completion) => normalizeCompletionName(completion.name) !== normalizedCompletionName,
       ),
       dirty: true,
     })

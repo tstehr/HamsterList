@@ -104,7 +104,7 @@ export function createLocalItemFromString(stringRepresentation: string, categori
 
 export function createLocalItemFromItemStringRepresentation(
   itemStringRepresentation: unknown,
-  categories: readonly CategoryDefinition[]
+  categories: readonly CategoryDefinition[],
 ): LocalItem {
   if (
     checkKeys(itemStringRepresentation, ['stringRepresentation']) &&
@@ -132,7 +132,7 @@ export function createItem(itemSpec: unknown): Item {
 
 export function createItemFromItemStringRepresentation(
   itemStringRepresentation: unknown,
-  categories: readonly CategoryDefinition[]
+  categories: readonly CategoryDefinition[],
 ): Item {
   if (isIndexable(itemStringRepresentation)) {
     const localItem = createLocalItemFromItemStringRepresentation(_.omit(itemStringRepresentation, ['id']), categories)
@@ -217,7 +217,7 @@ export function mergeItemsTwoWay(client: Item, server: Item): Item {
 export function addMatchingCategory<T extends LocalItem>(item: T, completions: readonly CompletionItem[]): T {
   const exactMatchingCompletion = completions.find(
     (completionItem) =>
-      item.name === completionItem.name && (item.category === undefined || item.category === completionItem.category)
+      item.name === completionItem.name && (item.category === undefined || item.category === completionItem.category),
   )
   if (exactMatchingCompletion != null) {
     return addCompletionToItem<T>(item, exactMatchingCompletion)
@@ -227,7 +227,7 @@ export function addMatchingCategory<T extends LocalItem>(item: T, completions: r
   const matchingCompletion = completions.find(
     (completionItem) =>
       normalizedItemName === normalizeCompletionName(completionItem.name) &&
-      (item.category === undefined || item.category === completionItem.category)
+      (item.category === undefined || item.category === completionItem.category),
   )
   if (matchingCompletion != null) {
     return addCompletionToItem<T>(item, matchingCompletion)
@@ -241,7 +241,7 @@ export function addMatchingCategory<T extends LocalItem>(item: T, completions: r
     const looseMatchingCompletion = completions.find(
       (completionItem) =>
         normalizedHead === normalizeCompletionName(completionItem.name) &&
-        (item.category === undefined || item.category === completionItem.category)
+        (item.category === undefined || item.category === completionItem.category),
     )
     if (looseMatchingCompletion != null) {
       return { ...addCompletionToItem<T>(item, looseMatchingCompletion), name: looseMatchingCompletion.name + tail }
@@ -255,7 +255,7 @@ function addCompletionToItem<T extends LocalItem>(item: T, matchingCompletion: C
   return Object.assign(
     {},
     item,
-    _.omitBy(matchingCompletion, (val) => val == null)
+    _.omitBy(matchingCompletion, (val) => val == null),
   )
 }
 
@@ -266,7 +266,7 @@ export function normalizeCompletionName(name: string): string {
 export function transformItemsToCategories<T extends { category?: UUID | null | undefined }>(
   sourceItems: readonly T[],
   sourceCategories: readonly CategoryDefinition[],
-  targetCategories: readonly CategoryDefinition[]
+  targetCategories: readonly CategoryDefinition[],
 ): readonly T[] {
   const { leftToRight: sourceToTarget } = getCategoryMapping(sourceCategories, targetCategories)
   return sourceItems.map((i) => {

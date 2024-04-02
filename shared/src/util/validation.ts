@@ -38,19 +38,19 @@ export function checkKeys<T extends string>(object: unknown, expectedKeys: T[]):
 export function checkAttributeType<T extends AttributeType, K extends string, O extends { [P in K]?: unknown }>(
   object: O,
   key: K,
-  type: T
+  type: T,
 ): object is O & { [P in K]: TypeMap[T] }
 export function checkAttributeType<T extends AttributeType, K extends string, O extends { [P in K]?: unknown }>(
   object: O,
   key: K,
   type: T,
-  optional: true
+  optional: true,
 ): object is O & { [P in K]?: TypeMap[T] }
 export function checkAttributeType<T extends AttributeType, K extends string, O extends { [P in K]: unknown }>(
   object: O,
   key: K,
   type: T,
-  optional = false
+  optional = false,
 ): boolean {
   if (!optional && object[key] == null) {
     throw new TypeError(`Given object must have an attribute "${key}"`)

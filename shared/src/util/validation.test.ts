@@ -52,7 +52,7 @@ describe('errorMap', () => {
           }
 
           return el
-        }
+        },
       )
     }).toThrow('Error in element 3 (id="three"): Ich nehm die Nummer 3')
   })

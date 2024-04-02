@@ -1,7 +1,7 @@
 import fuzzy from 'fuzzy'
 import { Up } from 'HistoryTracker'
 import _ from 'lodash'
-import React, { Fragment } from 'react'
+import React from 'react'
 // import FlipMove from 'react-flip-move'
 import { CategoryDefinition, CompletionItem, itemToString, LocalItem, UUID } from 'shoppinglist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'

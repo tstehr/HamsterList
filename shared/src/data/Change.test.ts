@@ -43,7 +43,7 @@ const shoppingList = createShoppingList(
       },
     ],
   },
-  []
+  [],
 )
 
 describe('createChange', () => {
@@ -134,7 +134,7 @@ describe('diffShoppingLists', () => {
         category: '1508d447-3e0d-4b50-bcae-ae4a9c85a3ea',
         id: 'cbda3946-f136-4c94-8280-4931100576b4',
         amount: null,
-      })
+      }),
     )
     const newShoppingList = applyDiff(shoppingList, originalDiff)
     const diffs = diffShoppingLists(shoppingList, newShoppingList)
@@ -152,7 +152,7 @@ describe('diffShoppingLists', () => {
         amount: {
           value: 5,
         },
-      })
+      }),
     )
     const newShoppingList = applyDiff(shoppingList, originalDiff)
     const diffs = diffShoppingLists(shoppingList, newShoppingList)
@@ -306,7 +306,7 @@ describe('createReverseDiff', () => {
       createDiff({
         type: DELETE_ITEM,
         oldItem: item,
-      })
+      }),
     )
   })
 
@@ -321,7 +321,7 @@ describe('createReverseDiff', () => {
         type: UPDATE_ITEM,
         oldItem: item,
         item: oldItem,
-      })
+      }),
     )
   })
 
@@ -334,7 +334,7 @@ describe('createReverseDiff', () => {
       createDiff({
         type: ADD_ITEM,
         item: oldItem,
-      })
+      }),
     )
   })
 })

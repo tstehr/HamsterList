@@ -44,7 +44,7 @@ export function getConfig(): nconf.Provider {
       },
       {
         spaces: 2,
-      }
+      },
     )
   }
 
