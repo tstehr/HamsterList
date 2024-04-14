@@ -14,7 +14,8 @@ export default class CompletionsController {
     let completionItem: CompletionItem
     try {
       completionItem = createCompletionItem(req.body)
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
       res.status(400).json({
         error: e.message,
       })

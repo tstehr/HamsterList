@@ -39,7 +39,8 @@ class LocalStorageDB implements DB {
 
     try {
       return JSON.parse(itemString)
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
       if (e instanceof SyntaxError) {
         return null
       }
@@ -105,7 +106,8 @@ class LocalStorageDB implements DB {
           this.set(RECENTLY_USED_KEY, oldRecentlyUsedLists)
         }
       }
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
       console.error(e)
     }
   }

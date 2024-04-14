@@ -34,7 +34,8 @@ export async function runServer(config: nconf.Provider) {
 
   try {
     doRun(config, db, log)
-  } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any) {
     log.fatal(e)
   }
 }
@@ -117,7 +118,8 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
         if (req.username === '') {
           req.username = null
         }
-      } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
         res.status(400).json({
           error: 'Header field X-ShoppingList-Username is malformed.',
         })
@@ -195,7 +197,8 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
         key: fs.readFileSync(config.get('keyFile')),
         cert: fs.readFileSync(config.get('certFile')),
       }
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
       log.fatal(`File "${e.path}" couldn't be found`)
       process.exit(1)
       return

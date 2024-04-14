@@ -24,7 +24,8 @@ export class DB {
     let json
     try {
       json = await fs.readJson(this.path)
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
       json = {
         lists: [],
       }

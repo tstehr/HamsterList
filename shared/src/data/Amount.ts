@@ -102,7 +102,8 @@ export function createAmountFromString(amountString: string): Amount {
     try {
       const evalResult = mathjs.evaluate(modAmountString)
       return mathjsValueToAmount(evalResult)
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
       if (!initialError) {
         initialError = e
       }
@@ -148,7 +149,8 @@ export function mergeAmountsTwoWay(client?: Amount | null, server?: Amount | nul
     } else {
       return server
     }
-  } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any) {
     return client
   }
 }

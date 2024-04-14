@@ -8,7 +8,8 @@ export default class ChangesController {
   handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     try {
       res.json(getChangesBetween(req.list.changes, this.getUUID(req.query['oldest']), this.getUUID(req.query['newest'])))
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
       res.status(400).json({
         error: e.message,
       })
