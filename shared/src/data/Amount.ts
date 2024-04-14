@@ -144,7 +144,8 @@ export function mergeAmountsTwoWay(client?: Amount | null, server?: Amount | nul
   const mathjsServer = amountToMathjsValue(server)
 
   try {
-    if (mathjs.compare(mathjsClient, mathjsServer) > 0) {
+    const comparison = mathjs.compare(mathjsClient, mathjsServer)
+    if (typeof comparison === 'number' && comparison > 0) {
       return client
     } else {
       return server

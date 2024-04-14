@@ -15,7 +15,8 @@ export function isIndexable(object: unknown): object is { [k: string]: unknown }
   return _.isObject(object)
 }
 
-export function getLiteralKeys<O>(object: O): ReadonlyArray<keyof O> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function getLiteralKeys<O extends {}>(object: O): ReadonlyArray<keyof O> {
   // This is technically only a retyping of Object.keys
   return Object.keys(object) as Array<keyof O>
 }

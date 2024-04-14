@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import globalStyles from './index.module.css'
 import styles from './ServiceWorkerInstall.module.css'
+import globalStyles from './index.module.css'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
 export default function ServiceWorkerInstall() {
@@ -20,7 +20,7 @@ export default function ServiceWorkerInstall() {
   const reloadPage = () => {
     waitingWorker?.postMessage({ type: 'SKIP_WAITING' })
     setShowReload(false)
-    window.location.reload(true)
+    window.location.reload()
   }
 
   useCheckForUpdateOnVisible()

@@ -751,7 +751,7 @@ class SyncingCore {
     this.log('info', ...messages)
   }
 
-  log(method: keyof typeof console, ...messages: unknown[]) {
+  log(method: 'error' | 'info', ...messages: unknown[]) {
     console[method](`[SyncingCore listid="${this.listid}"]`, ...messages)
   }
 
