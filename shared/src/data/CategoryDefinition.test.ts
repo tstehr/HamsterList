@@ -1,4 +1,4 @@
-/* eslint-env jest */
+import { describe, expect, it } from 'vitest'
 import { createRandomUUID, createUUID } from '../util/uuid'
 import { createCategoryDefinition, getCategoryMapping, mergeCategoryLists } from './CategoryDefinition'
 

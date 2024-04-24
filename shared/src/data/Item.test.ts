@@ -1,4 +1,4 @@
-/* eslint-env jest */
+import { describe, expect, it } from 'vitest'
 import { createUUID } from '../util/uuid'
 import { createAmountValue, createUnit } from './Amount'
 import { createCategoryDefinition } from './CategoryDefinition'

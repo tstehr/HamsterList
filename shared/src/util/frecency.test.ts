@@ -1,5 +1,5 @@
-/* eslint-env jest */
 import MockDate from 'mockdate'
+import { afterAll, beforeAll, expect, it } from 'vitest'
 import { frecency } from './frecency'
 beforeAll(() => {
   MockDate.set('2019-06-01T12:00:00.000Z')

@@ -10,7 +10,7 @@
     "build:tsc": "tsc",
     "watch": "yarn run build:clean && yarn run watch:tsc",
     "watch:tsc": "yarn run build:tsc --watch",
-    "test": "jest src",
+    "test": "vitest",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
     "format": "yarn run format:imports; yarn run format:prettier",
@@ -32,27 +32,12 @@
     "@types/color-string": "^1.5.0",
     "@types/deep-freeze": "^0.1.2",
     "@types/is-uuid": "^1.0.0",
-    "@types/jest": "^24.9.0",
     "@types/lodash": "^4.14.149",
     "@types/mockdate": "^2.0.0",
     "@types/node": "^13.11.1",
     "@types/nodemon": "^1.19.0",
     "@types/uuid": "^7.0.2",
-    "mockdate": "^2.0.3"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "coverageDirectory": "coverage",
-    "collectCoverageFrom": [
-      "src/**/*.ts"
-    ],
-    "testPathIgnorePatterns": [
-      "/build/",
-      "/node_modules/"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "ts"
-    ]
+    "mockdate": "^2.0.3",
+    "vitest": "^1.5.1"
   }
 }
