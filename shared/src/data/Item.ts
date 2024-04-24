@@ -1,10 +1,10 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
 import * as mathjs from 'mathjs'
-import { createUUID, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, endValidation, isIndexable, nullSafe } from '../util/validation'
-import { Amount, createAmount, createAmountFromString, mergeAmounts, mergeAmountsTwoWay } from './Amount'
-import { CategoryDefinition, getCategoryMapping } from './CategoryDefinition'
+import { createUUID, UUID } from '../util/uuid.js'
+import { checkAttributeType, checkKeys, endValidation, isIndexable, nullSafe } from '../util/validation.js'
+import { Amount, createAmount, createAmountFromString, mergeAmounts, mergeAmountsTwoWay } from './Amount.js'
+import { CategoryDefinition, getCategoryMapping } from './CategoryDefinition.js'
 
 export interface CompletionItem {
   readonly name: string

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { createUUID } from '../util/uuid'
-import { createLocalItemFromString } from './Item'
-import { createShoppingList, mergeShoppingLists } from './ShoppingList'
+import { createUUID } from '../util/uuid.js'
+import { createLocalItemFromString } from './Item.js'
+import { createShoppingList, mergeShoppingLists } from './ShoppingList.js'
 const id = createUUID('a58df112-085f-4742-873d-8f8e31af7826')
 
 describe('createShoppingList', () => {

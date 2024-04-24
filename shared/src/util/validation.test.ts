@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { errorMap, getLiteralKeys } from './validation'
+import { errorMap, getLiteralKeys } from './validation.js'
 
 describe('errorMap', () => {
   it('Shows error with element index', () => {

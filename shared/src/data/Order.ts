@@ -1,9 +1,9 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { createUUID, createUUIDFromUnknown, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, endValidation, errorMap, nullSafe } from '../util/validation'
-import { CategoryDefinition, getCategoryMapping } from './CategoryDefinition'
-import { Item } from './Item'
+import { createUUID, createUUIDFromUnknown, UUID } from '../util/uuid.js'
+import { checkAttributeType, checkKeys, endValidation, errorMap, nullSafe } from '../util/validation.js'
+import { CategoryDefinition, getCategoryMapping } from './CategoryDefinition.js'
+import { Item } from './Item.js'
 
 export type CategoryOrder = ReadonlyArray<UUID | null>
 

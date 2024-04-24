@@ -1,9 +1,9 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { checkAttributeType, checkKeys, endValidation, errorMap } from '../util/validation'
-import { CategoryDefinition } from './CategoryDefinition'
-import { createItem, Item, mergeItems, mergeItemsTwoWay } from './Item'
-import { sortItems } from './Order'
+import { checkAttributeType, checkKeys, endValidation, errorMap } from '../util/validation.js'
+import { CategoryDefinition } from './CategoryDefinition.js'
+import { createItem, Item, mergeItems, mergeItemsTwoWay } from './Item.js'
+import { sortItems } from './Order.js'
 
 export interface BaseShoppingList {
   readonly id: string

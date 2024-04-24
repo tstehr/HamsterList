@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { createUUID } from '../util/uuid'
-import { createAmountValue, createUnit } from './Amount'
-import { createCategoryDefinition } from './CategoryDefinition'
+import { createUUID } from '../util/uuid.js'
+import { createAmountValue, createUnit } from './Amount.js'
+import { createCategoryDefinition } from './CategoryDefinition.js'
 import {
   addMatchingCategory,
   createCompletionItem,
@@ -13,7 +13,7 @@ import {
   itemToString,
   mergeItems,
   mergeItemsTwoWay,
-} from './Item'
+} from './Item.js'
 
 const id = createUUID('a58df112-085f-4742-873d-8f8e31af7826')
 const categories = [

@@ -1,10 +1,10 @@
 import { differenceInDays } from 'date-fns/differenceInDays'
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { createUUID, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, endValidation, errorMap, isIndexable } from '../util/validation'
-import { createItem, Item } from './Item'
-import { BaseShoppingList, ShoppingList } from './ShoppingList'
+import { createUUID, UUID } from '../util/uuid.js'
+import { checkAttributeType, checkKeys, endValidation, errorMap, isIndexable } from '../util/validation.js'
+import { createItem, Item } from './Item.js'
+import { BaseShoppingList, ShoppingList } from './ShoppingList.js'
 
 export interface Change {
   readonly username: string | undefined | null

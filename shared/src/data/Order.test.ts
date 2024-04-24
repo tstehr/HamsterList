@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { createRandomUUID, createUUID } from '../util/uuid'
-import { CategoryDefinition, createCategoryDefinition } from './CategoryDefinition'
-import { createItem, Item } from './Item'
-import { completeCategoryOrder, createOrder, sortCategories, sortItems, transformOrderToCategories } from './Order'
+import { createRandomUUID, createUUID } from '../util/uuid.js'
+import { CategoryDefinition, createCategoryDefinition } from './CategoryDefinition.js'
+import { createItem, Item } from './Item.js'
+import { completeCategoryOrder, createOrder, sortCategories, sortItems, transformOrderToCategories } from './Order.js'
 
 describe('createOrder', () => {
   it('Creates an order from a valid spec', () => {

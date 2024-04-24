@@ -1,12 +1,12 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { createUUID, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, endValidation, errorMap, getLiteralKeys, isIndexable, nullSafe } from '../util/validation'
-import { CategoryDefinition, createCategoryDefinition } from './CategoryDefinition'
-import { Change, createChange } from './Change'
-import { CompletionItem, createCompletionItem, Item } from './Item'
-import { createOrder, Order } from './Order'
-import { createShoppingList, ShoppingList } from './ShoppingList'
+import { createUUID, UUID } from '../util/uuid.js'
+import { checkAttributeType, checkKeys, endValidation, errorMap, getLiteralKeys, isIndexable, nullSafe } from '../util/validation.js'
+import { CategoryDefinition, createCategoryDefinition } from './CategoryDefinition.js'
+import { Change, createChange } from './Change.js'
+import { CompletionItem, createCompletionItem, Item } from './Item.js'
+import { createOrder, Order } from './Order.js'
+import { createShoppingList, ShoppingList } from './ShoppingList.js'
 
 export interface SyncedShoppingList {
   readonly id: string

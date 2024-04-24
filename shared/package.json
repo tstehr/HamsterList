@@ -1,6 +1,7 @@
 {
   "name": "shoppinglist-shared",
   "version": "1.0.0",
+  "type": "module",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "license": "MIT",

@@ -1,6 +1,6 @@
 import MockDate from 'mockdate'
 import { afterAll, beforeAll, expect, it } from 'vitest'
-import { frecency } from './frecency'
+import { frecency } from './frecency.js'
 beforeAll(() => {
   MockDate.set('2019-06-01T12:00:00.000Z')
 })

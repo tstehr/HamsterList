@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createUUID } from '../util/uuid'
+import { createUUID } from '../util/uuid.js'
 import {
   ADD_ITEM,
   applyDiff,
@@ -14,9 +14,9 @@ import {
   generateUpdateItem,
   isDiffApplicable,
   UPDATE_ITEM,
-} from './Change'
-import { createItem } from './Item'
-import { createShoppingList } from './ShoppingList'
+} from './Change.js'
+import { createItem } from './Item.js'
+import { createShoppingList } from './ShoppingList.js'
 
 const shoppingList = createShoppingList(
   {

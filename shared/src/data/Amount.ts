@@ -2,7 +2,7 @@ import deepFreeze from 'deep-freeze'
 import escapeStringRegexp from 'escape-string-regexp'
 import _ from 'lodash'
 import * as mathjs from 'mathjs'
-import { checkAttributeType, checkKeys, endValidation, nullSafe } from '../util/validation'
+import { checkAttributeType, checkKeys, endValidation, nullSafe } from '../util/validation.js'
 
 export type Unit = string
 // TODO implement opaque type: https://codemix.com/opaque-types-in-javascript/

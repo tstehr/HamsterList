@@ -10,7 +10,7 @@ import {
   mapReplace,
   mergeAmounts,
   powerSet,
-} from './Amount'
+} from './Amount.js'
 
 describe(`createAmountValue`, () => {
   it(`Creates AmountValue from positive number`, () => {

@@ -1,8 +1,8 @@
 import colorString from 'color-string'
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { createUUID, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, endValidation } from '../util/validation'
+import { createUUID, UUID } from '../util/uuid.js'
+import { checkAttributeType, checkKeys, endValidation } from '../util/validation.js'
 
 export type Color = string
 export interface CategoryDefinition {
