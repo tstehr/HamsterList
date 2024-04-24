@@ -5,8 +5,11 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "jsx": "react",
-    "lib": ["es6", "dom"],
+    "jsx": "preserve",
+    "lib": [
+      "es6",
+      "dom"
+    ],
     "moduleResolution": "node",
     "strict": true,
     "target": "esnext",
@@ -20,5 +23,8 @@
     "resolveJsonModule": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*",
+    "vite.config.ts"
+  ]
 }
