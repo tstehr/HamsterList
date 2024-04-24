@@ -20,12 +20,12 @@ import {
   SyncResponse,
   UUID,
 } from 'shoppinglist-shared'
-import { ListidParam } from 'ShoppingListController'
-import { getChangesBetween } from './ChangesController'
-import { addCompletion, getSortedCompletions } from './CompletionsController'
-import { updateRecentlyUsed } from './ItemController'
-import { getBaseShoppingList, getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList'
-import TokenCreator from './TokenCreator'
+import { getChangesBetween } from './ChangesController.js'
+import { addCompletion, getSortedCompletions } from './CompletionsController.js'
+import { updateRecentlyUsed } from './ItemController.js'
+import { getBaseShoppingList, getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList.js'
+import { ListidParam } from './ShoppingListController.js'
+import TokenCreator from './TokenCreator.js'
 
 // TODO remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/43823 is merged
 type QueryValueWorkaround = string | Query | Array<string | Query>

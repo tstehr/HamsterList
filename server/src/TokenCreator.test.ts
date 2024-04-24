@@ -1,6 +1,6 @@
 import { createUUID } from 'shoppinglist-shared'
 import { expect, it } from 'vitest'
-import TokenCreator from './TokenCreator'
+import TokenCreator from './TokenCreator.js'
 
 const tokenCreator = new TokenCreator('123')
 const changeId = createUUID('a58df112-085f-4742-873d-8f8e31af7826')

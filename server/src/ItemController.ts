@@ -11,12 +11,12 @@ import {
   createUUID,
   Item,
   LocalItem,
+  updateInArray,
   UUID,
 } from 'shoppinglist-shared'
-import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
-import { ListidParam } from 'ShoppingListController'
-import { addCompletion, getSortedCompletions } from './CompletionsController'
-import { RecentlyUsedArray } from './ServerShoppingList'
+import { addCompletion, getSortedCompletions } from './CompletionsController.js'
+import { RecentlyUsedArray } from './ServerShoppingList.js'
+import { ListidParam } from './ShoppingListController.js'
 
 export interface ItemidParam extends ListidParam {
   itemid: UUID

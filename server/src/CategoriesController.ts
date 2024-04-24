@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { CategoryDefinition, createCategoryDefinition, errorMap } from 'shoppinglist-shared'
-import { ListidParam } from 'ShoppingListController'
+import { ListidParam } from './ShoppingListController.js'
 
 export default class CategoriesController {
   handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {

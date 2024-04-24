@@ -1,12 +1,18 @@
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
-import { CategoryDefinition, Change, createShoppingList, diffShoppingLists, getOnlyNewChanges } from 'shoppinglist-shared'
-import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
-import { DB } from './DB'
-import { createServerShoppingList, getBaseShoppingList, ServerShoppingList } from './ServerShoppingList'
-import { ShoppingListChangeCallback } from './SocketController'
-import TokenCreator from './TokenCreator'
-import normalizeListid from './util/normalizeListid'
+import {
+  CategoryDefinition,
+  Change,
+  createShoppingList,
+  diffShoppingLists,
+  getOnlyNewChanges,
+  updateInArray,
+} from 'shoppinglist-shared'
+import { DB } from './DB.js'
+import { createServerShoppingList, getBaseShoppingList, ServerShoppingList } from './ServerShoppingList.js'
+import { ShoppingListChangeCallback } from './SocketController.js'
+import TokenCreator from './TokenCreator.js'
+import normalizeListid from './util/normalizeListid.js'
 
 export interface ListidParam extends ParamsDictionary {
   listid: string

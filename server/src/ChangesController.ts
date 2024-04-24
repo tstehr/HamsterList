@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { Query } from 'express-serve-static-core'
 import _ from 'lodash'
 import { Change, createUUID, UUID } from 'shoppinglist-shared'
-import { ListidParam } from 'ShoppingListController'
+import { ListidParam } from './ShoppingListController.js'
 
 export default class ChangesController {
   handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {

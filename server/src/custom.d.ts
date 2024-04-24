@@ -1,7 +1,7 @@
 import { ItemidParam } from 'ItemController'
 import { UUID } from 'shoppinglist-shared'
-import { ListidParam } from 'ShoppingListController'
-import { ServerShoppingList } from './ServerShoppingList'
+import { ServerShoppingList } from './ServerShoppingList.js'
+import { ListidParam } from './ShoppingListController.js'
 
 // https://stackoverflow.com/a/55718334
 declare module 'express-serve-static-core' {

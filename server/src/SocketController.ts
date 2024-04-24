@@ -4,9 +4,9 @@ import https from 'https'
 import _ from 'lodash'
 import { createRandomUUID } from 'shoppinglist-shared'
 import WebSocket from 'ws'
-import { getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList'
-import TokenCreator from './TokenCreator'
-import normalizeListid from './util/normalizeListid'
+import { getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList.js'
+import TokenCreator from './TokenCreator.js'
+import normalizeListid from './util/normalizeListid.js'
 
 export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 

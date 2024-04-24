@@ -2,7 +2,7 @@ import Logger from 'bunyan'
 import deepFreeze from 'deep-freeze'
 import fs from 'fs-extra'
 import writeJsonFile from 'write-json-file'
-import { createServerShoppingList, ServerShoppingList } from './ServerShoppingList'
+import { createServerShoppingList, ServerShoppingList } from './ServerShoppingList.js'
 
 export interface DBContents {
   readonly lists: readonly ServerShoppingList[]
