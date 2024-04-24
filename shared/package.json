@@ -5,12 +5,10 @@
   "types": "build/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "build": "yarn run build:clean && yarn run build:babel & yarn run build:tsc",
+    "build": "yarn run build:clean && yarn run build:tsc",
     "build:clean": "rm -rf ./build",
-    "build:babel": "babel src --out-dir build --source-maps --extensions '.ts'",
-    "build:tsc": "tsc --emitDeclarationOnly",
-    "watch": "yarn run build:clean && yarn run watch:babel & yarn run watch:tsc",
-    "watch:babel": "yarn run build:babel --watch",
+    "build:tsc": "tsc",
+    "watch": "yarn run build:clean && yarn run watch:tsc",
     "watch:tsc": "yarn run build:tsc --watch",
     "test": "jest src",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
@@ -20,7 +18,6 @@
     "format:prettier": "yarn run -T prettier src --write"
   },
   "dependencies": {
-    "@babel/runtime": "^7.9.2",
     "color-string": "^1.5.2",
     "date-fns": "^2.12.0",
     "deep-freeze": "^0.0.1",
@@ -32,16 +29,6 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.0",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-transform-runtime": "^7.9.0",
-    "@babel/plugin-transform-typescript": "^7.9.4",
-    "@babel/preset-env": "^7.9.5",
-    "@babel/preset-typescript": "^7.9.0",
-    "@types/babel__core": "^7.1.7",
-    "@types/babel__plugin-transform-runtime": "^7.9.0",
-    "@types/babel__preset-env": "^7.9.0",
     "@types/color-string": "^1.5.0",
     "@types/deep-freeze": "^0.1.2",
     "@types/is-uuid": "^1.0.0",
