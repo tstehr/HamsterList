@@ -13,7 +13,7 @@
     "build:tsc": "tsc",
     "watch": "yarn run build:clean && yarn run watch:tsc",
     "watch:tsc": "yarn run build:tsc --watch",
-    "test": "jest src",
+    "test": "vitest",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
     "format": "yarn run format:imports; yarn run format:prettier",
@@ -53,8 +53,8 @@
     "@types/nconf": "^0.10.0",
     "@types/nodemon": "^1.19.0",
     "@types/ws": "^7.2.3",
-    "jest": "^24.9.0",
     "nodemon": "^2.0.3",
-    "tsx": "^4.7.1"
+    "tsx": "^4.7.1",
+    "vitest": "^1.5.1"
   }
 }

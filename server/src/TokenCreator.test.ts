@@ -1,6 +1,5 @@
-/* eslint-env jest */
-
 import { createUUID } from 'shoppinglist-shared'
+import { expect, it } from 'vitest'
 import TokenCreator from './TokenCreator'
 
 const tokenCreator = new TokenCreator('123')
