@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import styles from './ServiceWorkerInstall.module.css'
 import globalStyles from './index.module.css'
+import styles from './ServiceWorkerInstall.module.css'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
 export default function ServiceWorkerInstall() {

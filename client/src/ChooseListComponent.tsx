@@ -1,17 +1,17 @@
-import classNames from 'classnames'
 import Frame from 'Frame'
 import IconButton from 'IconButton'
 import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
+import classNames from 'classnames'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import FlipMove from 'react-flip-move'
 import { Link, Redirect } from 'react-router-dom'
 import { createRandomUUID, createShoppingList } from 'shoppinglist-shared'
 import styles from './ChooseListComponent.module.css'
-import DB, { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY, RESTORATION_ENABLED } from './DB'
-import globalStyles from './index.module.css'
+import DB, { Key, RECENTLY_USED_KEY, RESTORATION_ENABLED, RecentlyUsedList, getRecentlyUsedLists } from './DB'
 import LocalStorageDB from './LocalStorageDB'
 import TopBarComponent from './TopBarComponent'
+import globalStyles from './index.module.css'
 import { responseToJSON } from './utils'
 
 interface State {
@@ -82,7 +82,7 @@ export default class ChooseListComponent extends Component<{}, State> {
 
   async createRandomList(): Promise<void> {
     const listid = createRandomUUID()
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL ?? ''}/api/${listid}/`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL ?? ''}/api/${listid}/`, {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -200,7 +200,7 @@ export default class ChooseListComponent extends Component<{}, State> {
                     www.flaticon.com
                   </a>
                 </p>
-                <p>Version: {process.env.REACT_APP_GIT_SHA ?? 'No version information found!'}</p>
+                <p>Version: {import.meta.env.VITE_GIT_SHA ?? 'No version information found!'}</p>
               </div>
             ),
           }}

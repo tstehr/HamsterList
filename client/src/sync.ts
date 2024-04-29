@@ -278,8 +278,8 @@ class SyncingCore {
 
     let base: string
 
-    if (process.env.REACT_APP_SOCKET_URL) {
-      base = process.env.REACT_APP_SOCKET_URL
+    if (import.meta.env.VITE_SOCKET_URL) {
+      base = import.meta.env.VITE_SOCKET_URL
     } else {
       const url = this.baseUrl ? new URL(this.baseUrl) : window.location
       const protocol = url.protocol === 'https:' ? 'wss://' : 'ws://'

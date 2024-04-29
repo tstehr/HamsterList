@@ -216,7 +216,7 @@ export default class ShoppingListComponent extends Component<Props> {
           <p>
             <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
           </p>
-          <p>Version: {process.env.REACT_APP_GIT_SHA ?? 'No version information found!'}</p>
+          <p>Version: {import.meta.env.VITE_GIT_SHA ?? 'No version information found!'}</p>
         </section>
       </>
     )
