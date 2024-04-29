@@ -26,6 +26,14 @@ export default defineConfig({
   },
   server: {
     port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3000,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4000/',
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+      },
+    },
   },
   test: {
     exclude: ['build', 'node_modules'],
