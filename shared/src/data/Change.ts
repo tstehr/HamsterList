@@ -1,4 +1,4 @@
-import differenceInDays from 'date-fns/differenceInDays'
+import { differenceInDays } from 'date-fns/differenceInDays'
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
 import { createUUID, UUID } from '../util/uuid'
