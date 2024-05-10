@@ -1156,6 +1156,11 @@
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
 
+"@types/share-api-polyfill@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@types/share-api-polyfill/-/share-api-polyfill-1.0.5.tgz#81e462c4fe19f9d493ae81a44f9d5b7941976678"
+  integrity sha512-TXctdAA6CXcMvjuc2FZ0aeo+D4GNXjqfFO9l5Ap+qzSea9KXi4yU37K6OSv0daluDqHP3Rc1Ss0XwGtuB0rmHg==
+
 "@types/smoothscroll-polyfill@^0.3.1":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@types/smoothscroll-polyfill/-/smoothscroll-polyfill-0.3.1.tgz#77fb3a6e116bdab4a5959122e3b8e201224dcd49"
@@ -4670,10 +4675,10 @@ setprototypeof@1.1.1:
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.1.1.tgz#7e95acb24aa92f5885e0abef5ba131330d4ae683"
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
 
-share-api-polyfill@^1.0.7:
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/share-api-polyfill/-/share-api-polyfill-1.0.11.tgz#feba9a8fc013cbf9501a32d40a18d2c87d5f0ddd"
-  integrity sha512-qMYRDbR6l1vdNGXXS5RteeYMcwUXH3RxneYGOuNDOeOjXeblpRGG6ihOzTFsA+3OlEWmIHPmXZegJKQ/3FBKLA==
+share-api-polyfill@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/share-api-polyfill/-/share-api-polyfill-1.1.1.tgz#373bacac2f02828a3ee1bd7d9a2b72c60580080e"
+  integrity sha512-5GxXomFRth4lBpHWN136cxpv8KOo+uutljXqgO1RsptDQ5X1raRQWqLi+LoWZ/h02/TgV1STJwuMXcP/0b1vpQ==
 
 shebang-command@^2.0.0:
   version "2.0.0"
