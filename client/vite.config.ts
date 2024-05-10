@@ -1,12 +1,20 @@
 import react from '@vitejs/plugin-react'
 import autoprefixer from 'autoprefixer'
 import { defineConfig } from 'vite'
+import checker from 'vite-plugin-checker'
 import svgr from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), viteTsconfigPaths({ root: '.' }), svgr()],
+  plugins: [
+    react(),
+    viteTsconfigPaths({ root: '.' }),
+    svgr(),
+    checker({
+      typescript: true,
+    }),
+  ],
   css: {
     postcss: {
       plugins: [autoprefixer()],
