@@ -19,4 +19,9 @@ export default defineConfig({
   server: {
     port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3000,
   },
+  test: {
+    exclude: ['build', 'node_modules'],
+    testTimeout: 20000,
+    environment: 'jsdom',
+  },
 })
