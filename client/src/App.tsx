@@ -2,7 +2,7 @@ import { RESTORATION_ENABLED, RESTORATION_PATH } from 'DB'
 import LocalStorageDB from 'LocalStorageDB'
 import React, { useEffect, useRef } from 'react'
 import { BrowserRouter, Route, RouteComponentProps, Switch, useHistory, useLocation } from 'react-router-dom'
-import ServiceWorkerInstall from 'ServiceWorkerInstall'
+// import ServiceWorkerInstall from 'ServiceWorkerInstall'
 import ChooseListComponent from './ChooseListComponent'
 import HistoryTracker, { Up } from './HistoryTracker'
 import ShoppingListContainerComponent from './ShoppingListContainerComponent'
@@ -43,7 +43,7 @@ export default function App() {
           )}
         ></HistoryTracker>
       </BrowserRouter>
-      <ServiceWorkerInstall />
+      {/* <ServiceWorkerInstall /> */}
     </>
   )
 }
