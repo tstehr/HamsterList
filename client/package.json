@@ -38,8 +38,8 @@
     "workbox-streams": "^5.1.3"
   },
   "scripts": {
-    "start": "VITE_GIT_SHA=`env -i git rev-parse --short HEAD` yarn run vite",
-    "build": "VITE_GIT_SHA=`env -i git rev-parse --short HEAD` yarn run vite build",
+    "start": "yarn run vite",
+    "build": "yarn run vite build",
     "test": "yarn run vitest",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
