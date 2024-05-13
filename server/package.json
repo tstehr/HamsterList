@@ -10,7 +10,7 @@
     "development": "nodemon --watch src --watch ../shared/build --exec tsx src/index.ts --extensions '.ts' | bunyan",
     "build": "yarn run build:clean && yarn run build:tsc",
     "build:clean": "rm -rf ./build",
-    "build:tsc": "tsc",
+    "build:tsc": "yarn run -T tsc",
     "watch": "yarn run build:clean && yarn run watch:tsc",
     "watch:tsc": "yarn run build:tsc --watch",
     "test": "vitest",
