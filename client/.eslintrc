@@ -1,7 +1,0 @@
-{
-  "root": false,
-  "env": {
-    "node": false
-  },
-  "extends": ["react-app"]
-}

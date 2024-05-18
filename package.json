@@ -7,21 +7,19 @@
     "client"
   ],
   "devDependencies": {
-    "@types/eslint": "^6.8.0",
-    "@typescript-eslint/eslint-plugin": "^4.7.0",
-    "@typescript-eslint/parser": "^4.7.0",
-    "babel-eslint": "^10.0.2",
-    "eslint": "^7.13.0",
-    "eslint-config-prettier": "^6.15.0",
+    "@eslint/js": "^9.3.0",
+    "eslint": "^9.3.0",
     "organize-imports-cli": "^0.7.0",
     "prettier": "3.2.5",
     "typescript": "^5.4.5",
+    "typescript-eslint": "^7.9.0",
     "typesync": "^0.6.1"
   },
   "scripts": {
     "shared": "yarn workspace shoppinglist-shared",
     "server": "yarn workspace shoppinglist-server",
     "client": "yarn workspace shoppinglist-client",
-    "all": "yarn workspaces foreach -A run"
+    "all": "yarn workspaces foreach -A run",
+    "lint": "eslint ."
   }
 }

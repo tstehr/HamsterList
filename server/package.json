@@ -14,7 +14,7 @@
     "watch": "yarn run build:clean && yarn run watch:tsc",
     "watch:tsc": "yarn run build:tsc --watch",
     "test": "vitest",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "lint": "yarn run -T eslint .",
     "typecheck": "tsc --noEmit",
     "format": "yarn run format:imports; yarn run format:prettier",
     "format:imports": "organize-imports-cli tsconfig.json",

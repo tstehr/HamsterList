@@ -21,6 +21,13 @@
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
     },
-    "jest.disabledWorkspaceFolders": ["shoppinglist"]
+    "jest.disabledWorkspaceFolders": [
+      "shoppinglist"
+    ],
+    "eslint.runtime": "node",
+    "eslint.experimental.useFlatConfig": true,
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
   }
 }
