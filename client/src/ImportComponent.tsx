@@ -111,7 +111,7 @@ function ImportFromList({
       if (!state) {
         return
       }
-      // eslint-disable-next-line no-restricted-globals
+
       if (replace && !confirm("This will delete the list's existing content, continue?")) {
         return
       }

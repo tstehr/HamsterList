@@ -28,7 +28,7 @@ import { ListidParam } from './ShoppingListController.js'
 import TokenCreator from './TokenCreator.js'
 
 // TODO remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/43823 is merged
-type QueryValueWorkaround = string | Query | Array<string | Query>
+type QueryValueWorkaround = string | Query | (string | Query)[]
 
 export default class SyncController {
   tokenCreator: TokenCreator
@@ -38,7 +38,7 @@ export default class SyncController {
   }
 
   handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
-    res.send(this.buildResponse(req.list, this.makeIncludeInResponse(req.query['includeInResponse'])))
+    res.send(this.buildResponse(req.list, this.makeIncludeInResponse(req.query.includeInResponse)))
     next()
   }
 
@@ -47,7 +47,7 @@ export default class SyncController {
 
     try {
       // Convert stringRepresentation items to full items
-      if (req.body && req.body.currentState && Array.isArray(req.body.currentState.items)) {
+      if (req.body?.currentState && Array.isArray(req.body.currentState.items)) {
         req.body.currentState.items = req.body.currentState.items.map((itemSpec: unknown) => {
           if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
             return itemSpec

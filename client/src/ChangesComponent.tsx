@@ -8,10 +8,10 @@ import _, { isEqual } from 'lodash'
 import memoize from 'memoize-one'
 import React, { Component, useMemo, useState } from 'react'
 import FlipMove from 'react-flip-move'
-import { ADD_ITEM, CategoryDefinition, Change, DELETE_ITEM, Diff, UPDATE_ITEM, createReverseDiff } from 'shoppinglist-shared'
+import { ADD_ITEM, CategoryDefinition, Change, createReverseDiff, DELETE_ITEM, Diff, UPDATE_ITEM } from 'shoppinglist-shared'
 import styles from './ChangesComponent.module.css'
-import PillItemComponent from './PillItemComponent'
 import globalStyles from './index.module.css'
+import PillItemComponent from './PillItemComponent'
 import { ApplyDiff, CreateApplicableDiff } from './sync'
 
 interface Props {

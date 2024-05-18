@@ -11,14 +11,14 @@ interface TypeMap {
 
 type AttributeType = keyof TypeMap
 
-export function isIndexable(object: unknown): object is { [k: string]: unknown } {
+export function isIndexable(object: unknown): object is Record<string, unknown> {
   return _.isObject(object)
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export function getLiteralKeys<O extends {}>(object: O): ReadonlyArray<keyof O> {
+export function getLiteralKeys<O extends {}>(object: O): readonly (keyof O)[] {
   // This is technically only a retyping of Object.keys
-  return Object.keys(object) as Array<keyof O>
+  return Object.keys(object) as (keyof O)[]
 }
 
 export function checkKeys<T extends string>(object: unknown, expectedKeys: T[]): object is { [K in T]?: unknown } {
@@ -106,7 +106,7 @@ const IDENTIFICATION_FIELDS = Object.freeze(['name', 'title', 'id'])
 
 function getIdentification(o: unknown): string | undefined | null {
   if (_.isObject(o)) {
-    const indexableO = o as { [key: string]: unknown }
+    const indexableO = o as Record<string, unknown>
     for (const identificationField of IDENTIFICATION_FIELDS) {
       const value = indexableO[identificationField]
       if (typeof value === 'string') {

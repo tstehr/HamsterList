@@ -13,7 +13,7 @@ const Error404: React.SFC = () => {
 
 function createShoppingListContainerComponentRender(up: Up) {
   return (props: RouteComponentProps<{ listid: string }>) => {
-    return <ShoppingListContainerComponent listid={props.match.params['listid']} match={props.match} up={up} />
+    return <ShoppingListContainerComponent listid={props.match.params.listid} match={props.match} up={up} />
   }
 }
 

@@ -45,13 +45,9 @@ export function createCategoryDefinition(categoryDefinitionSpec: unknown): Categ
   endValidation()
 }
 
-interface UnsafeDict<V> {
-  [k: string]: V | undefined
-}
+type UnsafeDict<V> = Record<string, V | undefined>
 
-export interface CategoryMapping {
-  [k: string]: readonly UUID[] | undefined
-}
+export type CategoryMapping = Record<string, readonly UUID[] | undefined>
 
 export function getCategoryMapping(left: readonly CategoryDefinition[], right: readonly CategoryDefinition[]) {
   const leftByName = _.groupBy(left, (c) => normalizeCategoryDefinitionName(c.name)) as UnsafeDict<CategoryDefinition[]>

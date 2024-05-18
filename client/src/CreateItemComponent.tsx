@@ -41,7 +41,7 @@ interface Props {
 
 interface State {
   inputValue: string
-  itemsForInputLines: ReadonlyArray<ItemInput | null>
+  itemsForInputLines: readonly (ItemInput | null)[]
   itemsInCreation: readonly ItemInput[]
   formHasFocus: boolean
   forceMultiline: boolean
@@ -74,7 +74,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
   }
 
-  getItemsForInputLines(inputValue: string): ReadonlyArray<ItemInput | null> {
+  getItemsForInputLines(inputValue: string): readonly (ItemInput | null)[] {
     return inputValue
       .split('\n')
       .map((str) => str.trim())
@@ -137,7 +137,7 @@ export default class CreateItemComponent extends Component<Props, State> {
 
   createInputValueUpdate(newInputValue: string): {
     inputValue: string
-    itemsForInputLines: ReadonlyArray<ItemInput | null>
+    itemsForInputLines: readonly (ItemInput | null)[]
     itemsInCreation: readonly ItemInput[]
   } {
     const itemsForInputLines = this.getItemsForInputLines(newInputValue)
@@ -316,7 +316,7 @@ export default class CreateItemComponent extends Component<Props, State> {
               <Route
                 path={`/:listid/newItem/:itemRepr/category`}
                 render={({ history, match }) => {
-                  history.replace(`/${match.params['listid'] || ''}`)
+                  history.replace(`/${match.params.listid || ''}`)
                   return null
                 }}
               />

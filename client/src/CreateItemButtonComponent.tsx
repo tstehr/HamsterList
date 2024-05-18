@@ -43,9 +43,7 @@ export default function CreateItemButtonComponent(props: Props) {
           render={({ history, location, match }) => (
             <button
               className={classNames(styles.CategoryButton, KEY_FOCUS_COMPONENT_NO_FOCUS)}
-              onClick={() =>
-                history.push(`/${match.params['listid'] || ''}/newItem/${encodeURIComponent(props.itemRepr)}/category`)
-              }
+              onClick={() => history.push(`/${match.params.listid || ''}/newItem/${encodeURIComponent(props.itemRepr)}/category`)}
             >
               <CategoryComponent categoryId={props.item.category} categories={props.categories} />
             </button>
@@ -97,7 +95,7 @@ export default function CreateItemButtonComponent(props: Props) {
       <Route
         path={`/:listid/newItem/:itemRepr/category`}
         render={({ match }) => {
-          if (decodeURIComponent(match.params['itemRepr']) !== props.itemRepr) {
+          if (decodeURIComponent(match.params.itemRepr) !== props.itemRepr) {
             return null
           }
           return (

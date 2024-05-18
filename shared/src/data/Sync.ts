@@ -1,7 +1,15 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
 import { createUUID, UUID } from '../util/uuid.js'
-import { checkAttributeType, checkKeys, endValidation, errorMap, getLiteralKeys, isIndexable, nullSafe } from '../util/validation.js'
+import {
+  checkAttributeType,
+  checkKeys,
+  endValidation,
+  errorMap,
+  getLiteralKeys,
+  isIndexable,
+  nullSafe,
+} from '../util/validation.js'
 import { CategoryDefinition, createCategoryDefinition } from './CategoryDefinition.js'
 import { Change, createChange } from './Change.js'
 import { CompletionItem, createCompletionItem, Item } from './Item.js'

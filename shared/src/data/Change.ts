@@ -13,20 +13,20 @@ export interface Change {
   readonly diffs: readonly Diff[]
 }
 
-export const ADD_ITEM = 'ADD_ITEM' as const
+export const ADD_ITEM = 'ADD_ITEM'
 export interface AddItem {
   readonly type: typeof ADD_ITEM
   readonly item: Item
 }
 
-export const UPDATE_ITEM = 'UPDATE_ITEM' as const
+export const UPDATE_ITEM = 'UPDATE_ITEM'
 export interface UpdateItem {
   readonly type: typeof UPDATE_ITEM
   readonly oldItem: Item
   readonly item: Item
 }
 
-export const DELETE_ITEM = 'DELETE_ITEM' as const
+export const DELETE_ITEM = 'DELETE_ITEM'
 export interface DeleteItem {
   readonly type: typeof DELETE_ITEM
   readonly oldItem: Item

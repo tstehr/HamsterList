@@ -84,7 +84,7 @@ export default class EditOrdersComponent extends Component<Props> {
                   <NullSafeEditOrderComponent
                     listid={this.props.listid}
                     orders={this.props.orders}
-                    orderid={match.params['orderid']}
+                    orderid={match.params.orderid}
                     categories={this.props.categories}
                     updateCategories={this.props.updateCategories}
                     updateOrder={this.updateOrder}

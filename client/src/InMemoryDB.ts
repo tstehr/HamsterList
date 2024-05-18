@@ -5,8 +5,8 @@ import { PersistedClientShoppingList } from './sync'
 
 @Emittery.mixin('emitter')
 class InMemoryDB implements DB {
-  private simple: { [k: string]: Value } = {}
-  private lists: { [id: string]: Value } = {}
+  private simple: Record<string, Value> = {}
+  private lists: Record<string, Value> = {}
 
   public close() {
     return

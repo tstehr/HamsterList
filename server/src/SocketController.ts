@@ -18,9 +18,7 @@ interface LoggingWebSocket extends WebSocket {
 export default class SocketController {
   tokenCreator: TokenCreator
   log: Logger
-  registeredWebSockets: {
-    [x: string]: LoggingWebSocket[]
-  }
+  registeredWebSockets: Record<string, LoggingWebSocket[]>
 
   constructor(tokenCreator: TokenCreator, log: Logger) {
     this.tokenCreator = tokenCreator

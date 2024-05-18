@@ -5,7 +5,7 @@ import { checkAttributeType, checkKeys, endValidation, errorMap, nullSafe } from
 import { CategoryDefinition, getCategoryMapping } from './CategoryDefinition.js'
 import { Item } from './Item.js'
 
-export type CategoryOrder = ReadonlyArray<UUID | null>
+export type CategoryOrder = readonly (UUID | null)[]
 
 export interface Order {
   readonly id: UUID

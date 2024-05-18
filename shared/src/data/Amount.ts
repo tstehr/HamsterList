@@ -231,12 +231,7 @@ function mathjsUnitToCookingMathjsUnit(mathjsUnit: mathjs.Unit): mathjs.Unit {
   return prefixed
 }
 
-export function mapReplace(
-  str: string,
-  replacements: {
-    [x: string]: string
-  },
-): string {
+export function mapReplace(str: string, replacements: Record<string, string>): string {
   const regexpStr = Object.keys(replacements)
     .map((r) => escapeStringRegexp(r))
     .join('|')

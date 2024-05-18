@@ -127,7 +127,7 @@ export default class EditItemComponent extends Component<Props, State> {
             <button
               type="button"
               className={classNames(styles.Category, KEY_FOCUS_COMPONENT_NO_FOCUS)}
-              onClick={() => history.push(`/${match.params['listid'] || ''}/${this.props.item.id}/category`)}
+              onClick={() => history.push(`/${match.params.listid || ''}/${this.props.item.id}/category`)}
             >
               <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories} />
             </button>
