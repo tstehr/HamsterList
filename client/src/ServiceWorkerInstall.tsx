@@ -45,8 +45,7 @@ function useCheckForUpdateOnVisible() {
     try {
       const registration = await navigator.serviceWorker.ready
       await registration.update()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error) {
       console.error(error.message)
     }
   }, [])

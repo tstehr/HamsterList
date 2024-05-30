@@ -21,8 +21,7 @@ export default class CategoriesController {
 
     try {
       categories = errorMap<unknown, CategoryDefinition>(categorySpecs, createCategoryDefinition)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       res.status(400).json({
         error: e.message,
       })

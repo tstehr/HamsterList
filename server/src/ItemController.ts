@@ -27,8 +27,7 @@ export default class ItemController {
     try {
       req.itemid = createUUID(req.params.itemid)
       next()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       res.status(400).json({
         error: e.message,
       })
@@ -57,8 +56,7 @@ export default class ItemController {
       } else {
         localItem = createLocalItem(req.body)
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       res.status(400).json({
         error: e.message,
       })
@@ -84,8 +82,7 @@ export default class ItemController {
       } else {
         item = createItem(req.body)
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       res.status(400).json({
         error: e.message,
       })

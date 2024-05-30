@@ -41,8 +41,7 @@ export default class SocketController {
         try {
           ws.isAlive = false
           ws.ping('', false)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (e: any) {
+        } catch (e) {
           ws.log.error(e, {
             message: 'Failed to ping websocket',
           })
@@ -110,8 +109,7 @@ export default class SocketController {
       for (const ws of this.registeredWebSockets[list.id]) {
         try {
           ws.send(this.tokenCreator.createToken(getSyncedShoppingList(list)))
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (e: any) {
+        } catch (e) {
           ws.log.error(e, {
             message: 'Failed to send message to websocket',
           })

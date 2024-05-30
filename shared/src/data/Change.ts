@@ -122,8 +122,7 @@ export function diffShoppingLists(oldShoppingList: BaseShoppingList, newShopping
         //  oldItem != null && newItem == null
         diffs.push(generateDeleteItem(oldShoppingList, id))
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       // TypeError means that the diff couldn't be created, which means it isn't needed. We can safely ignore those.
       if (!(e instanceof TypeError)) {
         throw e
@@ -207,8 +206,7 @@ export function isDiffApplicable(shoppingList: ShoppingList, diff: Diff): boolea
   try {
     applyDiff(shoppingList, diff)
     return true
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (e: any) {
+  } catch (e) {
     return false
   }
 }

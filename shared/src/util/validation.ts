@@ -75,8 +75,7 @@ export function errorMap<I, O>(array: readonly I[], transformer: (a: I) => O): r
   return array.map((el, i) => {
     try {
       return transformer(el)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       const identification = getIdentification(el)
 
       if (identification != null) {

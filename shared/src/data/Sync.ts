@@ -87,16 +87,14 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
     let previousSync: SyncedShoppingList
     try {
       previousSync = createSyncedShoppingList(syncRequestSpec.previousSync, null)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       throw new TypeError(`Error in previousSync: ${e.message}`)
     }
 
     let currentState: ShoppingList
     try {
       currentState = createShoppingList(syncRequestSpec.currentState, null)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       throw new TypeError(`Error in currentState: ${e.message}`)
     }
 
@@ -114,8 +112,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
     if (syncRequestSpec.categories != null) {
       try {
         categories = errorMap(syncRequestSpec.categories, createCategoryDefinition)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (e: any) {
+      } catch (e) {
         throw new TypeError(`Error in categories: ${e.message}`)
       }
     }
@@ -124,8 +121,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
     if (syncRequestSpec.orders != null) {
       try {
         orders = errorMap(syncRequestSpec.orders, createOrder)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (e: any) {
+      } catch (e) {
         throw new TypeError(`Error in orders: ${e.message}`)
       }
     }
@@ -140,8 +136,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
 
           return c
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (e: any) {
+      } catch (e) {
         throw new TypeError(`Error in deleteCompletions: ${e.message}`)
       }
     }
@@ -150,8 +145,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
     if (syncRequestSpec.addCompletions != null) {
       try {
         addCompletions = errorMap(syncRequestSpec.addCompletions, createCompletionItem)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (e: any) {
+      } catch (e) {
         throw new TypeError(`Error in addCompletions: ${e.message}`)
       }
     }
@@ -181,8 +175,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
     let list: SyncedShoppingList
     try {
       list = createSyncedShoppingList(syncResponseSpec.list, null)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       throw new TypeError(`Error in list: ${e.message}`)
     }
 
@@ -190,8 +183,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
     if (syncResponseSpec.completions != null) {
       try {
         completions = errorMap(syncResponseSpec.completions, createCompletionItem)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (e: any) {
+      } catch (e) {
         throw new TypeError(`Error in completions: ${e.message}`)
       }
     }
@@ -200,8 +192,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
     if (syncResponseSpec.categories != null) {
       try {
         categories = errorMap(syncResponseSpec.categories, createCategoryDefinition)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (e: any) {
+      } catch (e) {
         throw new TypeError(`Error in categories: ${e.message}`)
       }
     }
@@ -210,8 +201,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
     if (syncResponseSpec.orders != null) {
       try {
         orders = errorMap(syncResponseSpec.orders, createOrder)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (e: any) {
+      } catch (e) {
         throw new TypeError(`Error in orders: ${e.message}`)
       }
     }
@@ -220,8 +210,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
     if (syncResponseSpec.changes != null) {
       try {
         changes = errorMap(syncResponseSpec.changes, createChange)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (e: any) {
+      } catch (e) {
         throw new TypeError(`Error in changes: ${e.message}`)
       }
     }

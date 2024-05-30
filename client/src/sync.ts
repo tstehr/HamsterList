@@ -226,8 +226,7 @@ class SyncingCore {
 
     try {
       this.db.updateList(getPersistedState(this.state))
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       this.log('error', 'DB', 'Save failed (probably due to quota)', e)
     }
   }, 500)
@@ -498,8 +497,7 @@ class SyncingCore {
       if (initialSync) {
         this.markListAsUsed()
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       const failedState = {
         lastSyncFailed: true,
         syncing: false,
@@ -601,8 +599,7 @@ class SyncingCore {
         ...completionStateUpdate,
         dirty: true,
       })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       this.log('error', 'SYNC', 'Error while applying diff', diff, e)
     }
     this.requestSync()
@@ -665,8 +662,7 @@ class SyncingCore {
     try {
       const diff = generateAddItem(item)
       this.applyDiff(diff)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       if (!(e instanceof TypeError)) {
         throw e
       }
@@ -677,8 +673,7 @@ class SyncingCore {
     try {
       const diff = generateDeleteItem(this.getShoppingList(this.state), id)
       this.applyDiff(diff)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       if (!(e instanceof TypeError)) {
         throw e
       }
@@ -691,8 +686,7 @@ class SyncingCore {
     try {
       const diff = generateUpdateItem(this.getShoppingList(this.state), item)
       this.applyDiff(diff)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       if (!(e instanceof TypeError)) {
         throw e
       }

@@ -58,8 +58,7 @@ export default class SyncController {
       }
 
       syncRequest = createSyncRequest(req.body)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       res.status(400).json({
         error: e.message,
       })

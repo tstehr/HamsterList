@@ -1,15 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
 import { Query } from 'express-serve-static-core'
 import _ from 'lodash'
-import { Change, createUUID, UUID } from 'shoppinglist-shared'
+import { Change, UUID, createUUID } from 'shoppinglist-shared'
 import { ListidParam } from './ShoppingListController.js'
 
 export default class ChangesController {
   handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     try {
       res.json(getChangesBetween(req.list.changes, this.getUUID(req.query.oldest), this.getUUID(req.query.newest)))
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       res.status(400).json({
         error: e.message,
       })

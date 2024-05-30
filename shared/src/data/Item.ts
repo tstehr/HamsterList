@@ -91,8 +91,7 @@ export function createLocalItemFromString(stringRepresentation: string, categori
         amount: amount,
         category: category,
       })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e) {
       // ignore and try again
     }
   }

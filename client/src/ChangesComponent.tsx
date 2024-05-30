@@ -80,8 +80,7 @@ export default function ChangesComponent(props: Props): JSX.Element {
       try {
         const reverseDiff = createReverseDiff(diff)
         props.applyDiff(reverseDiff)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (e: any) {
+      } catch (e) {
         console.error(e)
       }
     }
@@ -218,8 +217,7 @@ export class DiffComponent extends Component<DiffProps> {
       if (applicableDiff != null) {
         try {
           this.props.applyDiff(applicableDiff)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (e: any) {
+        } catch (e) {
           console.error(e)
         }
       }
