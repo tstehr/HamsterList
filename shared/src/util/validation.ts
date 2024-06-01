@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import assertError from './assertError.js'
 
 interface TypeMap {
   // can also be a type
@@ -76,6 +77,7 @@ export function errorMap<I, O>(array: readonly I[], transformer: (a: I) => O): r
     try {
       return transformer(el)
     } catch (e) {
+      assertError(e)
       const identification = getIdentification(el)
 
       if (identification != null) {

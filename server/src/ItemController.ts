@@ -14,6 +14,7 @@ import {
   updateInArray,
   UUID,
 } from 'shoppinglist-shared'
+import sendErrorResponse from 'util/sendErrorResponse.js'
 import { addCompletion, getSortedCompletions } from './CompletionsController.js'
 import { RecentlyUsedArray } from './ServerShoppingList.js'
 import { ListidParam } from './ShoppingListController.js'
@@ -28,10 +29,7 @@ export default class ItemController {
       req.itemid = createUUID(req.params.itemid)
       next()
     } catch (e) {
-      res.status(400).json({
-        error: e.message,
-      })
-      return
+      return sendErrorResponse(res, e)
     }
   }
 
@@ -57,10 +55,7 @@ export default class ItemController {
         localItem = createLocalItem(req.body)
       }
     } catch (e) {
-      res.status(400).json({
-        error: e.message,
-      })
-      return
+      return sendErrorResponse(res, e)
     }
 
     const item: Item = { ...localItem, id: createRandomUUID() }
@@ -83,10 +78,7 @@ export default class ItemController {
         item = createItem(req.body)
       }
     } catch (e) {
-      res.status(400).json({
-        error: e.message,
-      })
-      return
+      return sendErrorResponse(res, e)
     }
 
     if (item.id !== req.itemid) {

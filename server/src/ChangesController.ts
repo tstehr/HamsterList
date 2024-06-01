@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { Query } from 'express-serve-static-core'
 import _ from 'lodash'
-import { Change, UUID, createUUID } from 'shoppinglist-shared'
+import { Change, createUUID, UUID } from 'shoppinglist-shared'
+import sendErrorResponse from 'util/sendErrorResponse.js'
 import { ListidParam } from './ShoppingListController.js'
 
 export default class ChangesController {
@@ -9,9 +10,7 @@ export default class ChangesController {
     try {
       res.json(getChangesBetween(req.list.changes, this.getUUID(req.query.oldest), this.getUUID(req.query.newest)))
     } catch (e) {
-      res.status(400).json({
-        error: e.message,
-      })
+      sendErrorResponse(res, e)
     }
 
     next()

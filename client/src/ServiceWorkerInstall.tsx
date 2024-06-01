@@ -46,7 +46,11 @@ function useCheckForUpdateOnVisible() {
       const registration = await navigator.serviceWorker.ready
       await registration.update()
     } catch (error) {
-      console.error(error.message)
+      if (!(error instanceof Error)) {
+        console.error(error)
+      } else {
+        console.error(error.message)
+      }
     }
   }, [])
 

@@ -9,6 +9,7 @@ import https from 'https'
 import nconf from 'nconf'
 import path from 'path'
 import { createRandomUUID } from 'shoppinglist-shared'
+import isErrnoException from 'util/isErrnoException.js'
 import CategoriesController from './CategoriesController.js'
 import ChangesController from './ChangesController.js'
 import CompletionsController from './CompletionsController.js'
@@ -196,9 +197,12 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
         cert: fs.readFileSync(config.get('certFile')),
       }
     } catch (e) {
-      log.fatal(`File "${e.path}" couldn't be found`)
+      if (isErrnoException(e) && e.code === 'ENOENT') {
+        log.fatal(`File "${e.path}" couldn't be found`)
+      } else {
+        log.fatal(`Unexpected failure loading https files`, e)
+      }
       process.exit(1)
-      return
     }
 
     const server = https.createServer(options, app)

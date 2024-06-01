@@ -51,6 +51,7 @@
     "@types/json5": "^0.0.30",
     "@types/lodash": "^4.14.149",
     "@types/nconf": "^0.10.0",
+    "@types/node": "^20.0.0",
     "@types/nodemon": "^1.19.0",
     "@types/ws": "^7.2.3",
     "nodemon": "^2.0.3",

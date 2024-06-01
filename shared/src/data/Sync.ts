@@ -1,5 +1,6 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
+import assertError from '../util/assertError.js'
 import { createUUID, UUID } from '../util/uuid.js'
 import {
   checkAttributeType,
@@ -88,6 +89,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
     try {
       previousSync = createSyncedShoppingList(syncRequestSpec.previousSync, null)
     } catch (e) {
+      assertError(e)
       throw new TypeError(`Error in previousSync: ${e.message}`)
     }
 
@@ -95,6 +97,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
     try {
       currentState = createShoppingList(syncRequestSpec.currentState, null)
     } catch (e) {
+      assertError(e)
       throw new TypeError(`Error in currentState: ${e.message}`)
     }
 
@@ -113,6 +116,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
       try {
         categories = errorMap(syncRequestSpec.categories, createCategoryDefinition)
       } catch (e) {
+        assertError(e)
         throw new TypeError(`Error in categories: ${e.message}`)
       }
     }
@@ -122,6 +126,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
       try {
         orders = errorMap(syncRequestSpec.orders, createOrder)
       } catch (e) {
+        assertError(e)
         throw new TypeError(`Error in orders: ${e.message}`)
       }
     }
@@ -137,6 +142,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
           return c
         })
       } catch (e) {
+        assertError(e)
         throw new TypeError(`Error in deleteCompletions: ${e.message}`)
       }
     }
@@ -146,6 +152,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
       try {
         addCompletions = errorMap(syncRequestSpec.addCompletions, createCompletionItem)
       } catch (e) {
+        assertError(e)
         throw new TypeError(`Error in addCompletions: ${e.message}`)
       }
     }
@@ -176,6 +183,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
     try {
       list = createSyncedShoppingList(syncResponseSpec.list, null)
     } catch (e) {
+      assertError(e)
       throw new TypeError(`Error in list: ${e.message}`)
     }
 
@@ -184,6 +192,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
       try {
         completions = errorMap(syncResponseSpec.completions, createCompletionItem)
       } catch (e) {
+        assertError(e)
         throw new TypeError(`Error in completions: ${e.message}`)
       }
     }
@@ -193,6 +202,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
       try {
         categories = errorMap(syncResponseSpec.categories, createCategoryDefinition)
       } catch (e) {
+        assertError(e)
         throw new TypeError(`Error in categories: ${e.message}`)
       }
     }
@@ -202,6 +212,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
       try {
         orders = errorMap(syncResponseSpec.orders, createOrder)
       } catch (e) {
+        assertError(e)
         throw new TypeError(`Error in orders: ${e.message}`)
       }
     }
@@ -211,6 +222,7 @@ export function createSyncResponse(syncResponseSpec: unknown): SyncResponse {
       try {
         changes = errorMap(syncResponseSpec.changes, createChange)
       } catch (e) {
+        assertError(e)
         throw new TypeError(`Error in changes: ${e.message}`)
       }
     }

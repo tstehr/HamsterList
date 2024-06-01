@@ -20,6 +20,7 @@ import {
   SyncResponse,
   UUID,
 } from 'shoppinglist-shared'
+import sendErrorResponse from 'util/sendErrorResponse.js'
 import { getChangesBetween } from './ChangesController.js'
 import { addCompletion, getSortedCompletions } from './CompletionsController.js'
 import { updateRecentlyUsed } from './ItemController.js'
@@ -59,10 +60,7 @@ export default class SyncController {
 
       syncRequest = createSyncRequest(req.body)
     } catch (e) {
-      res.status(400).json({
-        error: e.message,
-      })
-      return
+      return sendErrorResponse(res, e)
     }
 
     if (syncRequest.previousSync.id != syncRequest.currentState.id || syncRequest.currentState.id != req.listid) {

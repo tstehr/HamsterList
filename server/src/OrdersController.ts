@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { createOrder, errorMap } from 'shoppinglist-shared'
+import sendErrorResponse from 'util/sendErrorResponse.js'
 import { ListidParam } from './ShoppingListController.js'
 
 export default class OrdersController {
@@ -20,10 +21,7 @@ export default class OrdersController {
     try {
       orders = errorMap(req.body, createOrder)
     } catch (e) {
-      res.status(400).json({
-        error: e.message,
-      })
-      return
+      return sendErrorResponse(res, e)
     }
 
     req.updatedList = { ...req.list, orders: orders }

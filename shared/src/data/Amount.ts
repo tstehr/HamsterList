@@ -2,6 +2,7 @@ import deepFreeze from 'deep-freeze'
 import escapeStringRegexp from 'escape-string-regexp'
 import _ from 'lodash'
 import * as mathjs from 'mathjs'
+import assertError from '../util/assertError.js'
 import { checkAttributeType, checkKeys, endValidation, nullSafe } from '../util/validation.js'
 
 export type Unit = string
@@ -103,6 +104,7 @@ export function createAmountFromString(amountString: string): Amount {
       const evalResult = mathjs.evaluate(modAmountString)
       return mathjsValueToAmount(evalResult)
     } catch (e) {
+      assertError(e)
       if (!initialError) {
         initialError = e
       }

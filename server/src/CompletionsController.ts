@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import _ from 'lodash'
 import { CompletionItem, createCompletionItem, frecency, normalizeCompletionName } from 'shoppinglist-shared'
+import sendErrorResponse from 'util/sendErrorResponse.js'
 import { RecentlyUsed, RecentlyUsedArray } from './ServerShoppingList.js'
 import { ListidParam } from './ShoppingListController.js'
 
@@ -15,10 +16,7 @@ export default class CompletionsController {
     try {
       completionItem = createCompletionItem(req.body)
     } catch (e) {
-      res.status(400).json({
-        error: e.message,
-      })
-      return
+      return sendErrorResponse(res, e)
     }
 
     const completionName = normalizeCompletionName(req.params.completionname)

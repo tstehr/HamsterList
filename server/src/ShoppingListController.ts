@@ -8,6 +8,7 @@ import {
   getOnlyNewChanges,
   updateInArray,
 } from 'shoppinglist-shared'
+import sendErrorResponse from 'util/sendErrorResponse.js'
 import { DB } from './DB.js'
 import { createServerShoppingList, getBaseShoppingList, ServerShoppingList } from './ServerShoppingList.js'
 import { ShoppingListChangeCallback } from './SocketController.js'
@@ -75,10 +76,7 @@ export default class ShoppingListController {
         req.list.categories,
       )
     } catch (e) {
-      res.status(400).json({
-        error: e.message,
-      })
-      return
+      return sendErrorResponse(res, e)
     }
 
     if (bodyList.id !== req.listid) {

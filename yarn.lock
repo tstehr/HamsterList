@@ -1500,10 +1500,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^13.11.1":
+"@types/node@npm:*":
   version: 13.11.1
   resolution: "@types/node@npm:13.11.1"
   checksum: 10c0/2f25705dc67eab225d4ad175b715b7e082b4433d9240addc15dd96958d330b7de8bc6821dcb0cc2865790dfbba2f70f9f9d1afd1359e180cb650e4912b66b11e
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.0.0":
+  version: 20.13.0
+  resolution: "@types/node@npm:20.13.0"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/4fb1ab41d622bbf3434da138bd0f23052e5df3bc59852ea1228cdfe185fd9d66ea71171a68a3106452c883808be7eaa7bc4cd87f534708754d49849e817aa566
   languageName: node
   linkType: hard
 
@@ -7750,6 +7759,7 @@ __metadata:
     "@types/json5": "npm:^0.0.30"
     "@types/lodash": "npm:^4.14.149"
     "@types/nconf": "npm:^0.10.0"
+    "@types/node": "npm:^20.0.0"
     "@types/nodemon": "npm:^1.19.0"
     "@types/ws": "npm:^7.2.3"
     body-parser: "npm:^1.18.3"
@@ -7784,7 +7794,6 @@ __metadata:
     "@types/is-uuid": "npm:^1.0.0"
     "@types/lodash": "npm:^4.14.149"
     "@types/mockdate": "npm:^2.0.0"
-    "@types/node": "npm:^13.11.1"
     "@types/nodemon": "npm:^1.19.0"
     "@types/uuid": "npm:^7.0.2"
     color-string: "npm:^1.5.2"
@@ -8667,6 +8676,13 @@ __metadata:
   dependencies:
     debug: "npm:^2.2.0"
   checksum: 10c0/3fec716e1fc8b6bda7589b77d247387b55371c2e46d6c60bfa49388f95c2dc501129e94d30713b5871aba0cfbe467500702e125fcca0a2ee96033ef3e2c27555
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~5.26.4":
+  version: 5.26.5
+  resolution: "undici-types@npm:5.26.5"
+  checksum: 10c0/bb673d7876c2d411b6eb6c560e0c571eef4a01c1c19925175d16e3a30c4c428181fb8d7ae802a261f283e4166a0ac435e2f505743aa9e45d893f9a3df017b501
   languageName: node
   linkType: hard
 
