@@ -83,6 +83,7 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
 
   const router = express.Router()
   router.use(
+    // @ts-expect-error -- We should migrate away from deprecated bodyParser. Allowing for now to unblock migration to vite.
     bodyParser.json({
       strict: false,
       limit: '2mb',
