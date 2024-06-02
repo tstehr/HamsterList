@@ -48,7 +48,7 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
   // here.
   // TODO refactor once https://bugs.webkit.org/show_bug.cgi?id=201591 is resolved
   const connectSrc = ["'self'"]
-  const websocketHost = config.get('websocketHost') || config.get('host')
+  const websocketHost = config.get<string>('websocketHost') || config.get('host')
 
   if (config.get('https') || config.get('proxiedHttps')) {
     connectSrc.push(`https://${websocketHost}`, `wss://${websocketHost}`)
@@ -207,7 +207,7 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
 
     const server = https.createServer(options, app)
     socketController.initializeFor(server)
-    const port = config.get('httpsPort')
+    const port = config.get<number>('httpsPort')
     server.listen(port)
     log.info(`HTTPS server listening on port ${port} `)
   }
@@ -215,7 +215,7 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
   if (config.get('http')) {
     const server = http.createServer(app)
     socketController.initializeFor(server)
-    const port = config.get('port')
+    const port = config.get<number>('port')
     server.listen(port)
     log.info(`HTTP server listening on port ${port} `)
   }

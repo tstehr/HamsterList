@@ -15,3 +15,9 @@ declare module 'express-serve-static-core' {
     itemid: P extends ItemidParam ? UUID : null
   }
 }
+
+declare module 'nconf' {
+  interface Provider {
+    get<T>(key?: string, callback?: ICallbackFunction): T
+  }
+}
