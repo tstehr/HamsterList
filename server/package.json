@@ -20,7 +20,7 @@
     "typecheck": "tsc --noEmit",
     "format": "yarn run format:imports; yarn run format:prettier",
     "format:imports": "organize-imports-cli tsconfig.json",
-    "format:prettier": "prettier src --write"
+    "format:prettier": "yarn run -T prettier src --write"
   },
   "dependencies": {
     "@babel/runtime": "^7.9.2",
