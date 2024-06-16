@@ -4,6 +4,7 @@ import * as mathjs from 'mathjs'
 import React from 'react'
 import { Amount, BaseItem } from 'shoppinglist-shared'
 import styles from './ItemComponent.module.css'
+import Linkify from 'linkify-react'
 
 interface AmountProps {
   amount: Amount | undefined | null
@@ -31,7 +32,10 @@ interface Props {
 const ItemComponent = React.memo(function ItemComponent(props: Props) {
   return (
     <span className={classNames(styles.ItemComponent, props.className)}>
-      <AmountComponent amount={props.item.amount} /> {props.item.name}
+      <AmountComponent amount={props.item.amount} />{' '}
+      <Linkify as="span" options={{ target: '_blank', defaultProtocol: 'https' }}>
+        {props.item.name}
+      </Linkify>
     </span>
   )
 }, isEqual)

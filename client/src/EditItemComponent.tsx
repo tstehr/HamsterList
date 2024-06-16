@@ -49,7 +49,17 @@ export default class EditItemComponent extends Component<Props, State> {
     this.props.updateItem(this.props.item.id, updatedItem)
   }
 
-  handleFocus = (): void => {
+  handleFocus = (e: React.FocusEvent): void => {
+    // Don't treat clicks on focusable children as focus events. This allows links in the item name to be clicked.
+    if (
+      e.target !== e.currentTarget &&
+      e.target instanceof HTMLElement &&
+      e.target.tabIndex != null &&
+      e.target.tabIndex !== -1
+    ) {
+      return
+    }
+
     this.setState((prevState) => ({
       hasFocus: true,
       isEditing: prevState.hasFocus ? false : true,
