@@ -101,7 +101,7 @@ export function createAmountFromString(amountString: string): Amount {
     const modAmountString: string = transformationCombination.reduce((memo, transformation) => transformation(memo), amountString)
 
     try {
-      const evalResult = mathjs.evaluate(modAmountString)
+      const evalResult = mathjs.evaluate(modAmountString) as MathjsValue
       return mathjsValueToAmount(evalResult)
     } catch (e) {
       assertError(e)

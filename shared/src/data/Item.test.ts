@@ -214,7 +214,7 @@ describe('itemToString', () => {
     expect(
       itemToString({
         id: id,
-        // @ts-ignore Expected type error, to check runtime behavior
+        // @ts-expect-error Expected type error, to check runtime behavior
         name: undefined,
         amount: undefined,
         category: undefined,

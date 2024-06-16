@@ -1,3 +1,4 @@
+import Logger from 'bunyan'
 import { ItemidParam } from 'ItemController'
 import { UUID } from 'shoppinglist-shared'
 import { ServerShoppingList } from './ServerShoppingList.js'

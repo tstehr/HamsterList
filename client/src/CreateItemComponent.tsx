@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { Up } from 'HistoryTracker'
 import React, { Component } from 'react'
 import AutosizeTextarea from 'react-autosize-textarea'
-import { Route } from 'react-router-dom'
+import { Route, RouteComponentProps } from 'react-router-dom'
 import {
   addMatchingCategory,
   CategoryDefinition,
@@ -104,14 +104,14 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
   }
 
-  handleFocus = (e: React.FocusEvent): void => {
+  handleFocus = (): void => {
     clearTimeout(this.focusTimeoutID)
     this.setState({
       formHasFocus: true,
     })
   }
 
-  handleBlur = (e: React.FocusEvent): void => {
+  handleBlur = (): void => {
     this.focusTimeoutID = window.setTimeout((): void => {
       this.setState({
         formHasFocus: false,
@@ -175,7 +175,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
   }
 
-  handleToggleMultiline = (e: React.SyntheticEvent): void => {
+  handleToggleMultiline = (): void => {
     if (this.isMultiline() && this.hasMulipleLines()) {
       const confirmation = window.confirm('This will delete the current input, continue?')
 
@@ -315,7 +315,7 @@ export default class CreateItemComponent extends Component<Props, State> {
             ) : (
               <Route
                 path={`/:listid/newItem/:itemRepr/category`}
-                render={({ history, match }) => {
+                render={({ history, match }: RouteComponentProps<{ listid: string; itemRepr: string }>) => {
                   history.replace(`/${match.params.listid || ''}`)
                   return null
                 }}

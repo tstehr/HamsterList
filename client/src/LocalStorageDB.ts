@@ -8,6 +8,7 @@ const keyPrefix = 'SL$$1$$'
 const listPrefix = `${keyPrefix}LIST$$`
 
 @Emittery.mixin('emitter')
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 class LocalStorageDB implements DB {
   constructor() {
     window.addEventListener('storage', this.handleStorage)
@@ -37,7 +38,8 @@ class LocalStorageDB implements DB {
     }
 
     try {
-      return JSON.parse(itemString)
+      const item = JSON.parse(itemString) as T
+      return item
     } catch (e) {
       if (e instanceof SyntaxError) {
         return null
@@ -96,7 +98,7 @@ class LocalStorageDB implements DB {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-unsafe-declaration-merging
 interface LocalStorageDB extends MixinEmitter<DBEmitter> {}
 
 export default LocalStorageDB

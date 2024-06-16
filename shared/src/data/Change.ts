@@ -79,7 +79,7 @@ export function createDiff(diffSpec: unknown): Diff {
         oldItem: createItem(diffSpec.oldItem),
       }
     } else {
-      throw new TypeError(`Unknown diff type ${diffSpec.type}`)
+      throw new TypeError(`Unknown diff type ${String(diffSpec.type)}`)
     }
 
     return deepFreeze(diff)

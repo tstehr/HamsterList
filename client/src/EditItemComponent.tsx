@@ -3,7 +3,7 @@ import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import AutosizeTextarea from 'react-autosize-textarea'
-import { Route } from 'react-router-dom'
+import { Route, RouteComponentProps } from 'react-router-dom'
 import { CategoryDefinition, createLocalItemFromString, Item, itemToString, LocalItem } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
 import styles from './EditItemComponent.module.css'
@@ -111,7 +111,7 @@ export default class EditItemComponent extends Component<Props, State> {
     }
   }
 
-  handleDivClick = (e: React.SyntheticEvent): void => {
+  handleDivClick = (): void => {
     this.setState({
       hasFocus: true,
       isEditing: true,
@@ -123,11 +123,11 @@ export default class EditItemComponent extends Component<Props, State> {
     return (
       <li className={styles.EditItemComponent}>
         <Route
-          render={({ history, location, match }) => (
+          render={({ history, match }: RouteComponentProps<{ listid?: string }>) => (
             <button
               type="button"
               className={classNames(styles.Category, KEY_FOCUS_COMPONENT_NO_FOCUS)}
-              onClick={() => history.push(`/${match.params.listid || ''}/${this.props.item.id}/category`)}
+              onClick={() => history.push(`/${match.params.listid ?? ''}/${this.props.item.id}/category`)}
             >
               <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories} />
             </button>
@@ -161,7 +161,7 @@ export default class EditItemComponent extends Component<Props, State> {
           </div>
         )}
         <IconButton
-          onClick={(e) => this.props.deleteItem(this.props.item.id)}
+          onClick={() => this.props.deleteItem(this.props.item.id)}
           icon="DELETE"
           alt="Delete"
           className={classNames(styles.Delete, KEY_FOCUS_COMPONENT_NO_FOCUS)}

@@ -28,7 +28,7 @@ export default class SocketController {
       const sockets = _.chain(this.registeredWebSockets).values().flatten().value()
 
       this.log.trace(
-        sockets.map((ws) => ws.log.fields),
+        sockets.map((ws) => ws.log.fields as unknown),
         'All connected',
       )
       sockets.forEach((ws) => {
@@ -78,7 +78,7 @@ export default class SocketController {
     ws.isAlive = true
     ws.log.debug(`Connected`)
     ws.on('message', (msg) => {
-      ws.log.debug(`Received: ${msg}`)
+      ws.log.debug(`Received: ${String(msg)}`)
     })
     ws.on('close', () => {
       this.registeredWebSockets[listid].splice(this.registeredWebSockets[listid].indexOf(ws), 1)

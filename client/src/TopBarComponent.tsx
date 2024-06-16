@@ -16,7 +16,7 @@ interface Props {
 
 export default function TopBarComponent(props: Props): JSX.Element {
   const className = classNames(styles.TopBarComponent, {
-    [styles.responsive]: props.responsive == null ? true : props.responsive,
+    [styles.responsive]: props.responsive ?? true,
   })
   return (
     <header className={className}>

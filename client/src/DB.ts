@@ -14,8 +14,7 @@ export type Key =
       readonly listid: string
     }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Value = any
+export type Value = unknown
 
 export const RECENTLY_USED_KEY: Key = { type: 'simple', identifier: 'recentlyUsedLists' }
 export const RESTORATION_ENABLED: Key = { type: 'simple', identifier: 'restorationEnabled' }
@@ -44,8 +43,8 @@ export interface RecentlyUsedList {
 }
 
 export function getRecentlyUsedLists(db: DB): readonly RecentlyUsedList[] {
-  return _.chain(db.get(RECENTLY_USED_KEY) ?? [])
-    .orderBy([(entry: RecentlyUsedList) => frecency(entry)], ['desc'])
+  return _.chain(db.get<RecentlyUsedList>(RECENTLY_USED_KEY) ?? [])
+    .orderBy([(entry) => frecency(entry)], ['desc'])
     .value()
 }
 

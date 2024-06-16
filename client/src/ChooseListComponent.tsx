@@ -32,7 +32,7 @@ export default class ChooseListComponent extends Component<{}, State> {
     this.state = {
       listid: null,
       recentlyUsedLists: getRecentlyUsedLists(this.db),
-      restorationEnabled: this.db.get(RESTORATION_ENABLED) ?? false,
+      restorationEnabled: this.db.get<boolean>(RESTORATION_ENABLED) ?? false,
     }
     this.inputListid = React.createRef()
   }
@@ -124,12 +124,14 @@ export default class ChooseListComponent extends Component<{}, State> {
               </TopBarComponent>
             ),
             sections: [
-              <div className={styles.Content}>
+              <div key="Content" className={styles.Content}>
                 <section>
                   <button
                     type="button"
                     className={classNames(globalStyles.Button, styles.RandomButton)}
-                    onClick={this.createRandomList.bind(this)}
+                    onClick={() => {
+                      this.createRandomList().catch(console.error)
+                    }}
                   >
                     <span>Create new List</span>
                   </button>
@@ -159,7 +161,7 @@ export default class ChooseListComponent extends Component<{}, State> {
                         <div className={classNames(globalStyles.Button, styles.RecentlyUsedLink)} key={rul.id}>
                           <Link to={'/' + rul.id}>{rul.title}</Link>
                           <IconButton
-                            onClick={(e) => this.removeRecentlyUsedList(rul.id)}
+                            onClick={() => this.removeRecentlyUsedList(rul.id)}
                             icon="DELETE"
                             alt="Remove from recently used"
                             className={KEY_FOCUS_COMPONENT_NO_FOCUS}

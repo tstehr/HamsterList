@@ -131,7 +131,7 @@ export default function ChangesComponent(props: Props): JSX.Element {
         leaveAnimation="accordionVertical"
       >
         {/* <ul className={styles.List}> */}
-        {diffs.map(({ change, changeIndex, unsynced, diff, diffIndex }, absoluteDiffIndex) => {
+        {diffs.map(({ change, unsynced, diff, diffIndex }, absoluteDiffIndex) => {
           const detailsExpanded =
             expandedChange != null && expandedChange.id === change.id && detailsExpandedDiff.diffIndex === diffIndex
           return (
@@ -194,7 +194,7 @@ export class DiffComponent extends Component<DiffProps> {
     return [dateString, absoluteDateString, date.toISOString()]
   }, isEqual)
 
-  getApplicableDiff = (diff: Diff): [Diff | null | undefined, boolean] => {
+  getApplicableDiff = (): [Diff | null | undefined, boolean] => {
     const reverseDiff = createReverseDiff(this.props.diff)
     const applicableDiff = this.props.createApplicableDiff(reverseDiff)
 
@@ -209,7 +209,7 @@ export class DiffComponent extends Component<DiffProps> {
       [styles.expanded]: this.props.detailsExpanded,
     })
     const [dateString, absoluteDateString, isoDateString] = this.getDateString(this.props.change.date)
-    const [applicableDiff, reverseEqualApplicable] = this.getApplicableDiff(this.props.diff)
+    const [applicableDiff, reverseEqualApplicable] = this.getApplicableDiff()
 
     const undo = (e: React.SyntheticEvent): void => {
       e.preventDefault()
@@ -257,7 +257,6 @@ export class DiffComponent extends Component<DiffProps> {
               // Use a link even if undo isn't possible so focus isn't lost after undo
               // We can't use a button, because we want line breaks to be possible inside the element
             }
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
             <a
               href="#"
               onClick={undo}
@@ -282,7 +281,6 @@ export class DiffComponent extends Component<DiffProps> {
               // Use a link even if undo isn't possible so focus isn't lost after undo
               // We can't use a button, because we want line breaks to be possible inside the element
             }
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
             <a
               href="#"
               onClick={undoNewer}

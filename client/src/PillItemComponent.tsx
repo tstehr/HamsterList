@@ -10,8 +10,8 @@ interface Props {
   categories: readonly CategoryDefinition[]
 }
 
-const PillItemComponent = React.memo(
-  (props: Props) => (
+const PillItemComponent = React.memo(function PillItemComponent(props: Props) {
+  return (
     <div className={styles.PillItemComponent}>
       <CategoryTextComponent
         categoryId={props.item.category}
@@ -20,8 +20,7 @@ const PillItemComponent = React.memo(
       />{' '}
       <ItemComponent item={props.item} className={styles.Item} />
     </div>
-  ),
-  isEqual,
-)
+  )
+}, isEqual)
 
 export default PillItemComponent

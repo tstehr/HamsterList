@@ -23,7 +23,7 @@ export class DB {
 
     let json
     try {
-      json = await fs.readJson(this.path)
+      json = (await fs.readJson(this.path)) as DBContents
     } catch (e) {
       json = {
         lists: [],

@@ -50,6 +50,7 @@ const CategoryComponent = React.memo(
   isEqual,
 )
 
+// eslint-disable-next-line react/display-name
 const CategoryTextComponent = React.memo((props: Props & ComponentProps<'span'>) => {
   const category = getCategory(props)
 

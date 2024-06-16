@@ -10,10 +10,13 @@ export class HTTPErrorStatusError extends Error {
 }
 
 export async function responseToJSON(res: Response): Promise<unknown> {
-  const json = await res.json()
+  const json: unknown = await res.json()
 
   if (!res.ok) {
-    const errorMessage = json?.error
+    const errorMessage =
+      typeof json === 'object' && json !== null && 'error' in json && typeof json.error === 'string'
+        ? json?.error
+        : 'Unknown error'
     throw new HTTPErrorStatusError(errorMessage, res.status)
   }
 
@@ -21,11 +24,13 @@ export async function responseToJSON(res: Response): Promise<unknown> {
 }
 
 export type MixinEmitter<T> =
-  T extends Emittery.Typed<infer P, infer Q>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends Emittery.Typed<any, any>
     ? PublicEmitter<T> & {
         emitter: T
       }
     : never
 
 export type PublicEmitter<T> =
-  T extends Emittery.Typed<infer P, infer Q> ? Omit<T, 'emit' | 'emitSerial' | 'bindMethods' | 'clearListeners'> : never
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends Emittery.Typed<any, any> ? Omit<T, 'emit' | 'emitSerial' | 'bindMethods' | 'clearListeners'> : never

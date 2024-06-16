@@ -13,7 +13,7 @@ type Props = {
 export const KEY_FOCUS_COMPONENT_NO_FOCUS = 'KEY_FOCUS_COMPONENT_NO_FOCUS'
 
 export default class KeyFocusComponent extends Component<Props> {
-  root: HTMLElement | undefined | null
+  root: Element | undefined | null
   back: ArrowKey
   forward: ArrowKey
 
@@ -110,7 +110,7 @@ export default class KeyFocusComponent extends Component<Props> {
         // ts-ignore is needed as ts chokes on the typing for ref in combination with keyof jsx.Element
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        ref={(root: HTMLElment): void => {
+        ref={(root: Element | null): void => {
           this.root = root
         }}
         className={className}

@@ -40,6 +40,6 @@ function getSvg(icon: IconType, alt: string): JSX.Element {
       )
 
     default:
-      throw Error(`Unknwon icon type: ${icon}`)
+      throw Error(`Unknwon icon type`)
   }
 }

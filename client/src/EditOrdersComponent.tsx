@@ -79,7 +79,7 @@ export default class EditOrdersComponent extends Component<Props> {
           <div className={styles.EditOrdersComponent}>
             <Route
               path="/:listid/orders/:orderid"
-              render={({ history, match }: RouteComponentProps<{ orderid: string }>) => (
+              render={({ match }: RouteComponentProps<{ orderid: string }>) => (
                 <div className={styles.Order}>
                   <NullSafeEditOrderComponent
                     listid={this.props.listid}
@@ -228,7 +228,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     }
   }
 
-  componentWillReceiveProps(nextProps: EditOrderProps): void {
+  UNSAFE_componentWillReceiveProps(nextProps: EditOrderProps): void {
     this.setState((oldState) => ({
       inputValue: oldState.hasFocus ? oldState.inputValue : nextProps.order?.name ?? '',
     }))
@@ -247,13 +247,13 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     })
   }
 
-  handleFocus = (e: React.SyntheticEvent): void => {
+  handleFocus = (): void => {
     this.setState({
       hasFocus: true,
     })
   }
 
-  handleBlur = (e: React.SyntheticEvent): void => {
+  handleBlur = (): void => {
     this.setState({
       hasFocus: false,
     })
