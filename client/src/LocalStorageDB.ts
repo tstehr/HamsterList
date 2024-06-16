@@ -1,6 +1,6 @@
 import Emittery from 'emittery'
 import { MixinEmitter } from 'utils'
-import DB, { DBEmitter, Key, RECENTLY_USED_KEY, Value } from './DB'
+import DB, { DBEmitter, Key, Value } from './DB'
 import { PersistedClientShoppingList } from './sync'
 
 // in case of incompatible changes we increment the number to ensure that old data isn't read by new version
@@ -10,7 +10,6 @@ const listPrefix = `${keyPrefix}LIST$$`
 @Emittery.mixin('emitter')
 class LocalStorageDB implements DB {
   constructor() {
-    this.migrateRecentlyUsedLists()
     window.addEventListener('storage', this.handleStorage)
   }
 
@@ -94,20 +93,6 @@ class LocalStorageDB implements DB {
       return identifier ? { type: 'simple', identifier } : null
     }
     return null
-  }
-
-  private migrateRecentlyUsedLists() {
-    try {
-      if (this.get(RECENTLY_USED_KEY) === null) {
-        const oldDB = JSON.parse(localStorage.db)
-        const oldRecentlyUsedLists = oldDB?.recentlyUsedLists
-        if (oldRecentlyUsedLists) {
-          this.set(RECENTLY_USED_KEY, oldRecentlyUsedLists)
-        }
-      }
-    } catch (e) {
-      console.error(e)
-    }
   }
 }
 
