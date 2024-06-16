@@ -16,14 +16,18 @@ export interface ShoppingList {
   readonly items: readonly Item[]
 }
 
-export function createShoppingList(shoppingListSpec: unknown, categories?: readonly CategoryDefinition[] | null): ShoppingList {
+export function createShoppingList(
+  shoppingListSpec: unknown,
+  categories?: readonly CategoryDefinition[] | null,
+  transformItemSpec?: (itemSpec: unknown) => unknown,
+): ShoppingList {
   if (
     checkKeys(shoppingListSpec, ['id', 'title', 'items']) &&
     checkAttributeType(shoppingListSpec, 'id', 'string') &&
     checkAttributeType(shoppingListSpec, 'title', 'string') &&
     checkAttributeType(shoppingListSpec, 'items', 'array')
   ) {
-    let items = errorMap(shoppingListSpec.items, createItem)
+    let items = errorMap(shoppingListSpec.items, (itemSpec) => createItem(itemSpec, transformItemSpec))
     const duplicatedIds = _.chain(items)
       .groupBy('id')
       .entries()

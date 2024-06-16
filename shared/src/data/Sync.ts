@@ -66,7 +66,7 @@ export function createSyncedShoppingList(
   endValidation()
 }
 
-export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
+export function createSyncRequest(syncRequestSpec: unknown, transformItemSpec?: (itemSpec: unknown) => unknown): SyncRequest {
   if (
     checkKeys(syncRequestSpec, [
       'previousSync',
@@ -95,7 +95,7 @@ export function createSyncRequest(syncRequestSpec: unknown): SyncRequest {
 
     let currentState: ShoppingList
     try {
-      currentState = createShoppingList(syncRequestSpec.currentState, null)
+      currentState = createShoppingList(syncRequestSpec.currentState, null, transformItemSpec)
     } catch (e) {
       assertError(e)
       throw new TypeError(`Error in currentState: ${e.message}`)

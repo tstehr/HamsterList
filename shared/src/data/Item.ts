@@ -46,7 +46,8 @@ export function createCompletionItem(completionItemSpec: unknown): CompletionIte
   endValidation()
 }
 
-export function createLocalItem(localItemSpec: unknown): LocalItem {
+export function createLocalItem(localItemSpecArg: unknown, transformItemSpec?: (itemSpec: unknown) => unknown): LocalItem {
+  const localItemSpec = transformItemSpec ? transformItemSpec(localItemSpecArg) : localItemSpecArg
   if (isIndexable(localItemSpec)) {
     const completionItem = createCompletionItem(_.omit(localItemSpec, ['amount']))
     const localItem = {
@@ -115,7 +116,8 @@ export function createLocalItemFromItemStringRepresentation(
   endValidation()
 }
 
-export function createItem(itemSpec: unknown): Item {
+export function createItem(itemSpecArg: unknown, transformItemSpec?: (itemSpec: unknown) => unknown): Item {
+  const itemSpec = transformItemSpec ? transformItemSpec(itemSpecArg) : itemSpecArg
   if (isIndexable(itemSpec)) {
     const localItem = createLocalItem(_.omit(itemSpec, ['id']))
 

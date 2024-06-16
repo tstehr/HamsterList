@@ -48,12 +48,13 @@ export default class ItemController {
   handlePost = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     let localItem: LocalItem
     try {
-      if (req.body.stringRepresentation != null) {
-        localItem = createLocalItemFromItemStringRepresentation(req.body, req.list.categories)
-        localItem = addMatchingCategory(localItem, getSortedCompletions(req.list.recentlyUsed))
-      } else {
-        localItem = createLocalItem(req.body)
-      }
+      localItem = createLocalItem(req.body, (itemSpec) => {
+        if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
+          return itemSpec
+        }
+        const item = createLocalItemFromItemStringRepresentation(itemSpec, req.list.categories)
+        return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
+      })
     } catch (e) {
       return sendErrorResponse(res, e)
     }
@@ -71,12 +72,13 @@ export default class ItemController {
   handlePut = (req: Request<ItemidParam>, res: Response, next: NextFunction): void => {
     let item: Item
     try {
-      if (req.body.stringRepresentation != null) {
-        item = createItemFromItemStringRepresentation(req.body, req.list.categories)
-        item = addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
-      } else {
-        item = createItem(req.body)
-      }
+      item = createItem(req.body, (itemSpec) => {
+        if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
+          return itemSpec
+        }
+        const item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
+        return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
+      })
     } catch (e) {
       return sendErrorResponse(res, e)
     }

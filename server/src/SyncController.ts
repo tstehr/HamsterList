@@ -47,18 +47,13 @@ export default class SyncController {
     let syncRequest: SyncRequest
 
     try {
-      // Convert stringRepresentation items to full items
-      if (req.body?.currentState && Array.isArray(req.body.currentState.items)) {
-        req.body.currentState.items = req.body.currentState.items.map((itemSpec: unknown) => {
-          if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
-            return itemSpec
-          }
-          const item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
-          return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
-        })
-      }
-
-      syncRequest = createSyncRequest(req.body)
+      syncRequest = createSyncRequest(req.body, (itemSpec) => {
+        if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
+          return itemSpec
+        }
+        const item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
+        return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
+      })
     } catch (e) {
       return sendErrorResponse(res, e)
     }
