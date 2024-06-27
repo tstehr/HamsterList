@@ -14,7 +14,7 @@ const flatCompat = new FlatCompat()
 
 export default tseslint.config(
   {
-    ignores: ['*/build/**', '*/coverage/**', '.yarn/**'],
+    ignores: ['*/build/**', '*/coverage/**', '.yarn/**', 'client/dev-dist/**'],
   },
   {
     files: ['*/src/**/*.ts', '*/src/**/*.tsx'],
