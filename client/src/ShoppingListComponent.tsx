@@ -2,27 +2,26 @@ import EditOrdersComponent from 'EditOrdersComponent'
 import Frame from 'Frame'
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Link, Route, Switch } from 'react-router-dom'
+import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom'
 import {
+  addAmounts,
   CategoryDefinition,
   Change,
   CompletionItem,
+  createCookingAmount,
+  getSIUnit,
   Item,
   LocalItem,
   Order,
   ShoppingList,
   UUID,
-  addAmounts,
-  createCookingAmount,
-  getSIUnit,
 } from 'shoppinglist-shared'
 import ChooseCategoryComponent from './ChooseCategoryComponent'
 import CreateItemComponent from './CreateItemComponent'
 import { Up } from './HistoryTracker'
 import ImportComponent from './ImportComponent'
-import ShoppingListItemsComponent from './ShoppingListItemsComponent'
-import TopBarComponent, { EditTitleComponent, SyncStatusComponent } from './TopBarComponent'
 import globalStyles from './index.module.css'
+import ShoppingListItemsComponent from './ShoppingListItemsComponent'
 import {
   AddCompletion,
   ApplyDiff,
@@ -40,6 +39,7 @@ import {
   UpdateListTitle,
   UpdateOrders,
 } from './sync'
+import TopBarComponent, { EditTitleComponent, SyncStatusComponent } from './TopBarComponent'
 
 interface Props {
   shoppingList: ShoppingList
@@ -116,7 +116,7 @@ export default class ShoppingListComponent extends Component<Props> {
     this.props.performTransaction(() => {
       const grouped = _.groupBy(this.props.shoppingList.items, (item) => {
         return JSON.stringify({
-          category: item.category == null ? null : item.category,
+          category: item.category ?? null,
           unit: item.amount == null ? null : getSIUnit(item.amount),
           name: item.name.trim().toLowerCase(),
         })
@@ -174,7 +174,13 @@ export default class ShoppingListComponent extends Component<Props> {
         <section>
           <h2>Tools</h2>
           <p>
-            <button type="button" className={globalStyles.PaddedButton} onClick={this.shareList}>
+            <button
+              type="button"
+              className={globalStyles.PaddedButton}
+              onClick={() => {
+                this.shareList().catch(console.error)
+              }}
+            >
               Share
             </button>
           </p>
@@ -216,7 +222,7 @@ export default class ShoppingListComponent extends Component<Props> {
           <p>
             <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
           </p>
-          <p>Version: {process.env.REACT_APP_GIT_SHA ?? 'No version information found!'}</p>
+          <p>Version: {import.meta.env.VITE_GIT_SHA ?? 'No version information found!'}</p>
         </section>
       </>
     )
@@ -243,6 +249,7 @@ export default class ShoppingListComponent extends Component<Props> {
                 ),
                 sections: [
                   <EditOrdersComponent
+                    key="EditOrdersComponent"
                     listid={this.props.shoppingList.id}
                     orders={this.props.orders}
                     categories={this.props.categories}
@@ -273,6 +280,7 @@ export default class ShoppingListComponent extends Component<Props> {
                 ),
                 sections: [
                   <ImportComponent
+                    key="ImportComponent"
                     listid={this.props.shoppingList.id}
                     items={this.props.shoppingList.items}
                     completions={this.props.completions}
@@ -308,6 +316,7 @@ export default class ShoppingListComponent extends Component<Props> {
                 ),
                 sections: [
                   <ShoppingListItemsComponent
+                    key="ShoppingListItemsComponent"
                     items={this.props.shoppingList.items}
                     categories={this.props.categories}
                     orders={this.props.orders}
@@ -318,6 +327,7 @@ export default class ShoppingListComponent extends Component<Props> {
                     up={this.props.up}
                   />,
                   <CreateItemComponent
+                    key="CreateItemComponent"
                     changes={this.props.changes}
                     unsyncedChanges={this.props.unsyncedChanges}
                     completions={this.props.completions}
@@ -339,11 +349,11 @@ export default class ShoppingListComponent extends Component<Props> {
 
         <Route
           path={`/:listid/:itemid/category`}
-          render={({ history, match }) => {
-            const item = this.props.shoppingList.items.find((i) => i.id === match.params['itemid'])
+          render={({ history, match }: RouteComponentProps<{ itemid: string; listid: string }>) => {
+            const item = this.props.shoppingList.items.find((i) => i.id === match.params.itemid)
 
             if (item == null) {
-              history.replace(`/${match.params['listid'] || ''}`)
+              history.replace(`/${match.params.listid || ''}`)
               return null
             }
 

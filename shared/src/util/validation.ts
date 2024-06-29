@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import assertError from './assertError.js'
 
 interface TypeMap {
   // can also be a type
@@ -11,13 +12,14 @@ interface TypeMap {
 
 type AttributeType = keyof TypeMap
 
-export function isIndexable(object: unknown): object is { [k: string]: unknown } {
+export function isIndexable(object: unknown): object is Record<string, unknown> {
   return _.isObject(object)
 }
 
-export function getLiteralKeys<O>(object: O): ReadonlyArray<keyof O> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function getLiteralKeys<O extends {}>(object: O): readonly (keyof O)[] {
   // This is technically only a retyping of Object.keys
-  return Object.keys(object) as Array<keyof O>
+  return Object.keys(object) as (keyof O)[]
 }
 
 export function checkKeys<T extends string>(object: unknown, expectedKeys: T[]): object is { [K in T]?: unknown } {
@@ -38,19 +40,19 @@ export function checkKeys<T extends string>(object: unknown, expectedKeys: T[]):
 export function checkAttributeType<T extends AttributeType, K extends string, O extends { [P in K]?: unknown }>(
   object: O,
   key: K,
-  type: T
+  type: T,
 ): object is O & { [P in K]: TypeMap[T] }
 export function checkAttributeType<T extends AttributeType, K extends string, O extends { [P in K]?: unknown }>(
   object: O,
   key: K,
   type: T,
-  optional: true
+  optional: true,
 ): object is O & { [P in K]?: TypeMap[T] }
 export function checkAttributeType<T extends AttributeType, K extends string, O extends { [P in K]: unknown }>(
   object: O,
   key: K,
   type: T,
-  optional = false
+  optional = false,
 ): boolean {
   if (!optional && object[key] == null) {
     throw new TypeError(`Given object must have an attribute "${key}"`)
@@ -75,6 +77,7 @@ export function errorMap<I, O>(array: readonly I[], transformer: (a: I) => O): r
     try {
       return transformer(el)
     } catch (e) {
+      assertError(e)
       const identification = getIdentification(el)
 
       if (identification != null) {
@@ -104,7 +107,7 @@ const IDENTIFICATION_FIELDS = Object.freeze(['name', 'title', 'id'])
 
 function getIdentification(o: unknown): string | undefined | null {
   if (_.isObject(o)) {
-    const indexableO = o as { [key: string]: unknown }
+    const indexableO = o as Record<string, unknown>
     for (const identificationField of IDENTIFICATION_FIELDS) {
       const value = indexableO[identificationField]
       if (typeof value === 'string') {

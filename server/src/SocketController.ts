@@ -4,9 +4,9 @@ import https from 'https'
 import _ from 'lodash'
 import { createRandomUUID } from 'shoppinglist-shared'
 import WebSocket from 'ws'
-import { getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList'
-import TokenCreator from './TokenCreator'
-import normalizeListid from './util/normalizeListid'
+import { getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList.js'
+import TokenCreator from './TokenCreator.js'
+import normalizeListid from './util/normalizeListid.js'
 
 export type ShoppingListChangeCallback = (list: ServerShoppingList) => void
 
@@ -18,9 +18,7 @@ interface LoggingWebSocket extends WebSocket {
 export default class SocketController {
   tokenCreator: TokenCreator
   log: Logger
-  registeredWebSockets: {
-    [x: string]: LoggingWebSocket[]
-  }
+  registeredWebSockets: Record<string, LoggingWebSocket[]>
 
   constructor(tokenCreator: TokenCreator, log: Logger) {
     this.tokenCreator = tokenCreator
@@ -30,8 +28,8 @@ export default class SocketController {
       const sockets = _.chain(this.registeredWebSockets).values().flatten().value()
 
       this.log.trace(
-        sockets.map((ws) => ws.log.fields),
-        'All connected'
+        sockets.map((ws) => ws.log.fields as unknown),
+        'All connected',
       )
       sockets.forEach((ws) => {
         if (ws.isAlive === false) {
@@ -80,7 +78,7 @@ export default class SocketController {
     ws.isAlive = true
     ws.log.debug(`Connected`)
     ws.on('message', (msg) => {
-      ws.log.debug(`Received: ${msg}`)
+      ws.log.debug(`Received: ${String(msg)}`)
     })
     ws.on('close', () => {
       this.registeredWebSockets[listid].splice(this.registeredWebSockets[listid].indexOf(ws), 1)

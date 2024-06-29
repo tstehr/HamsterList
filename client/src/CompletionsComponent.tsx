@@ -1,7 +1,7 @@
 import fuzzy from 'fuzzy'
 import { Up } from 'HistoryTracker'
 import _ from 'lodash'
-import React, { Fragment } from 'react'
+import React from 'react'
 // import FlipMove from 'react-flip-move'
 import { CategoryDefinition, CompletionItem, itemToString, LocalItem, UUID } from 'shoppinglist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
@@ -41,7 +41,6 @@ export default function CompletionsComponent(props: Props) {
       {props.itemsInCreation.map((ii) => (
         <CreateItemButtonComponent
           key={itemToUniqueRepr.get(ii.item)}
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           itemRepr={itemToUniqueRepr.get(ii.item)!}
           item={ii.item}
           categories={props.categories}
@@ -57,7 +56,6 @@ export default function CompletionsComponent(props: Props) {
       {completionItems.map((item) => (
         <CreateItemButtonComponent
           key={itemToUniqueRepr.get(item)}
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           itemRepr={itemToUniqueRepr.get(item)!}
           item={item}
           categories={props.categories}
@@ -79,7 +77,7 @@ function getCompletionItems(itemsInCreation: readonly ItemInput[], completions: 
 
   const itemsInCreationNames = itemsInCreation.map((ii) => ii.item.name.trim().toLowerCase())
 
-  let results: Array<fuzzy.FilterResult<CompletionItem> & { item: LocalItem }> = []
+  let results: (fuzzy.FilterResult<CompletionItem> & { item: LocalItem })[] = []
   for (const itemInput of itemsInCreation) {
     const itemInCreation = itemInput.item
     const resultsForItem = fuzzy

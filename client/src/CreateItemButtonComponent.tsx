@@ -1,15 +1,15 @@
 import ChooseCategoryComponent from 'ChooseCategoryComponent'
+import classNames from 'classnames'
 import { Up } from 'HistoryTracker'
 import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
-import classNames from 'classnames'
 import React, { useState } from 'react'
-import { Route } from 'react-router-dom'
+import { Route, RouteComponentProps } from 'react-router-dom'
 import { CategoryDefinition, LocalItem, UUID } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
 import styles from './CreateItemButtonComponent.module.css'
 import IconButton from './IconButton'
-import ItemComponent from './ItemComponent'
 import globalStyles from './index.module.css'
+import ItemComponent from './ItemComponent'
 import { CreateItem, DeleteCompletion } from './sync'
 
 interface Props {
@@ -40,12 +40,10 @@ export default function CreateItemButtonComponent(props: Props) {
     <>
       <div className={className}>
         <Route
-          render={({ history, location, match }) => (
+          render={({ history, match }: RouteComponentProps<{ listid?: string }>) => (
             <button
               className={classNames(styles.CategoryButton, KEY_FOCUS_COMPONENT_NO_FOCUS)}
-              onClick={() =>
-                history.push(`/${match.params['listid'] || ''}/newItem/${encodeURIComponent(props.itemRepr)}/category`)
-              }
+              onClick={() => history.push(`/${match.params.listid ?? ''}/newItem/${encodeURIComponent(props.itemRepr)}/category`)}
             >
               <CategoryComponent categoryId={props.item.category} categories={props.categories} />
             </button>
@@ -96,8 +94,8 @@ export default function CreateItemButtonComponent(props: Props) {
       </div>
       <Route
         path={`/:listid/newItem/:itemRepr/category`}
-        render={({ match }) => {
-          if (decodeURIComponent(match.params['itemRepr']) !== props.itemRepr) {
+        render={({ match }: RouteComponentProps<{ listid: string; itemRepr: string }>) => {
+          if (decodeURIComponent(match.params.itemRepr) !== props.itemRepr) {
             return null
           }
           return (

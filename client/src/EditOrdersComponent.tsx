@@ -1,12 +1,12 @@
-import IconButton from 'IconButton'
 import classNames from 'classnames'
 import { History } from 'history'
+import IconButton from 'IconButton'
 import _ from 'lodash'
 import React, { Component, useEffect, useRef, useState } from 'react'
 import { ChromePicker, ColorResult, RGBColor } from 'react-color'
 import { Link, Route, RouteComponentProps } from 'react-router-dom'
-import { SortableContainer, SortableElement, SortableHandle, arrayMove } from 'react-sortable-hoc'
-import { CategoryDefinition, Order, UUID, createRandomUUID, sortCategories } from 'shoppinglist-shared'
+import { arrayMove, SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
+import { CategoryDefinition, createRandomUUID, Order, sortCategories, UUID } from 'shoppinglist-shared'
 import CategoryComponent from './CategoryComponent'
 import styles from './EditOrdersComponent.module.css'
 import { Up } from './HistoryTracker'
@@ -79,12 +79,12 @@ export default class EditOrdersComponent extends Component<Props> {
           <div className={styles.EditOrdersComponent}>
             <Route
               path="/:listid/orders/:orderid"
-              render={({ history, match }: RouteComponentProps<{ orderid: string }>) => (
+              render={({ match }: RouteComponentProps<{ orderid: string }>) => (
                 <div className={styles.Order}>
                   <NullSafeEditOrderComponent
                     listid={this.props.listid}
                     orders={this.props.orders}
-                    orderid={match.params['orderid']}
+                    orderid={match.params.orderid}
                     categories={this.props.categories}
                     updateCategories={this.props.updateCategories}
                     updateOrder={this.updateOrder}
@@ -138,7 +138,7 @@ const SortableOrders = SortableContainer(
         ))}
       </div>
     )
-  }
+  },
 )
 
 const SortableOrder = SortableElement(
@@ -157,7 +157,7 @@ const SortableOrder = SortableElement(
         <DragHandle />
       </Link>
     )
-  }
+  },
 )
 
 interface NullSafeEditOrderProps {
@@ -197,11 +197,7 @@ function NullSafeEditOrderComponent(props: NullSafeEditOrderProps): JSX.Element 
       ) : (
         <>
           <p>Not found :(</p>
-          <button
-            type="button"
-            className={classNames(globalStyles.Button, globalStyles.padded)}
-            onClick={() => props.up(1)}
-          >
+          <button type="button" className={classNames(globalStyles.Button, globalStyles.padded)} onClick={() => props.up(1)}>
             Back
           </button>
         </>
@@ -232,7 +228,7 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     }
   }
 
-  componentWillReceiveProps(nextProps: EditOrderProps): void {
+  UNSAFE_componentWillReceiveProps(nextProps: EditOrderProps): void {
     this.setState((oldState) => ({
       inputValue: oldState.hasFocus ? oldState.inputValue : nextProps.order?.name ?? '',
     }))
@@ -251,13 +247,13 @@ class EditOrderComponent extends Component<EditOrderProps, EditOrderState> {
     })
   }
 
-  handleFocus = (e: React.SyntheticEvent): void => {
+  handleFocus = (): void => {
     this.setState({
       hasFocus: true,
     })
   }
 
-  handleBlur = (e: React.SyntheticEvent): void => {
+  handleBlur = (): void => {
     this.setState({
       hasFocus: false,
     })
@@ -406,7 +402,7 @@ const SortableCategories = SortableContainer(
         ))}
       </div>
     )
-  }
+  },
 )
 
 const SortableCategory = SortableElement(
@@ -501,7 +497,7 @@ const SortableCategory = SortableElement(
         <DragHandle />
       </div>
     )
-  }
+  },
 )
 
 const DragHandle = SortableHandle(() => (

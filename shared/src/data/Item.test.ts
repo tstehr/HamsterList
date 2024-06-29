@@ -1,19 +1,19 @@
-/* eslint-env jest */
-import { createUUID } from '../util/uuid'
-import { createAmountValue, createUnit } from './Amount'
-import { createCategoryDefinition } from './CategoryDefinition'
+import { describe, expect, it } from 'vitest'
+import { createUUID } from '../util/uuid.js'
+import { createAmountValue, createUnit } from './Amount.js'
+import { createCategoryDefinition } from './CategoryDefinition.js'
 import {
-  Item,
   addMatchingCategory,
   createCompletionItem,
   createItem,
   createItemFromItemStringRepresentation,
   createLocalItemFromItemStringRepresentation,
   createLocalItemFromString,
+  Item,
   itemToString,
   mergeItems,
   mergeItemsTwoWay,
-} from './Item'
+} from './Item.js'
 
 const id = createUUID('a58df112-085f-4742-873d-8f8e31af7826')
 const categories = [
@@ -152,8 +152,8 @@ describe('createLocalItemFromStringRepresentation', () => {
         {
           stringRepresentation: '500g Käse',
         },
-        categories
-      )
+        categories,
+      ),
     ).toEqual({
       name: 'Käse',
       amount: {
@@ -173,8 +173,8 @@ describe('createlItemFromStringRepresentation', () => {
           stringRepresentation: '(M) 500g Käse',
           id: id,
         },
-        categories
-      )
+        categories,
+      ),
     ).toEqual({
       id: id,
       name: 'Käse',
@@ -195,7 +195,7 @@ describe('itemToString', () => {
         name: 'Gemüse',
         amount: undefined,
         category: undefined,
-      } as Item)
+      } as Item),
     ).toEqual('Gemüse')
   })
 
@@ -206,7 +206,7 @@ describe('itemToString', () => {
         name: 'Gemüse\t\n\n',
         amount: undefined,
         category: undefined,
-      } as Item)
+      } as Item),
     ).toEqual('Gemüse')
   })
 
@@ -214,11 +214,11 @@ describe('itemToString', () => {
     expect(
       itemToString({
         id: id,
-        // @ts-ignore Expected type error, to check runtime behavior
+        // @ts-expect-error Expected type error, to check runtime behavior
         name: undefined,
         amount: undefined,
         category: undefined,
-      })
+      }),
     ).toEqual('')
   })
 
@@ -232,7 +232,7 @@ describe('itemToString', () => {
           unit: undefined,
         },
         category: undefined,
-      } as Item)
+      } as Item),
     ).toEqual('1.11 Gemüse')
   })
 
@@ -246,7 +246,7 @@ describe('itemToString', () => {
           unit: createUnit('kg'),
         },
         category: undefined,
-      } as Item)
+      } as Item),
     ).toEqual('1.11 kg Gemüse')
   })
 })

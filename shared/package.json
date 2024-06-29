@@ -1,74 +1,43 @@
 {
   "name": "shoppinglist-shared",
   "version": "1.0.0",
+  "type": "module",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "build": "yarn run build:clean && yarn run build:babel & yarn run build:tsc",
+    "build": "yarn run build:clean && yarn run build:tsc",
     "build:clean": "rm -rf ./build",
-    "build:babel": "babel src --out-dir build --source-maps --extensions '.ts'",
-    "build:tsc": "tsc --emitDeclarationOnly",
-    "watch": "yarn run build:clean && yarn run watch:babel & yarn run watch:tsc",
-    "watch:babel": "yarn run build:babel --watch",
+    "build:tsc": "yarn run -T tsc",
+    "watch": "yarn run build:clean && yarn run watch:tsc",
     "watch:tsc": "yarn run build:tsc --watch",
-    "test": "jest src",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "test": "vitest",
+    "lint": "yarn run -T eslint .",
     "typecheck": "tsc --noEmit",
     "format": "yarn run format:imports; yarn run format:prettier",
     "format:imports": "organize-imports-cli tsconfig.json",
-    "format:prettier": "prettier src --write"
+    "format:prettier": "yarn run -T prettier src --write"
   },
   "dependencies": {
-    "@babel/runtime": "^7.9.2",
     "color-string": "^1.5.2",
-    "date-fns": "^2.12.0",
+    "date-fns": "^3.6.0",
     "deep-freeze": "^0.0.1",
     "escape-string-regexp": "^4.0.0",
     "is-uuid": "^1.0.2",
     "lodash": "^4.17.14",
-    "mathjs": "^6.6.3",
+    "mathjs": "^12.4.1",
     "nodemon": "^2.0.3",
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.0",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-transform-runtime": "^7.9.0",
-    "@babel/plugin-transform-typescript": "^7.9.4",
-    "@babel/preset-env": "^7.9.5",
-    "@babel/preset-typescript": "^7.9.0",
-    "@types/babel__core": "^7.1.7",
-    "@types/babel__plugin-transform-runtime": "^7.9.0",
-    "@types/babel__preset-env": "^7.9.0",
     "@types/color-string": "^1.5.0",
     "@types/deep-freeze": "^0.1.2",
     "@types/is-uuid": "^1.0.0",
-    "@types/jest": "^24.9.0",
     "@types/lodash": "^4.14.149",
-    "@types/mathjs": "^6.0.4",
     "@types/mockdate": "^2.0.0",
-    "@types/node": "^13.11.1",
     "@types/nodemon": "^1.19.0",
-    "@types/prettier": "2.0.0",
     "@types/uuid": "^7.0.2",
     "mockdate": "^2.0.3",
-    "prettier": "2.0.4"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "coverageDirectory": "coverage",
-    "collectCoverageFrom": [
-      "src/**/*.ts"
-    ],
-    "testPathIgnorePatterns": [
-      "/build/",
-      "/node_modules/"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "ts"
-    ]
+    "vitest": "^1.5.1"
   }
 }

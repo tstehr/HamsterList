@@ -1,17 +1,17 @@
+import classNames from 'classnames'
 import Frame from 'Frame'
 import IconButton from 'IconButton'
 import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
-import classNames from 'classnames'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import FlipMove from 'react-flip-move'
 import { Link, Redirect } from 'react-router-dom'
 import { createRandomUUID, createShoppingList } from 'shoppinglist-shared'
 import styles from './ChooseListComponent.module.css'
-import DB, { Key, RECENTLY_USED_KEY, RESTORATION_ENABLED, RecentlyUsedList, getRecentlyUsedLists } from './DB'
+import DB, { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY, RESTORATION_ENABLED } from './DB'
+import globalStyles from './index.module.css'
 import LocalStorageDB from './LocalStorageDB'
 import TopBarComponent from './TopBarComponent'
-import globalStyles from './index.module.css'
 import { responseToJSON } from './utils'
 
 interface State {
@@ -32,7 +32,7 @@ export default class ChooseListComponent extends Component<{}, State> {
     this.state = {
       listid: null,
       recentlyUsedLists: getRecentlyUsedLists(this.db),
-      restorationEnabled: this.db.get(RESTORATION_ENABLED) ?? false,
+      restorationEnabled: this.db.get<boolean>(RESTORATION_ENABLED) ?? false,
     }
     this.inputListid = React.createRef()
   }
@@ -82,7 +82,7 @@ export default class ChooseListComponent extends Component<{}, State> {
 
   async createRandomList(): Promise<void> {
     const listid = createRandomUUID()
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL ?? ''}/api/${listid}/`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL ?? ''}/api/${listid}/`, {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ export default class ChooseListComponent extends Component<{}, State> {
     }
     this.db.set(
       RECENTLY_USED_KEY,
-      recentlyUsedLists.filter(({ id }) => id !== listid)
+      recentlyUsedLists.filter(({ id }) => id !== listid),
     )
     this.setState({ recentlyUsedLists: getRecentlyUsedLists(this.db) })
   }
@@ -124,12 +124,14 @@ export default class ChooseListComponent extends Component<{}, State> {
               </TopBarComponent>
             ),
             sections: [
-              <div className={styles.Content}>
+              <div key="Content" className={styles.Content}>
                 <section>
                   <button
                     type="button"
                     className={classNames(globalStyles.Button, styles.RandomButton)}
-                    onClick={this.createRandomList.bind(this)}
+                    onClick={() => {
+                      this.createRandomList().catch(console.error)
+                    }}
                   >
                     <span>Create new List</span>
                   </button>
@@ -156,13 +158,10 @@ export default class ChooseListComponent extends Component<{}, State> {
                       leaveAnimation="accordionVertical"
                     >
                       {this.state.recentlyUsedLists.map((rul) => (
-                        <div
-                          className={classNames(globalStyles.Button, styles.RecentlyUsedLink)}
-                          key={rul.id}
-                        >
+                        <div className={classNames(globalStyles.Button, styles.RecentlyUsedLink)} key={rul.id}>
                           <Link to={'/' + rul.id}>{rul.title}</Link>
                           <IconButton
-                            onClick={(e) => this.removeRecentlyUsedList(rul.id)}
+                            onClick={() => this.removeRecentlyUsedList(rul.id)}
                             icon="DELETE"
                             alt="Remove from recently used"
                             className={KEY_FOCUS_COMPONENT_NO_FOCUS}
@@ -203,7 +202,7 @@ export default class ChooseListComponent extends Component<{}, State> {
                     www.flaticon.com
                   </a>
                 </p>
-                <p>Version: {process.env.REACT_APP_GIT_SHA ?? 'No version information found!'}</p>
+                <p>Version: {import.meta.env.VITE_GIT_SHA ?? 'No version information found!'}</p>
               </div>
             ),
           }}

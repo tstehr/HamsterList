@@ -1,9 +1,9 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { checkAttributeType, checkKeys, endValidation, errorMap } from '../util/validation'
-import { CategoryDefinition } from './CategoryDefinition'
-import { createItem, Item, mergeItems, mergeItemsTwoWay } from './Item'
-import { sortItems } from './Order'
+import { checkAttributeType, checkKeys, endValidation, errorMap } from '../util/validation.js'
+import { CategoryDefinition } from './CategoryDefinition.js'
+import { createItem, Item, mergeItems, mergeItemsTwoWay } from './Item.js'
+import { sortItems } from './Order.js'
 
 export interface BaseShoppingList {
   readonly id: string
@@ -16,14 +16,18 @@ export interface ShoppingList {
   readonly items: readonly Item[]
 }
 
-export function createShoppingList(shoppingListSpec: unknown, categories?: readonly CategoryDefinition[] | null): ShoppingList {
+export function createShoppingList(
+  shoppingListSpec: unknown,
+  categories?: readonly CategoryDefinition[] | null,
+  transformItemSpec?: (itemSpec: unknown) => unknown,
+): ShoppingList {
   if (
     checkKeys(shoppingListSpec, ['id', 'title', 'items']) &&
     checkAttributeType(shoppingListSpec, 'id', 'string') &&
     checkAttributeType(shoppingListSpec, 'title', 'string') &&
     checkAttributeType(shoppingListSpec, 'items', 'array')
   ) {
-    let items = errorMap(shoppingListSpec.items, createItem)
+    let items = errorMap(shoppingListSpec.items, (itemSpec) => createItem(itemSpec, transformItemSpec))
     const duplicatedIds = _.chain(items)
       .groupBy('id')
       .entries()
@@ -38,7 +42,7 @@ export function createShoppingList(shoppingListSpec: unknown, categories?: reado
     if (categories != null) {
       items = sortItems(
         items,
-        categories.map((cat) => cat.id)
+        categories.map((cat) => cat.id),
       )
     }
 
@@ -57,7 +61,7 @@ export function mergeShoppingLists(
   base: ShoppingList,
   client: ShoppingList,
   server: ShoppingList,
-  categories?: readonly CategoryDefinition[] | null
+  categories?: readonly CategoryDefinition[] | null,
 ): ShoppingList {
   let title: string
   if (base.title != client.title) {
@@ -105,7 +109,7 @@ export function mergeShoppingLists(
       items,
       title,
     },
-    categories
+    categories,
   )
 }
 

@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 import * as React from 'react'
 import { useEffect, useRef, useState } from 'react'
-import styles from './TopBarComponent.module.css'
-import { ReactComponent as ArrowDownUp } from './icons/arrow-down-up.svg'
-import { ReactComponent as ArrowUp } from './icons/arrow-up.svg'
-import { ReactComponent as Back } from './icons/back.svg'
-import { ReactComponent as Cross } from './icons/cross.svg'
+import ArrowDownUp from './icons/arrow-down-up.svg?react'
+import ArrowUp from './icons/arrow-up.svg?react'
+import Back from './icons/back.svg?react'
+import Cross from './icons/cross.svg?react'
 import { ConnectionState, UpdateListTitle } from './sync'
+import styles from './TopBarComponent.module.css'
 
 interface Props {
   back?: () => void
@@ -16,7 +16,7 @@ interface Props {
 
 export default function TopBarComponent(props: Props): JSX.Element {
   const className = classNames(styles.TopBarComponent, {
-    [styles.responsive]: props.responsive == null ? true : props.responsive,
+    [styles.responsive]: props.responsive ?? true,
   })
   return (
     <header className={className}>

@@ -53,8 +53,19 @@
 
 body {
   /* https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/  */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-    'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
   color: var(--text-color);
   background-color: var(--background-color);
 }
@@ -72,7 +83,9 @@ button {
 
 :not(select):focus-visible {
   outline: none;
-  box-shadow: 0 0 3px var(--focus-color), inset 0 0 3px var(--focus-color);
+  box-shadow:
+    0 0 3px var(--focus-color),
+    inset 0 0 3px var(--focus-color);
 }
 
 button.PaddedButton {

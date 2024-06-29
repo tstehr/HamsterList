@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { Up } from 'HistoryTracker'
 import React, { Component } from 'react'
 import AutosizeTextarea from 'react-autosize-textarea'
-import { Route } from 'react-router-dom'
+import { Route, RouteComponentProps } from 'react-router-dom'
 import {
   addMatchingCategory,
   CategoryDefinition,
@@ -41,7 +41,7 @@ interface Props {
 
 interface State {
   inputValue: string
-  itemsForInputLines: ReadonlyArray<ItemInput | null>
+  itemsForInputLines: readonly (ItemInput | null)[]
   itemsInCreation: readonly ItemInput[]
   formHasFocus: boolean
   forceMultiline: boolean
@@ -74,7 +74,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
   }
 
-  getItemsForInputLines(inputValue: string): ReadonlyArray<ItemInput | null> {
+  getItemsForInputLines(inputValue: string): readonly (ItemInput | null)[] {
     return inputValue
       .split('\n')
       .map((str) => str.trim())
@@ -104,14 +104,14 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
   }
 
-  handleFocus = (e: React.FocusEvent): void => {
+  handleFocus = (): void => {
     clearTimeout(this.focusTimeoutID)
     this.setState({
       formHasFocus: true,
     })
   }
 
-  handleBlur = (e: React.FocusEvent): void => {
+  handleBlur = (): void => {
     this.focusTimeoutID = window.setTimeout((): void => {
       this.setState({
         formHasFocus: false,
@@ -135,11 +135,9 @@ export default class CreateItemComponent extends Component<Props, State> {
     this.setState({ ...this.createInputValueUpdate(e.currentTarget.value), changingQuickly: changingQuickly })
   }
 
-  createInputValueUpdate(
-    newInputValue: string
-  ): {
+  createInputValueUpdate(newInputValue: string): {
     inputValue: string
-    itemsForInputLines: ReadonlyArray<ItemInput | null>
+    itemsForInputLines: readonly (ItemInput | null)[]
     itemsInCreation: readonly ItemInput[]
   } {
     const itemsForInputLines = this.getItemsForInputLines(newInputValue)
@@ -177,7 +175,7 @@ export default class CreateItemComponent extends Component<Props, State> {
     }
   }
 
-  handleToggleMultiline = (e: React.SyntheticEvent): void => {
+  handleToggleMultiline = (): void => {
     if (this.isMultiline() && this.hasMulipleLines()) {
       const confirmation = window.confirm('This will delete the current input, continue?')
 
@@ -317,8 +315,8 @@ export default class CreateItemComponent extends Component<Props, State> {
             ) : (
               <Route
                 path={`/:listid/newItem/:itemRepr/category`}
-                render={({ history, match }) => {
-                  history.replace(`/${match.params['listid'] || ''}`)
+                render={({ history, match }: RouteComponentProps<{ listid: string; itemRepr: string }>) => {
+                  history.replace(`/${match.params.listid || ''}`)
                   return null
                 }}
               />

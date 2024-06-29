@@ -1,7 +1,7 @@
-/* eslint-env jest */
-import { createUUID } from '../util/uuid'
-import { createLocalItemFromString } from './Item'
-import { createShoppingList, mergeShoppingLists } from './ShoppingList'
+import { describe, expect, it } from 'vitest'
+import { createUUID } from '../util/uuid.js'
+import { createLocalItemFromString } from './Item.js'
+import { createShoppingList, mergeShoppingLists } from './ShoppingList.js'
 const id = createUUID('a58df112-085f-4742-873d-8f8e31af7826')
 
 describe('createShoppingList', () => {
@@ -12,7 +12,7 @@ describe('createShoppingList', () => {
         title: 'Aquarium',
         items: [],
       },
-      []
+      [],
     )
   })
 
@@ -33,7 +33,7 @@ describe('createShoppingList', () => {
             },
           ],
         },
-        []
+        [],
       )
     }).toThrow(`ShoppingList "Aquarium" has duplicated ids: ${id}`)
   })
@@ -170,7 +170,7 @@ describe('mergeShoppingLists', () => {
           },
         ],
       },
-      []
+      [],
     )
     const server = createShoppingList(
       {
@@ -221,7 +221,7 @@ describe('mergeShoppingLists', () => {
           },
         ],
       },
-      []
+      [],
     )
     const client = createShoppingList(
       {
@@ -278,7 +278,7 @@ describe('mergeShoppingLists', () => {
           },
         ],
       },
-      []
+      [],
     )
     const result = mergeShoppingLists(base, client, server, [])
     expect(result).toEqual({

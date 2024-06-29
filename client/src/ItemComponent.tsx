@@ -9,7 +9,7 @@ interface AmountProps {
   amount: Amount | undefined | null
 }
 
-const AmountComponent = React.memo((props: AmountProps) => {
+const AmountComponent = React.memo(function AmountComponent(props: AmountProps) {
   const amount = props.amount
 
   if (amount != null) {
@@ -28,14 +28,13 @@ interface Props {
   className?: string
 }
 
-const ItemComponent = React.memo(
-  (props: Props) => (
+const ItemComponent = React.memo(function ItemComponent(props: Props) {
+  return (
     <span className={classNames(styles.ItemComponent, props.className)}>
       <AmountComponent amount={props.item.amount} /> {props.item.name}
     </span>
-  ),
-  isEqual
-)
+  )
+}, isEqual)
 
 export default ItemComponent
 export { AmountComponent }

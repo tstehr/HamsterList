@@ -1,11 +1,11 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { createUUID, createUUIDFromUnknown, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, endValidation, errorMap, nullSafe } from '../util/validation'
-import { CategoryDefinition, getCategoryMapping } from './CategoryDefinition'
-import { Item } from './Item'
+import { createUUID, createUUIDFromUnknown, UUID } from '../util/uuid.js'
+import { checkAttributeType, checkKeys, endValidation, errorMap, nullSafe } from '../util/validation.js'
+import { CategoryDefinition, getCategoryMapping } from './CategoryDefinition.js'
+import { Item } from './Item.js'
 
-export type CategoryOrder = ReadonlyArray<UUID | null>
+export type CategoryOrder = readonly (UUID | null)[]
 
 export interface Order {
   readonly id: UUID
@@ -49,7 +49,7 @@ export function sortItems(items: readonly Item[], categoryOrder: CategoryOrder):
 
 export function sortCategories(
   categories: readonly CategoryDefinition[],
-  categoryOrder: CategoryOrder
+  categoryOrder: CategoryOrder,
 ): readonly CategoryDefinition[] {
   const categoryIteratee = (cat: CategoryDefinition): number => convertSmallerZeroToInf(categoryOrder.indexOf(cat.id))
 
@@ -65,7 +65,7 @@ export function completeCategoryOrder(categoryOrder: CategoryOrder, categories: 
 export function transformOrderToCategories(
   sourceOrder: Order,
   sourceCategories: readonly CategoryDefinition[],
-  targetCategories: readonly CategoryDefinition[]
+  targetCategories: readonly CategoryDefinition[],
 ) {
   const { leftToRight: sourceToTarget } = getCategoryMapping(sourceCategories, targetCategories)
   const mappedCategoryOrder = sourceOrder.categoryOrder

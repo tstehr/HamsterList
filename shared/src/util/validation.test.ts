@@ -1,5 +1,5 @@
-/* eslint-env jest */
-import { errorMap, getLiteralKeys } from './validation'
+import { describe, expect, it } from 'vitest'
+import { errorMap, getLiteralKeys } from './validation.js'
 
 describe('errorMap', () => {
   it('Shows error with element index', () => {
@@ -52,7 +52,7 @@ describe('errorMap', () => {
           }
 
           return el
-        }
+        },
       )
     }).toThrow('Error in element 3 (id="three"): Ich nehm die Nummer 3')
   })

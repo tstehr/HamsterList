@@ -11,12 +11,13 @@ import {
   createUUID,
   Item,
   LocalItem,
+  updateInArray,
   UUID,
 } from 'shoppinglist-shared'
-import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
-import { ListidParam } from 'ShoppingListController'
-import { addCompletion, getSortedCompletions } from './CompletionsController'
-import { RecentlyUsedArray } from './ServerShoppingList'
+import sendErrorResponse from 'util/sendErrorResponse.js'
+import { addCompletion, getSortedCompletions } from './CompletionsController.js'
+import { RecentlyUsedArray } from './ServerShoppingList.js'
+import { ListidParam } from './ShoppingListController.js'
 
 export interface ItemidParam extends ListidParam {
   itemid: UUID
@@ -28,10 +29,7 @@ export default class ItemController {
       req.itemid = createUUID(req.params.itemid)
       next()
     } catch (e) {
-      res.status(400).json({
-        error: e.message,
-      })
-      return
+      return sendErrorResponse(res, e)
     }
   }
 
@@ -50,17 +48,15 @@ export default class ItemController {
   handlePost = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     let localItem: LocalItem
     try {
-      if (req.body.stringRepresentation != null) {
-        localItem = createLocalItemFromItemStringRepresentation(req.body, req.list.categories)
-        localItem = addMatchingCategory(localItem, getSortedCompletions(req.list.recentlyUsed))
-      } else {
-        localItem = createLocalItem(req.body)
-      }
-    } catch (e) {
-      res.status(400).json({
-        error: e.message,
+      localItem = createLocalItem(req.body, (itemSpec) => {
+        if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
+          return itemSpec
+        }
+        const item = createLocalItemFromItemStringRepresentation(itemSpec, req.list.categories)
+        return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
       })
-      return
+    } catch (e) {
+      return sendErrorResponse(res, e)
     }
 
     const item: Item = { ...localItem, id: createRandomUUID() }
@@ -76,17 +72,15 @@ export default class ItemController {
   handlePut = (req: Request<ItemidParam>, res: Response, next: NextFunction): void => {
     let item: Item
     try {
-      if (req.body.stringRepresentation != null) {
-        item = createItemFromItemStringRepresentation(req.body, req.list.categories)
-        item = addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
-      } else {
-        item = createItem(req.body)
-      }
-    } catch (e) {
-      res.status(400).json({
-        error: e.message,
+      item = createItem(req.body, (itemSpec) => {
+        if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
+          return itemSpec
+        }
+        const item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
+        return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
       })
-      return
+    } catch (e) {
+      return sendErrorResponse(res, e)
     }
 
     if (item.id !== req.itemid) {

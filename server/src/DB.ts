@@ -2,7 +2,7 @@ import Logger from 'bunyan'
 import deepFreeze from 'deep-freeze'
 import fs from 'fs-extra'
 import writeJsonFile from 'write-json-file'
-import { createServerShoppingList, ServerShoppingList } from './ServerShoppingList'
+import { createServerShoppingList, ServerShoppingList } from './ServerShoppingList.js'
 
 export interface DBContents {
   readonly lists: readonly ServerShoppingList[]
@@ -11,7 +11,10 @@ export interface DBContents {
 export class DB {
   contents: DBContents | undefined | null
 
-  constructor(public path: string, public log: Logger) {}
+  constructor(
+    public path: string,
+    public log: Logger,
+  ) {}
 
   async load(): Promise<DBContents> {
     if (this.contents != null) {
@@ -20,7 +23,7 @@ export class DB {
 
     let json
     try {
-      json = await fs.readJson(this.path)
+      json = (await fs.readJson(this.path)) as DBContents
     } catch (e) {
       json = {
         lists: [],

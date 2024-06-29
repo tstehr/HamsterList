@@ -2,7 +2,8 @@ import deepFreeze from 'deep-freeze'
 import escapeStringRegexp from 'escape-string-regexp'
 import _ from 'lodash'
 import * as mathjs from 'mathjs'
-import { checkAttributeType, checkKeys, endValidation, nullSafe } from '../util/validation'
+import assertError from '../util/assertError.js'
+import { checkAttributeType, checkKeys, endValidation, nullSafe } from '../util/validation.js'
 
 export type Unit = string
 // TODO implement opaque type: https://codemix.com/opaque-types-in-javascript/
@@ -100,9 +101,10 @@ export function createAmountFromString(amountString: string): Amount {
     const modAmountString: string = transformationCombination.reduce((memo, transformation) => transformation(memo), amountString)
 
     try {
-      const evalResult = mathjs.evaluate(modAmountString)
+      const evalResult = mathjs.evaluate(modAmountString) as MathjsValue
       return mathjsValueToAmount(evalResult)
     } catch (e) {
+      assertError(e)
       if (!initialError) {
         initialError = e
       }
@@ -143,7 +145,8 @@ export function mergeAmountsTwoWay(client?: Amount | null, server?: Amount | nul
   const mathjsServer = amountToMathjsValue(server)
 
   try {
-    if (mathjs.compare(mathjsClient, mathjsServer) > 0) {
+    const comparison = mathjs.compare(mathjsClient, mathjsServer)
+    if (typeof comparison === 'number' && comparison > 0) {
       return client
     } else {
       return server
@@ -228,12 +231,7 @@ function mathjsUnitToCookingMathjsUnit(mathjsUnit: mathjs.Unit): mathjs.Unit {
   return prefixed
 }
 
-export function mapReplace(
-  str: string,
-  replacements: {
-    [x: string]: string
-  }
-): string {
+export function mapReplace(str: string, replacements: Record<string, string>): string {
   const regexpStr = Object.keys(replacements)
     .map((r) => escapeStringRegexp(r))
     .join('|')

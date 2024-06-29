@@ -1,12 +1,19 @@
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
-import { CategoryDefinition, Change, createShoppingList, diffShoppingLists, getOnlyNewChanges } from 'shoppinglist-shared'
-import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
-import { DB } from './DB'
-import { ServerShoppingList, createServerShoppingList, getBaseShoppingList } from './ServerShoppingList'
-import { ShoppingListChangeCallback } from './SocketController'
-import TokenCreator from './TokenCreator'
-import normalizeListid from './util/normalizeListid'
+import {
+  CategoryDefinition,
+  Change,
+  createShoppingList,
+  diffShoppingLists,
+  getOnlyNewChanges,
+  updateInArray,
+} from 'shoppinglist-shared'
+import sendErrorResponse from 'util/sendErrorResponse.js'
+import { DB } from './DB.js'
+import { createServerShoppingList, getBaseShoppingList, ServerShoppingList } from './ServerShoppingList.js'
+import { ShoppingListChangeCallback } from './SocketController.js'
+import TokenCreator from './TokenCreator.js'
+import normalizeListid from './util/normalizeListid.js'
 
 export interface ListidParam extends ParamsDictionary {
   listid: string
@@ -22,7 +29,7 @@ export default class ShoppingListController {
     db: DB,
     defaultCategories: readonly CategoryDefinition[],
     tokenCreator: TokenCreator,
-    changeCallback: ShoppingListChangeCallback
+    changeCallback: ShoppingListChangeCallback,
   ) {
     this.db = db
     this.defaultCategories = defaultCategories
@@ -66,13 +73,10 @@ export default class ShoppingListController {
           items: [],
           ...req.body,
         },
-        req.list.categories
+        req.list.categories,
       )
     } catch (e) {
-      res.status(400).json({
-        error: e.message,
-      })
-      return
+      return sendErrorResponse(res, e)
     }
 
     if (bodyList.id !== req.listid) {
@@ -152,4 +156,3 @@ export default class ShoppingListController {
     }
   }
 }
-

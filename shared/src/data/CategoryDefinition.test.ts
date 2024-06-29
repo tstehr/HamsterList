@@ -1,6 +1,6 @@
-/* eslint-env jest */
-import { createRandomUUID, createUUID } from '../util/uuid'
-import { createCategoryDefinition, getCategoryMapping, mergeCategoryLists } from './CategoryDefinition'
+import { describe, expect, it } from 'vitest'
+import { createRandomUUID, createUUID } from '../util/uuid.js'
+import { createCategoryDefinition, getCategoryMapping, mergeCategoryLists } from './CategoryDefinition.js'
 
 const id = createUUID('a58df112-085f-4742-873d-8f8e31af7826')
 

@@ -1,10 +1,10 @@
-import differenceInDays from 'date-fns/differenceInDays'
+import { differenceInDays } from 'date-fns/differenceInDays'
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { createUUID, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, endValidation, errorMap, isIndexable } from '../util/validation'
-import { createItem, Item } from './Item'
-import { BaseShoppingList, ShoppingList } from './ShoppingList'
+import { createUUID, UUID } from '../util/uuid.js'
+import { checkAttributeType, checkKeys, endValidation, errorMap, isIndexable } from '../util/validation.js'
+import { createItem, Item } from './Item.js'
+import { BaseShoppingList, ShoppingList } from './ShoppingList.js'
 
 export interface Change {
   readonly username: string | undefined | null
@@ -13,20 +13,20 @@ export interface Change {
   readonly diffs: readonly Diff[]
 }
 
-export const ADD_ITEM = 'ADD_ITEM' as const
+export const ADD_ITEM = 'ADD_ITEM'
 export interface AddItem {
   readonly type: typeof ADD_ITEM
   readonly item: Item
 }
 
-export const UPDATE_ITEM = 'UPDATE_ITEM' as const
+export const UPDATE_ITEM = 'UPDATE_ITEM'
 export interface UpdateItem {
   readonly type: typeof UPDATE_ITEM
   readonly oldItem: Item
   readonly item: Item
 }
 
-export const DELETE_ITEM = 'DELETE_ITEM' as const
+export const DELETE_ITEM = 'DELETE_ITEM'
 export interface DeleteItem {
   readonly type: typeof DELETE_ITEM
   readonly oldItem: Item
@@ -79,7 +79,7 @@ export function createDiff(diffSpec: unknown): Diff {
         oldItem: createItem(diffSpec.oldItem),
       }
     } else {
-      throw new TypeError(`Unknown diff type ${diffSpec.type}`)
+      throw new TypeError(`Unknown diff type ${String(diffSpec.type)}`)
     }
 
     return deepFreeze(diff)

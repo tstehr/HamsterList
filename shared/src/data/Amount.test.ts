@@ -1,4 +1,4 @@
-/* eslint-env jest */
+import { describe, expect, it } from 'vitest'
 import {
   addAmounts,
   createAmount,
@@ -10,7 +10,7 @@ import {
   mapReplace,
   mergeAmounts,
   powerSet,
-} from './Amount'
+} from './Amount.js'
 
 describe(`createAmountValue`, () => {
   it(`Creates AmountValue from positive number`, () => {
@@ -379,7 +379,7 @@ describe('mapReplace', () => {
       mapReplace('a b c b', {
         a: 'x',
         b: 'y',
-      })
+      }),
     ).toEqual('x y c y')
   })
 
@@ -394,10 +394,10 @@ describe('mapReplace', () => {
           incididunt: 'incidunt',
           magna: 'magnam',
           aliqua: 'aliquam',
-        }
-      )
+        },
+      ),
     ).toEqual(
-      'Dolorem ipsum dolor sit amet, consectetur adipiscingng velit, sed do eiusmod tempor incidunt ut labore et dolore magnam aliquam.'
+      'Dolorem ipsum dolor sit amet, consectetur adipiscingng velit, sed do eiusmod tempor incidunt ut labore et dolore magnam aliquam.',
     )
   })
 
@@ -407,7 +407,7 @@ describe('mapReplace', () => {
         '+': '-',
         '|': '&',
         '(5)': '^5$',
-      })
+      }),
     ).toEqual('& \\ [-] ^5$')
   })
 })

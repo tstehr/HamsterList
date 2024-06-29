@@ -1,8 +1,8 @@
 import colorString from 'color-string'
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
-import { createUUID, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, endValidation } from '../util/validation'
+import { createUUID, UUID } from '../util/uuid.js'
+import { checkAttributeType, checkKeys, endValidation } from '../util/validation.js'
 
 export type Color = string
 export interface CategoryDefinition {
@@ -45,13 +45,9 @@ export function createCategoryDefinition(categoryDefinitionSpec: unknown): Categ
   endValidation()
 }
 
-interface UnsafeDict<V> {
-  [k: string]: V | undefined
-}
+type UnsafeDict<V> = Record<string, V | undefined>
 
-export interface CategoryMapping {
-  [k: string]: readonly UUID[] | undefined
-}
+export type CategoryMapping = Record<string, readonly UUID[] | undefined>
 
 export function getCategoryMapping(left: readonly CategoryDefinition[], right: readonly CategoryDefinition[]) {
   const leftByName = _.groupBy(left, (c) => normalizeCategoryDefinitionName(c.name)) as UnsafeDict<CategoryDefinition[]>
@@ -82,7 +78,7 @@ export function getCategoryMapping(left: readonly CategoryDefinition[], right: r
 export function mergeCategoryLists(
   base: readonly CategoryDefinition[],
   patch: readonly CategoryDefinition[],
-  { dropUnmatched }: { dropUnmatched: boolean }
+  { dropUnmatched }: { dropUnmatched: boolean },
 ): readonly CategoryDefinition[] {
   const { leftToRight: baseToPatch, rightToLeft: patchToBase } = getCategoryMapping(base, patch)
 

@@ -22,7 +22,9 @@
   padding-left: 0.5rem;
 }
 .Name:focus-within {
-  box-shadow: 0 0 3px var(--focus-color), inset 0 0 3px var(--focus-color);
+  box-shadow:
+    0 0 3px var(--focus-color),
+    inset 0 0 3px var(--focus-color);
   background: var(--background-color);
 }
 .Name > * {
@@ -54,9 +56,10 @@
   }
 }
 
-.Category, .Delete { 
+.Category,
+.Delete {
   width: 3rem;
-  height: 3rem
+  height: 3rem;
 }
 
 @media print {

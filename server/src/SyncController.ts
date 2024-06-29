@@ -20,15 +20,16 @@ import {
   SyncResponse,
   UUID,
 } from 'shoppinglist-shared'
-import { ListidParam } from 'ShoppingListController'
-import { getChangesBetween } from './ChangesController'
-import { addCompletion, getSortedCompletions } from './CompletionsController'
-import { updateRecentlyUsed } from './ItemController'
-import { getBaseShoppingList, getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList'
-import TokenCreator from './TokenCreator'
+import sendErrorResponse from 'util/sendErrorResponse.js'
+import { getChangesBetween } from './ChangesController.js'
+import { addCompletion, getSortedCompletions } from './CompletionsController.js'
+import { updateRecentlyUsed } from './ItemController.js'
+import { getBaseShoppingList, getSyncedShoppingList, ServerShoppingList } from './ServerShoppingList.js'
+import { ListidParam } from './ShoppingListController.js'
+import TokenCreator from './TokenCreator.js'
 
 // TODO remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/43823 is merged
-type QueryValueWorkaround = string | Query | Array<string | Query>
+type QueryValueWorkaround = string | Query | (string | Query)[]
 
 export default class SyncController {
   tokenCreator: TokenCreator
@@ -38,7 +39,7 @@ export default class SyncController {
   }
 
   handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
-    res.send(this.buildResponse(req.list, this.makeIncludeInResponse(req.query['includeInResponse'])))
+    res.send(this.buildResponse(req.list, this.makeIncludeInResponse(req.query.includeInResponse)))
     next()
   }
 
@@ -46,23 +47,15 @@ export default class SyncController {
     let syncRequest: SyncRequest
 
     try {
-      // Convert stringRepresentation items to full items
-      if (req.body && req.body.currentState && Array.isArray(req.body.currentState.items)) {
-        req.body.currentState.items = req.body.currentState.items.map((itemSpec: unknown) => {
-          if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
-            return itemSpec
-          }
-          const item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
-          return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
-        })
-      }
-
-      syncRequest = createSyncRequest(req.body)
-    } catch (e) {
-      res.status(400).json({
-        error: e.message,
+      syncRequest = createSyncRequest(req.body, (itemSpec) => {
+        if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
+          return itemSpec
+        }
+        const item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
+        return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
       })
-      return
+    } catch (e) {
+      return sendErrorResponse(res, e)
     }
 
     if (syncRequest.previousSync.id != syncRequest.currentState.id || syncRequest.currentState.id != req.listid) {
@@ -143,7 +136,7 @@ export default class SyncController {
   buildResponse(
     serverList: ServerShoppingList,
     includeInResponse: string | readonly string[] | void,
-    previousSyncChangeId?: UUID | null
+    previousSyncChangeId?: UUID | null,
   ): SyncedShoppingList | SyncResponse {
     const list = this.tokenCreator.setToken(getSyncedShoppingList(serverList))
 

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { CategoryDefinition, createCategoryDefinition, errorMap } from 'shoppinglist-shared'
-import { ListidParam } from 'ShoppingListController'
+import sendErrorResponse from 'util/sendErrorResponse.js'
+import { ListidParam } from './ShoppingListController.js'
 
 export default class CategoriesController {
   handleGet = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
@@ -22,10 +23,7 @@ export default class CategoriesController {
     try {
       categories = errorMap<unknown, CategoryDefinition>(categorySpecs, createCategoryDefinition)
     } catch (e) {
-      res.status(400).json({
-        error: e.message,
-      })
-      return
+      return sendErrorResponse(res, e)
     }
 
     req.updatedList = { ...req.list, categories: categories }

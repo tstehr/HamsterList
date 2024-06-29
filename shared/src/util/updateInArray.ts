@@ -3,7 +3,7 @@ import deepFreeze, { DeepReadonly } from 'deep-freeze'
 export default function updateInArray<T, U extends { readonly id: T }>(
   arr: readonly U[],
   toUpdate: U,
-  insertIfNotFound = false
+  insertIfNotFound = false,
 ): DeepReadonly<U[]> {
   const index = arr.findIndex((arrEl) => arrEl.id == toUpdate.id)
   if (index === -1) {

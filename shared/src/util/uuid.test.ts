@@ -1,5 +1,5 @@
-/* eslint-env jest */
-import { createRandomUUID, createUUID, createUUIDFromUnknown } from './uuid'
+import { describe, expect, it } from 'vitest'
+import { createRandomUUID, createUUID, createUUIDFromUnknown } from './uuid.js'
 
 describe('createsRandomUUID', () => {
   it('Creates a uuid randomly', () => {

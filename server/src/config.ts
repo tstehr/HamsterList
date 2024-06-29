@@ -2,7 +2,7 @@ import { camelCase } from 'camel-case'
 import fs from 'fs-extra'
 import nconf from 'nconf'
 import path from 'path'
-import TokenCreator from './TokenCreator'
+import TokenCreator from './TokenCreator.js'
 
 export function getConfig(): nconf.Provider {
   const config = new nconf.Provider()
@@ -44,7 +44,7 @@ export function getConfig(): nconf.Provider {
       },
       {
         spaces: 2,
-      }
+      },
     )
   }
 

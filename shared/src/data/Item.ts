@@ -1,10 +1,10 @@
 import deepFreeze from 'deep-freeze'
 import _ from 'lodash'
 import * as mathjs from 'mathjs'
-import { createUUID, UUID } from '../util/uuid'
-import { checkAttributeType, checkKeys, endValidation, isIndexable, nullSafe } from '../util/validation'
-import { Amount, createAmount, createAmountFromString, mergeAmounts, mergeAmountsTwoWay } from './Amount'
-import { CategoryDefinition, getCategoryMapping } from './CategoryDefinition'
+import { createUUID, UUID } from '../util/uuid.js'
+import { checkAttributeType, checkKeys, endValidation, isIndexable, nullSafe } from '../util/validation.js'
+import { Amount, createAmount, createAmountFromString, mergeAmounts, mergeAmountsTwoWay } from './Amount.js'
+import { CategoryDefinition, getCategoryMapping } from './CategoryDefinition.js'
 
 export interface CompletionItem {
   readonly name: string
@@ -46,7 +46,8 @@ export function createCompletionItem(completionItemSpec: unknown): CompletionIte
   endValidation()
 }
 
-export function createLocalItem(localItemSpec: unknown): LocalItem {
+export function createLocalItem(localItemSpecArg: unknown, transformItemSpec?: (itemSpec: unknown) => unknown): LocalItem {
+  const localItemSpec = transformItemSpec ? transformItemSpec(localItemSpecArg) : localItemSpecArg
   if (isIndexable(localItemSpec)) {
     const completionItem = createCompletionItem(_.omit(localItemSpec, ['amount']))
     const localItem = {
@@ -104,7 +105,7 @@ export function createLocalItemFromString(stringRepresentation: string, categori
 
 export function createLocalItemFromItemStringRepresentation(
   itemStringRepresentation: unknown,
-  categories: readonly CategoryDefinition[]
+  categories: readonly CategoryDefinition[],
 ): LocalItem {
   if (
     checkKeys(itemStringRepresentation, ['stringRepresentation']) &&
@@ -115,7 +116,8 @@ export function createLocalItemFromItemStringRepresentation(
   endValidation()
 }
 
-export function createItem(itemSpec: unknown): Item {
+export function createItem(itemSpecArg: unknown, transformItemSpec?: (itemSpec: unknown) => unknown): Item {
+  const itemSpec = transformItemSpec ? transformItemSpec(itemSpecArg) : itemSpecArg
   if (isIndexable(itemSpec)) {
     const localItem = createLocalItem(_.omit(itemSpec, ['id']))
 
@@ -132,7 +134,7 @@ export function createItem(itemSpec: unknown): Item {
 
 export function createItemFromItemStringRepresentation(
   itemStringRepresentation: unknown,
-  categories: readonly CategoryDefinition[]
+  categories: readonly CategoryDefinition[],
 ): Item {
   if (isIndexable(itemStringRepresentation)) {
     const localItem = createLocalItemFromItemStringRepresentation(_.omit(itemStringRepresentation, ['id']), categories)
@@ -217,7 +219,7 @@ export function mergeItemsTwoWay(client: Item, server: Item): Item {
 export function addMatchingCategory<T extends LocalItem>(item: T, completions: readonly CompletionItem[]): T {
   const exactMatchingCompletion = completions.find(
     (completionItem) =>
-      item.name === completionItem.name && (item.category === undefined || item.category === completionItem.category)
+      item.name === completionItem.name && (item.category === undefined || item.category === completionItem.category),
   )
   if (exactMatchingCompletion != null) {
     return addCompletionToItem<T>(item, exactMatchingCompletion)
@@ -227,7 +229,7 @@ export function addMatchingCategory<T extends LocalItem>(item: T, completions: r
   const matchingCompletion = completions.find(
     (completionItem) =>
       normalizedItemName === normalizeCompletionName(completionItem.name) &&
-      (item.category === undefined || item.category === completionItem.category)
+      (item.category === undefined || item.category === completionItem.category),
   )
   if (matchingCompletion != null) {
     return addCompletionToItem<T>(item, matchingCompletion)
@@ -241,7 +243,7 @@ export function addMatchingCategory<T extends LocalItem>(item: T, completions: r
     const looseMatchingCompletion = completions.find(
       (completionItem) =>
         normalizedHead === normalizeCompletionName(completionItem.name) &&
-        (item.category === undefined || item.category === completionItem.category)
+        (item.category === undefined || item.category === completionItem.category),
     )
     if (looseMatchingCompletion != null) {
       return { ...addCompletionToItem<T>(item, looseMatchingCompletion), name: looseMatchingCompletion.name + tail }
@@ -255,7 +257,7 @@ function addCompletionToItem<T extends LocalItem>(item: T, matchingCompletion: C
   return Object.assign(
     {},
     item,
-    _.omitBy(matchingCompletion, (val) => val == null)
+    _.omitBy(matchingCompletion, (val) => val == null),
   )
 }
 
@@ -266,7 +268,7 @@ export function normalizeCompletionName(name: string): string {
 export function transformItemsToCategories<T extends { category?: UUID | null | undefined }>(
   sourceItems: readonly T[],
   sourceCategories: readonly CategoryDefinition[],
-  targetCategories: readonly CategoryDefinition[]
+  targetCategories: readonly CategoryDefinition[],
 ): readonly T[] {
   const { leftToRight: sourceToTarget } = getCategoryMapping(sourceCategories, targetCategories)
   return sourceItems.map((i) => {

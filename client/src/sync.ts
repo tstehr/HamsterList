@@ -123,6 +123,7 @@ interface CompletionStateUpdate {
 }
 
 @Emittery.mixin('emitter')
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 class SyncingCore {
   baseUrl: string | null
   state: ClientShoppingList
@@ -136,7 +137,10 @@ class SyncingCore {
   changePushSyncTimeoutID = -1
   requestSyncTimeoutID = -1
 
-  constructor(private listid: string, baseUrl: string | null = null) {
+  constructor(
+    private listid: string,
+    baseUrl: string | null = null,
+  ) {
     this.db = new LocalStorageDB()
     this.baseUrl = baseUrl
     this.state = {
@@ -274,8 +278,8 @@ class SyncingCore {
 
     let base: string
 
-    if (process.env.REACT_APP_SOCKET_URL) {
-      base = process.env.REACT_APP_SOCKET_URL
+    if (import.meta.env.VITE_SOCKET_URL) {
+      base = `${import.meta.env.VITE_SOCKET_URL}`
     } else {
       const url = this.baseUrl ? new URL(this.baseUrl) : window.location
       const protocol = url.protocol === 'https:' ? 'wss://' : 'ws://'
@@ -389,7 +393,7 @@ class SyncingCore {
     } else {
       this.info('SYNC', 'initial sync!')
       syncPromise = this.fetch(
-        `/api/${this.listid}/sync?includeInResponse=changes&includeInResponse=categories&includeInResponse=completions&includeInResponse=orders`
+        `/api/${this.listid}/sync?includeInResponse=changes&includeInResponse=categories&includeInResponse=completions&includeInResponse=orders`,
       )
     }
 
@@ -416,13 +420,13 @@ class SyncingCore {
 
       // retain completion deletions performed during sync
       const unsyncedDeletedCompletions = this.state.deletedCompletions.filter(
-        (name) => !preSyncDeletedCompletions.includes(normalizeCompletionName(name))
+        (name) => !preSyncDeletedCompletions.includes(normalizeCompletionName(name)),
       )
       dirtyAfterSync = dirtyAfterSync || unsyncedDeletedCompletions.length > 0 // add newly fetched changes to local changes
 
       // retain completion deletions performed during sync
       const unsyncedAddedCompletions = this.state.addedCompletions.filter(
-        (name) => !preSyncAddedCompletions.includes(normalizeCompletionName(name))
+        (name) => !preSyncAddedCompletions.includes(normalizeCompletionName(name)),
       )
       dirtyAfterSync = dirtyAfterSync || unsyncedAddedCompletions.length > 0 // add newly fetched changes to local changes
 
@@ -464,7 +468,7 @@ class SyncingCore {
 
       const syncState = {
         completions: completions.filter(
-          (completionItem) => !unsyncedDeletedCompletions.includes(normalizeCompletionName(completionItem.name))
+          (completionItem) => !unsyncedDeletedCompletions.includes(normalizeCompletionName(completionItem.name)),
         ),
         categories,
         orders,
@@ -612,7 +616,7 @@ class SyncingCore {
       deletedCompletions: [...this.state.deletedCompletions, normalizedCompletionName],
       addedCompletions: this.state.addedCompletions.filter((c) => c !== normalizedCompletionName),
       completions: this.state.completions.filter(
-        (completion) => normalizeCompletionName(completion.name) !== normalizedCompletionName
+        (completion) => normalizeCompletionName(completion.name) !== normalizedCompletionName,
       ),
       dirty: true,
     })
@@ -742,7 +746,7 @@ class SyncingCore {
     this.log('info', ...messages)
   }
 
-  log(method: keyof typeof console, ...messages: unknown[]) {
+  log(method: 'error' | 'info', ...messages: unknown[]) {
     console[method](`[SyncingCore listid="${this.listid}"]`, ...messages)
   }
 
@@ -769,7 +773,7 @@ type SyncingCoreEmitter = Emittery.Typed<{
   change: { clientShoppingList: ClientShoppingList }
 }>
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-unsafe-declaration-merging
 interface SyncingCore extends MixinEmitter<SyncingCoreEmitter> {}
 
 export default SyncingCore

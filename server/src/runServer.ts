@@ -9,17 +9,18 @@ import https from 'https'
 import nconf from 'nconf'
 import path from 'path'
 import { createRandomUUID } from 'shoppinglist-shared'
-import CategoriesController from './CategoriesController'
-import ChangesController from './ChangesController'
-import CompletionsController from './CompletionsController'
-import { DB } from './DB'
-import featurePolicy from './featurePolicy'
-import ItemController, { ItemidParam } from './ItemController'
-import OrdersController from './OrdersController'
-import ShoppingListController, { ListidParam } from './ShoppingListController'
-import SocketController from './SocketController'
-import SyncController from './SyncController'
-import TokenCreator from './TokenCreator'
+import isErrnoException from 'util/isErrnoException.js'
+import CategoriesController from './CategoriesController.js'
+import ChangesController from './ChangesController.js'
+import CompletionsController from './CompletionsController.js'
+import { DB } from './DB.js'
+import featurePolicy from './featurePolicy.js'
+import ItemController, { ItemidParam } from './ItemController.js'
+import OrdersController from './OrdersController.js'
+import ShoppingListController, { ListidParam } from './ShoppingListController.js'
+import SocketController from './SocketController.js'
+import SyncController from './SyncController.js'
+import TokenCreator from './TokenCreator.js'
 
 export async function runServer(config: nconf.Provider) {
   const log = Logger.createLogger({
@@ -47,7 +48,7 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
   // here.
   // TODO refactor once https://bugs.webkit.org/show_bug.cgi?id=201591 is resolved
   const connectSrc = ["'self'"]
-  const websocketHost = config.get('websocketHost') || config.get('host')
+  const websocketHost = config.get<string>('websocketHost') || config.get('host')
 
   if (config.get('https') || config.get('proxiedHttps')) {
     connectSrc.push(`https://${websocketHost}`, `wss://${websocketHost}`)
@@ -72,7 +73,7 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
         maxAge: 30,
       },
       featurePolicy,
-    })
+    }),
   )
 
   // enable cors requests
@@ -82,10 +83,11 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
 
   const router = express.Router()
   router.use(
+    // @ts-expect-error -- We should migrate away from deprecated bodyParser. Allowing for now to unblock migration to vite.
     bodyParser.json({
       strict: false,
       limit: '2mb',
-    })
+    }),
   )
 
   const tokenCreator = new TokenCreator(config.get('secret'))
@@ -96,7 +98,7 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
     db,
     config.get('defaultCategories'),
     tokenCreator,
-    socketController.notifiyChanged
+    socketController.notifiyChanged,
   )
   const itemController = new ItemController()
   const syncController = new SyncController(tokenCreator)
@@ -105,8 +107,8 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
   const completionsController = new CompletionsController()
   const changesController = new ChangesController()
 
-  router.param('listid', (shoppingListController.handleParamListid as unknown) as RequestParamHandler)
-  router.param('itemid', (itemController.handleParamItemid as unknown) as RequestParamHandler)
+  router.param('listid', shoppingListController.handleParamListid as unknown as RequestParamHandler)
+  router.param('itemid', itemController.handleParamItemid as unknown as RequestParamHandler)
 
   router.use('*', (req: Request, res: Response, next: NextFunction) => {
     req.id = createRandomUUID()
@@ -196,14 +198,17 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
         cert: fs.readFileSync(config.get('certFile')),
       }
     } catch (e) {
-      log.fatal(`File "${e.path}" couldn't be found`)
+      if (isErrnoException(e) && e.code === 'ENOENT') {
+        log.fatal(`File "${e.path}" couldn't be found`)
+      } else {
+        log.fatal(`Unexpected failure loading https files`, e)
+      }
       process.exit(1)
-      return
     }
 
     const server = https.createServer(options, app)
     socketController.initializeFor(server)
-    const port = config.get('httpsPort')
+    const port = config.get<number>('httpsPort')
     server.listen(port)
     log.info(`HTTPS server listening on port ${port} `)
   }
@@ -211,7 +216,7 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
   if (config.get('http')) {
     const server = http.createServer(app)
     socketController.initializeFor(server)
-    const port = config.get('port')
+    const port = config.get<number>('port')
     server.listen(port)
     log.info(`HTTP server listening on port ${port} `)
   }

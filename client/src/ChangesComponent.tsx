@@ -1,17 +1,17 @@
 import classNames from 'classnames'
-import differenceInHours from 'date-fns/differenceInHours'
-import differenceInMinutes from 'date-fns/differenceInMinutes'
-import format from 'date-fns/format'
-import formatDistance from 'date-fns/formatDistance'
+import { differenceInHours } from 'date-fns/differenceInHours'
+import { differenceInMinutes } from 'date-fns/differenceInMinutes'
+import { format } from 'date-fns/format'
+import { formatDistance } from 'date-fns/formatDistance'
 import { DeepReadonly } from 'deep-freeze'
 import _, { isEqual } from 'lodash'
 import memoize from 'memoize-one'
 import React, { Component, useMemo, useState } from 'react'
 import FlipMove from 'react-flip-move'
-import { ADD_ITEM, CategoryDefinition, Change, DELETE_ITEM, Diff, UPDATE_ITEM, createReverseDiff } from 'shoppinglist-shared'
+import { ADD_ITEM, CategoryDefinition, Change, createReverseDiff, DELETE_ITEM, Diff, UPDATE_ITEM } from 'shoppinglist-shared'
 import styles from './ChangesComponent.module.css'
-import PillItemComponent from './PillItemComponent'
 import globalStyles from './index.module.css'
+import PillItemComponent from './PillItemComponent'
 import { ApplyDiff, CreateApplicableDiff } from './sync'
 
 interface Props {
@@ -52,7 +52,7 @@ export default function ChangesComponent(props: Props): JSX.Element {
         (c) =>
           differenceInMinutes(now, c.date as Date) <= 5 &&
           _.isEqual(originalExpandedChange.diffs, c.diffs) &&
-          originalExpandedChange.username === c.username
+          originalExpandedChange.username === c.username,
       )
 
       if (matchingChange != null) {
@@ -70,7 +70,7 @@ export default function ChangesComponent(props: Props): JSX.Element {
       unsynced: changeIndex >= props.changes.length,
       diff,
       diffIndex,
-    }))
+    })),
   )
 
   allDiffs.reverse()
@@ -131,7 +131,7 @@ export default function ChangesComponent(props: Props): JSX.Element {
         leaveAnimation="accordionVertical"
       >
         {/* <ul className={styles.List}> */}
-        {diffs.map(({ change, changeIndex, unsynced, diff, diffIndex }, absoluteDiffIndex) => {
+        {diffs.map(({ change, unsynced, diff, diffIndex }, absoluteDiffIndex) => {
           const detailsExpanded =
             expandedChange != null && expandedChange.id === change.id && detailsExpandedDiff.diffIndex === diffIndex
           return (
@@ -194,7 +194,7 @@ export class DiffComponent extends Component<DiffProps> {
     return [dateString, absoluteDateString, date.toISOString()]
   }, isEqual)
 
-  getApplicableDiff = (diff: Diff): [Diff | null | undefined, boolean] => {
+  getApplicableDiff = (): [Diff | null | undefined, boolean] => {
     const reverseDiff = createReverseDiff(this.props.diff)
     const applicableDiff = this.props.createApplicableDiff(reverseDiff)
 
@@ -209,7 +209,7 @@ export class DiffComponent extends Component<DiffProps> {
       [styles.expanded]: this.props.detailsExpanded,
     })
     const [dateString, absoluteDateString, isoDateString] = this.getDateString(this.props.change.date)
-    const [applicableDiff, reverseEqualApplicable] = this.getApplicableDiff(this.props.diff)
+    const [applicableDiff, reverseEqualApplicable] = this.getApplicableDiff()
 
     const undo = (e: React.SyntheticEvent): void => {
       e.preventDefault()
@@ -257,7 +257,6 @@ export class DiffComponent extends Component<DiffProps> {
               // Use a link even if undo isn't possible so focus isn't lost after undo
               // We can't use a button, because we want line breaks to be possible inside the element
             }
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
             <a
               href="#"
               onClick={undo}
@@ -282,7 +281,6 @@ export class DiffComponent extends Component<DiffProps> {
               // Use a link even if undo isn't possible so focus isn't lost after undo
               // We can't use a button, because we want line breaks to be possible inside the element
             }
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
             <a
               href="#"
               onClick={undoNewer}
