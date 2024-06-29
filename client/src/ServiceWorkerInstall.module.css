@@ -26,3 +26,9 @@
     border: 2px solid var(--theme-color);
   }
 }
+
+.Countdown {
+  width: 1.5rem;
+  text-align: right;
+  display: inline-block;
+}
