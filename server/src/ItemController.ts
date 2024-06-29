@@ -14,7 +14,7 @@ import {
   updateInArray,
   UUID,
 } from 'shoppinglist-shared'
-import sendErrorResponse from 'util/sendErrorResponse.js'
+import sendErrorResponse from './util/sendErrorResponse.js'
 import { addCompletion, getSortedCompletions } from './CompletionsController.js'
 import { RecentlyUsedArray } from './ServerShoppingList.js'
 import { ListidParam } from './ShoppingListController.js'

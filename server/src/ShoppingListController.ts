@@ -8,7 +8,7 @@ import {
   getOnlyNewChanges,
   updateInArray,
 } from 'shoppinglist-shared'
-import sendErrorResponse from 'util/sendErrorResponse.js'
+import sendErrorResponse from './util/sendErrorResponse.js'
 import { DB } from './DB.js'
 import { createServerShoppingList, getBaseShoppingList, ServerShoppingList } from './ServerShoppingList.js'
 import { ShoppingListChangeCallback } from './SocketController.js'

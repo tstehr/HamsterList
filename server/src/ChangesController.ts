@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { Query } from 'express-serve-static-core'
 import _ from 'lodash'
 import { Change, createUUID, UUID } from 'shoppinglist-shared'
-import sendErrorResponse from 'util/sendErrorResponse.js'
+import sendErrorResponse from './util/sendErrorResponse.js'
 import { ListidParam } from './ShoppingListController.js'
 
 export default class ChangesController {

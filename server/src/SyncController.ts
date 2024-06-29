@@ -20,7 +20,7 @@ import {
   SyncResponse,
   UUID,
 } from 'shoppinglist-shared'
-import sendErrorResponse from 'util/sendErrorResponse.js'
+import sendErrorResponse from './util/sendErrorResponse.js'
 import { getChangesBetween } from './ChangesController.js'
 import { addCompletion, getSortedCompletions } from './CompletionsController.js'
 import { updateRecentlyUsed } from './ItemController.js'

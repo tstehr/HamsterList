@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { createOrder, errorMap } from 'shoppinglist-shared'
-import sendErrorResponse from 'util/sendErrorResponse.js'
+import sendErrorResponse from './util/sendErrorResponse.js'
 import { ListidParam } from './ShoppingListController.js'
 
 export default class OrdersController {
