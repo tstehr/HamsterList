@@ -236,11 +236,12 @@ This object represents an item for purposes of completions. This is essentially 
 
 This object represents an amount of an item.
 
-| Field | Type   | Description                                                             |
-|-------|--------|-------------------------------------------------------------------------|
-| value | Float  | The value of the amount                                                 |
-| unit  | String | *Optional.* Unit of amount. String must represent a unit of measurement |
+| Field | Type          | Description                                                             |
+|-------|---------------|-------------------------------------------------------------------------|
+| value | Float<sup>[FLT](#FLT)</sup> | The value of the amount                                                 |
+| unit  | String        | *Optional.* Unit of amount. String must represent a unit of measurement |
 
+<a name="FLT">FLT</a>: A double-precision 64-bit floating point format (IEEE 754), aka a [JavaScript Number](https://developer.mozilla.org/en-US/docs/Glossary/Number)
 
 ### CategoryDefinition
 
