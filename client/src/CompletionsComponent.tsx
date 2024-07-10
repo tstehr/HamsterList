@@ -1,7 +1,7 @@
 import fuzzy from 'fuzzy'
 import { Up } from 'HistoryTracker'
 import _ from 'lodash'
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 // import FlipMove from 'react-flip-move'
 import { CategoryDefinition, CompletionItem, itemToString, LocalItem, UUID } from 'shoppinglist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
@@ -10,7 +10,7 @@ import { AddCompletion, CreateItem, DeleteCompletion } from './sync'
 
 interface Props {
   focusItemsInCreation: boolean
-  itemsInCreation: readonly ItemInput[]
+  itemInputInCreation: readonly ItemInput[]
   completions: readonly CompletionItem[]
   categories: readonly CategoryDefinition[]
   createItem: CreateItem
@@ -21,9 +21,30 @@ interface Props {
   up: Up
 }
 
-export default function CompletionsComponent(props: Props) {
-  const itemsInCreation = props.itemsInCreation.map((ii) => ii.item)
-  const completionItems = getCompletionItems(props.itemsInCreation, props.completions)
+export default function CompletionsComponent({
+  focusItemsInCreation,
+  itemInputInCreation,
+  completions,
+  categories,
+  createItem,
+  updateItemCategory,
+  deleteCompletion,
+  addCompletion,
+  focusInput,
+  up,
+}: Props) {
+  const [recentlyCreatedCompletionItems, setRecentlyCreatedCompletionItems] = useState<LocalItem[]>([])
+
+  const createItemFromCompletion = useCallback(
+    (item: LocalItem) => {
+      setRecentlyCreatedCompletionItems((rci) => [...rci, item])
+      createItem(item)
+    },
+    [createItem],
+  )
+
+  const itemsInCreation = itemInputInCreation.map((ii) => ii.item)
+  const completionItems = getCompletionItems([...itemsInCreation, ...recentlyCreatedCompletionItems], completions)
 
   const itemToUniqueRepr = new Map<LocalItem, string>()
   const itemsByRepr = _.groupBy([...itemsInCreation, ...completionItems], itemToString)
@@ -38,19 +59,19 @@ export default function CompletionsComponent(props: Props) {
 
   return (
     <>
-      {props.itemsInCreation.map((ii) => (
+      {itemInputInCreation.map((ii) => (
         <CreateItemButtonComponent
           key={itemToUniqueRepr.get(ii.item)}
           itemRepr={itemToUniqueRepr.get(ii.item)!}
           item={ii.item}
-          categories={props.categories}
-          createItem={props.createItem}
-          focusInput={props.focusInput}
+          categories={categories}
+          createItem={createItem}
+          focusInput={focusInput}
           noArrowFocus
-          focused={props.focusItemsInCreation}
-          deleteCompletion={ii.categoryAdded ? props.deleteCompletion : null}
-          updateCategory={(categoryId) => props.updateItemCategory(ii.item, categoryId)}
-          up={props.up}
+          focused={focusItemsInCreation}
+          deleteCompletion={ii.categoryAdded ? deleteCompletion : null}
+          updateCategory={(categoryId) => updateItemCategory(ii.item, categoryId)}
+          up={up}
         />
       ))}
       {completionItems.map((item) => (
@@ -58,28 +79,26 @@ export default function CompletionsComponent(props: Props) {
           key={itemToUniqueRepr.get(item)}
           itemRepr={itemToUniqueRepr.get(item)!}
           item={item}
-          categories={props.categories}
-          createItem={props.createItem}
-          deleteCompletion={props.deleteCompletion}
-          focusInput={props.focusInput}
-          updateCategory={(categoryId) => props.addCompletion({ name: item.name, category: categoryId })}
-          up={props.up}
+          categories={categories}
+          createItem={createItemFromCompletion}
+          deleteCompletion={deleteCompletion}
+          focusInput={focusInput}
+          updateCategory={(categoryId) => addCompletion({ name: item.name, category: categoryId })}
+          up={up}
         />
       ))}
     </>
   )
 }
 
-function getCompletionItems(itemsInCreation: readonly ItemInput[], completions: readonly CompletionItem[]): readonly LocalItem[] {
-  if (itemsInCreation.length === 0) {
+function getCompletionItems(ignoreItems: readonly LocalItem[], completions: readonly CompletionItem[]): readonly LocalItem[] {
+  if (ignoreItems.length === 0) {
     return []
   }
 
-  const itemsInCreationNames = itemsInCreation.map((ii) => ii.item.name.trim().toLowerCase())
-
   let results: (fuzzy.FilterResult<CompletionItem> & { item: LocalItem })[] = []
-  for (const itemInput of itemsInCreation) {
-    const itemInCreation = itemInput.item
+  for (const itemInput of ignoreItems) {
+    const itemInCreation = itemInput
     const resultsForItem = fuzzy
       .filter(itemInCreation.name, completions as CompletionItem[], {
         extract: (item: CompletionItem) => item.name,
@@ -90,7 +109,8 @@ function getCompletionItems(itemsInCreation: readonly ItemInput[], completions: 
       }))
     results.splice(results.length, 0, ...resultsForItem)
   }
-  results = results.filter((el) => !itemsInCreationNames.includes(el.item.name.trim().toLowerCase()))
+  const ignoreItemNames = ignoreItems.map((ii) => ii.name.trim().toLowerCase())
+  results = results.filter((el) => !ignoreItemNames.includes(el.item.name.trim().toLowerCase()))
   results = _.orderBy(results, ['score'], ['desc'])
 
   let resultItems = results.map((el) => el.item)

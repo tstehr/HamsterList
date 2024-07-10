@@ -304,7 +304,7 @@ export default class CreateItemComponent extends Component<Props, State> {
                 focusItemsInCreation={this.state.formHasFocus}
                 completions={this.props.completions}
                 categories={this.props.categories}
-                itemsInCreation={itemsInCreation}
+                itemInputInCreation={itemsInCreation}
                 createItem={this.createItem}
                 updateItemCategory={this.updateItemCategory}
                 deleteCompletion={this.props.deleteCompletion}
