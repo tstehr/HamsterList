@@ -1,4 +1,6 @@
+import { RECENTLY_USED_KEY, RecentlyUsedList } from 'DB'
 import { Up } from 'HistoryTracker'
+import LocalStorageDB from 'LocalStorageDB'
 import React, { useCallback, useEffect } from 'react'
 import { generatePath, match, useHistory } from 'react-router-dom'
 import ShoppingListComponent from 'ShoppingListComponent'
@@ -16,11 +18,22 @@ export default function ShoppingListContainerComponent({ listid, match, up }: Pr
   const history = useHistory()
   const updateListid = useCallback(
     (newListid: string) => {
+      // update listid in recently used
+      const db = new LocalStorageDB()
+      const recentlyUsedLists = db.get<RecentlyUsedList[]>(RECENTLY_USED_KEY)
+      if (recentlyUsedLists) {
+        db.set(
+          RECENTLY_USED_KEY,
+          recentlyUsedLists.map((rul) => (rul.id === listid ? { ...rul, id: newListid } : rul)),
+        )
+      }
+
+      // redirect to new path
       const newParams = { ...match.params, listid: newListid }
       const newPath = generatePath(match.path, newParams)
       history.replace(newPath)
     },
-    [history, match.params, match.path],
+    [history, listid, match.params, match.path],
   )
 
   useEffect(() => {

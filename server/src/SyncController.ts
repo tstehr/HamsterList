@@ -58,7 +58,10 @@ export default class SyncController {
       return sendErrorResponse(res, e)
     }
 
-    if (syncRequest.previousSync.id != syncRequest.currentState.id || syncRequest.currentState.id != req.listid) {
+    if (
+      (syncRequest.previousSync.id !== req.unnormalizedListid && syncRequest.previousSync.id != req.listid) ||
+      (syncRequest.currentState.id !== req.unnormalizedListid && syncRequest.currentState.id != req.listid)
+    ) {
       res.status(400).json({
         error: "List ids don't match",
       })
