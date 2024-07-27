@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import _ from 'lodash'
-import { CompletionItem, createCompletionItem, frecency, normalizeCompletionName } from 'shoppinglist-shared'
+import { CompletionItem, createCompletionItem, frecency, normalizeCompletionName } from 'hamsterlist-shared'
 import sendErrorResponse from './util/sendErrorResponse.js'
 import { RecentlyUsed, RecentlyUsedArray } from './ServerShoppingList.js'
 import { ListidParam } from './ShoppingListController.js'

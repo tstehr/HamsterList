@@ -15,7 +15,7 @@ import {
   Order,
   ShoppingList,
   UUID,
-} from 'shoppinglist-shared'
+} from 'hamsterlist-shared'
 import ChooseCategoryComponent from './ChooseCategoryComponent'
 import CreateItemComponent from './CreateItemComponent'
 import { Up } from './HistoryTracker'

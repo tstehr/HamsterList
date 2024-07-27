@@ -12,7 +12,7 @@ import {
   itemToString,
   LocalItem,
   UUID,
-} from 'shoppinglist-shared'
+} from 'hamsterlist-shared'
 import ChangesComponent from './ChangesComponent'
 import CompletionsComponent from './CompletionsComponent'
 import styles from './CreateItemComponent.module.css'

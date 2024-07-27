@@ -1,5 +1,5 @@
 {
-  "name": "shoppinglist-client",
+  "name": "hamsterlist-client",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
@@ -9,6 +9,7 @@
     "deep-freeze": "^0.0.1",
     "emittery": "^0.7.0",
     "fuzzy": "^0.1.3",
+    "hamsterlist-shared": "1.0.0",
     "http-proxy-middleware": "^1.0.3",
     "linkify-react": "^4.1.3",
     "linkifyjs": "^4.1.3",
@@ -24,7 +25,6 @@
     "react-router-dom": "^5.1.2",
     "react-sortable-hoc": "^1.11.0",
     "share-api-polyfill": "^1.1.1",
-    "shoppinglist-shared": "1.0.0",
     "smoothscroll-polyfill": "^0.4.4",
     "workbox-background-sync": "^5.1.3",
     "workbox-broadcast-update": "^5.1.3",

@@ -1,6 +1,6 @@
 import Emittery from 'emittery'
 import _ from 'lodash'
-import { frecency } from 'shoppinglist-shared'
+import { frecency } from 'hamsterlist-shared'
 import { PersistedClientShoppingList } from 'sync'
 import { MixinEmitter } from 'utils'
 

@@ -13,7 +13,7 @@ import {
   LocalItem,
   updateInArray,
   UUID,
-} from 'shoppinglist-shared'
+} from 'hamsterlist-shared'
 import sendErrorResponse from './util/sendErrorResponse.js'
 import { addCompletion, getSortedCompletions } from './CompletionsController.js'
 import { RecentlyUsedArray } from './ServerShoppingList.js'

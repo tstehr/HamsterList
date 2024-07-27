@@ -19,7 +19,7 @@ import {
   ShoppingList,
   sortItems,
   SyncedShoppingList,
-} from 'shoppinglist-shared'
+} from 'hamsterlist-shared'
 
 export interface RecentlyUsed {
   lastUsedTimestamp: number

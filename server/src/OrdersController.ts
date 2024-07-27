@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { createOrder, errorMap } from 'shoppinglist-shared'
+import { createOrder, errorMap } from 'hamsterlist-shared'
 import sendErrorResponse from './util/sendErrorResponse.js'
 import { ListidParam } from './ShoppingListController.js'
 

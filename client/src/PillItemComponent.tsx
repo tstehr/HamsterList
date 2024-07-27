@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash'
 import React from 'react'
-import { CategoryDefinition, Item } from 'shoppinglist-shared'
+import { CategoryDefinition, Item } from 'hamsterlist-shared'
 import { CategoryTextComponent } from './CategoryComponent'
 import ItemComponent from './ItemComponent'
 import styles from './PillItemComponent.module.css'

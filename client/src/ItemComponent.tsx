@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { isEqual } from 'lodash'
 import * as mathjs from 'mathjs'
 import React from 'react'
-import { Amount, BaseItem } from 'shoppinglist-shared'
+import { Amount, BaseItem } from 'hamsterlist-shared'
 import styles from './ItemComponent.module.css'
 import Linkify from 'linkify-react'
 

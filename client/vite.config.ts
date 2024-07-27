@@ -22,8 +22,6 @@ export default defineConfig(() => {
       }),
       VitePWA({
         manifest: {
-          short_name: 'Shopping List',
-          name: 'Create Shared Shopping Lists',
           icons: [
             {
               src: 'favicon.ico',
@@ -36,6 +34,8 @@ export default defineConfig(() => {
               type: 'image/png',
             },
           ],
+          short_name: 'HamsterList',
+          name: 'HamsterList – Shared Shopping Lists',
           theme_color: '#4CAF50',
           background_color: '#ffffff',
         },
