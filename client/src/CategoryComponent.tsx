@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import _, { isEqual } from 'lodash'
 import React, { Component, ComponentProps, PropsWithChildren } from 'react'
-import { CategoryDefinition, createCategoryDefinition, UUID } from 'shoppinglist-shared'
+import { CategoryDefinition, createCategoryDefinition, UUID } from 'hamsterlist-shared'
 import styles from './CategoryComponent.module.css'
 
 const unknownCategory = createCategoryDefinition({

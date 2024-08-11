@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { CategoryDefinition, UUID } from 'shoppinglist-shared'
+import { CategoryDefinition, UUID } from 'hamsterlist-shared'
 import CategoryComponent from './CategoryComponent'
 import styles from './ChooseCategoryComponent.module.css'
 import KeyFocusComponent from './KeyFocusComponent'

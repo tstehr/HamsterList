@@ -1,4 +1,4 @@
-import { createUUID } from 'shoppinglist-shared'
+import { createUUID } from 'hamsterlist-shared'
 import { expect, it } from 'vitest'
 import TokenCreator from './TokenCreator.js'
 

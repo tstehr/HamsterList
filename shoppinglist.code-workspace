@@ -22,7 +22,7 @@
       "source.fixAll": "explicit",
     },
     "jest.disabledWorkspaceFolders": [
-      "shoppinglist"
+      "hamsterlist"
     ],
     "eslint.runtime": "node",
     "eslint.experimental.useFlatConfig": true,

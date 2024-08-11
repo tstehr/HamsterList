@@ -22,23 +22,15 @@ export default defineConfig(() => {
       }),
       VitePWA({
         manifest: {
-          short_name: 'Shopping List',
-          name: 'Create Shared Shopping Lists',
-          icons: [
-            {
-              src: 'favicon.ico',
-              sizes: '256x256 192x192 128x128 96x96 64x64 48x48 40x40 32x32 24x24 16x16',
-              type: 'image/x-icon',
-            },
-            {
-              src: 'apple-touch-icon.png',
-              sizes: '512x512',
-              type: 'image/png',
-            },
-          ],
+          short_name: 'HamsterList',
+          name: 'HamsterList – Shared Shopping Lists',
           theme_color: '#4CAF50',
           background_color: '#ffffff',
         },
+        pwaAssets:  {
+          config: true,
+          overrideManifestIcons: true,
+        }
       }),
     ],
 

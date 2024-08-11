@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 import stringify from 'json-stable-stringify'
-import { SyncedShoppingList } from 'shoppinglist-shared'
+import { SyncedShoppingList } from 'hamsterlist-shared'
 
 export default class TokenCreator {
   secret: string

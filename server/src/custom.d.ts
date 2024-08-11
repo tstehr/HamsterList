@@ -1,6 +1,6 @@
 import Logger from 'bunyan'
 import { ItemidParam } from 'ItemController'
-import { UUID } from 'shoppinglist-shared'
+import { UUID } from 'hamsterlist-shared'
 import { ServerShoppingList } from './ServerShoppingList.js'
 import { ListidParam } from './ShoppingListController.js'
 

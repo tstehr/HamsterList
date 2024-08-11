@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { createUUID, Order, UUID } from 'shoppinglist-shared'
+import { createUUID, Order, UUID } from 'hamsterlist-shared'
 import styles from './OrderSelectComponent.module.css'
 import { SelectOrder } from './sync'
 

@@ -12,7 +12,7 @@ import {
   Order,
   transformItemsToCategories,
   transformOrderToCategories,
-} from 'shoppinglist-shared'
+} from 'hamsterlist-shared'
 import { CreateItem, DeleteItem, ModifyCompletions, UpdateCategories, UpdateOrders } from 'sync'
 import useSync from 'useSync'
 import styles from './ImportComponent.module.css'

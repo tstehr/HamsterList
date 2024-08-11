@@ -19,7 +19,7 @@ import {
   SyncRequest,
   SyncResponse,
   UUID,
-} from 'shoppinglist-shared'
+} from 'hamsterlist-shared'
 import sendErrorResponse from './util/sendErrorResponse.js'
 import { getChangesBetween } from './ChangesController.js'
 import { addCompletion, getSortedCompletions } from './CompletionsController.js'

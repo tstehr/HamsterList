@@ -1,5 +1,5 @@
 {
-  "name": "shoppinglist",
+  "name": "hamsterlist",
   "private": true,
   "workspaces": [
     "shared",
@@ -19,9 +19,9 @@
     "typesync": "^0.6.1"
   },
   "scripts": {
-    "shared": "yarn workspace shoppinglist-shared",
-    "server": "yarn workspace shoppinglist-server",
-    "client": "yarn workspace shoppinglist-client",
+    "shared": "yarn workspace hamsterlist-shared",
+    "server": "yarn workspace hamsterlist-server",
+    "client": "yarn workspace hamsterlist-client",
     "all": "yarn workspaces foreach -A run",
     "lint": "eslint ."
   }

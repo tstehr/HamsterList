@@ -1,4 +1,4 @@
-# ShoppingList
+# HamsterList
 
 A React-based shared shopping list.
 
@@ -10,22 +10,22 @@ documentation](./API.md).
 
 ## Developing
 
-This section describes how to set up and run shoppinglist locally on your computer.
+This section describes how to set up and run HamsterList locally on your computer.
 
 1. Install required tools
    1. [node](https://nodejs.org/en/)
    2. [yarn](https://yarnpkg.com/en/docs/install)
 2. Check out this repo
 3. Run `./install.sh` to download required node packages
-4. ShoppingList has three components shared, server and client. You need to start a watcher for each of them to rebuild and restart when you perform changes:
+4. HamsterList has three components shared, server and client. You need to start a watcher for each of them to rebuild and restart when you perform changes:
    1. shared: `cd shared; yarn watch`
    2. server: `cd server; yarn start`
    3. client: `cd client; yarn start`
-5. You should now be able to access ShoppingList on `http://localhost:3000`
+5. You should now be able to access HamsterList on `http://localhost:3000`
 
 ## Deploying
 
-You can deploy your own shoppinglist instance.
+You can deploy your own HamsterList instance.
 
 1. Install required tools
    1. [node](https://nodejs.org/en/)

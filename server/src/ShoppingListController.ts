@@ -7,7 +7,7 @@ import {
   diffShoppingLists,
   getOnlyNewChanges,
   updateInArray,
-} from 'shoppinglist-shared'
+} from 'hamsterlist-shared'
 import sendErrorResponse from './util/sendErrorResponse.js'
 import { DB } from './DB.js'
 import { createServerShoppingList, getBaseShoppingList, ServerShoppingList } from './ServerShoppingList.js'

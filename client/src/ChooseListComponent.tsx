@@ -6,7 +6,7 @@ import _ from 'lodash'
 import React, { Component } from 'react'
 import FlipMove from 'react-flip-move'
 import { Link, Redirect } from 'react-router-dom'
-import { createRandomUUID, createShoppingList } from 'shoppinglist-shared'
+import { createRandomUUID, createShoppingList } from 'hamsterlist-shared'
 import styles from './ChooseListComponent.module.css'
 import DB, { getRecentlyUsedLists, Key, RecentlyUsedList, RECENTLY_USED_KEY, RESTORATION_ENABLED } from './DB'
 import globalStyles from './index.module.css'
@@ -120,7 +120,7 @@ export default class ChooseListComponent extends Component<{}, State> {
           {{
             topBar: (
               <TopBarComponent responsive={true}>
-                <h1 className={styles.Title}>ShoppingList</h1>
+                <h1 className={styles.Title}>HamsterList</h1>
               </TopBarComponent>
             ),
             sections: [

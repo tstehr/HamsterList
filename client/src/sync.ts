@@ -27,8 +27,8 @@ import {
   SyncedShoppingList,
   SyncRequest,
   UUID,
-} from 'shoppinglist-shared'
-import updateInArray from 'shoppinglist-shared/build/util/updateInArray'
+} from 'hamsterlist-shared'
+import updateInArray from 'hamsterlist-shared/build/util/updateInArray'
 import DB, { getRecentlyUsedLists, RecentlyUsedList, RECENTLY_USED_KEY } from './DB'
 import LocalStorageDB from './LocalStorageDB'
 import { MixinEmitter, responseToJSON } from './utils'
