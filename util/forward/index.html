@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, viewport-fit=cover" />
+    <title>HamsterList</title>
+  </head>
+  <body>
+    <p>You're being redirected to HamsterList</p>
+    <script>
+      const NEW_HOST = 'localhost:3001'
+
+      const url = new URL(window.location.href)
+      const recentlyUsedLists = localStorage['SL$$1$$recentlyUsedLists']
+      const query = new URLSearchParams()
+      if (recentlyUsedLists) {
+        query.set('recentlyUsedListsJson', recentlyUsedLists)
+      }
+      url.search = query.toString()
+      url.host = NEW_HOST
+      window.location = url.toString()
+    </script>
+  </body>
+</html>

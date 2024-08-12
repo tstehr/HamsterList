@@ -43,6 +43,30 @@ export default class ChooseListComponent extends Component<{}, State> {
     }
 
     this.db.on('change', this.handleStorage)
+
+    // Allows migrating to a new host while keeping recentlyUsedList. Use utils/forward/index.html at the old host with an
+    // appropriate NEW_HOST.
+    if (this.state.recentlyUsedLists.length === 0) {
+      const query = new URLSearchParams(location.search)
+      const recentlyUsedListsJson = query.get('recentlyUsedListsJson')
+      if (!recentlyUsedListsJson) {
+        return
+      }
+      let recentlyUsedLists: RecentlyUsedList[]
+      try {
+        recentlyUsedLists = JSON.parse(recentlyUsedListsJson) as RecentlyUsedList[]
+      } catch (e) {
+        return
+      }
+      this.db.set(RECENTLY_USED_KEY, recentlyUsedLists)
+      this.setState({
+        recentlyUsedLists: recentlyUsedLists,
+      })
+      query.delete('recentlyUsedListsJson')
+      const url = new URL(location.href)
+      url.search = query.toString()
+      history.pushState(null, '', url.toString())
+    }
   }
 
   componentWillUnmount(): void {
