@@ -43,7 +43,7 @@ export interface RecentlyUsedList {
 }
 
 export function getRecentlyUsedLists(db: DB): readonly RecentlyUsedList[] {
-  return _.chain(db.get<RecentlyUsedList>(RECENTLY_USED_KEY) ?? [])
+  return _.chain(db.get<RecentlyUsedList[]>(RECENTLY_USED_KEY) ?? [])
     .orderBy([(entry) => frecency(entry)], ['desc'])
     .value()
 }

@@ -6,6 +6,7 @@ import ServiceWorkerInstall from 'ServiceWorkerInstall'
 import ChooseListComponent from './ChooseListComponent'
 import HistoryTracker, { Up } from './HistoryTracker'
 import ShoppingListContainerComponent from './ShoppingListContainerComponent'
+import RecentlyUsedListsMigration from 'RecentlyUsedListsMigration'
 
 const Error404: React.SFC = () => {
   return <>Not found 🙁</>
@@ -42,6 +43,7 @@ export default function App() {
             </Switch>
           )}
         ></HistoryTracker>
+        <RecentlyUsedListsMigration />
       </BrowserRouter>
       <ServiceWorkerInstall />
     </>

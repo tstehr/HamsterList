@@ -1,0 +1,37 @@
+.RecentlyUsedListsMigration {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+
+  width: 100vw;
+  padding: 0.5rem;
+  border-top: 2px solid var(--theme-color);
+
+  background-color: var(--background-color);
+}
+
+.InfoLine {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.Actions {
+  margin-left: auto;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+@media (min-width: 55rem) {
+  .RecentlyUsedListsMigration {
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 50rem;
+    border: 2px solid var(--theme-color);
+  }
+}
