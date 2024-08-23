@@ -220,7 +220,7 @@ export default class ShoppingListComponent extends Component<Props> {
             </button>
           </p>
           <p>
-            <a href="https://github.com/tstehr/shoppinglist/issues">Report Bugs</a>
+            <a href="https://github.com/tstehr/HamsterList/issues">Report Bugs</a>
           </p>
           <p>Version: {import.meta.env.VITE_GIT_SHA ?? 'No version information found!'}</p>
         </section>
