@@ -15,9 +15,9 @@ const AmountComponent = React.memo(function AmountComponent(props: AmountProps) 
 
   if (amount != null) {
     return (
-      <span>
+      <>
         {mathjs.round(amount.value, 2)} {amount.unit != null && <em>{amount.unit}</em>}
-      </span>
+      </>
     )
   } else {
     return null
@@ -31,12 +31,13 @@ interface Props {
 
 const ItemComponent = React.memo(function ItemComponent(props: Props) {
   return (
-    <span className={classNames(styles.ItemComponent, props.className)}>
-      <AmountComponent amount={props.item.amount} />{' '}
-      <Linkify as="span" options={{ target: '_blank', defaultProtocol: 'https' }}>
-        {props.item.name}
-      </Linkify>
-    </span>
+    <Linkify
+      as="span"
+      options={{ target: '_blank', defaultProtocol: 'https' }}
+      className={classNames(styles.ItemComponent, props.className)}
+    >
+      <AmountComponent amount={props.item.amount} /> {props.item.name}
+    </Linkify>
   )
 }, isEqual)
 
