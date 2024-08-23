@@ -3,7 +3,9 @@
   display: flex;
   align-items: stretch !important;
   width: 100%;
-  height: 3rem;
+  min-height: 3rem;
+  max-height: 8rem;
+  height: auto;
   transition: padding-left 150ms;
 }
 .CreateItemButtonComponent.focused {
@@ -37,7 +39,6 @@
   flex: 1;
   padding-left: 0.5rem;
   overflow: hidden;
-  text-overflow: ellipsis;
   border: 0;
   border-radius: 0;
   font-size: 1rem;
@@ -52,11 +53,11 @@
 }
 @media (hover: hover) {
   .CreateItemButtonComponent .IconButton {
-    display: none;
+    visibility: hidden;
   }
   .CreateItemButtonComponent:hover .IconButton,
   .CreateItemButtonComponent.focused .IconButton,
   .CreateItemButtonComponent:focus-within .IconButton {
-    display: block;
+    visibility: visible;
   }
 }
