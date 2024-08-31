@@ -1,5 +1,6 @@
 import { RECENTLY_USED_KEY, RecentlyUsedList } from 'DB'
 import { Up } from 'HistoryTracker'
+import Loading from 'Loading'
 import LocalStorageDB from 'LocalStorageDB'
 import React, { useCallback, useEffect } from 'react'
 import { generatePath, match, useHistory } from 'react-router-dom'
@@ -44,7 +45,7 @@ export default function ShoppingListContainerComponent({ listid, match, up }: Pr
 
   return (
     <div>
-      {state?.loaded && sync && (
+      {state?.loaded && sync ? (
         <ShoppingListComponent
           shoppingList={sync.getShoppingList(state)}
           completions={state.completions}
@@ -76,6 +77,8 @@ export default function ShoppingListContainerComponent({ listid, match, up }: Pr
           performTransaction={sync.performTransaction.bind(sync)}
           up={up}
         />
+      ) : (
+        <Loading />
       )}
     </div>
   )
