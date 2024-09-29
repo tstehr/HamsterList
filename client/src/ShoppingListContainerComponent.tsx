@@ -38,7 +38,7 @@ export default function ShoppingListContainerComponent({ listid, match, up }: Pr
   )
 
   useEffect(() => {
-    if (state && listid !== state.id) {
+    if (state && state.id && listid !== state.id) {
       updateListid(state.id)
     }
   }, [listid, state, updateListid])
