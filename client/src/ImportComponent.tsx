@@ -118,7 +118,7 @@ function ImportFromList({
 
       setInProgress(true)
 
-      setImmediate(() => {
+      setTimeout(() => {
         let newCategories = categories
         if (importCategories) {
           newCategories = mergeCategoryLists(categories, state.categories, { dropUnmatched: replace })
@@ -150,7 +150,7 @@ function ImportFromList({
         }
 
         close()
-      })
+      }, 0)
     },
     [
       categories,
