@@ -1,4 +1,4 @@
-.RecentlyUsedListsMigration {
+.LocalStorageMigration {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -26,7 +26,7 @@
 }
 
 @media (min-width: 55rem) {
-  .RecentlyUsedListsMigration {
+  .LocalStorageMigration {
     bottom: 0.5rem;
     left: 50%;
     transform: translateX(-50%);

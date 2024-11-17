@@ -10,15 +10,58 @@
     <script>
       const NEW_HOST = 'localhost:3001'
 
-      const url = new URL(window.location.href)
-      const recentlyUsedLists = localStorage['SL$$1$$recentlyUsedLists']
-      const query = new URLSearchParams()
-      if (recentlyUsedLists) {
-        query.set('recentlyUsedListsJson', recentlyUsedLists)
+      function forwardToNewUrl() {
+        const recentlyUsedLists = localStorage['SL$$1$$recentlyUsedLists']
+        const usernamesPairs = Object.keys(localStorage).flatMap(k => {
+          if (!k.startsWith('SL$$1$$LIST$$')) {
+            return []
+          }
+
+          const listStr = localStorage[k]
+          let list
+          try {
+            list = JSON.parse(listStr)
+          } catch {
+            return []
+          }
+
+          if (typeof list === 'object' && list !== null && list.username && list.id) {
+            return [[list.id, list.username]]
+          }
+          return []
+        })
+
+        const restorationEnabled = localStorage['SL$$1$$restorationEnabled']
+
+        const forwardUrl = new URL(window.location.href)
+
+        const forwardSearchParams = new URLSearchParams()
+        if (recentlyUsedLists) {
+          forwardSearchParams.set('recentlyUsedListsJson', recentlyUsedLists)
+        }
+        if (usernamesPairs.length) {
+          forwardSearchParams.set('usernamesJson', JSON.stringify(Object.fromEntries(usernamesPairs)))
+        }
+        if (restorationEnabled) {
+          forwardSearchParams.set('restorationEnabled', true)
+        }
+        if (forwardSearchParams.size) {
+          forwardSearchParams.set('successUrl', window.location.href)
+        }
+
+        forwardUrl.search = forwardSearchParams.toString()
+        forwardUrl.host = NEW_HOST
+        window.location.href = forwardUrl.toString()
       }
-      url.search = query.toString()
-      url.host = NEW_HOST
-      window.location = url.toString()
+
+      const searchParams = new URLSearchParams(window.location.search)
+      if (searchParams.has('returnUrl')) {
+        localStorage.clear()
+        window.location.href = searchParams.get('returnUrl')
+      } else {
+        forwardToNewUrl()
+      }
+
     </script>
   </body>
 </html>
