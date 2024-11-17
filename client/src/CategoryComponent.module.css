@@ -2,6 +2,7 @@
   width: 3rem;
   height: 3rem;
   flex-shrink: 0;
+  display: flow-root;
 }
 .Circle {
   width: 80%;
