@@ -6,15 +6,15 @@ import React, { useCallback, useState } from 'react'
 import { CategoryDefinition, CompletionItem, itemToString, LocalItem, UUID } from 'hamsterlist-shared'
 import CreateItemButtonComponent from './CreateItemButtonComponent'
 import { ItemInput } from './CreateItemComponent'
-import { AddCompletion, CreateItem, DeleteCompletion } from './sync'
+import { AddCompletion, DeleteCompletion } from './sync'
 
 interface Props {
   focusItemsInCreation: boolean
-  itemInputInCreation: readonly ItemInput[]
+  itemsForInputLines: readonly (ItemInput | null)[]
   completions: readonly CompletionItem[]
   categories: readonly CategoryDefinition[]
-  createItem: CreateItem
-  updateItemCategory: (item: LocalItem, categoryId: UUID | null | undefined) => void
+  createItem: (item: LocalItem, lineIndex?: number) => void
+  updateItemCategory: (item: LocalItem, lineIndex: number, categoryId: UUID | null | undefined) => void
   deleteCompletion: DeleteCompletion
   addCompletion: AddCompletion
   focusInput: () => void
@@ -23,7 +23,7 @@ interface Props {
 
 export default function CompletionsComponent({
   focusItemsInCreation,
-  itemInputInCreation,
+  itemsForInputLines,
   completions,
   categories,
   createItem,
@@ -43,7 +43,7 @@ export default function CompletionsComponent({
     [createItem],
   )
 
-  const itemsInCreation = itemInputInCreation.map((ii) => ii.item)
+  const itemsInCreation = itemsForInputLines.flatMap((ii) => (ii ? ii.item : []))
   const completionItems = getCompletionItems([...itemsInCreation, ...recentlyCreatedCompletionItems], completions)
 
   const itemToUniqueRepr = new Map<LocalItem, string>()
@@ -59,21 +59,23 @@ export default function CompletionsComponent({
 
   return (
     <>
-      {itemInputInCreation.map((ii) => (
-        <CreateItemButtonComponent
-          key={itemToUniqueRepr.get(ii.item)}
-          itemRepr={itemToUniqueRepr.get(ii.item)!}
-          item={ii.item}
-          categories={categories}
-          createItem={createItem}
-          focusInput={focusInput}
-          noArrowFocus
-          focused={focusItemsInCreation}
-          deleteCompletion={ii.categoryAdded ? deleteCompletion : null}
-          updateCategory={(categoryId) => updateItemCategory(ii.item, categoryId)}
-          up={up}
-        />
-      ))}
+      {itemsForInputLines.map((ii, lineIndex) =>
+        ii ? (
+          <CreateItemButtonComponent
+            key={itemToUniqueRepr.get(ii.item)}
+            itemRepr={itemToUniqueRepr.get(ii.item)!}
+            item={ii.item}
+            categories={categories}
+            createItem={(item) => createItem(item, lineIndex)}
+            focusInput={focusInput}
+            noArrowFocus
+            focused={focusItemsInCreation}
+            deleteCompletion={ii.categoryAdded ? deleteCompletion : null}
+            updateCategory={(categoryId) => updateItemCategory(ii.item, lineIndex, categoryId)}
+            up={up}
+          />
+        ) : null,
+      )}
       {completionItems.map((item) => (
         <CreateItemButtonComponent
           key={itemToUniqueRepr.get(item)}

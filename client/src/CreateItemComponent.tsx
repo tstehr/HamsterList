@@ -41,8 +41,6 @@ interface Props {
 
 interface State {
   inputValue: string
-  itemsForInputLines: readonly (ItemInput | null)[]
-  itemsInCreation: readonly ItemInput[]
   formHasFocus: boolean
   forceMultiline: boolean
   changingQuickly: boolean
@@ -59,8 +57,6 @@ export default class CreateItemComponent extends Component<Props, State> {
     super(props)
     this.state = {
       inputValue: '',
-      itemsForInputLines: [],
-      itemsInCreation: [],
       formHasFocus: false,
       forceMultiline: false,
       changingQuickly: false,
@@ -94,10 +90,11 @@ export default class CreateItemComponent extends Component<Props, State> {
   }
 
   saveItems(): void {
+    const itemsForInputLines = this.getItemsForInputLines(this.state.inputValue)
     this.props.performTransaction(() => {
-      this.state.itemsInCreation.forEach((ii) => this.props.createItem(ii.item))
+      itemsForInputLines.forEach((ii) => ii && this.props.createItem(ii.item))
     })
-    this.setState(this.createInputValueUpdate(''))
+    this.setState({ inputValue: '' })
 
     if (this.input != null) {
       this.input.focus()
@@ -132,22 +129,7 @@ export default class CreateItemComponent extends Component<Props, State> {
       }, 250)
     }
 
-    this.setState({ ...this.createInputValueUpdate(e.currentTarget.value), changingQuickly: changingQuickly })
-  }
-
-  createInputValueUpdate(newInputValue: string): {
-    inputValue: string
-    itemsForInputLines: readonly (ItemInput | null)[]
-    itemsInCreation: readonly ItemInput[]
-  } {
-    const itemsForInputLines = this.getItemsForInputLines(newInputValue)
-    const itemsInCreation: readonly ItemInput[] = itemsForInputLines.filter((ii: ItemInput | null): ii is ItemInput => ii != null)
-
-    return {
-      inputValue: newInputValue,
-      itemsForInputLines: itemsForInputLines,
-      itemsInCreation: itemsInCreation,
-    }
+    this.setState({ inputValue: e.currentTarget.value, changingQuickly: changingQuickly })
   }
 
   handleSubmit = (e: React.SyntheticEvent): void => {
@@ -190,26 +172,20 @@ export default class CreateItemComponent extends Component<Props, State> {
     })
   }
 
-  createItem = (item: LocalItem): void => {
+  createItem = (item: LocalItem, lineIndex?: number): void => {
     if (!this.isMultiline()) {
-      this.setState(this.createInputValueUpdate(''))
-    } else {
-      const lineIndex = this.state.itemsForInputLines.findIndex((ii) => ii && ii.item === item)
-
-      if (lineIndex !== -1) {
-        const lines = this.state.inputValue.split('\n')
-        lines.splice(lineIndex, 1)
-        const newInputValue = lines.join('\n')
-        this.setState(this.createInputValueUpdate(newInputValue))
-      }
+      this.setState({ inputValue: '' })
+    } else if (lineIndex !== undefined) {
+      const lines = this.state.inputValue.split('\n')
+      lines.splice(lineIndex, 1)
+      const newInputValue = lines.join('\n')
+      this.setState({ inputValue: newInputValue })
     }
 
     this.props.createItem(item)
   }
 
-  updateItemCategory = (item: LocalItem, categoryId: UUID | null | undefined): void => {
-    const lineIndex = this.state.itemsForInputLines.findIndex((ii) => ii && ii.item === item)
-
+  updateItemCategory = (item: LocalItem, lineIndex: number, categoryId: UUID | null | undefined): void => {
     if (lineIndex !== -1) {
       const itemString = itemToString(item)
       const category = this.props.categories.find((c) => c.id === categoryId)
@@ -220,7 +196,7 @@ export default class CreateItemComponent extends Component<Props, State> {
       const lines = this.state.inputValue.split('\n')
       lines.splice(lineIndex, 1, newLine)
       const newInputValue = lines.join('\n')
-      this.setState(this.createInputValueUpdate(newInputValue))
+      this.setState({ inputValue: newInputValue })
     }
   }
 
@@ -241,7 +217,7 @@ export default class CreateItemComponent extends Component<Props, State> {
   render(): JSX.Element {
     const isCreatingItem = this.state.inputValue !== ''
     const isMultiline = this.isMultiline()
-    const itemsInCreation = this.state.itemsInCreation
+    const itemsForInputLines = this.getItemsForInputLines(this.state.inputValue)
     return (
       <div
         className={classNames(styles.CreateItemComponent, isCreatingItem && styles.creatingItem)}
@@ -304,7 +280,7 @@ export default class CreateItemComponent extends Component<Props, State> {
                 focusItemsInCreation={this.state.formHasFocus}
                 completions={this.props.completions}
                 categories={this.props.categories}
-                itemInputInCreation={itemsInCreation}
+                itemsForInputLines={itemsForInputLines}
                 createItem={this.createItem}
                 updateItemCategory={this.updateItemCategory}
                 deleteCompletion={this.props.deleteCompletion}
