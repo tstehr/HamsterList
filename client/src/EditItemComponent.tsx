@@ -3,7 +3,7 @@ import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
 import _ from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import AutosizeTextarea from 'react-autosize-textarea'
-import { Route, RouteComponentProps } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { CategoryDefinition, createLocalItemFromString, Item, itemToString, LocalItem } from 'hamsterlist-shared'
 import CategoryComponent from './CategoryComponent'
 import styles from './EditItemComponent.module.css'
@@ -114,19 +114,18 @@ const EditItemComponent = React.memo<Props>(
       }
     })
 
+    const history = useHistory()
+    const params = useParams<{ listid?: string }>()
+
     return (
       <li className={styles.EditItemComponent}>
-        <Route
-          render={({ history, match }: RouteComponentProps<{ listid?: string }>) => (
-            <button
-              type="button"
-              className={classNames(styles.Category, KEY_FOCUS_COMPONENT_NO_FOCUS)}
-              onClick={() => history.push(`/${match.params.listid ?? ''}/${props.item.id}/category`)}
-            >
-              <CategoryComponent categoryId={props.item.category} categories={props.categories} />
-            </button>
-          )}
-        />
+        <button
+          type="button"
+          className={classNames(styles.Category, KEY_FOCUS_COMPONENT_NO_FOCUS)}
+          onClick={() => history.push(`/${params.listid ?? ''}/${props.item.id}/category`)}
+        >
+          <CategoryComponent categoryId={props.item.category} categories={props.categories} />
+        </button>
 
         {editState.isEditing ? (
           <form onSubmit={handleSubmit} className={styles.Name}>
