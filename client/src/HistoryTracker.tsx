@@ -1,138 +1,116 @@
 import { Location } from 'history'
 import _ from 'lodash'
-import { Component } from 'react'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { useCallback, useEffect, useRef } from 'react'
+import { useHistory } from 'react-router-dom'
 
 export type Up = (levels: number | 'home' | 'list') => void
 
-type Props = {
+interface Props {
   render: (up: Up) => JSX.Element
-} & RouteComponentProps
-
-interface NavigationStackEntry {
-  path: string
-  key: string | undefined | null
 }
 
-class UnboundHistoryTracker extends Component<Props> {
-  unlisten: (() => void) | null = null
-  navigationStack: NavigationStackEntry[]
-  navigationStackIndex: number
+interface NavigationStackEntry {
+  readonly path: string
+  readonly key: string | undefined | null
+}
 
-  constructor(props: Props) {
-    super(props)
-    this.navigationStack = [this.createNavigationStackEntry(this.props.history.location)]
-    this.navigationStackIndex = 0
-    this.setupHistoryListener()
-  }
+export default function HistoryTracker(props: Props) {
+  const history = useHistory()
 
-  historyListener = (location: Location, action: string): void => {
+  const navigationStackRef = useRef<NavigationStackEntry[]>([createNavigationStackEntry(history.location)])
+  const navigationStackIndexRef = useRef<number>(0)
+
+  const historyListener = useCallback((location: Location, action: string): void => {
     switch (action) {
       case 'PUSH': {
-        this.navigationStackIndex++
-        this.navigationStack.splice(this.navigationStackIndex, Infinity, this.createNavigationStackEntry(location))
+        navigationStackIndexRef.current++
+        navigationStackRef.current.splice(navigationStackIndexRef.current, Infinity, createNavigationStackEntry(location))
         break
       }
       case 'POP': {
-        const stackEntry = this.createNavigationStackEntry(location)
-        const keyIndex = _.findIndex(this.navigationStack, (entry) => _.isEqual(entry, stackEntry))
+        const stackEntry = createNavigationStackEntry(location)
+        const keyIndex = _.findIndex(navigationStackRef.current, (entry) => _.isEqual(entry, stackEntry))
 
         if (keyIndex === -1) {
-          this.navigationStack.splice(this.navigationStackIndex - 2, Infinity, stackEntry)
+          navigationStackRef.current.splice(navigationStackIndexRef.current - 2, Infinity, stackEntry)
         } else {
-          this.navigationStackIndex = keyIndex
+          navigationStackIndexRef.current = keyIndex
         }
 
         break
       }
       case 'REPLACE': {
-        this.navigationStack.splice(this.navigationStackIndex, 1, this.createNavigationStackEntry(location))
+        navigationStackRef.current.splice(navigationStackIndexRef.current, 1, createNavigationStackEntry(location))
         break
       }
       default: {
         console.warn(`Unkonwn navigation action: ${action}`)
       }
     }
-  }
+  }, [])
 
-  up = (levels: number | 'home' | 'list'): void => {
-    if (levels === 'home') {
-      this.navigateBackTo('')
-    } else if (levels === 'list') {
-      const listid = this.navigationStack[this.navigationStackIndex].path.split('/')[1]
-      this.navigateBackTo('/' + listid)
-    } else {
-      const splitPath = this.navigationStack[this.navigationStackIndex].path.split('/')
-      const newPath = splitPath.slice(0, splitPath.length - levels).join('/')
-      this.navigateBackTo(newPath)
-    }
-  }
+  useEffect(() => {
+    const unlisten = history.listen(historyListener)
+    return () => unlisten()
+  }, [history, historyListener])
 
-  escapeListener = (e: KeyboardEvent): void => {
-    if (e.code === 'Escape' && !e.defaultPrevented) {
-      this.up('list')
-    }
-  }
+  const navigateBackTo = useCallback(
+    (pathname: string) => {
+      const idx = _.findLastIndex(navigationStackRef.current, (entry) => entry.path === pathname, navigationStackIndexRef.current)
 
-  componentDidMount(): void {
-    window.addEventListener('keydown', this.escapeListener)
-  }
+      if (idx === -1) {
+        history.push(pathname)
+      } else {
+        const stepsBack = navigationStackIndexRef.current - idx
 
-  componentWillUnmount(): void {
-    if (this.unlisten) {
-      this.unlisten()
-    }
+        if (stepsBack > 0) {
+          history.go(-stepsBack)
+        }
+      }
+    },
+    [history],
+  )
 
-    window.removeEventListener('keydown', this.escapeListener)
-  }
+  const up = useCallback(
+    (levels: number | 'home' | 'list') => {
+      if (levels === 'home') {
+        navigateBackTo('')
+      } else if (levels === 'list') {
+        const listid = navigationStackRef.current[navigationStackIndexRef.current].path.split('/')[1]
+        navigateBackTo('/' + listid)
+      } else {
+        const splitPath = navigationStackRef.current[navigationStackIndexRef.current].path.split('/')
+        const newPath = splitPath.slice(0, splitPath.length - levels).join('/')
+        navigateBackTo(newPath)
+      }
+    },
+    [navigateBackTo],
+  )
 
-  componentDidUpdate(prevProps: Props): void {
-    if (prevProps.history !== this.props.history) {
-      this.setupHistoryListener()
-    }
-  }
-
-  setupHistoryListener(): void {
-    if (this.unlisten) {
-      this.unlisten()
-    }
-
-    this.unlisten = this.props.history.listen(this.historyListener)
-  }
-
-  createNavigationStackEntry(location: Location): NavigationStackEntry {
-    return Object.freeze({
-      path: `${this.removeTrailingSlash(location.pathname)}`,
-      key: location.key,
-    })
-  }
-
-  removeTrailingSlash(pathname: string): string {
-    if (pathname.endsWith('/')) {
-      return pathname.substr(0, pathname.length - 1)
-    }
-
-    return pathname
-  }
-
-  navigateBackTo(pathname: string): void {
-    const idx = _.findLastIndex(this.navigationStack, (entry) => entry.path === pathname, this.navigationStackIndex)
-
-    if (idx === -1) {
-      this.props.history.push(pathname)
-    } else {
-      const stepsBack = this.navigationStackIndex - idx
-
-      if (stepsBack > 0) {
-        this.props.history.go(-stepsBack)
+  useEffect(() => {
+    const escapeListener = (e: KeyboardEvent) => {
+      if (e.code === 'Escape' && !e.defaultPrevented) {
+        up('list')
       }
     }
-  }
 
-  render(): JSX.Element {
-    return this.props.render(this.up)
-  }
+    window.addEventListener('keydown', escapeListener)
+    return () => window.removeEventListener('keydown', escapeListener)
+  })
+
+  return props.render(up)
 }
 
-const HistoryTracker = withRouter(UnboundHistoryTracker)
-export default HistoryTracker
+function createNavigationStackEntry(location: Location): NavigationStackEntry {
+  return Object.freeze({
+    path: `${removeTrailingSlash(location.pathname)}`,
+    key: location.key,
+  })
+}
+
+function removeTrailingSlash(pathname: string): string {
+  if (pathname.endsWith('/')) {
+    return pathname.substring(0, pathname.length - 1)
+  }
+  return pathname
+}
