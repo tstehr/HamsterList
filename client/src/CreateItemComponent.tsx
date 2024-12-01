@@ -43,15 +43,12 @@ interface State {
   inputValue: string
   formHasFocus: boolean
   forceMultiline: boolean
-  changingQuickly: boolean
 }
 
 export default class CreateItemComponent extends Component<Props, State> {
   root: HTMLDivElement | undefined | null
   input: HTMLTextAreaElement | undefined | null
-  lastChange: number
   focusTimeoutID = -1
-  changingQuicklyTimeoutID = -1
 
   constructor(props: Props) {
     super(props)
@@ -59,9 +56,7 @@ export default class CreateItemComponent extends Component<Props, State> {
       inputValue: '',
       formHasFocus: false,
       forceMultiline: false,
-      changingQuickly: false,
     }
-    this.lastChange = Date.now()
   }
 
   componentDidMount(): void {
@@ -117,19 +112,7 @@ export default class CreateItemComponent extends Component<Props, State> {
   }
 
   handleChange = (e: React.FormEvent<HTMLTextAreaElement>): void => {
-    const changingQuickly = Date.now() - this.lastChange < 250
-    this.lastChange = Date.now()
-    clearTimeout(this.changingQuicklyTimeoutID)
-
-    if (changingQuickly) {
-      this.changingQuicklyTimeoutID = window.setTimeout((): void => {
-        this.setState({
-          changingQuickly: false,
-        })
-      }, 250)
-    }
-
-    this.setState({ inputValue: e.currentTarget.value, changingQuickly: changingQuickly })
+    this.setState({ inputValue: e.currentTarget.value })
   }
 
   handleSubmit = (e: React.SyntheticEvent): void => {
