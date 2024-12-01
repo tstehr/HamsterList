@@ -76,8 +76,11 @@ export default function HistoryTracker(props: Props) {
       if (levels === 'home') {
         navigateBackTo('')
       } else if (levels === 'list') {
-        const listid = navigationStackRef.current[navigationStackIndexRef.current].path.split('/')[1]
-        navigateBackTo('/' + listid)
+        const currentStackEntryParts = navigationStackRef.current[navigationStackIndexRef.current].path.split('/')
+        if (currentStackEntryParts.length > 1) {
+          const listid = currentStackEntryParts[1]
+          navigateBackTo('/' + listid)
+        }
       } else {
         const splitPath = navigationStackRef.current[navigationStackIndexRef.current].path.split('/')
         const newPath = splitPath.slice(0, splitPath.length - levels).join('/')
