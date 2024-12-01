@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
 import _ from 'lodash'
-import React, { Component } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import AutosizeTextarea from 'react-autosize-textarea'
 import { Route, RouteComponentProps } from 'react-router-dom'
 import { CategoryDefinition, createLocalItemFromString, Item, itemToString, LocalItem } from 'hamsterlist-shared'
@@ -26,110 +26,94 @@ interface State {
   inputValue: string
 }
 
-export default class EditItemComponent extends Component<Props, State> {
-  input: HTMLTextAreaElement | undefined | null
-  itemDiv: HTMLDivElement | undefined | null
+const EditItemComponent = React.memo<Props>(
+  function EditItemComponent(props) {
+    const inputRef = useRef<HTMLTextAreaElement | null>(null)
+    const itemDivRef = useRef<HTMLDivElement | null>(null)
 
-  constructor(props: Props) {
-    super(props)
-    this.state = {
+    const [editState, setEditState] = useState<State>({
       hasFocus: false,
       isEditing: false,
-      inputValue: itemToString(this.props.item),
-    }
-  }
-
-  shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
-    return !_.isEqual(this.state, nextState) || !_.isEqual(this.props.item, nextProps.item)
-  }
-
-  saveItem(): void {
-    const itemFromString: LocalItem = createLocalItemFromString(this.state.inputValue, this.props.categories)
-    const updatedItem: LocalItem = { ...itemFromString, category: itemFromString.category ?? this.props.item.category }
-    this.props.updateItem(this.props.item.id, updatedItem)
-  }
-
-  handleFocus = (e: React.FocusEvent): void => {
-    // Don't treat clicks on focusable children as focus events. This allows links in the item name to be clicked.
-    if (
-      e.target !== e.currentTarget &&
-      e.target instanceof HTMLElement &&
-      e.target.tabIndex != null &&
-      e.target.tabIndex !== -1
-    ) {
-      return
-    }
-
-    this.setState((prevState) => ({
-      hasFocus: true,
-      isEditing: prevState.hasFocus ? false : true,
-      inputValue: prevState.hasFocus ? prevState.inputValue : itemToString(this.props.item),
-    }))
-  }
-
-  handleBlur = (): void => {
-    this.saveItem()
-    this.setState({
-      hasFocus: false,
-      isEditing: false,
+      inputValue: itemToString(props.item),
     })
-  }
 
-  handleSumbit = (e: React.SyntheticEvent): void => {
-    this.saveItem()
-    this.setState({
-      isEditing: false,
-    })
-    e.preventDefault()
-  }
-
-  handleInputKeyDown = (e: React.KeyboardEvent): void => {
-    if (e.key === 'Enter') {
-      this.saveItem()
-      this.setState({
-        isEditing: false,
-      })
-      e.preventDefault()
+    const saveItem = (): void => {
+      const itemFromString: LocalItem = createLocalItemFromString(editState.inputValue, props.categories)
+      const updatedItem: LocalItem = { ...itemFromString, category: itemFromString.category ?? props.item.category }
+      props.updateItem(props.item.id, updatedItem)
     }
 
-    if (e.key === 'Escape') {
-      this.setState({
-        isEditing: false,
-        inputValue: itemToString(this.props.item),
-      })
-      e.preventDefault()
-    }
-  }
+    const handleFocus = (e: React.FocusEvent): void => {
+      // Don't treat clicks on focusable children as focus events. This allows links in the item name to be clicked.
+      if (
+        e.target !== e.currentTarget &&
+        e.target instanceof HTMLElement &&
+        e.target.tabIndex != null &&
+        e.target.tabIndex !== -1
+      ) {
+        return
+      }
 
-  handleChange = (e: React.FormEvent<HTMLTextAreaElement>): void => {
-    this.setState({
-      inputValue: e.currentTarget.value,
-    })
-  }
-
-  handleDivKeyDown = (e: React.KeyboardEvent): void => {
-    if (e.key === 'Enter') {
-      this.setState({
+      setEditState((prevState) => ({
         hasFocus: true,
-        isEditing: true,
-        inputValue: itemToString(this.props.item),
-      })
-      e.preventDefault()
-    } else if (e.key === 'Delete' || e.key === 'Backspace') {
-      this.props.deleteItem(this.props.item.id)
+        isEditing: prevState.hasFocus ? false : true,
+        inputValue: prevState.hasFocus ? prevState.inputValue : itemToString(props.item),
+      }))
+    }
+
+    const handleBlur = (): void => {
+      saveItem()
+      setEditState((prevState) => ({ ...prevState, hasFocus: false, isEditing: false }))
+    }
+
+    const handleSubmit = (e: React.SyntheticEvent): void => {
+      saveItem()
+      setEditState((prevState) => ({ ...prevState, isEditing: false }))
       e.preventDefault()
     }
-  }
 
-  handleDivClick = (): void => {
-    this.setState({
-      hasFocus: true,
-      isEditing: true,
-      inputValue: itemToString(this.props.item),
+    const handleInputKeyDown = (e: React.KeyboardEvent): void => {
+      if (e.key === 'Enter') {
+        saveItem()
+        setEditState((prevState) => ({ ...prevState, isEditing: false }))
+        e.preventDefault()
+      }
+
+      if (e.key === 'Escape') {
+        setEditState((prevState) => ({ ...prevState, isEditing: false, inputValue: itemToString(props.item) }))
+        e.preventDefault()
+      }
+    }
+
+    const handleChange = (e: React.FormEvent<HTMLTextAreaElement>): void => {
+      const inputValue = e.currentTarget.value
+      setEditState((prevState) => ({ ...prevState, inputValue }))
+    }
+
+    const handleDivKeyDown = (e: React.KeyboardEvent): void => {
+      if (e.key === 'Enter') {
+        setEditState({ hasFocus: true, isEditing: true, inputValue: itemToString(props.item) })
+        e.preventDefault()
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        props.deleteItem(props.item.id)
+        e.preventDefault()
+      }
+    }
+
+    const handleDivClick = (): void => {
+      setEditState((prevState) => ({ ...prevState, hasFocus: true, isEditing: true, inputValue: itemToString(props.item) }))
+    }
+
+    useEffect(() => {
+      if (editState.hasFocus) {
+        if (inputRef.current != null) {
+          inputRef.current.focus()
+        } else if (itemDivRef.current != null) {
+          itemDivRef.current.focus()
+        }
+      }
     })
-  }
 
-  render(): JSX.Element {
     return (
       <li className={styles.EditItemComponent}>
         <Route
@@ -137,23 +121,23 @@ export default class EditItemComponent extends Component<Props, State> {
             <button
               type="button"
               className={classNames(styles.Category, KEY_FOCUS_COMPONENT_NO_FOCUS)}
-              onClick={() => history.push(`/${match.params.listid ?? ''}/${this.props.item.id}/category`)}
+              onClick={() => history.push(`/${match.params.listid ?? ''}/${props.item.id}/category`)}
             >
-              <CategoryComponent categoryId={this.props.item.category} categories={this.props.categories} />
+              <CategoryComponent categoryId={props.item.category} categories={props.categories} />
             </button>
           )}
         />
 
-        {this.state.isEditing ? (
-          <form onSubmit={this.handleSumbit} className={styles.Name}>
+        {editState.isEditing ? (
+          <form onSubmit={handleSubmit} className={styles.Name}>
             <AutosizeTextarea
               type="text"
-              value={this.state.inputValue}
-              onBlur={this.handleBlur}
-              onChange={this.handleChange}
-              onKeyDown={this.handleInputKeyDown}
+              value={editState.inputValue}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              onKeyDown={handleInputKeyDown}
               innerRef={(input) => {
-                this.input = input
+                inputRef.current = input
               }}
             />
           </form>
@@ -161,32 +145,25 @@ export default class EditItemComponent extends Component<Props, State> {
           <div
             className={styles.Name}
             tabIndex={0}
-            onFocus={this.handleFocus}
-            onBlur={this.handleBlur}
-            onKeyDown={this.handleDivKeyDown}
-            onClick={this.handleDivClick}
-            ref={(itemDiv) => (this.itemDiv = itemDiv)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onKeyDown={handleDivKeyDown}
+            onClick={handleDivClick}
+            ref={itemDivRef}
           >
-            <ItemComponent item={this.props.item} />
+            <ItemComponent item={props.item} />
           </div>
         )}
         <IconButton
-          onClick={() => this.props.deleteItem(this.props.item.id)}
+          onClick={() => props.deleteItem(props.item.id)}
           icon="DELETE"
           alt="Delete"
           className={classNames(styles.Delete, KEY_FOCUS_COMPONENT_NO_FOCUS)}
         />
       </li>
     )
-  }
+  },
+  (prevProps, nextProps) => _.isEqual(prevProps, nextProps),
+)
 
-  componentDidUpdate(): void {
-    if (this.state.hasFocus) {
-      if (this.input != null) {
-        this.input.focus()
-      } else if (this.itemDiv != null) {
-        this.itemDiv.focus()
-      }
-    }
-  }
-}
+export default EditItemComponent

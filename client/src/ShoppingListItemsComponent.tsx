@@ -11,6 +11,7 @@ import KeyFocusComponent from './KeyFocusComponent'
 import OrderSelectComponent from './OrderSelectComponent'
 import styles from './ShoppingListItemsComponent.module.css'
 import { DeleteItem, SelectOrder, UpdateItem } from './sync'
+import ClassWrapper from 'util/ClassWrapper'
 
 interface Props {
   items: readonly Item[]
@@ -89,7 +90,8 @@ export default function ShoppingListItemsComponent(props: Props): JSX.Element {
         )}
         {itemOrCategoryList.map((itemOrCategory) =>
           itemOrCategory.type === 'item' ? (
-            <EditItemComponent
+            <ClassWrapper
+              component={EditItemComponent}
               key={itemOrCategory.item.id}
               item={itemOrCategory.item}
               categories={props.categories}
