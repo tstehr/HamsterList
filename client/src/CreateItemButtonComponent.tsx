@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { Up } from 'HistoryTracker'
 import { KEY_FOCUS_COMPONENT_NO_FOCUS } from 'KeyFocusComponent'
 import React, { useState } from 'react'
-import { Route, RouteComponentProps } from 'react-router-dom'
+import { Route, RouteComponentProps, useHistory, useParams } from 'react-router-dom'
 import { CategoryDefinition, LocalItem, UUID } from 'hamsterlist-shared'
 import CategoryComponent from './CategoryComponent'
 import styles from './CreateItemButtonComponent.module.css'
@@ -36,19 +36,18 @@ export default function CreateItemButtonComponent(props: Props) {
     [KEY_FOCUS_COMPONENT_NO_FOCUS]: props.noArrowFocus,
   })
 
+  const history = useHistory()
+  const params = useParams<{ listid?: string }>()
+
   return (
     <>
       <div className={className}>
-        <Route
-          render={({ history, match }: RouteComponentProps<{ listid?: string }>) => (
-            <button
-              className={classNames(styles.CategoryButton, KEY_FOCUS_COMPONENT_NO_FOCUS)}
-              onClick={() => history.push(`/${match.params.listid ?? ''}/newItem/${encodeURIComponent(props.itemRepr)}/category`)}
-            >
-              <CategoryComponent categoryId={props.item.category} categories={props.categories} />
-            </button>
-          )}
-        />
+        <button
+          className={classNames(styles.CategoryButton, KEY_FOCUS_COMPONENT_NO_FOCUS)}
+          onClick={() => history.push(`/${params.listid ?? ''}/newItem/${encodeURIComponent(props.itemRepr)}/category`)}
+        >
+          <CategoryComponent categoryId={props.item.category} categories={props.categories} />
+        </button>
         <button
           className={buttonClassName}
           onClick={(): void => {
