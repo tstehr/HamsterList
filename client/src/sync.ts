@@ -287,7 +287,7 @@ class SyncingCore {
     }
 
     let onopenTimeoutID: number
-    this.socket = new WebSocket(base + `/api/${this.listid}/socket`)
+    this.socket = new WebSocket(base + `/api/${encodeURIComponent(this.listid)}/socket`)
 
     this.socket.onopen = (): void => {
       onopenTimeoutID = window.setTimeout((): void => {
@@ -382,7 +382,9 @@ class SyncingCore {
         deleteCompletions: preSyncDeletedCompletions,
         addCompletions: this.state.completions.filter((c) => preSyncAddedCompletions.includes(normalizeCompletionName(c.name))),
       }
-      syncPromise = this.fetch(`/api/${this.listid}/sync`, {
+      const uri = `/api/${encodeURIComponent(this.listid)}/sync`
+      console.log('[sync]', uri)
+      syncPromise = this.fetch(uri, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -393,7 +395,7 @@ class SyncingCore {
     } else {
       this.info('SYNC', 'initial sync!')
       syncPromise = this.fetch(
-        `/api/${this.listid}/sync?includeInResponse=changes&includeInResponse=categories&includeInResponse=completions&includeInResponse=orders`,
+        `/api/${encodeURIComponent(this.listid)}/sync?includeInResponse=changes&includeInResponse=categories&includeInResponse=completions&includeInResponse=orders`,
       )
     }
 

@@ -115,7 +115,7 @@ export default class ChooseListComponent extends Component<{}, State> {
   render(): JSX.Element {
     return (
       <>
-        {this.state.listid && <Redirect to={this.state.listid} push />}
+        {this.state.listid && <Redirect to={encodeURIComponent(this.state.listid)} push />}
         <Frame>
           {{
             topBar: (
