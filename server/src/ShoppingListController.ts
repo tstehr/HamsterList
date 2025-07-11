@@ -79,7 +79,7 @@ export default class ShoppingListController {
       return sendErrorResponse(res, e)
     }
 
-    if (bodyList.id !== req.unnormalizedListid && bodyList.id !== req.listid)  {
+    if (bodyList.id !== req.unnormalizedListid && bodyList.id !== req.listid) {
       res.status(400).json({
         error: "List ids don't match",
       })
