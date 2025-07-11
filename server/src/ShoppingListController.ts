@@ -39,11 +39,8 @@ export default class ShoppingListController {
 
   handleParamListid = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     const listidParam = req.params.listid
-    const { list, shouldPersist } = this.getList(listidParam)
+    const list = this.getList(listidParam)
     req.list = list
-    if (shouldPersist) {
-      req.updatedList = list
-    }
     req.listid = list.id
     req.unnormalizedListid = listidParam
 
@@ -122,37 +119,31 @@ export default class ShoppingListController {
     next()
   }
 
-  private getList(listidParam: string): { list: ServerShoppingList; shouldPersist: boolean } {
+  private getList(listidParam: string): ServerShoppingList {
     const lists = this.db.get().lists
 
     // Support lists created prior to the introduction of listid normalization by trying an exact match first
     const listByExactId = lists.find((list) => list.id == listidParam)
     if (listByExactId) {
-      return { list: listByExactId, shouldPersist: false }
+      return listByExactId
     }
 
     // All newly created lists have normalized listids
     const normalizedListid = normalizeListid(listidParam)
     const listByNormalizedId = lists.find((list) => list.id == normalizedListid)
     if (listByNormalizedId) {
-      return { list: listByNormalizedId, shouldPersist: false }
+      return listByNormalizedId
     }
 
-    // List doesn't exist yet, generate a new one from template. We may save it immediately or on 1st write depending on the list
-    // name. For the list name we want to use the original un-normalized listid. Therefore, if the listid was changed by
-    // normalization we write an empty list immediately so that any later requests using a different form of listid still get the
-    // original list name.
-    return {
-      list: createServerShoppingList({
-        id: normalizedListid,
-        title: listidParam,
-        items: [],
-        recentlyUsed: [],
-        categories: this.defaultCategories,
-        orders: [],
-        changes: [],
-      }),
-      shouldPersist: normalizedListid !== listidParam,
-    }
+    // List doesn't exist yet, generate a new one from template.
+    return createServerShoppingList({
+      id: normalizedListid,
+      title: listidParam,
+      items: [],
+      recentlyUsed: [],
+      categories: this.defaultCategories,
+      orders: [],
+      changes: [],
+    })
   }
 }
