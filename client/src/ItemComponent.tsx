@@ -33,7 +33,15 @@ const ItemComponent = React.memo(function ItemComponent(props: Props) {
   return (
     <Linkify
       as="span"
-      options={{ target: '_blank', defaultProtocol: 'https' }}
+      options={{
+        target: '_blank',
+        defaultProtocol: 'https',
+        attributes: {
+          // Set tabIndex explicity, otherwise links can not be focused on iOS. This throws off the logic that allows clicking
+          // links in EditItemComponent, making link click impossible.
+          tabIndex: '0',
+        },
+      }}
       className={classNames(styles.ItemComponent, props.className)}
     >
       <AmountComponent amount={props.item.amount} /> {props.item.name}
