@@ -22,6 +22,7 @@
   top: 0;
   opacity: 0;
   transition: opacity 100ms 0ms;
+  pointer-events: none;
 }
 .CreateItemButtonComponent.focused::before {
   opacity: 1;
