@@ -1,6 +1,6 @@
 import { RESTORATION_ENABLED, RESTORATION_PATH } from 'DB'
 import LocalStorageDB from 'LocalStorageDB'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { BrowserRouter, Route, RouteComponentProps, Switch, useHistory, useLocation } from 'react-router-dom'
 import ServiceWorkerInstall from 'ServiceWorkerInstall'
 import ChooseListComponent from './ChooseListComponent'
@@ -19,30 +19,34 @@ function createShoppingListContainerComponentRender(up: Up) {
 }
 
 export default function App() {
+  const [pathRestorationComplete, setPathRestorationComplete] = useState(false)
+
   return (
     <>
       <BrowserRouter>
-        <RestorePath />
-        <HistoryTracker
-          render={(up: Up) => (
-            <Switch>
-              <Route exact path="/" component={ChooseListComponent} />
-              <Route
-                path={[
-                  '/:listid',
-                  '/:listid/orders',
-                  '/:listid/orders/:orderid',
-                  '/:listid/:itemid/category',
-                  '/:listid/import',
-                  '/:listid/newItem/:itemrepr/category',
-                ]}
-                exact
-                render={createShoppingListContainerComponentRender(up)}
-              />
-              <Route component={Error404} />
-            </Switch>
-          )}
-        ></HistoryTracker>
+        <RestorePath pathRestorationComplete={pathRestorationComplete} setPathRestorationComplete={setPathRestorationComplete} />
+        {pathRestorationComplete && (
+          <HistoryTracker
+            render={(up: Up) => (
+              <Switch>
+                <Route exact path="/" component={ChooseListComponent} />
+                <Route
+                  path={[
+                    '/:listid',
+                    '/:listid/orders',
+                    '/:listid/orders/:orderid',
+                    '/:listid/:itemid/category',
+                    '/:listid/import',
+                    '/:listid/newItem/:itemrepr/category',
+                  ]}
+                  exact
+                  render={createShoppingListContainerComponentRender(up)}
+                />
+                <Route component={Error404} />
+              </Switch>
+            )}
+          ></HistoryTracker>
+        )}
         <LocalStorageMigration />
       </BrowserRouter>
       <ServiceWorkerInstall />
@@ -50,7 +54,13 @@ export default function App() {
   )
 }
 
-function RestorePath() {
+function RestorePath({
+  pathRestorationComplete,
+  setPathRestorationComplete,
+}: {
+  pathRestorationComplete: boolean
+  setPathRestorationComplete: (res: boolean) => void
+}) {
   const dbRef = useRef(new LocalStorageDB())
 
   // forward on load
@@ -59,11 +69,16 @@ function RestorePath() {
     if (!dbRef.current.get(RESTORATION_ENABLED)) {
       return
     }
+    if (pathRestorationComplete) {
+      return
+    }
     const restorationPath = dbRef.current.get<string>(RESTORATION_PATH)
     if (restorationPath && window.location.pathname === '/' && restorationPath !== '/') {
+      console.log('[App]', 'Redirecting', restorationPath)
       history.replace(restorationPath)
     }
-  }, [history])
+    setPathRestorationComplete(true)
+  }, [history, pathRestorationComplete, setPathRestorationComplete])
 
   // store current path
   const { pathname } = useLocation()
