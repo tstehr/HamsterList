@@ -66,10 +66,11 @@ function RestorePath({
   // forward on load
   const history = useHistory()
   useEffect(() => {
-    if (!dbRef.current.get(RESTORATION_ENABLED)) {
+    if (pathRestorationComplete) {
       return
     }
-    if (pathRestorationComplete) {
+    if (!dbRef.current.get(RESTORATION_ENABLED)) {
+      setPathRestorationComplete(true)
       return
     }
     const restorationPath = dbRef.current.get<string>(RESTORATION_PATH)
