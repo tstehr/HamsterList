@@ -159,6 +159,10 @@ class SyncingCore {
     }
   }
 
+  public getListid() {
+    return this.state.loaded ? this.listid : undefined
+  }
+
   private setState(state: Partial<ClientShoppingList>, suppressSave = false): void {
     // update state
     this.state = {

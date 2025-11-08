@@ -6,16 +6,23 @@ export default function useSync(listid: string): [ClientShoppingList | undefined
   const [sync, setSync] = useState<SyncingCore>()
 
   useEffect(() => {
-    const sync = new SyncingCore(listid, import.meta.env.VITE_BACKEND_URL ? `${import.meta.env.VITE_BACKEND_URL}` : null)
     function handleChange({ clientShoppingList }: { clientShoppingList: ClientShoppingList }) {
       setState(clientShoppingList)
     }
-    setSync(sync)
-    sync.init()
-    sync.on('change', handleChange)
+
+    if (sync?.getListid() === listid) {
+      sync.init()
+      sync.on('change', handleChange)
+      return
+    }
+
+    const newSync = new SyncingCore(listid, import.meta.env.VITE_BACKEND_URL ? `${import.meta.env.VITE_BACKEND_URL}` : null)
+    setSync(newSync)
+    newSync.init()
+    newSync.on('change', handleChange)
     return () => {
-      sync.off('change', handleChange)
-      sync.close()
+      newSync.off('change', handleChange)
+      newSync.close()
     }
   }, [listid])
 
