@@ -39,7 +39,7 @@ export default class ShoppingListController {
 
   handleParamListid = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
     const listidParam = req.params.listid
-    const list = this.getList(listidParam)
+    const list = this.getList(listidParam, req.previousSyncTitle)
     req.list = list
     req.listid = list.id
     req.unnormalizedListid = listidParam
@@ -119,7 +119,7 @@ export default class ShoppingListController {
     next()
   }
 
-  private getList(listidParam: string): ServerShoppingList {
+  private getList(listidParam: string, previousSyncTitle: string | undefined): ServerShoppingList {
     const lists = this.db.get().lists
 
     // Support lists created prior to the introduction of listid normalization by trying an exact match first
@@ -138,7 +138,10 @@ export default class ShoppingListController {
     // List doesn't exist yet, generate a new one from template.
     return createServerShoppingList({
       id: normalizedListid,
-      title: listidParam,
+      // Prefer the title from a previous sync if present. If we didn't do that, clients that respect listid normalization would
+      // request with the normalized listid after the 1st request, and thus the normalized listid would be used as list title,
+      // even if a non-normalized listid was supplied originally.
+      title: previousSyncTitle ?? listidParam,
       items: [],
       recentlyUsed: [],
       categories: this.defaultCategories,
