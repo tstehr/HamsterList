@@ -125,24 +125,22 @@ interface CompletionStateUpdate {
 @Emittery.mixin('emitter')
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 class SyncingCore {
-  baseUrl: string | null
-  state: ClientShoppingList
-  db: DB
+  private state: ClientShoppingList
+  private db: DB
 
-  isInTransaction = false
-  changeInTransaction = false
+  private isInTransaction = false
+  private changeInTransaction = false
 
-  socket: WebSocket | undefined
-  waitForOnlineTimeoutID = -1
-  changePushSyncTimeoutID = -1
-  requestSyncTimeoutID = -1
+  private socket: WebSocket | undefined
+  private waitForOnlineTimeoutID = -1
+  private changePushSyncTimeoutID = -1
+  private requestSyncTimeoutID = -1
 
   constructor(
     private listid: string,
-    baseUrl: string | null = null,
+    private baseUrl: string | null = null,
   ) {
     this.db = new LocalStorageDB()
-    this.baseUrl = baseUrl
     this.state = {
       ...ephemeralInitialState,
       ...this.getPersistedStateFromDB(),
@@ -161,7 +159,7 @@ class SyncingCore {
     }
   }
 
-  setState(state: Partial<ClientShoppingList>, suppressSave = false): void {
+  private setState(state: Partial<ClientShoppingList>, suppressSave = false): void {
     // update state
     this.state = {
       ...this.state,
@@ -184,7 +182,7 @@ class SyncingCore {
     }
   }
 
-  performTransaction(cb: () => void) {
+  public performTransaction(cb: () => void) {
     try {
       this.isInTransaction = true
       cb()
@@ -197,7 +195,7 @@ class SyncingCore {
     }
   }
 
-  init(): void {
+  public init(): void {
     this.db.on('listChange', this.handleListChange)
     window.addEventListener('online', this.handleOnline)
     window.addEventListener('offline', this.handleOffline)
@@ -209,7 +207,7 @@ class SyncingCore {
     }
   }
 
-  close(): void {
+  public close(): void {
     this.db.off('listChange', this.handleListChange)
     this.db.close()
     window.removeEventListener('online', this.handleOnline)
@@ -222,7 +220,7 @@ class SyncingCore {
     }
   }
 
-  save = _.debounce((): void => {
+  private save = _.debounce((): void => {
     this.info('DB', 'Save')
 
     try {
@@ -232,7 +230,7 @@ class SyncingCore {
     }
   }, 500)
 
-  load(): void {
+  private load(): void {
     this.info('DB', 'Load')
     const newState = this.getPersistedStateFromDB()
     this.setState(newState, true)
@@ -241,7 +239,7 @@ class SyncingCore {
     }
   }
 
-  getPersistedStateFromDB(): PersistedClientShoppingList {
+  private getPersistedStateFromDB(): PersistedClientShoppingList {
     const dbState = this.db.getList(this.listid)
 
     if (dbState) {
@@ -255,7 +253,7 @@ class SyncingCore {
     }
   }
 
-  removeListFromDB(): void {
+  public removeListFromDB(): void {
     if (this.socket) {
       this.socket.onclose = null
 
@@ -266,7 +264,7 @@ class SyncingCore {
     this.load()
   }
 
-  initiateSyncConnection(): void {
+  public initiateSyncConnection(): void {
     void this.sync()
 
     if (this.socket != null && this.socket.readyState === WebSocket.OPEN) {
@@ -336,7 +334,7 @@ class SyncingCore {
     }
   }
 
-  waitForOnline(): void {
+  private waitForOnline(): void {
     this.info('SYNC', 'checking online')
 
     if (window.navigator.onLine) {
@@ -347,7 +345,7 @@ class SyncingCore {
     }
   }
 
-  async sync(): Promise<void> {
+  private async sync(): Promise<void> {
     window.clearTimeout(this.requestSyncTimeoutID)
 
     if (this.state.syncing) {
@@ -510,11 +508,11 @@ class SyncingCore {
     }
   }
 
-  getShoppingList(clientShoppingList: ClientShoppingList): ShoppingList {
+  public getShoppingList(clientShoppingList: ClientShoppingList): ShoppingList {
     return createShoppingList(_.pick(clientShoppingList, ['id', 'title', 'items']), this.state.categories)
   }
 
-  fetch(url: string, init?: RequestInit): Promise<Response> {
+  private fetch(url: string, init?: RequestInit): Promise<Response> {
     init = init ?? {}
 
     _.merge(init, {
@@ -526,7 +524,7 @@ class SyncingCore {
     return fetch((this.baseUrl ?? '') + url, init)
   }
 
-  markListAsUsed(): void {
+  private markListAsUsed(): void {
     if (!this.state.id) {
       return
     }
@@ -550,7 +548,7 @@ class SyncingCore {
     this.db.set(RECENTLY_USED_KEY, recentlyUsedLists)
   }
 
-  createCompletionsStateUpdate(state: ClientShoppingList, updatedItem: Item): CompletionStateUpdate {
+  private createCompletionsStateUpdate(state: ClientShoppingList, updatedItem: Item): CompletionStateUpdate {
     const completionItem = createCompletionItem(_.pick(updatedItem, 'name', 'category'))
     const completionName = normalizeCompletionName(completionItem.name)
 
@@ -580,7 +578,7 @@ class SyncingCore {
     return newCompletions
   }
 
-  applyDiff(diff: Diff): void {
+  public applyDiff(diff: Diff): void {
     this.markListAsUsed()
     try {
       const localChange: Change = {
@@ -608,11 +606,11 @@ class SyncingCore {
     this.requestSync()
   }
 
-  createApplicableDiff(diff: Diff): Diff | null {
+  public createApplicableDiff(diff: Diff): Diff | null {
     return createApplicableDiff(this.getShoppingList(this.state), diff)
   }
 
-  deleteCompletion(completionName: string): void {
+  public deleteCompletion(completionName: string): void {
     const normalizedCompletionName = normalizeCompletionName(completionName)
     this.setState({
       deletedCompletions: [...this.state.deletedCompletions, normalizedCompletionName],
@@ -625,7 +623,7 @@ class SyncingCore {
     this.requestSync()
   }
 
-  addCompletion(completion: CompletionItem): void {
+  public addCompletion(completion: CompletionItem): void {
     const normalizedCompletionName = normalizeCompletionName(completion.name)
     this.setState({
       deletedCompletions: this.state.deletedCompletions.filter((c) => c !== normalizedCompletionName),
@@ -636,7 +634,7 @@ class SyncingCore {
     this.requestSync()
   }
 
-  modifyCompletions(deletedCompletionNames: readonly string[], addedCompletions: readonly CompletionItem[]) {
+  public modifyCompletions(deletedCompletionNames: readonly string[], addedCompletions: readonly CompletionItem[]) {
     const normalizedAddedCompletionNames = addedCompletions.map((c) => normalizeCompletionName(c.name))
     const normalizedDeletedCompletionNames = deletedCompletionNames
       .map(normalizeCompletionName)
@@ -650,7 +648,7 @@ class SyncingCore {
     this.requestSync()
   }
 
-  updateListTitle(newTitle: string): void {
+  public updateListTitle(newTitle: string): void {
     this.markListAsUsed()
     this.setState({
       title: newTitle,
@@ -659,7 +657,7 @@ class SyncingCore {
     this.requestSync()
   }
 
-  createItem(localItem: LocalItem): void {
+  public createItem(localItem: LocalItem): void {
     const item = { ...localItem, id: createRandomUUID() }
 
     try {
@@ -672,7 +670,7 @@ class SyncingCore {
     }
   }
 
-  deleteItem(id: UUID): void {
+  public deleteItem(id: UUID): void {
     try {
       const diff = generateDeleteItem(this.getShoppingList(this.state), id)
       this.applyDiff(diff)
@@ -683,7 +681,7 @@ class SyncingCore {
     }
   }
 
-  updateItem(id: UUID, localItem: LocalItem): void {
+  public updateItem(id: UUID, localItem: LocalItem): void {
     const item = { ...localItem, id: id }
 
     try {
@@ -696,13 +694,13 @@ class SyncingCore {
     }
   }
 
-  selectOrder(id?: UUID | null): void {
+  public selectOrder(id?: UUID | null): void {
     this.setState({
       selectedOrder: id,
     })
   }
 
-  updateCategories(categories: readonly CategoryDefinition[]): void {
+  public updateCategories(categories: readonly CategoryDefinition[]): void {
     this.markListAsUsed()
     this.setState({
       dirty: true,
@@ -712,7 +710,7 @@ class SyncingCore {
     this.requestSync()
   }
 
-  updateOrders(orders: readonly Order[]): void {
+  public updateOrders(orders: readonly Order[]): void {
     this.markListAsUsed()
     this.setState({
       dirty: true,
@@ -722,7 +720,7 @@ class SyncingCore {
     this.requestSync()
   }
 
-  setUsername(username?: string | null): void {
+  public setUsername(username?: string | null): void {
     if (username != null) {
       username = username.trim()
 
@@ -737,32 +735,32 @@ class SyncingCore {
     })
   }
 
-  requestSync(delay = 1000): void {
+  private requestSync(delay = 1000): void {
     window.clearTimeout(this.requestSyncTimeoutID)
     this.requestSyncTimeoutID = window.setTimeout(() => {
       void this.sync()
     }, delay)
   }
 
-  info(...messages: unknown[]) {
+  private info(...messages: unknown[]) {
     this.log('info', ...messages)
   }
 
-  log(method: 'error' | 'info', ...messages: unknown[]) {
+  private log(method: 'error' | 'info', ...messages: unknown[]) {
     console[method](`[SyncingCore listid="${this.listid}"]`, ...messages)
   }
 
-  handleListChange = ({ list: { id } }: { list: PersistedClientShoppingList }): void => {
+  private handleListChange = ({ list: { id } }: { list: PersistedClientShoppingList }): void => {
     if (id === this.listid) {
       this.load()
     }
   }
 
-  handleOnline = (): void => {
+  private handleOnline = (): void => {
     this.initiateSyncConnection()
   }
 
-  handleOffline = (): void => {
+  private handleOffline = (): void => {
     this.info('offline')
     this.setState({
       connectionState: 'disconnected',
