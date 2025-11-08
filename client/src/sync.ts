@@ -173,6 +173,7 @@ class SyncingCore {
       this.changeInTransaction = true
     } else {
       void this.emitter.emit('change', { clientShoppingList: this.state })
+      this.checkListId()
     }
 
     // save new state to local storage
@@ -188,11 +189,36 @@ class SyncingCore {
       cb()
       if (this.changeInTransaction) {
         void this.emitter.emit('change', { clientShoppingList: this.state })
+        this.checkListId()
       }
     } finally {
       this.isInTransaction = false
       this.changeInTransaction = false
     }
+  }
+
+  private checkListId() {
+    if (!this.state.loaded || this.state.id === this.listid) {
+      return
+    }
+
+    const oldListid = this.listid
+    const newListid = this.state.id
+
+    // Update listid in sync
+    this.listid = newListid
+
+    // Update recently used lists
+    const recentlyUsedLists = this.db.get<RecentlyUsedList[]>(RECENTLY_USED_KEY)
+    if (recentlyUsedLists) {
+      this.db.set(
+        RECENTLY_USED_KEY,
+        recentlyUsedLists.map((rul) => (rul.id === oldListid ? { ...rul, id: newListid } : rul)),
+      )
+    }
+
+    // Emit change event
+    void this.emitter.emit('listidChange', { newListid })
   }
 
   public init(): void {
@@ -771,6 +797,7 @@ class SyncingCore {
 
 type SyncingCoreEmitter = Emittery.Typed<{
   change: { clientShoppingList: ClientShoppingList }
+  listidChange: { newListid: string }
 }>
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-unsafe-declaration-merging

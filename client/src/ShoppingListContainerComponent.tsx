@@ -1,8 +1,6 @@
-import { RECENTLY_USED_KEY, RecentlyUsedList } from 'DB'
 import { Up } from 'HistoryTracker'
 import Loading from 'Loading'
-import LocalStorageDB from 'LocalStorageDB'
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { generatePath, match, useHistory } from 'react-router-dom'
 import ShoppingListComponent from 'ShoppingListComponent'
 import useSync from 'useSync'
@@ -17,31 +15,21 @@ export default function ShoppingListContainerComponent({ listid, match, up }: Pr
   const [state, sync] = useSync(listid)
 
   const history = useHistory()
-  const updateListid = useCallback(
-    (newListid: string) => {
-      // update listid in recently used
-      const db = new LocalStorageDB()
-      const recentlyUsedLists = db.get<RecentlyUsedList[]>(RECENTLY_USED_KEY)
-      if (recentlyUsedLists) {
-        db.set(
-          RECENTLY_USED_KEY,
-          recentlyUsedLists.map((rul) => (rul.id === listid ? { ...rul, id: newListid } : rul)),
-        )
-      }
-
+  useEffect(() => {
+    if (!sync) {
+      return
+    }
+    const onListidChange = ({ newListid }: { newListid: string }) => {
       // redirect to new path
       const newParams = { ...match.params, listid: newListid }
       const newPath = generatePath(match.path, newParams)
       history.replace(newPath)
-    },
-    [history, listid, match.params, match.path],
-  )
-
-  useEffect(() => {
-    if (state && state.id && listid !== state.id) {
-      updateListid(state.id)
     }
-  }, [listid, state, updateListid])
+    sync.on('listidChange', onListidChange)
+    return () => {
+      sync.off('listidChange', onListidChange)
+    }
+  }, [history, match, sync])
 
   return (
     <div>
