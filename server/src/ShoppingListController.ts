@@ -14,6 +14,7 @@ import { createServerShoppingList, getBaseShoppingList, ServerShoppingList } fro
 import { ShoppingListChangeCallback } from './SocketController.js'
 import TokenCreator from './TokenCreator.js'
 import normalizeListid from './util/normalizeListid.js'
+import _ from 'lodash'
 
 export interface ListidParam extends ParamsDictionary {
   listid: string
@@ -90,31 +91,33 @@ export default class ShoppingListController {
   }
 
   saveUpdatedList = (req: Request<ListidParam>, res: Response, next: NextFunction): void => {
-    if (req.updatedList) {
-      const updatedList = req.updatedList
-      const diffs = diffShoppingLists(req.list, updatedList)
-      let newList: ServerShoppingList
-
-      if (diffs.length > 0) {
-        const change: Change = {
-          username: req.username,
-          id: req.id,
-          date: new Date(),
-          diffs: diffs,
-        }
-        const changes = getOnlyNewChanges([...updatedList.changes, change])
-        newList = { ...updatedList, changes }
-        req.updatedList = newList
-      } else {
-        newList = updatedList
-      }
-
-      this.changeCallback(newList)
-      this.db.set({ ...this.db.get(), lists: updateInArray(this.db.get().lists, newList, true) })
-      this.db.write().catch((e) => {
-        req.log.error(e)
-      })
+    if (!req.updatedList || _.isEqual(req.list, req.updatedList)) {
+      return
     }
+
+    const updatedList = req.updatedList
+    const diffs = diffShoppingLists(req.list, updatedList)
+    let newList: ServerShoppingList
+
+    if (diffs.length > 0) {
+      const change: Change = {
+        username: req.username,
+        id: req.id,
+        date: new Date(),
+        diffs: diffs,
+      }
+      const changes = getOnlyNewChanges([...updatedList.changes, change])
+      newList = { ...updatedList, changes }
+      req.updatedList = newList
+    } else {
+      newList = updatedList
+    }
+
+    this.changeCallback(newList)
+    this.db.set({ ...this.db.get(), lists: updateInArray(this.db.get().lists, newList, true) })
+    this.db.write().catch((e) => {
+      req.log.error(e)
+    })
 
     next()
   }
