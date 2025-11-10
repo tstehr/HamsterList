@@ -47,13 +47,7 @@ export default class SyncController {
     let syncRequest: SyncRequest
 
     try {
-      syncRequest = createSyncRequest(req.body, (itemSpec) => {
-        if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
-          return itemSpec
-        }
-        const item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
-        return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
-      })
+      syncRequest = this.parseSyncRequest(req)
     } catch (e) {
       return sendErrorResponse(res, e)
     }
@@ -119,6 +113,16 @@ export default class SyncController {
         error: 'req.updatedList was null',
       })
     }
+  }
+
+  public parseSyncRequest(req: Request<ListidParam>): SyncRequest {
+    return createSyncRequest(req.body, (itemSpec) => {
+      if (_.isObject(itemSpec) && !('stringRepresentation' in itemSpec)) {
+        return itemSpec
+      }
+      const item = createItemFromItemStringRepresentation(itemSpec, req.list.categories)
+      return addMatchingCategory(item, getSortedCompletions(req.list.recentlyUsed))
+    })
   }
 
   makeIncludeInResponse(includeInResponseQueryParam: QueryValueWorkaround): readonly string[] {

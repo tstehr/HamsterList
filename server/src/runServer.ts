@@ -136,6 +136,20 @@ function doRun(config: nconf.Provider, db: DB, log: Logger) {
     req.log.info({
       req: req,
     })
+
+    const body = req.body as unknown
+    if (
+      typeof body === 'object' &&
+      body !== null &&
+      'previousSync' in body &&
+      typeof body.previousSync === 'object' &&
+      body.previousSync !== null &&
+      'title' in body.previousSync &&
+      typeof body.previousSync.title === 'string'
+    ) {
+      req.previousSyncTitle = body.previousSync.title
+    }
+
     next()
 
     if (!res.headersSent) {

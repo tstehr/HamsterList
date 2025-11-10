@@ -15,6 +15,7 @@ declare module 'express-serve-static-core' {
     list: P extends ListidParam ? ServerShoppingList : null
     updatedList?: P extends ListidParam ? ServerShoppingList : null
     itemid: P extends ItemidParam ? UUID : null
+    previousSyncTitle?: string
   }
 }
 
