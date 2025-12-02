@@ -3,9 +3,7 @@ import { differenceInHours } from 'date-fns/differenceInHours'
 import { differenceInMinutes } from 'date-fns/differenceInMinutes'
 import { format } from 'date-fns/format'
 import { formatDistance } from 'date-fns/formatDistance'
-import { DeepReadonly } from 'deep-freeze'
-import _, { isEqual } from 'lodash'
-import memoize from 'memoize-one'
+import _ from 'lodash'
 import React, { Component, useMemo, useState } from 'react'
 import FlipMove from 'react-flip-move'
 import { ADD_ITEM, CategoryDefinition, Change, createReverseDiff, DELETE_ITEM, Diff, UPDATE_ITEM } from 'hamsterlist-shared'
@@ -184,15 +182,37 @@ interface DiffProps {
   onHeaderClick: () => void
 }
 
-export class DiffComponent extends Component<DiffProps> {
-  getDateString = memoize((readonlyDate: DeepReadonly<Date>) => {
-    const date = readonlyDate as Date
+export class DiffComponent extends Component<
+  DiffProps,
+  { dateString: string; absoluteDateString: string; isoDateString: string }
+> {
+  private updateInterval: number | undefined
+
+  constructor(props: DiffProps) {
+    super(props)
+    this.state = {
+      ...this.getDateStrings(),
+    }
+  }
+
+  componentDidMount(): void {
+    this.updateInterval = window.setInterval(() => {
+      this.setState(this.getDateStrings())
+    }, 30_000)
+  }
+
+  componentWillUnmount(): void {
+    window.clearInterval(this.updateInterval)
+  }
+
+  getDateStrings = () => {
+    const date = this.props.change.date
     const now = new Date()
     const absoluteDateString = format(date, 'yyyy-MM-dd HH:mm')
     const hours = differenceInHours(now, date)
     const dateString = hours < 12 ? `${formatDistance(now, date)} ago` : absoluteDateString
-    return [dateString, absoluteDateString, date.toISOString()]
-  }, isEqual)
+    return { dateString, absoluteDateString, isoDateString: date.toISOString() }
+  }
 
   getApplicableDiff = (): [Diff | null | undefined, boolean] => {
     const reverseDiff = createReverseDiff(this.props.diff)
@@ -208,7 +228,7 @@ export class DiffComponent extends Component<DiffProps> {
       [styles.unsynced]: this.props.unsynced,
       [styles.expanded]: this.props.detailsExpanded,
     })
-    const [dateString, absoluteDateString, isoDateString] = this.getDateString(this.props.change.date)
+    const { dateString, absoluteDateString, isoDateString } = this.state
     const [applicableDiff, reverseEqualApplicable] = this.getApplicableDiff()
 
     const undo = (e: React.SyntheticEvent): void => {
